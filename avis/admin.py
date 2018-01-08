@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Profil, Restaurant, Plat, Tag, Avis
+from .models import Profil, Restaurant, Plat, Avis
+
 
 class ProfilAdmin(admin.ModelAdmin):
     list_display = ('user', 'nbAvis', 'date')
@@ -11,10 +12,12 @@ class ProfilAdmin(admin.ModelAdmin):
 
     nbAvis.short_description = "Nombre d'avis"
 
+
 class PlatInLine(admin.TabularInline):
     model = Plat
     exclude = ('photo', )
     extra = 1
+
 
 class RestaurantAdmin(admin.ModelAdmin):
     list_display = ('nom', 'apercu_informations', 'adresse', 'telephone', 'nbPLat', 'date')
@@ -40,10 +43,12 @@ class RestaurantAdmin(admin.ModelAdmin):
 
     nbPLat.short_description = 'Nombre de plat'
 
+
 class AvisInLine(admin.TabularInline):
     model = Avis
     exclude = ('photo', )
     extra = 1
+
 
 class PlatAdmin(admin.ModelAdmin):
     list_display = ('nom', 'restaurant', 'apercu_description', 'prix', 'nbAvis', 'date')
@@ -73,7 +78,8 @@ class PlatAdmin(admin.ModelAdmin):
         return plat.avis_set.count()
 
     nbAvis.short_description = "Nombre d'avis"
-    
+
+
 class AvisAdmin(admin.ModelAdmin):
     list_display = ('id', 'plat', 'auteur', 'apercu_avis', 'note', 'date')
     list_filter = ('plat', 'auteur', 'note')
@@ -94,8 +100,8 @@ class AvisAdmin(admin.ModelAdmin):
 
     apercu_avis.short_description = "Aperçu de l'avis"
 
+
 admin.site.register(Profil, ProfilAdmin)
 admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(Plat, PlatAdmin)
-admin.site.register(Tag)
 admin.site.register(Avis, AvisAdmin)
