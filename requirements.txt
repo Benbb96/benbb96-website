@@ -1,2 +1,8 @@
-django==1.11.3
-pytz==2017.2
+Django==2.0.1
+django-appconf==1.0.2
+django-taggit==0.22.2
+pilkit==2.0
+Pillow==5.0.0
+pkg-resources==0.0.0
+pytz==2017.3
+six==1.11.0
