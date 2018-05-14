@@ -1,0 +1,6 @@
+.idea/
+media/
+venv/
+db.sqlite3
+benbb96/__pycache__/
+*.pyc
