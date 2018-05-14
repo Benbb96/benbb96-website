@@ -3,17 +3,11 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import taggit.managers
 
 
 class Migration(migrations.Migration):
 
     initial = True
-
-    dependencies = [
-        ('taggit', '0002_auto_20150616_2121'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
 
     operations = [
         migrations.CreateModel(
@@ -74,11 +68,6 @@ class Migration(migrations.Migration):
             model_name='plat',
             name='restaurant',
             field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='avis.Restaurant'),
-        ),
-        migrations.AddField(
-            model_name='plat',
-            name='tags',
-            field=taggit.managers.TaggableManager(help_text='A comma-separated list of tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags'),
         ),
         migrations.AddField(
             model_name='avis',

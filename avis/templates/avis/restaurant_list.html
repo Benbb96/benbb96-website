@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Restaurants{% endblock %}
+
+{% block content %}
+<h1>Restaurants</h1>
+<ul>
+{% for restaurant in object_list %}
+    <li>{{ restaurant.nom }} (ajouté le {{ restaurant.date|date }})</li>
+{% empty %}
+    <li>Pas de restaurant enregistré.</li>
+{% endfor %}
+</ul>
+{% endblock %}

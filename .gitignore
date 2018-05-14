@@ -1,2 +1,4 @@
+.idea/
 media/
-db.slite3
+venv/
+db.sqlite3

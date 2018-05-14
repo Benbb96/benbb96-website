@@ -1,8 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.html import format_html
-from taggit.managers import TaggableManager
 
 
 class Profil(models.Model):
@@ -38,7 +36,6 @@ class Plat(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True, help_text='Une description du plat')
-    tags = TaggableManager()
     prix = models.DecimalField(max_digits=4, decimal_places=2)
     photo = models.ImageField(null=True, blank=True, upload_to="media/plats/")
     date = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)

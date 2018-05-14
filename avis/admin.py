@@ -17,6 +17,7 @@ class PlatInLine(admin.TabularInline):
     model = Plat
     exclude = ('photo', )
     extra = 1
+    show_change_link = True
 
 
 class RestaurantAdmin(admin.ModelAdmin):
@@ -32,7 +33,7 @@ class RestaurantAdmin(admin.ModelAdmin):
     def apercu_informations(self, restaurant):
         text = restaurant.informations[0:40]
         if len(restaurant.informations) > 40:
-            return '%s…' % text
+            return '%s...' % text
         else:
             return text
 
@@ -48,6 +49,7 @@ class AvisInLine(admin.TabularInline):
     model = Avis
     exclude = ('photo', )
     extra = 1
+    show_change_link = True
 
 
 class PlatAdmin(admin.ModelAdmin):
@@ -68,7 +70,7 @@ class PlatAdmin(admin.ModelAdmin):
         """
         text = plat.description[0:40]
         if len(plat.description) > 40:
-            return '%s…' % text
+            return '%s...' % text
         else:
             return text
 
@@ -94,7 +96,7 @@ class AvisAdmin(admin.ModelAdmin):
         """
         text = avis.avis[0:40]
         if len(avis.avis) > 40:
-            return '%s…' % text
+            return '%s...' % text
         else:
             return text
 
