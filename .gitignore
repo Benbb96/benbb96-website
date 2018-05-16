@@ -1,5 +1,8 @@
 .idea/
+bin/
 media/
+static/
 venv/
 db.sqlite3
 benbb96/__pycache__/
+*.pyc
