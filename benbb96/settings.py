@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'avis',
-    'bootstrap4'
+    'bootstrap4',
+    'geoposition'
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,5 @@ MEDIA_ROOT = '/home/benbb96/benbb96/media'
 MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/benbb96/benbb96/static'
 STATIC_URL = '/static/'
+
+GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw'
