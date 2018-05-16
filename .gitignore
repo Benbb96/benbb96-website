@@ -1,8 +1,16 @@
 .idea/
+
 bin/
+venv/
+
 media/
 static/
-venv/
+
 db.sqlite3
-benbb96/__pycache__/
-*.pyc
+
+__pycache__/
+*.py[cod]
+
+# Django stuff:
+*.log
+*.pot
