@@ -1,4 +1,5 @@
 .idea/
+bin/
 media/
 venv/
 db.sqlite3
