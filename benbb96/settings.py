@@ -117,7 +117,7 @@ STATIC_ROOT = '/home/benbb96/benbb96/static'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'assets')
 ]
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw'
