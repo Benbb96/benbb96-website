@@ -1,6 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 from geoposition.fields import GeopositionField
 
 
@@ -55,3 +56,6 @@ class Avis(models.Model):
 
     def __str__(self):
         return str(self.auteur) + ' : ' + self.plat.nom + ' (' + str(self.note) + '/10)'
+
+    def get_absolute_url(self):
+        return reverse('avis:detail-avis', kwargs={'pk': self.pk})
