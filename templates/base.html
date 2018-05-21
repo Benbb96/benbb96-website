@@ -3,34 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Benbb96{% endblock %} - Benbb96</title>
+    <title>{% block title %}Benbb96{% endblock %} | Benbb96</title>
     {# Load the tag library #}
-    {% load bootstrap4 %}
+    {% load bootstrap4 static fontawesome  %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-social.css' %}">
+    {% fontawesome_stylesheet %}
 
     {# Load CSS and JavaScript #}
-    {% bootstrap_css %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     {% bootstrap_javascript jquery='full' %}
 
     {# Display django.contrib.messages as Bootstrap alerts #}
     {% bootstrap_messages %}
-    <style>
-        /* Remove the navbar's default margin-bottom and rounded borders */
-        .navbar {
-            margin-bottom: 0;
-            border-radius: 0;
-        }
-
-        /* Add a gray background color and some padding to the footer */
-        footer {
-            background-color: #f2f2f2;
-            padding: 25px;
-        }
-    </style>
 </head>
 <body>
-{% include 'navbar.html' %}
-{% include 'jumbotron.html' %}
+
+{% block navbar %}
+{% include 'navbar.html' with home=True %}
+{% endblock %}
+
+<div class="jumbotron">
+    <div class="container text-center">
+        <h1>{% block jumbotron_title %}Benbb96{% endblock %}</h1>
+        <p>{% block jumbotron_description %}Juste une interface pour experimenter mon code...{% endblock %}</p>
+    </div>
+</div>
+
 <div class="content">
     {% block content %}{% endblock %}
 </div>
