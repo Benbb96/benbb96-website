@@ -1,12 +1,14 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, DetailView
 
-from avis.models import Restaurant
+from avis.models import Restaurant, Avis
 
 
-class RecommandationIndex(TemplateView):
-    template_name = 'avis/index.html'
+class AvisListView(ListView):
+    model = Avis
+
+
+class AvisDetailView(DetailView):
+    model = Avis
 
 
 class RestaurantList(ListView):

@@ -1,0 +1,18 @@
+{% extends 'avis/base_avis.html' %}
+
+{% block avis_title %}Liste{% endblock %}
+
+{% block content %}
+<h1>Avis</h1>
+<ul>
+{% for avis in object_list %}
+    <li>
+        <a href="{% url 'avis:detail-avis' avis.pk %}">
+            {{ avis.plat.restaurant }} - {{ avis.plat }} (ajouté le {{ avis.date_creation|date }}) : {{ avis.note }}/10
+        </a>
+    </li>
+{% empty %}
+    <li>Pas d'avis enregistré.</li>
+{% endfor %}
+</ul>
+{% endblock %}

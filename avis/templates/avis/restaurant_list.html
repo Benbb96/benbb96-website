@@ -1,12 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'avis/base_avis.html' %}
 
-{% block title %}Restaurants{% endblock %}
+{% block avis_title %}restaurants{% endblock %}
 
-{% block content %}
+{% block avis_content %}
 <h1>Restaurants</h1>
 <ul>
 {% for restaurant in object_list %}
-    <li>{{ restaurant.nom }} (ajouté le {{ restaurant.date|date }})</li>
+    <li>{{ restaurant.nom }} (ajouté le {{ restaurant.date_creation|date }})</li>
 {% empty %}
     <li>Pas de restaurant enregistré.</li>
 {% endfor %}

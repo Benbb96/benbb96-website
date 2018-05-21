@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}{% block avis_title %}Avis{% endblock %} | Avis{% endblock %}
+
+{% block navbar %}
+{% include 'navbar.html' with avis=True %}
+{% endblock %}
+
+{% block jumbotron_title %}Avis{% endblock %}
+{% block jumbotron_description %}Mes avis sur ce que j'ai mangé récemment !{% endblock %}
+
+{% block content %}
+{% block avis_content %}{% endblock %}
+{% endblock %}

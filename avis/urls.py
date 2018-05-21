@@ -5,6 +5,7 @@ from . import views
 app_name = 'avis'
 
 urlpatterns = [
-    path('', views.RecommandationIndex.as_view(), name='index'),
+    path('', views.AvisListView.as_view(), name='liste-avis'),
+    path('<int:pk>/', views.AvisDetailView.as_view(), name='detail-avis'),
     path('restaurants/', views.RestaurantList.as_view(), name='restaurants')
 ]

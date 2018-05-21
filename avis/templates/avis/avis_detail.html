@@ -1,0 +1,13 @@
+{% extends 'avis/base_avis.html' %}
+
+{% block avis_title %}Avis {{ object.plat }}{% endblock %}
+
+{% block avis_content %}
+    <h1>Avis de {{ object.auteur }} sur {{ object.plat }}</h1>
+    <h3>Le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
+    <div>
+        <img src="{{ object.photo.url }}" title="Photo du plat {{ object.plat }}" alt="Photo du plat {{ object.plat }} prise par {{ object.auteur }}" />
+        <p>{{ object.avis }}</p>
+        <h2>Note : {{ object.note }}/10</h2>
+    </div>
+{% endblock %}
