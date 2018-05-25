@@ -14,7 +14,7 @@
                 <li {% if home %}class="active"{% endif %}><a href="{% url 'home' %}">Accueil</a></li>
                 <li><a href="#">A propos</a></li>
                 <li {% if avis %}class="active"{% endif %}><a href="{% url 'avis:liste-avis' %}">Avis</a></li>
-                <li><a href="#">Gallerie</a></li>
+                <li {% if gallery %}class="active"{% endif %}><a href="{% url 'gallery' %}">Gallerie</a></li>
                 <li><a href="#">Contact</a></li>
                 {% if request.user.is_superuser %}
                 <li><a href="{% url 'admin:index' %}">Administration</a></li>
