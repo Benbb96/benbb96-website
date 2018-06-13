@@ -8,6 +8,7 @@ from benbb96 import settings
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('rallye-des-colocs', TemplateView.as_view(template_name='rallye.html'), name='rallye'),
     path('gallery', TemplateView.as_view(template_name='gallery.html'), name='gallery'),
     path('avis/', include('avis.urls')),
     path('admin/', admin.site.urls)

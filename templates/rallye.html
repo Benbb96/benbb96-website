@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Rallye des Colocs{% endblock %}
+
+{% block content %}
+<h1>Rallye des Colocs</h1>
+<div id="map"></div>
+<div class="hotes">
+    <div>
+        <h2>Benjamin Bernard-Bouissières</h2>
+        <p>Numéro de téléphone : 06 05 04 16 66</p>
+        <p>Adresse : 11 rue Mottet de Gérando</p>
+    </div>
+    <div>
+        <h2>Tom Masson</h2>
+        <p>Numéro de téléphone : 06 52 08 75 10</p>
+        <p>Adresse : 51 rue Magenta, code 869 2e étage</p>
+    </div>
+    <div>
+        <h2>Julie Lo Curto</h2>
+        <p>Numéro de téléphone : 06 77 73 52 08</p>
+        <p>Adresse : 1 rue Santos Dumont</p>
+    </div>
+    <div>
+        <h2>Joan Tassel</h2>
+        <p>Numéro de téléphone : 06 40 60 57 18</p>
+        <p>Adresse : 40 rue Villon</p>
+    </div>
+    <div>
+        <h2>Baptiste Rochez</h2>
+        <p>Numéro de téléphone : 0615331175</p>
+        <p>Adresse : 122 avenue Jean Jaurès</p>
+    </div>
+</div>
+<script>
+// Initialize and add the map
+function initMap() {
+    var lyon = {lat: 45.76, lng: 4.84};
+    var map = new google.maps.Map(document.getElementById('map'), {zoom: 13, center: lyon});
+    var g4 = new google.maps.Marker({position: {lat: 45.7713346, lng: 4.7967018}, map: map, title: 'Institut G4'});
+    g4.addListener('click', function() {
+        new google.maps.InfoWindow({content: '<p>Institut G4</p>'}).open(map, g4);
+    });
+    var bbb = new google.maps.Marker({position: {lat: 45.773394, lng: 4.832897}, map: map});
+    var tom = new google.maps.Marker({position: {lat: 45.7679768, lng: 4.8691283}, map: map});
+    var julie = new google.maps.Marker({position: {lat: 45.7438883, lng: 4.8566362}, map: map});
+    var fdp = new google.maps.Marker({position: {lat: 45.7438825, lng: 4.8628431}, map: map});
+    var baptou = new google.maps.Marker({position: {lat: 45.7420407, lng: 4.8325052}, map: map});
+}
+</script>
+<!--Load the API from the specified URL
+* The async attribute allows the browser to render the page while the API loads
+* The key parameter will contain your own API key (which is not needed for this tutorial)
+* The callback parameter executes the initMap() function
+-->
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw&callback=initMap">
+</script>
+{% endblock %}
