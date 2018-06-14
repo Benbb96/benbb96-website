@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Rallye des Colocs{% endblock %}
+
+{% block content %}
+<h1>Rallye des Colocs</h1>
+<div id="map"></div>
+<div class="hotes">
+    <div class="hote">
+        <span class="number">1</span>
+        <h2>Benjamin Bernard-Bouissières</h2>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33605041666">06 05 04 16 66</a></p>
+        <p>
+            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=11 rue Mottet de Gerando, Lyon 69001">11 rue Mottet de Gérando</a><br>
+            <i>Accès TCL depuis G4</i> : Bus 45 (arrêt Sergent Berthet) jusqu'au terminus <b>Croix-Rousse</b> ou bien Métro D => A => C.
+        </p>
+    </div>
+    <div class="hote">
+        <span class="number">2</span>
+        <h2>Tom Masson</h2>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33652087510">06 52 08 75 10</a></p>
+        <p>
+            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=51 rue Magenta, Villeurbanne 69100">51 rue Magenta</a>, code 869 2e étage<br>
+            <i>Accès TCL depuis Croix-Rousse</i> : descendre à pied jusqu'à Hôtel de Ville puis métro A direction Vaulx-en-Velin, arrêt <b>République</b>.
+        </p>
+    </div>
+    <div class="hote">
+        <span class="number">3</span>
+        <h2>Julie Lo Curto</h2>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33677735208">06 77 73 52 08</a></p>
+        <p>
+            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=1 rue Santos Dumont, Lyon 69008">1 rue Santos Dumont</a><br>
+            <i>Accès TCL depuis République</i> : Métro A jusqu'à Charpennes, puis T4 direction Hôpital Feyzin Vénissieux, arrêt <b>Lycée Colbert</b>.<br>
+            <i>Informations</i> : Chanter "I'm a Barbie Girl" quand vous arrivez et Julie viendra vous ouvrir !
+        </p>
+    </div>
+    <div class="hote">
+        <span class="number">4</span>
+        <h2>Joan Tassel</h2>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33640605718">06 40 60 57 18</a></p>
+        <p>
+            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=40 rue Villon, Lyon 69008">40 rue Villon</a><br>
+            <i>Accès depuis chez Julie</i> : 7 minutes à pied ;)
+        </p>
+    </div>
+    <div class="hote">
+        <span class="number">5</span>
+        <h2>Baptiste Rochez</h2>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33615331175">06 15 33 11 75</a></p>
+        <p>
+            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=122 rue avenue Jean Jaurès, Lyon 69007">122 avenue Jean Jaurès</a><br>
+            <i>Accès TCL depuis chez Joan</i> : Marcher jusqu'à l'arrêt Villon du T2 et le prendre direction Perrache, arrêt <b>Jean Macé</b>
+        </p>
+    </div>
+</div>
+<script>
+// Initialize and add the map
+function initMap() {
+    var lyon = {lat: 45.76, lng: 4.84};
+    var map = new google.maps.Map(document.getElementById('map'), {zoom: 13, center: lyon});
+
+    var steps = [
+        {lat: 45.7713346, lng: 4.7967018},
+        {lat: 45.773394, lng: 4.832897},
+        {lat: 45.7679768, lng: 4.8691283},
+        {lat: 45.7438883, lng: 4.8566362},
+        {lat: 45.7438825, lng: 4.8628431},
+        {lat: 45.7420407, lng: 4.8325052}
+    ];
+    var path = new google.maps.Polyline({
+        path: steps,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
+    path.setMap(map);
+
+    var g4 = new google.maps.Marker(
+        {position: steps[0], map: map, title: 'Institut G4', animation: google.maps.Animation.DROP}
+    );
+    g4.addListener('click', function() {
+        new google.maps.InfoWindow({content: '<div><h3>0. Institut G4</h3></div>'}).open(map, g4);
+    });
+
+    var bbb = new google.maps.Marker(
+        {position: steps[1], map: map, title: 'Chez Benjamin', animation: google.maps.Animation.DROP}
+    );
+    bbb.addListener('click', function() {
+        new google.maps.InfoWindow({content: '<div><h3>1. BBB</h3><p>11 rue Mottet de Gérando<br><a href="tel:+33605041666">06 05 04 16 66</a></p></div>'}).open(map, bbb);
+    });
+
+    var tom = new google.maps.Marker(
+        {position: steps[2], map: map, title: 'Chez Tom', animation: google.maps.Animation.DROP}
+    );
+    tom.addListener('click', function() {
+        new google.maps.InfoWindow({content: '<div><h3>2. Tom</h3>51 rue Magenta</div>'}).open(map, tom);
+    });
+
+    var julie = new google.maps.Marker(
+        {position: steps[3], map: map, title: 'Chez Julie', animation: google.maps.Animation.DROP}
+    );
+    julie.addListener('click', function() {
+        new google.maps.InfoWindow({content: '<div><h3>3. Julie</h3>1 rue Santos Dumont</div>'}).open(map, julie);
+    });
+
+    var fdp = new google.maps.Marker(
+        {position: steps[4], map: map, title: 'Chez Joan', animation: google.maps.Animation.DROP}
+    );
+    fdp.addListener('click', function() {
+        new google.maps.InfoWindow({content: '<div><h3>4. AifeDesPaix</h3>40 rue Villon</div>'}).open(map, fdp);
+    });
+
+    var baptou = new google.maps.Marker(
+        {position: steps[5], map: map, title: 'Chez Baptiste', animation: google.maps.Animation.DROP}
+    );
+    baptou.addListener('click', function() {
+        new google.maps.InfoWindow({content: '<div><h3>5. Baptou</h3>122 rue Jean Jaurès</div>'}).open(map, baptou);
+    });
+}
+</script>
+<!--Load the API from the specified URL
+* The async attribute allows the browser to render the page while the API loads
+* The key parameter will contain your own API key (which is not needed for this tutorial)
+* The callback parameter executes the initMap() function
+-->
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw&callback=initMap">
+</script>
+{% endblock %}
