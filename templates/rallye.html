@@ -2,8 +2,11 @@
 
 {% block title %}Rallye des Colocs{% endblock %}
 
+{% block jumbotron_title %}<a href="https://www.facebook.com/events/1899140316784594/" target="_blank">Rallye des Colocs</a>{% endblock %}
+{% block jumbotron_description %}Mardi 19 Juin 2018, de 19h à 23h, réservé aux étudiants de G4 !{% endblock %}
+
 {% block content %}
-<h1>Rallye des Colocs</h1>
+<h3>La carte des Hôtes !</h3>
 <div id="map"></div>
 <div class="hotes">
     <div class="hote">
@@ -77,45 +80,61 @@ function initMap() {
     path.setMap(map);
 
     var g4 = new google.maps.Marker(
-        {position: steps[0], map: map, title: 'Institut G4', animation: google.maps.Animation.DROP}
+        {position: steps[0], map: map, title: 'Institut G4', animation: google.maps.Animation.DROP,
+        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=0|FE6256|000000'}
     );
     g4.addListener('click', function() {
-        new google.maps.InfoWindow({content: '<div><h3>0. Institut G4</h3></div>'}).open(map, g4);
+        new google.maps.InfoWindow({content: '<div><h4>0. Institut G4</h4></div>'}).open(map, g4);
     });
 
     var bbb = new google.maps.Marker(
-        {position: steps[1], map: map, title: 'Chez Benjamin', animation: google.maps.Animation.DROP}
+        {position: steps[1], map: map, title: 'Chez Benjamin', animation: google.maps.Animation.DROP,
+        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=1|FE6256|000000'}
     );
     bbb.addListener('click', function() {
-        new google.maps.InfoWindow({content: '<div><h3>1. BBB</h3><p>11 rue Mottet de Gérando<br><a href="tel:+33605041666">06 05 04 16 66</a></p></div>'}).open(map, bbb);
+        new google.maps.InfoWindow(
+        {content: '<div><h4>1. BBB</h4><p>11 rue Mottet de Gérando<br><a href="tel:+33605041666">06 05 04 16 66</a></p></div>'}
+        ).open(map, bbb);
     });
 
     var tom = new google.maps.Marker(
-        {position: steps[2], map: map, title: 'Chez Tom', animation: google.maps.Animation.DROP}
+        {position: steps[2], map: map, title: 'Chez Tom', animation: google.maps.Animation.DROP,
+        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=2|FE6256|000000'}
     );
     tom.addListener('click', function() {
-        new google.maps.InfoWindow({content: '<div><h3>2. Tom</h3>51 rue Magenta</div>'}).open(map, tom);
+        new google.maps.InfoWindow(
+        {content: '<div><h4>2. Tom</h4><p>51 rue Magenta<br><a href="tel:+33652087510">06 52 08 75 10</a></p></div>'}
+        ).open(map, tom);
     });
 
     var julie = new google.maps.Marker(
-        {position: steps[3], map: map, title: 'Chez Julie', animation: google.maps.Animation.DROP}
+        {position: steps[3], map: map, title: 'Chez Julie', animation: google.maps.Animation.DROP,
+        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=3|FE6256|000000'}
     );
     julie.addListener('click', function() {
-        new google.maps.InfoWindow({content: '<div><h3>3. Julie</h3>1 rue Santos Dumont</div>'}).open(map, julie);
+        new google.maps.InfoWindow(
+        {content: '<div><h4>3. Julie</h4><p>1 rue Santos Dumont<br><a href="tel:+33677735208">06 77 73 52 08</p></div>'}
+        ).open(map, julie);
     });
 
     var fdp = new google.maps.Marker(
-        {position: steps[4], map: map, title: 'Chez Joan', animation: google.maps.Animation.DROP}
+        {position: steps[4], map: map, title: 'Chez Joan', animation: google.maps.Animation.DROP,
+        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=4|FE6256|000000'}
     );
     fdp.addListener('click', function() {
-        new google.maps.InfoWindow({content: '<div><h3>4. AifeDesPaix</h3>40 rue Villon</div>'}).open(map, fdp);
+        new google.maps.InfoWindow(
+        {content: '<div><h4>4. AifeDesPaix</h4><p>40 rue Villon<br><a href="tel:+33640605718">06 40 60 57 18</a></p></div>'}
+        ).open(map, fdp);
     });
 
     var baptou = new google.maps.Marker(
-        {position: steps[5], map: map, title: 'Chez Baptiste', animation: google.maps.Animation.DROP}
+        {position: steps[5], map: map, title: 'Chez Baptiste', animation: google.maps.Animation.DROP,
+        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=5|FE6256|000000'}
     );
     baptou.addListener('click', function() {
-        new google.maps.InfoWindow({content: '<div><h3>5. Baptou</h3>122 rue Jean Jaurès</div>'}).open(map, baptou);
+        new google.maps.InfoWindow(
+        {content: '<div><h4>5. Baptou</h4><p>122 rue Jean Jaurès<br><a href="tel:+33615331175">06 15 33 11 75</a></p></div>'}
+        ).open(map, baptou);
     });
 }
 </script>
