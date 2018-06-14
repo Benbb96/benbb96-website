@@ -5,6 +5,7 @@ from avis.models import Restaurant, Avis
 
 class AvisListView(ListView):
     model = Avis
+    ordering = '-date_creation'
 
 
 class AvisDetailView(DetailView):
