@@ -1,4 +1,4 @@
-Django==2.0.4
+Django==2.1a1
 django-bootstrap4==0.0.6
 django-fontawesome==1.0
 django-geoposition==0.3.0

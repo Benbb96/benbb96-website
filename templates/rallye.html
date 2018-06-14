@@ -51,8 +51,10 @@
         <h2>Baptiste Rochez</h2>
         <p><i>Numéro de téléphone</i> : <a href="tel:+33615331175">06 15 33 11 75</a></p>
         <p>
-            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=122 rue avenue Jean Jaurès, Lyon 69007">122 avenue Jean Jaurès</a><br>
-            <i>Accès TCL depuis chez Joan</i> : Marcher jusqu'à l'arrêt Villon du T2 et le prendre direction Perrache, arrêt <b>Jean Macé</b>
+            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=152 rue avenue Jean Jaurès, Lyon 69007">152 avenue Jean Jaurès</a><br>
+            <i>Accès TCL depuis chez Joan</i> : Marcher jusqu'à l'arrêt Villon du T2 et le prendre direction Perrache, arrêt <b>Jean Macé</b><br>
+            <i>Informations</i> : Il faut prendre la rue derrière l'immeuble et sonner à l'interfone au nom de Rochez, monter au 5ème étage avec le code de l'ascenseur 5310.<br>
+            Bon courage !!
         </p>
     </div>
 </div>
@@ -63,12 +65,12 @@ function initMap() {
     var map = new google.maps.Map(document.getElementById('map'), {zoom: 13, center: lyon});
 
     var steps = [
-        {lat: 45.7713346, lng: 4.7967018},
-        {lat: 45.773394, lng: 4.832897},
-        {lat: 45.7679768, lng: 4.8691283},
-        {lat: 45.7438883, lng: 4.8566362},
-        {lat: 45.7438825, lng: 4.8628431},
-        {lat: 45.7420407, lng: 4.8325052}
+        {lat: 45.7713346, lng: 4.7967018},  // G4
+        {lat: 45.773364, lng: 4.8345358},  // BBB
+        {lat: 45.7679768, lng: 4.8691283},  // Tom
+        {lat: 45.7438883, lng: 4.8566362},  // Julie
+        {lat: 45.7438825, lng: 4.8628431},  // Joan
+        {lat: 45.7400815, lng: 4.8362457}  // Baptou
     ];
     var path = new google.maps.Polyline({
         path: steps,
@@ -81,7 +83,7 @@ function initMap() {
 
     var g4 = new google.maps.Marker(
         {position: steps[0], map: map, title: 'Institut G4', animation: google.maps.Animation.DROP,
-        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=0|FE6256|000000'}
+        label: '0'}
     );
     g4.addListener('click', function() {
         new google.maps.InfoWindow({content: '<div><h4>0. Institut G4</h4></div>'}).open(map, g4);
@@ -89,7 +91,7 @@ function initMap() {
 
     var bbb = new google.maps.Marker(
         {position: steps[1], map: map, title: 'Chez Benjamin', animation: google.maps.Animation.DROP,
-        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=1|FE6256|000000'}
+        label: '1'}
     );
     bbb.addListener('click', function() {
         new google.maps.InfoWindow(
@@ -99,7 +101,7 @@ function initMap() {
 
     var tom = new google.maps.Marker(
         {position: steps[2], map: map, title: 'Chez Tom', animation: google.maps.Animation.DROP,
-        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=2|FE6256|000000'}
+        label: '2'}
     );
     tom.addListener('click', function() {
         new google.maps.InfoWindow(
@@ -109,7 +111,7 @@ function initMap() {
 
     var julie = new google.maps.Marker(
         {position: steps[3], map: map, title: 'Chez Julie', animation: google.maps.Animation.DROP,
-        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=3|FE6256|000000'}
+        label: '3'}
     );
     julie.addListener('click', function() {
         new google.maps.InfoWindow(
@@ -119,7 +121,7 @@ function initMap() {
 
     var fdp = new google.maps.Marker(
         {position: steps[4], map: map, title: 'Chez Joan', animation: google.maps.Animation.DROP,
-        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=4|FE6256|000000'}
+        label: '4'}
     );
     fdp.addListener('click', function() {
         new google.maps.InfoWindow(
@@ -129,7 +131,7 @@ function initMap() {
 
     var baptou = new google.maps.Marker(
         {position: steps[5], map: map, title: 'Chez Baptiste', animation: google.maps.Animation.DROP,
-        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=5|FE6256|000000'}
+        label: '5'}
     );
     baptou.addListener('click', function() {
         new google.maps.InfoWindow(

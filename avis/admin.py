@@ -13,6 +13,7 @@ def apercu(text):
     return apercu
 
 
+@admin.register(Profil)
 class ProfilAdmin(admin.ModelAdmin):
     list_display = ('user', 'nbAvis', 'date_creation')
     search_fields = ('user__username',)
@@ -31,6 +32,7 @@ class PlatInLine(admin.TabularInline):
     show_change_link = True
 
 
+@admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
     list_display = ('nom', 'apercu_informations', 'adresse', 'telephone', 'nbPLat', 'date_creation')
     search_fields = ('nom', 'adresse')
@@ -59,10 +61,11 @@ class AvisInLine(admin.TabularInline):
     show_change_link = True
 
 
+@admin.register(Plat)
 class PlatAdmin(admin.ModelAdmin):
     list_display = ('nom', 'restaurant', 'apercu_description', 'prix', 'nbAvis', 'date_creation')
     list_filter = ('restaurant', )
-    search_fields = ('nom', 'description')
+    search_fields = ('nom', 'description', 'restaurant__nom')
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
 
@@ -81,8 +84,9 @@ class PlatAdmin(admin.ModelAdmin):
     nbAvis.short_description = "Nombre d'avis"
 
 
+@admin.register(Avis)
 class AvisAdmin(admin.ModelAdmin):
-    list_display = ('id', 'plat', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition')
+    list_display = ('id', 'restaurant', 'plat', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition')
     list_filter = ('plat', 'auteur', 'note')
     search_fields = ('plat__nom', 'plat__restaurant__nom', 'auteur__user__username')
     ordering = ('-date_edition', )
@@ -93,8 +97,7 @@ class AvisAdmin(admin.ModelAdmin):
 
     apercu_avis.short_description = "Aperçu de l'avis"
 
+    def restaurant(self, avis):
+        return avis.plat.restaurant
 
-admin.site.register(Profil, ProfilAdmin)
-admin.site.register(Restaurant, RestaurantAdmin)
-admin.site.register(Plat, PlatAdmin)
-admin.site.register(Avis, AvisAdmin)
+    restaurant.short_description = "Restaurant"
