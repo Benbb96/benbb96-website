@@ -15,6 +15,26 @@ footer {
 }
 
 #map {
-        height: 400px;  /* The height is 400 pixels */
-        width: 100%;  /* The width is the width of the web page */
-       }
+    height: 400px;  /* The height is 400 pixels */
+    width: 100%;  /* The width is the width of the web page */
+}
+
+.hotes {
+    text-align: center;
+}
+
+.hote {
+    width: 60%;
+    margin-left: auto;
+    text-align: left;
+}
+
+.number {
+    position: relative;
+    left: -10%;
+    top: 80px;
+    font-size: 2.8em;
+    border: double 6px red;
+    border-radius: 50%;
+    padding: 10px 17px;
+}
