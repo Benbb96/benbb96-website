@@ -1,29 +1,22 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Accueil{% endblock %}
+{% block jumbotron_title %}Mes projets{% endblock %}
+{% block jumbotron_description %}Voici la liste des projets que je rends disponible pour le moment.{% endblock %}
 
 {% block content %}
-    <h1>Accueil</h1>
     <div class="container-fluid bg-3 text-center">
-        <h3>Mes projets</h3><br>
         <div class="row">
-            <div class="col-sm-3">
-                <p>Du texte..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h3><a href="{% url 'rallye' %}">Rallye Des Colocs</a></h3>
+                <img src="{% static 'img/baniere-rallye.jpg' %}" class="img-responsive" style="width:100%" alt="Rallye des Colocs">
             </div>
-            <div class="col-sm-3">
-                <p>Du texte..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h3><a href="{% url 'avis:liste-avis' %}">Mes avis culinaires</a></h3>
+                <img src="https://previews.123rf.com/images/enika/enika1503/enika150300672/38017002-healthy-food-for-diet-and-blank-note-on-a-wooden-table.jpg" class="img-responsive" style="width:100%" alt="Avis">
             </div>
-            <div class="col-sm-3">
-                <p>Du texte..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Du texte..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-
         </div>
     </div>
 {% endblock %}
