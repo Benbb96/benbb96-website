@@ -11,20 +11,20 @@
 <div class="hotes">
     <div class="hote">
         <span class="number">1</span>
-        <h2>Benjamin Bernard-Bouissières</h2>
-        <p><i>Numéro de téléphone</i> : <a href="tel:+33605041666">06 05 04 16 66</a></p>
+        <h2>Sam Mignot</h2>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33664686568">06 64 68 65 68</a></p>
         <p>
-            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=11 rue Mottet de Gerando, Lyon 69001">11 rue Mottet de Gérando</a><br>
-            <i>Accès TCL depuis G4</i> : Bus 45 (arrêt Sergent Berthet) jusqu'au terminus <b>Croix-Rousse</b> ou bien Métro D => A => C.
+            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=2 rue de l'Oiselière, Lyon 69009">2 rue de l'Oiselière</a>, code B00000 1er étage (porte MIGNOT)<br>
+            <i>Accès TCL depuis G4</i> : marcher 13 minutes dans la direction indiqué par votre GPS :p
         </p>
     </div>
     <div class="hote">
         <span class="number">2</span>
-        <h2>Tom Masson</h2>
-        <p><i>Numéro de téléphone</i> : <a href="tel:+33652087510">06 52 08 75 10</a></p>
+        <h2>Benjamin Bernard-Bouissières</h2>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33605041666">06 05 04 16 66</a></p>
         <p>
-            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=51 rue Magenta, Villeurbanne 69100">51 rue Magenta</a>, code 869 2e étage<br>
-            <i>Accès TCL depuis Croix-Rousse</i> : descendre à pied jusqu'à Hôtel de Ville puis métro A direction Vaulx-en-Velin, arrêt <b>République</b>.
+            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=11 rue Mottet de Gerando, Lyon 69001">11 rue Mottet de Gérando</a><br>
+            <i>Accès TCL depuis chez Sam</i> : Bus 45 (traverser le pont pour aller à l'arrêt Serin - Saint-Charles) pui jusqu'au terminus <b>Croix-Rousse</b> ou bien Métro D => A => C.
         </p>
     </div>
     <div class="hote">
@@ -33,7 +33,7 @@
         <p><i>Numéro de téléphone</i> : <a href="tel:+33677735208">06 77 73 52 08</a></p>
         <p>
             <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=1 rue Santos Dumont, Lyon 69008">1 rue Santos Dumont</a><br>
-            <i>Accès TCL depuis République</i> : Métro A jusqu'à Charpennes, puis T4 direction Hôpital Feyzin Vénissieux, arrêt <b>Lycée Colbert</b>.<br>
+            <i>Accès TCL depuis Croix-Rousse</i> : Métro A jusqu'à Bellecour, puis métro D direction Gare de Vénissieux, arrêt <b>Sans Soucis</b>.<br>
             <i>Informations</i> : Chanter "I'm a Barbie Girl" quand vous arrivez et Julie viendra vous ouvrir !
         </p>
     </div>
@@ -61,16 +61,16 @@
 <script>
 // Initialize and add the map
 function initMap() {
-    var lyon = {lat: 45.76, lng: 4.84};
+    var lyon = {lat: 45.76, lng: 4.83};
     var map = new google.maps.Map(document.getElementById('map'), {zoom: 13, center: lyon});
 
     var steps = [
-        {lat: 45.7713346, lng: 4.7967018},  // G4
-        {lat: 45.773364, lng: 4.8345358},  // BBB
-        {lat: 45.7679768, lng: 4.8691283},  // Tom
-        {lat: 45.7438883, lng: 4.8566362},  // Julie
-        {lat: 45.7438825, lng: 4.8628431},  // Joan
-        {lat: 45.7400815, lng: 4.8362457}  // Baptou
+        {lat: 45.7713346, lng: 4.799},  // G4
+        {lat: 45.7754479, lng: 4.8022},  // Sam
+        {lat: 45.773364, lng: 4.8349},  // BBB
+        {lat: 45.7438883, lng: 4.86},  // Julie
+        {lat: 45.7438825, lng: 4.8655},  // Joan
+        {lat: 45.7400815, lng: 4.8385}  // Baptou
     ];
     var path = new google.maps.Polyline({
         path: steps,
@@ -89,24 +89,24 @@ function initMap() {
         new google.maps.InfoWindow({content: '<div><h4>0. Institut G4</h4></div>'}).open(map, g4);
     });
 
-    var bbb = new google.maps.Marker(
-        {position: steps[1], map: map, title: 'Chez Benjamin', animation: google.maps.Animation.DROP,
+    var sam = new google.maps.Marker(
+        {position: steps[1], map: map, title: 'Chez Sam', animation: google.maps.Animation.DROP,
         label: '1'}
+    );
+    sam.addListener('click', function() {
+        new google.maps.InfoWindow(
+        {content: '<div><h4>1. Sam</h4><p>2 rue de l\'Oiselière<br><a href="tel:+33664686568">06 64 68 65 68</a></p></div>'}
+        ).open(map, sam);
+    });
+
+    var bbb = new google.maps.Marker(
+        {position: steps[2], map: map, title: 'Chez Benjamin', animation: google.maps.Animation.DROP,
+        label: '2'}
     );
     bbb.addListener('click', function() {
         new google.maps.InfoWindow(
-        {content: '<div><h4>1. BBB</h4><p>11 rue Mottet de Gérando<br><a href="tel:+33605041666">06 05 04 16 66</a></p></div>'}
+        {content: '<div><h4>2. BBB</h4><p>11 rue Mottet de Gérando<br><a href="tel:+33605041666">06 05 04 16 66</a></p></div>'}
         ).open(map, bbb);
-    });
-
-    var tom = new google.maps.Marker(
-        {position: steps[2], map: map, title: 'Chez Tom', animation: google.maps.Animation.DROP,
-        label: '2'}
-    );
-    tom.addListener('click', function() {
-        new google.maps.InfoWindow(
-        {content: '<div><h4>2. Tom</h4><p>51 rue Magenta<br><a href="tel:+33652087510">06 52 08 75 10</a></p></div>'}
-        ).open(map, tom);
     });
 
     var julie = new google.maps.Marker(

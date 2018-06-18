@@ -15,7 +15,7 @@ def apercu(text):
 
 @admin.register(Profil)
 class ProfilAdmin(admin.ModelAdmin):
-    list_display = ('user', 'nbAvis', 'date_creation')
+    list_display = ('user', 'nbAvis', 'note_moyenne', 'date_creation')
     search_fields = ('user__username',)
     ordering = ('user',)
 
@@ -34,7 +34,7 @@ class PlatInLine(admin.TabularInline):
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'apercu_informations', 'adresse', 'telephone', 'nbPLat', 'date_creation')
+    list_display = ('nom', 'apercu_informations', 'adresse', 'telephone', 'nbPLat', 'note_moyenne', 'date_creation')
     search_fields = ('nom', 'adresse')
     date_hierarchy = 'date_creation'
     ordering = ('nom', 'date_creation')
@@ -56,14 +56,14 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 class AvisInLine(admin.TabularInline):
     model = Avis
-    exclude = ('photo', )
+    fields = ('auteur', 'avis', 'note', 'photo')
     extra = 1
     show_change_link = True
 
 
 @admin.register(Plat)
 class PlatAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'restaurant', 'apercu_description', 'prix', 'nbAvis', 'date_creation')
+    list_display = ('nom', 'restaurant', 'apercu_description', 'prix', 'note_moyenne')
     list_filter = ('restaurant', )
     search_fields = ('nom', 'description', 'restaurant__nom')
     date_hierarchy = 'date_creation'
