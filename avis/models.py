@@ -38,8 +38,9 @@ class Restaurant(models.Model):
         moyenne = 0
         count = 0
         for plat in self.plat_set.all():
-            moyenne += plat.avis_set.all().aggregate(Avg('note'))['note__avg']
-            count += 1
+            if plat.avis_set.count():
+                moyenne += plat.avis_set.all().aggregate(Avg('note'))['note__avg']
+                count += 1
         if count:
             moyenne = moyenne / count
         return moyenne
