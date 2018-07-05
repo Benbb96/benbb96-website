@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db import models
+
 from .models import Profil, Restaurant, Plat, Avis
 
 
@@ -63,7 +65,7 @@ class AvisInLine(admin.TabularInline):
 
 @admin.register(Plat)
 class PlatAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'restaurant', 'apercu_description', 'prix', 'note_moyenne')
+    list_display = ('nom', 'restaurant', 'apercu_description', 'prix', 'moyenne')
     list_filter = ('restaurant', )
     search_fields = ('nom', 'description', 'restaurant__nom')
     date_hierarchy = 'date_creation'
@@ -72,6 +74,12 @@ class PlatAdmin(admin.ModelAdmin):
     inlines = [
         AvisInLine,
     ]
+
+    def get_queryset(self, request):
+        # Ajoute la note moyenne du plat sur chacun des plats
+        qs = super(PlatAdmin, self).get_queryset(request)
+        qs = qs.annotate(moyenne=models.Avg('avis__note'))
+        return qs
 
     def apercu_description(self, plat):
         return apercu(plat.description)
@@ -82,6 +90,10 @@ class PlatAdmin(admin.ModelAdmin):
         return plat.avis_set.count()
 
     nbAvis.short_description = "Nombre d'avis"
+
+    def moyenne(self, obj):
+        return obj.moyenne
+    moyenne.admin_order_field = 'moyenne'
 
 
 @admin.register(Avis)
