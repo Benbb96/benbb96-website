@@ -27,7 +27,7 @@ class ProfilAdmin(admin.ModelAdmin):
     nbAvis.short_description = "Nombre d'avis"
 
 
-class PlatInLine(admin.TabularInline):
+class PlatInLine(admin.StackedInline):
     model = Plat
     exclude = ('photo', )
     extra = 1
@@ -56,7 +56,7 @@ class RestaurantAdmin(admin.ModelAdmin):
     nbPLat.short_description = 'Nombre de plat'
 
 
-class AvisInLine(admin.TabularInline):
+class AvisInLine(admin.StackedInline):
     model = Avis
     fields = ('auteur', 'avis', 'note', 'photo')
     extra = 1
