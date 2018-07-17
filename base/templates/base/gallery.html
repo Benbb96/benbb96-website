@@ -4,6 +4,10 @@
 
 {% block title %}Gallerie{% endblock %}
 
+{% block navbar %}
+{% include 'navbar.html' with gallery=True %}
+{% endblock %}
+
 {% block content %}
     <h1>Gallerie</h1>
     <div id="myCarousel" class="carousel slide" data-ride="carousel">

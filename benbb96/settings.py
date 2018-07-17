@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'avis.apps.AvisConfig',
+    'base.apps.BaseConfig',
     'bootstrap4',
     'geoposition',
     'fontawesome'
@@ -111,7 +112,7 @@ USE_TZ = True
 
 # default static files settings for PythonAnywhere.
 # see https://help.pythonanywhere.com/pages/DjangoStaticFiles for more info
-MEDIA_ROOT = 'C:/Users/Ben/Documents/django/benbb96/media'
+MEDIA_ROOT = BASE_DIR
 MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/benbb96/benbb96/static'
 STATIC_URL = '/static/'

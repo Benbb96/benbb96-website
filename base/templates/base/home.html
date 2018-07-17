@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block base_title %}Accueil{% endblock %}
+{% block jumbotron_title %}Mes projets{% endblock %}
+{% block jumbotron_description %}Voici la liste des projets que je rends disponible pour le moment.{% endblock %}
+
+{% block base_content %}
+    <div class="container-fluid bg-3 text-center">
+        <div class="row">
+        {% for projet in object_list %}
+            {% if projet.actif %}
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h3><a href="{% url projet.lien %}">{{ projet.nom }}</a></h3>
+                <img src="{{ projet.image.url }}" class="img-responsive" style="max-height: 300px; margin: auto" alt="Avis">
+            </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}

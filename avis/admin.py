@@ -64,6 +64,8 @@ class AvisInLine(admin.StackedInline):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         # Limite les résultats à l'utilisateur connecté
+        # TODO : corriger l'erreur quand on essaye d'enregistrer un plat qui
+        # comporte des avis provenant d'autres personnes
         if db_field.name == 'auteur':
             kwargs["queryset"] = Profil.objects.filter(user=request.user)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
