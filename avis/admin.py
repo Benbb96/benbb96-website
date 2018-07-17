@@ -62,6 +62,12 @@ class AvisInLine(admin.StackedInline):
     extra = 1
     show_change_link = True
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        # Limite les résultats à l'utilisateur connecté
+        if db_field.name == 'auteur':
+            kwargs["queryset"] = Profil.objects.filter(user=request.user)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 @admin.register(Plat)
 class PlatAdmin(admin.ModelAdmin):
@@ -70,6 +76,7 @@ class PlatAdmin(admin.ModelAdmin):
     search_fields = ('nom', 'description', 'restaurant__nom')
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
+    autocomplete_fields = ('restaurant',)
 
     inlines = [
         AvisInLine,
@@ -110,6 +117,7 @@ class AvisAdmin(admin.ModelAdmin):
     search_fields = ('plat__nom', 'plat__restaurant__nom', 'auteur__user__username')
     ordering = ('-date_edition', )
     date_hierarchy = 'date_creation'
+    autocomplete_fields = ('plat',)
 
     def apercu_avis(self, avis):
         return apercu(avis.avis)
@@ -120,3 +128,9 @@ class AvisAdmin(admin.ModelAdmin):
         return avis.plat.restaurant
 
     restaurant.short_description = "Restaurant"
+
+    def get_form(self, request, obj=None, **kwargs):
+        # Pré-rempli automatiquement avec l'utilisateur connecté
+        form = super(AvisAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['auteur'].initial = Profil.objects.get(user=request.user)
+        return form
