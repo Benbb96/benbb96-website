@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'avis.apps.AvisConfig',
     'base.apps.BaseConfig',
-    'bootstrap4',
+    'bootstrap3',
     'geoposition',
     'fontawesome'
 ]

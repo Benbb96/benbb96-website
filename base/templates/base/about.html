@@ -11,11 +11,16 @@
 {% block jumbotron_description %}{% endblock %}
 
 {% block base_content %}
-    <p>
-        Salut, moi c'est Benjamin, mais beaucoup m'appelle BBB !<br><br>
-        J'adore coder en Python avec le Framework <a href="https://www.djangoproject.com/" target="_blank">Django</a>. C'est ainsi que ce site existe !<br>
-        Je souhaite y héberger de nombreux projets perso qui découlent de simples idées ou des besoins surevenus dans mon quotidien.<br><br>
-        Vous pouvez suivre l'avancement de ce projet sur mon repository Github : <a href="https://github.com/Benbb96/benbb96/"target="_blank">https://github.com/Benbb96/benbb96/</a>.<br>
-        Retrouvez-moi également sur de nombreux réseaux sociaux affichés ci-dessous ;)
-    </p>
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <img src="{% static 'img/bbb.jpg' %}" alt="Photo de moi" title="C'est moi !" style="width: 80%; margin-bottom: 15px"/>
+        </div>
+        <div class="col-sm-8">
+            Salut, moi c'est Benjamin, mais beaucoup m'appelle BBB !<br><br>
+            J'adore coder en Python avec le Framework <a href="https://www.djangoproject.com/" target="_blank">Django</a>. C'est ainsi que ce site existe !<br>
+            Je souhaite y héberger de nombreux projets perso qui découlent de simples idées ou des besoins surevenus dans mon quotidien.<br><br>
+            Vous pouvez suivre l'avancement de ce projet sur mon repository Github : <a href="https://github.com/Benbb96/benbb96/"target="_blank">https://github.com/Benbb96/benbb96/</a>.<br>
+            Retrouvez-moi également sur de nombreux réseaux sociaux affichés ci-dessous ;)
+        </div>
+    </div>
 {% endblock %}
