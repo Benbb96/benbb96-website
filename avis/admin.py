@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import models
+from django.utils.html import format_html
 
 from .models import Profil, Restaurant, Plat, Avis
 
@@ -36,7 +37,7 @@ class PlatInLine(admin.StackedInline):
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'apercu_informations', 'adresse', 'telephone', 'nbPLat', 'note_moyenne', 'date_creation')
+    list_display = ('nom', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nbPLat', 'note_moyenne', 'date_creation')
     search_fields = ('nom', 'adresse')
     date_hierarchy = 'date_creation'
     ordering = ('nom', 'date_creation')
@@ -54,6 +55,18 @@ class RestaurantAdmin(admin.ModelAdmin):
         return restaurant.plat_set.count()
 
     nbPLat.short_description = 'Nombre de plat'
+
+    def position_map(self, instance):
+        if instance.adresse is not None:
+            # TODO Maybe need to add client ID and signature
+            return format_html('<img src="http://maps.googleapis.com/maps/api/staticmap?center=%(latitude)s,%(longitude)s&zoom=%(zoom)s&size=%(width)sx%(height)s&maptype=roadmap&markers=%(latitude)s,%(longitude)s&sensor=false&visual_refresh=true&scale=%(scale)s" width="%(width)s" height="%(height)s">' % {
+                'latitude': instance.adresse.latitude,
+                'longitude': instance.adresse.longitude,
+                'zoom': 14,
+                'width': 100,
+                'height': 100,
+                'scale': 2
+            })
 
 
 class AvisInLine(admin.StackedInline):

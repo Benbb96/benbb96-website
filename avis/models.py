@@ -27,7 +27,7 @@ class Restaurant(models.Model):
     informations = models.TextField(blank=True, help_text='Informations utiles et relatives au restaurant')
     lien = models.URLField(max_length=255, blank=True, help_text='Le lien vers le site internet')
     telephone = models.CharField(max_length=20, blank=True, help_text='Indicatif facultatif et sans espaces.', validators=[telephone_validator])
-    adresse = GeopositionField(null=True, blank=True)
+    adresse = GeopositionField(blank=True)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
     def __str__(self):
