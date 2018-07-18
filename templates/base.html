@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Benbb96{% endblock %} | Benbb96</title>
     {# Load the tag library #}
-    {% load bootstrap4 static fontawesome  %}
+    {% load bootstrap3 static fontawesome  %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap-social.css' %}">
     {% fontawesome_stylesheet %}
@@ -13,14 +13,11 @@
     {# Load CSS and JavaScript #}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     {% bootstrap_javascript jquery='full' %}
-
-    {# Display django.contrib.messages as Bootstrap alerts #}
-    {% bootstrap_messages %}
 </head>
 <body>
 
 {% block navbar %}
-{% include 'navbar.html' with home=True %}
+{% include 'navbar.html' %}
 {% endblock %}
 
 <div class="jumbotron">
@@ -29,6 +26,9 @@
         <p>{% block jumbotron_description %}Juste une interface pour experimenter mon code...{% endblock %}</p>
     </div>
 </div>
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
 
 <div class="content">
     {% block content %}{% endblock %}
