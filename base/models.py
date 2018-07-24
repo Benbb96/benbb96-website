@@ -1,5 +1,20 @@
+from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Avg
 from fontawesome.fields import IconField
+
+
+class Profil(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')  # La liaison OneToOne vers le modèle User
+    avatar = models.ImageField(null=True, blank=True, upload_to="media/avatars/")
+    date_creation = models.DateTimeField(verbose_name="date de création", auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username
+
+    @property
+    def note_moyenne(self):
+        return self.avis_set.all().aggregate(Avg('note'))['note__avg']
 
 
 class Projet(models.Model):
