@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}{% block base_title %}Défaut{% endblock %}{% endblock %}
+
+{% block navbar %}
+{% include 'navbar.html' with home=True %}
+{% endblock %}
+
+{% block jumbotron_title %}Défaut{% endblock %}
+{% block jumbotron_description %}Description par dédaut{% endblock %}
+
+{% block content %}
+{% block base_content %}Contenu par défaut{% endblock %}
+{% endblock %}

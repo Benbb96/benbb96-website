@@ -14,6 +14,8 @@ footer {
     margin: 20px;
 }
 
+
+/* Rallye des Colocs */
 #map {
     height: 400px;  /* The height is 400 pixels */
     width: 100%;  /* The width is the width of the web page */
@@ -38,3 +40,4 @@ footer {
     border-radius: 50%;
     padding: 10px 17px;
 }
+/* ----------- */

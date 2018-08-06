@@ -14,3 +14,7 @@ class AvisDetailView(DetailView):
 
 class RestaurantList(ListView):
     model = Restaurant
+
+
+class RestaurantDetail(DetailView):
+    model = Restaurant

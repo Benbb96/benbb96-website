@@ -4,9 +4,13 @@
 
 {% block title %}Gallerie{% endblock %}
 
+{% block navbar %}
+{% include 'navbar.html' with gallery=True %}
+{% endblock %}
+
 {% block content %}
     <h1>Gallerie</h1>
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <div id="myCarousel" class="carousel slide" data-ride="carousel" style="width: 40%; margin: auto">
         <!-- Indicators -->
         <ol class="carousel-indicators">
             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>

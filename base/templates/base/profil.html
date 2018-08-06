@@ -1,0 +1,39 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block navbar %}
+{% include 'navbar.html' with home=False %}
+{% endblock %}
+
+{% block base_title %}Profil de {{ object }}{% endblock %}
+{% block jumbotron_title %}{% if object.get_full_name %}{{ object.get_full_name }}{% else %}{{ object }}{% endif %}{% endblock %}
+{% block jumbotron_description %}
+    {% if object.profil.avatar %}
+    <div class="text-center">
+        <img class="img-rounded" src="{{ object.profil.avatar.url }}" alt="Avatar de {{ object }}" style="max-height: 300px"/>
+    </div>
+    {% endif %}
+    Inscrit le {{ object.date_joined|date }}
+{% endblock %}
+
+{% block base_content %}
+    <h1>Ses derniers avis</h1>
+    <div class="row">
+    {% for avis in object.profil.avis_set.all %}
+        <div class="col-sm-4 col-xs-12">
+            <div class="thumbnail">
+                <a href="{{ avis.get_absolute_url }}">
+                    <img src="{% if avis.photo %}{{ avis.photo.url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du plat {{ avis.plat }}" alt="Photo du plat {{ avis.plat }} prise par {{ avis.auteur }}" style="max-height: 250px"/>
+                </a>
+                <div class="caption">
+                    <h3><a href="{{ avis.get_absolute_url }}">{{ avis.plat }}</a></h3>
+                </div>
+            <div class="note">
+                {{ avis.note }}/10
+            </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}

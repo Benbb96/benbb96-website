@@ -26,7 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'avis.apps.AvisConfig',
-    'bootstrap4',
+    'base.apps.BaseConfig',
+    'bootstrap3',
     'geoposition',
     'fontawesome'
 ]
@@ -54,6 +55,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'base.context_processors.liens_reseaux_sociaux'
             ],
         },
     },

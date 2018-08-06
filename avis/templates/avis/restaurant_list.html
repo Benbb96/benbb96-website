@@ -6,7 +6,7 @@
 <h1>Restaurants</h1>
 <ul>
 {% for restaurant in object_list %}
-    <li>{{ restaurant.nom }} (ajouté le {{ restaurant.date_creation|date }})</li>
+    <li><a href="{{ restaurant.get_absolute_url }}">{{ restaurant.nom }}</a> (ajouté le {{ restaurant.date_creation|date }})</li>
 {% empty %}
     <li>Pas de restaurant enregistré.</li>
 {% endfor %}
