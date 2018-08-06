@@ -24,6 +24,9 @@ class Restaurant(models.Model):
     def __str__(self):
         return self.nom
 
+    def get_absolute_url(self):
+        return reverse('avis:restaurant', kwargs={'pk': self.pk})
+
     @property
     def note_moyenne(self):
         moyenne = 0

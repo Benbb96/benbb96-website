@@ -1,0 +1,25 @@
+{% extends 'avis/base_avis.html' %}
+
+{% block avis_title %}Restaurant {{ object.nom }}{% endblock %}
+
+{% block avis_content %}
+    <h1>{{ object.nom }}</h1>
+    <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
+    <div>
+        {% if object.informations %}
+        <p>{{ object.informations }}</p>
+        {% endif %}
+        {% if object.telephone %}
+        <p>Téléphone : {{ object.telephone }}</p>
+        {% endif %}
+        {% if object.adresse %}
+        <p>Adresse : {{ object.adresse }}</p>
+        {% endif %}
+    </div>
+    <h2>Les plats</h2>
+    <ul>
+    {% for plat in object.plat_set.all %}
+        <li>{{ plat }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
