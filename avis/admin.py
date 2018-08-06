@@ -72,17 +72,9 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 class AvisInLine(admin.StackedInline):
     model = Avis
-    fields = ('auteur', 'avis', 'note', 'photo')
+    fields = ('avis', 'note', 'photo')
     extra = 1
     show_change_link = True
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        # Limite les résultats à l'utilisateur connecté
-        # TODO : corriger l'erreur quand on essaye d'enregistrer un plat qui
-        # comporte des avis provenant d'autres personnes
-        if db_field.name == 'auteur':
-            kwargs["queryset"] = Profil.objects.filter(user=request.user)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(Plat)
@@ -104,6 +96,15 @@ class PlatAdmin(admin.ModelAdmin):
         qs = qs.annotate(moyenne=models.Avg('avis__note'))
         qs = qs.annotate(total=models.Count('avis__note'))
         return qs
+
+    def save_formset(self, request, form, formset, change):
+        if formset.model == Avis:
+            avis_set = formset.save(commit=False)
+            for avis in avis_set:
+                avis.auteur = request.user.profil
+                avis.save()
+        else:
+            formset.save()
 
     def apercu_description(self, plat):
         return apercu(plat.description)
