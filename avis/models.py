@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from django.db import models
 from django.db.models import Avg
 from django.urls import reverse
+from django.utils.text import slugify
 
 from base.models import Profil
 from geoposition.fields import GeopositionField
@@ -13,6 +14,7 @@ telephone_validator = RegexValidator('^(0|\\+33|0033)[1-9][0-9]{8}$', "Ce numér
 
 class Restaurant(models.Model):
     nom = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, null=True)
     informations = models.TextField(blank=True, help_text='Informations utiles et relatives au restaurant')
     lien = models.URLField(max_length=255, blank=True, help_text='Le lien vers le site internet')
     telephone = models.CharField(
@@ -25,7 +27,11 @@ class Restaurant(models.Model):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse('avis:restaurant', kwargs={'pk': self.pk})
+        return reverse('avis:restaurant', kwargs={'slug': self.slug})
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.slug)
+        super(Restaurant, self).save(*args, **kwargs)
 
     @property
     def note_moyenne(self):

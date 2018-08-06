@@ -41,6 +41,7 @@ class RestaurantAdmin(admin.ModelAdmin):
     search_fields = ('nom', 'adresse')
     date_hierarchy = 'date_creation'
     ordering = ('nom', 'date_creation')
+    prepopulated_fields = {'slug': ('nom',), }
 
     inlines = [
         PlatInLine,
