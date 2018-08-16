@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Avg
+from django.urls import reverse
 from fontawesome.fields import IconField
 
 
@@ -11,6 +12,9 @@ class Profil(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def get_absolute_url(self):
+        return reverse('profil', kwargs={'slug': self.user.username})
 
     @property
     def note_moyenne(self):
