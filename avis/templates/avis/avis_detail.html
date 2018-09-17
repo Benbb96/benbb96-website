@@ -3,13 +3,19 @@
 {% block avis_title %}Avis {{ object.plat }}{% endblock %}
 
 {% block avis_content %}
-    <h1>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.plat }} (<a href="{{ object.plat.restaurant.get_absolute_url }}">{{ object.plat.restaurant }}</a>)</h1>
+    <ul class="breadcrumb">
+        <li><a href="{{ object.plat.restaurant.get_absolute_url }}">{{ object.plat.restaurant }}</a></li>
+        <li><a href="{{ object.plat.get_absolute_url }}">{{ object.plat }}</a></li>
+        <li>Avis n°{{ object.id }}</li>
+    </ul>
+
+    <h1>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.plat }}</h1>
     <h3>Le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
     <div>
         {% if object.photo %}
         <img src="{{ object.photo.url }}" width="50%" title="Photo du plat {{ object.plat }}" alt="Photo du plat {{ object.plat }} prise par {{ object.auteur }}" />
         {% endif %}
-        <p>{{ object.avis }}</p>
+        {{ object.avis|linebreaks }}
         <h2>Note : {{ object.note }}/10</h2>
     </div>
 {% endblock %}

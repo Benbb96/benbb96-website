@@ -144,7 +144,6 @@ class AvisAdmin(admin.ModelAdmin):
     list_display = ('id', 'restaurant', 'plat', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition')
     list_filter = ('auteur', 'note')
     search_fields = ('plat__nom', 'plat__restaurant__nom', 'auteur__user__username')
-    ordering = ('-date_edition', )
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('plat',)
 

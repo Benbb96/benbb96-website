@@ -56,6 +56,9 @@ class Plat(models.Model):
     def __str__(self):
         return self.nom
 
+    def get_absolute_url(self):
+        return reverse('avis:plat', kwargs={'pk': self.pk})
+
     @property
     def note_moyenne(self):
         return self.avis_set.all().aggregate(Avg('note'))['note__avg']
@@ -64,6 +67,7 @@ class Plat(models.Model):
 class Avis(models.Model):
     class Meta:
         verbose_name_plural = 'avis'
+        ordering = ('-date_edition',)
 
     plat = models.ForeignKey(Plat, on_delete=models.PROTECT)
     auteur = models.ForeignKey(Profil, on_delete=models.PROTECT)

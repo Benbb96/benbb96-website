@@ -1,8 +1,13 @@
 {% extends 'avis/base_avis.html' %}
 
-{% block avis_title %}Restaurant {{ object.nom }}{% endblock %}
+{% block avis_title %}Plat {{ object.nom }}{% endblock %}
 
 {% block avis_content %}
+     <ul class="breadcrumb">
+        <li><a href="{{ object.restaurant.get_absolute_url }}">{{ object.restaurant }}</a></li>
+        <li>{{ object.nom }}</li>
+    </ul>
+
     <h1>{{ object.nom }}</h1>
     <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
     <div>
@@ -16,10 +21,11 @@
         <p>Adresse : {{ object.adresse }}</p>
         {% endif %}
     </div>
-    <h2>Les plats</h2>
+    <h2>Les avis</h2>
+    {# TODO Faire un caroussel avec les photos des avis #}
     <ul>
-    {% for plat in object.plat_set.all %}
-        <li><a href="{{ plat.get_absolute_url }}">{{ plat }}</a></li>
+    {% for avis in object.avis_set.all %}
+        <li><a href="{{ avis.get_absolute_url }}">{{ avis }}</a></li>
     {% endfor %}
     </ul>
 {% endblock %}
