@@ -37,7 +37,7 @@ class PlatInLine(admin.StackedInline):
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nbPLat', 'note_moyenne', 'date_creation')
+    list_display = ('nom', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nb_plat', 'moyenne', 'date_creation')
     search_fields = ('nom', 'adresse')
     date_hierarchy = 'date_creation'
     ordering = ('nom', 'date_creation')
@@ -47,15 +47,27 @@ class RestaurantAdmin(admin.ModelAdmin):
         PlatInLine,
     ]
 
+    def get_queryset(self, request):
+        # Ajoute la moyenne et le nombre de plat sur chacun des restaurants
+        qs = super(RestaurantAdmin, self).get_queryset(request)
+        qs = qs.annotate(moyenne=models.Avg('plat__avis__note'))
+        qs = qs.annotate(nb_plat=models.Count('plat'))
+        return qs
+
     def apercu_informations(self, restaurant):
         return apercu(restaurant.informations)
 
     apercu_informations.short_description = 'Aperçu des informations'
 
-    def nbPLat(self, restaurant):
-        return restaurant.plat_set.count()
+    def moyenne(self, restaurant):
+        return restaurant.note_moyenne
+    moyenne.admin_order_field = 'moyenne'
 
-    nbPLat.short_description = 'Nombre de plat'
+    def nb_plat(self, restaurant):
+        return restaurant.plat_set.count()
+    nb_plat.admin_order_field = 'nb_plat'
+
+    nb_plat.short_description = 'Nombre de plat'
 
     def position_map(self, instance):
         if instance.adresse is not None:
@@ -91,7 +103,7 @@ class PlatAdmin(admin.ModelAdmin):
     ]
 
     def get_queryset(self, request):
-        # Ajoute la note moyenne du plat sur chacun des plats
+        # Ajoute la note moyenne du plat et le nombre total d'avis sur chacun des plats
         qs = super(PlatAdmin, self).get_queryset(request)
         qs = qs.annotate(moyenne=models.Avg('avis__note'))
         qs = qs.annotate(total=models.Count('avis__note'))
@@ -130,7 +142,7 @@ class PlatAdmin(admin.ModelAdmin):
 @admin.register(Avis)
 class AvisAdmin(admin.ModelAdmin):
     list_display = ('id', 'restaurant', 'plat', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition')
-    list_filter = ('plat', 'auteur', 'note')
+    list_filter = ('auteur', 'note')
     search_fields = ('plat__nom', 'plat__restaurant__nom', 'auteur__user__username')
     ordering = ('-date_edition', )
     date_hierarchy = 'date_creation'
