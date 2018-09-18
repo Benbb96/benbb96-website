@@ -4,10 +4,18 @@
 
 {% block avis_content %}
 <h1>Restaurants</h1>
-    <form action="" method="get">
-        {{ filter.form.as_p }}
-        <input type="submit" />
-    </form>
+    <div class="filter-bar" data-spy="affix" data-offset-top="395">
+        <form class="form-inline" action="" method="get">
+            {% for field in filter.form %}
+                <div class="form-group">
+                    {{ field.errors }}
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-default">Filtrer <i class="fa fa-filter"></i></button>
+        </form>
+    </div>
 {% for restaurant in filter.qs %}
     <div class="panel panel-default">
         <div class="panel-heading">
