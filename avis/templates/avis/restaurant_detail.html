@@ -7,7 +7,7 @@
     <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
     <div>
         {% if object.informations %}
-        <p>{{ object.informations }}</p>
+        <h4>{{ object.informations|linebreaksbr }}</h4>
         {% endif %}
         {% if object.telephone %}
         <p>Téléphone : {{ object.telephone }}</p>
@@ -19,7 +19,7 @@
     <h2>Les plats</h2>
     <ul>
     {% for plat in object.plat_set.all %}
-        <li>{{ plat }}</li>
+        <li><a href="{{ plat.get_absolute_url }}">{{ plat }}</a></li>
     {% endfor %}
     </ul>
 {% endblock %}

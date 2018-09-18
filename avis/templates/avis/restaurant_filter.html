@@ -1,0 +1,35 @@
+{% extends 'avis/base_avis.html' %}
+
+{% block avis_title %}Restaurants{% endblock %}
+
+{% block avis_content %}
+<h1>Restaurants</h1>
+    <form action="" method="get">
+        {{ filter.form.as_p }}
+        <input type="submit" />
+    </form>
+{% for restaurant in filter.qs %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>
+                <a href="{{ restaurant.get_absolute_url }}">{{ restaurant.nom }}</a> <small>(ajouté le {{ restaurant.date_creation|date }})</small>
+            </h2>
+        </div>
+        <div class="panel-body">
+            {% if restaurant.informations %}
+                <div>{{ restaurant.informations }}</div>
+            {% endif %}
+            <h3>Ses plats</h3>
+            <div class="row">
+                {% for plat in restaurant.plat_set.all %}
+                    <div class="col-md-3 col-sm-4 col-xs-6">
+                        <h4><a href="{{ plat.get_absolute_url }}">{{ plat.nom }}</a></h4>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <div>Pas de restaurant enregistré.</div>
+{% endfor %}
+{% endblock %}

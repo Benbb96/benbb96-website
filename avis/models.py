@@ -12,6 +12,17 @@ from geoposition.fields import GeopositionField
 telephone_validator = RegexValidator('^(0|\\+33|0033)[1-9][0-9]{8}$', "Ce numéro n'est pas valide.")
 
 
+def apercu(text):
+    """
+    Retourne les 80 premiers caractères du texte donné en paramètre.
+    S'il  y a plus de 80 caractères, il faut rajouter des points de suspension.
+    """
+    apercu = text[0:80]
+    if len(text) > 80:
+        return '%s...' % apercu
+    return apercu
+
+
 class Restaurant(models.Model):
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
@@ -32,6 +43,11 @@ class Restaurant(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.slug)
         super(Restaurant, self).save(*args, **kwargs)
+
+    def apercu_informations(self):
+        return apercu(self.informations)
+
+    apercu_informations.short_description = 'Aperçu des informations'
 
     @property
     def note_moyenne(self):
@@ -56,6 +72,14 @@ class Plat(models.Model):
     def __str__(self):
         return self.nom
 
+    def get_absolute_url(self):
+        return reverse('avis:plat', kwargs={'pk': self.pk})
+
+    def apercu_description(self):
+        return apercu(self.description)
+
+    apercu_description.short_description = 'Description'
+
     @property
     def note_moyenne(self):
         return self.avis_set.all().aggregate(Avg('note'))['note__avg']
@@ -64,6 +88,7 @@ class Plat(models.Model):
 class Avis(models.Model):
     class Meta:
         verbose_name_plural = 'avis'
+        ordering = ('-date_edition',)
 
     plat = models.ForeignKey(Plat, on_delete=models.PROTECT)
     auteur = models.ForeignKey(Profil, on_delete=models.PROTECT)
@@ -79,3 +104,7 @@ class Avis(models.Model):
 
     def get_absolute_url(self):
         return reverse('avis:detail-avis', kwargs={'pk': self.pk})
+
+    def apercu_avis(self):
+        return apercu(self.avis)
+    apercu_avis.short_description = "Aperçu de l'avis"

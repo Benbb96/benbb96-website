@@ -1,0 +1,16 @@
+{% load static %}
+
+<div class="thumbnail">
+    <a href="{{ avis.get_absolute_url }}">
+        <img src="{% if avis.photo %}{{ avis.photo.url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du plat {{ avis.plat }}" alt="Photo du plat {{ avis.plat }} prise par {{ avis.auteur }}" style="max-height: 250px"/>
+    </a>
+    <div>
+        Le {{ avis.date_edition|date:"l d N Y" }}
+    </div>
+    <div class="caption">
+        <h3><a href="{{ avis.get_absolute_url }}">{{ avis.plat }}</a></h3>
+    </div>
+    <div class="note">
+        {{ avis.note }}/10
+    </div>
+</div>

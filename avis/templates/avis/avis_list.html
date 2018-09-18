@@ -1,18 +1,21 @@
 {% extends 'avis/base_avis.html' %}
 
+{% load static %}
+
 {% block avis_title %}Liste{% endblock %}
 
 {% block content %}
-<h1>Avis</h1>
-<ul>
-{% for avis in object_list %}
-    <li>
-        <a href="{{ avis.get_absolute_url }}">
-            {{ avis.plat.restaurant }} - {{ avis.plat }} (ajouté le {{ avis.date_creation|date }}) : {{ avis.note }}/10
-        </a>
-    </li>
-{% empty %}
-    <li>Pas d'avis enregistré.</li>
-{% endfor %}
-</ul>
+    <div class="avis">
+        <h1>Les derniers avis</h1>
+        <div class="row">
+        {% for avis in object_list|slice:"12" %}
+            <div class="col-sm-4 col-xs-12">
+                {% include 'avis/avis_thumbnail.html' %}
+            </div>
+        {% empty %}
+            <div>Pas d'avis enregistré.</div>
+        {% endfor %}
+        </div>
+    </div>
+
 {% endblock %}

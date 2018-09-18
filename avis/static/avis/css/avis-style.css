@@ -1,7 +1,7 @@
 .note {
     position: absolute;
     right: 30px;
-    bottom: 105px;
+    top: 44%;
     font-size: 18px;
     border: 2px solid white;
     color: white;
@@ -18,4 +18,46 @@
     border-radius: 30%;
     background-color: rgba(88,88,88,0.6);
     transition: all 1s;
+}
+
+ /* Style the list */
+ul.breadcrumb {
+    padding: 10px 16px;
+    list-style: none;
+    background-color: #eee;
+}
+
+/* Display list items side by side */
+ul.breadcrumb li {
+    display: inline;
+    font-size: 18px;
+}
+
+/* Add a slash symbol (/) before/behind each list item */
+ul.breadcrumb li+li:before {
+    padding: 8px;
+    color: black;
+    content: "/\00a0";
+}
+
+/* Add a color to all links inside the list */
+ul.breadcrumb li a {
+    color: #0275d8;
+    text-decoration: none;
+}
+
+/* Add a color on mouse-over */
+ul.breadcrumb li a:hover {
+    color: #01447e;
+    text-decoration: underline;
+}
+
+.carousel-caption {
+    padding: 10px;
+    background-color: rgba(44,44,44,0.6);
+    border-radius: 25px;
+}
+
+.carousel-caption a {
+    color: dodgerblue;
 }

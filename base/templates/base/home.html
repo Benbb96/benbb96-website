@@ -13,7 +13,7 @@
             {% if projet.actif %}
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <h3><a href="{% url projet.lien %}">{{ projet.nom }}</a></h3>
-                <img src="{{ projet.image.url }}" class="img-responsive" style="max-height: 300px; margin: auto" alt="Avis">
+                <a href="{% url projet.lien %}"><img src="{{ projet.image.url }}" class="img-responsive" style="max-height: 300px; margin: auto" alt="Avis"></a>
             </div>
             {% endif %}
         {% endfor %}
