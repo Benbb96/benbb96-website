@@ -5,17 +5,6 @@ from django.utils.html import format_html
 from .models import Profil, Restaurant, Plat, Avis
 
 
-def apercu(text):
-    """
-    Retourne les 50 premiers caractères du texte donné en paramètre.
-    S'il  y a plus de 50 caractères, il faut rajouter des points de suspension.
-    """
-    apercu = text[0:50]
-    if len(text) > 50:
-        return '%s...' % apercu
-    return apercu
-
-
 @admin.register(Profil)
 class ProfilAdmin(admin.ModelAdmin):
     list_display = ('user', 'nbAvis', 'note_moyenne', 'date_creation')
@@ -53,11 +42,6 @@ class RestaurantAdmin(admin.ModelAdmin):
         qs = qs.annotate(moyenne=models.Avg('plat__avis__note'))
         qs = qs.annotate(nb_plat=models.Count('plat'))
         return qs
-
-    def apercu_informations(self, restaurant):
-        return apercu(restaurant.informations)
-
-    apercu_informations.short_description = 'Aperçu des informations'
 
     def moyenne(self, restaurant):
         return restaurant.note_moyenne
@@ -118,11 +102,6 @@ class PlatAdmin(admin.ModelAdmin):
         else:
             formset.save()
 
-    def apercu_description(self, plat):
-        return apercu(plat.description)
-
-    apercu_description.short_description = 'Description'
-
     def nbAvis(self, plat):
         return plat.avis_set.count()
 
@@ -146,11 +125,6 @@ class AvisAdmin(admin.ModelAdmin):
     search_fields = ('plat__nom', 'plat__restaurant__nom', 'auteur__user__username')
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('plat',)
-
-    def apercu_avis(self, avis):
-        return apercu(avis.avis)
-
-    apercu_avis.short_description = "Aperçu de l'avis"
 
     def restaurant(self, avis):
         return avis.plat.restaurant

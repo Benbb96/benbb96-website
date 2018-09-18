@@ -1,5 +1,7 @@
 {% extends 'avis/base_avis.html' %}
 
+{% load static %}
+
 {% block avis_title %}Plat {{ object.nom }}{% endblock %}
 
 {% block avis_content %}
@@ -8,24 +10,54 @@
         <li>{{ object.nom }}</li>
     </ul>
 
-    <h1>{{ object.nom }}</h1>
-    <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
-    <div>
-        {% if object.informations %}
-        <p>{{ object.informations }}</p>
-        {% endif %}
-        {% if object.telephone %}
-        <p>Téléphone : {{ object.telephone }}</p>
-        {% endif %}
-        {% if object.adresse %}
-        <p>Adresse : {{ object.adresse }}</p>
-        {% endif %}
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <h1>{{ object.nom }}</h1>
+            <h3>Créé le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
+            {% if object.description %}
+            <h4>{{ object.description|linebreaks }}</h4>
+            {% endif %}
+            {% if object.prix %}
+            <h3>Prix : <strong>{{ object.prix }}€</strong></h3>
+            {% endif %}
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <h2>Les avis</h2>
+            <div id="myCarousel" class="carousel slide" data-ride="carousel" style="width: 100%; margin: auto">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                    <li data-target="#myCarousel" data-slide-to="2"></li>
+                </ol>
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+
+                    {% for avis in object.avis_set.all %}
+                    <div class="item{% if forloop.first %} active{% endif %}">
+                        <a href="{{ avis.get_absolute_url }}">
+                            <img src="{% if avis.photo %}{{ avis.photo.url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du plat {{ avis.plat }}" alt="Photo du plat {{ avis.plat }} prise par {{ avis.auteur }}" style="width:100%;">
+                        </a>
+                        <div class="carousel-caption">
+                            <h3><a href="{{ avis.get_absolute_url }}">{{ avis.auteur }} - {{ avis.note }}/10</a></h3>
+                            <p>{{ avis.date_creation|date:"d/m/y" }}. {{ avis.apercu_avis }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- Left and right controls -->
+                <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    <span class="sr-only">Précédent</span>
+                </a>
+                <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                    <span class="sr-only">Suivant</span>
+                </a>
+            </div>
+        </div>
     </div>
-    <h2>Les avis</h2>
-    {# TODO Faire un caroussel avec les photos des avis #}
-    <ul>
-    {% for avis in object.avis_set.all %}
-        <li><a href="{{ avis.get_absolute_url }}">{{ avis }}</a></li>
-    {% endfor %}
-    </ul>
 {% endblock %}

@@ -1,10 +1,12 @@
 from django.views.generic import ListView, DetailView
+from django_filters.views import FilterView
 
+from avis.filters import RestaurantFilter
 from avis.models import Restaurant, Avis, Plat
 
 
-class RestaurantList(ListView):
-    model = Restaurant
+class RestaurantList(FilterView):
+    filterset_class = RestaurantFilter
 
 
 class RestaurantDetail(DetailView):

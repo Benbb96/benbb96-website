@@ -51,3 +51,13 @@ ul.breadcrumb li a:hover {
     color: #01447e;
     text-decoration: underline;
 }
+
+.carousel-caption {
+    padding: 10px;
+    background-color: rgba(44,44,44,0.6);
+    border-radius: 25px;
+}
+
+.carousel-caption a {
+    color: dodgerblue;
+}

@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'bootstrap3',
     'geoposition',
-    'fontawesome'
+    'fontawesome',
+    'django_filters'
 ]
 
 MIDDLEWARE = [

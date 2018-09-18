@@ -4,7 +4,11 @@
 
 {% block avis_content %}
 <h1>Restaurants</h1>
-{% for restaurant in object_list %}
+    <form action="" method="get">
+        {{ filter.form.as_p }}
+        <input type="submit" />
+    </form>
+{% for restaurant in filter.qs %}
     <div class="panel panel-default">
         <div class="panel-heading">
             <h2>
