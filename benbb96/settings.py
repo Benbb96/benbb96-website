@@ -27,10 +27,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'avis.apps.AvisConfig',
     'base.apps.BaseConfig',
+    'tracker.apps.TrackerConfig',
     'bootstrap3',
     'geoposition',
     'fontawesome',
-    'django_filters'
+    'django_filters',
+    'colorfield'
 ]
 
 MIDDLEWARE = [
