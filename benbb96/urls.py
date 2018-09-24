@@ -8,5 +8,6 @@ from benbb96 import settings
 urlpatterns = [
     path('', include('base.urls')),
     path('avis/', include('avis.urls')),
+    path('tracker/', include('tracker.urls')),
     path('admin/', admin.site.urls)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

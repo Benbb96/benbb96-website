@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from django.views.generic import ListView, DetailView
 
-# Create your views here.
+from tracker.models import Tracker
+
+
+class TrackerListView(ListView):
+    model = Tracker
+
+
+class TrackerDetailView(DetailView):
+    model = Tracker

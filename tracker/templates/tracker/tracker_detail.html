@@ -1,0 +1,11 @@
+{% extends 'tracker/base_tracker.html' %}
+
+{% load static fontawesome %}
+
+{% block avis_title %}Tracker {{ object.nom }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <h1>{{ tracker.nom }} {% fontawesome_icon tracker.icone %} <small>({{ tracker.date_creation }})</small></h1>
+    </div>
+{% endblock %}

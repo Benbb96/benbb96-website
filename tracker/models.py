@@ -1,5 +1,6 @@
 from colorfield.fields import ColorField
 from django.db import models
+from django.urls import reverse
 from fontawesome.fields import IconField
 
 from base.models import Profil
@@ -8,12 +9,16 @@ from base.models import Profil
 class Tracker(models.Model):
     createur = models.ForeignKey(Profil, related_name='trackers', on_delete=models.CASCADE)
     nom = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, null=True)
     icone = IconField()
     color = ColorField(default='#FFFFFF')
     date_creation = models.DateTimeField(verbose_name="date de création", auto_now_add=True)
 
     def __str__(self):
         return self.nom
+
+    def get_absolute_url(self):
+        return reverse('tracker:detail-tracker', kwargs={'slug': self.slug})
 
 
 class Track(models.Model):
