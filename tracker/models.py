@@ -24,7 +24,11 @@ class Tracker(models.Model):
 class Track(models.Model):
     tracker = models.ForeignKey(Tracker, related_name='tracks', on_delete=models.CASCADE)
     datetime = models.DateTimeField('date et heure', auto_now_add=True)
-    commentaire = models.CharField(max_length=255, help_text='Un texte pour donner une explication sur ce track.')
+    commentaire = models.CharField(max_length=255, help_text='Un texte pour donner une explication sur ce track.',
+                                   blank=True)
+
+    class Meta:
+        ordering = ('-datetime',)
 
     def __str__(self):
         return str(self.tracker) + ' - ' + str(self.datetime)

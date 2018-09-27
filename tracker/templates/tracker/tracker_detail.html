@@ -2,10 +2,35 @@
 
 {% load static fontawesome %}
 
-{% block avis_title %}Tracker {{ object.nom }}{% endblock %}
+{% block avis_title %}Tracker {{ tracker.nom }}{% endblock %}
 
 {% block content %}
     <div class="row">
-        <h1>{{ tracker.nom }} {% fontawesome_icon tracker.icone %} <small>({{ tracker.date_creation }})</small></h1>
+        <h1>{{ tracker.nom }} {% fontawesome_icon tracker.icone %} <small>(créé le {{ tracker.date_creation }})</small></h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group col-md-6 col-md-offset-3">
+                {{ form.commentaire.label_tag }}
+            </div>
+            <div class="input-group col-md-6 col-md-offset-3">
+                {{ form.commentaire }}
+                <div class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">
+                    <i class="glyphicon glyphicon-plus"></i>
+                  </button>
+                </div>
+            </div>
+            <div class="input-group col-md-6 col-md-offset-3">
+                {{ form.commentaire.errors }}
+            </div>
+        </form>
+        <h2>Historique</h2>
+        <div>
+            {% for track in tracker.tracks.all %}
+                <div>
+                    <strong>{{ track.datetime }}</strong>{% if track.commentaire %} - {{ track.commentaire }}{% endif %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
