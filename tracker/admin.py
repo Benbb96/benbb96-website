@@ -26,7 +26,7 @@ class TrackerAdmin(admin.ModelAdmin):
 
 @admin.register(Track)
 class TrackAdmin(admin.ModelAdmin):
-    list_display = ('tracker', 'datetime', 'commentaire')
+    list_display = ('id', 'tracker', 'datetime', 'commentaire')
     date_hierarchy = 'datetime'
     ordering = ('-datetime',)
     search_fields = ('tracker__nom', 'commentaire')
