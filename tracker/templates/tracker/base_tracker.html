@@ -12,7 +12,7 @@
 {% include 'navbar.html' with tracker=True %}
 {% endblock %}
 
-{% block jumbotron_title %}Trackers{% endblock %}
+{% block jumbotron_title %}<a href="{% url 'tracker:liste-tracker' %}">Trackers</a>{% endblock %}
 {% block jumbotron_description %}
     Les choses que je veux tracker pour voir leur évolution dans le temps.
 {% endblock %}

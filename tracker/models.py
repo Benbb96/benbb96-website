@@ -1,6 +1,7 @@
 from colorfield.fields import ColorField
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from fontawesome.fields import IconField
 
 from base.models import Profil
@@ -23,7 +24,7 @@ class Tracker(models.Model):
 
 class Track(models.Model):
     tracker = models.ForeignKey(Tracker, related_name='tracks', on_delete=models.CASCADE)
-    datetime = models.DateTimeField('date et heure', auto_now_add=True)
+    datetime = models.DateTimeField('date et heure', default=timezone.now)
     commentaire = models.CharField(max_length=255, help_text='Un texte pour donner une explication sur ce track.',
                                    blank=True)
 
@@ -31,4 +32,4 @@ class Track(models.Model):
         ordering = ('-datetime',)
 
     def __str__(self):
-        return str(self.tracker) + ' - ' + str(self.datetime)
+        return str(self.tracker) + ' (' + self.datetime.strftime('%d/%m/%y %H:%M') + ')'
