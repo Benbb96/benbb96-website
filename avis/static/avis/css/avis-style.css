@@ -65,15 +65,4 @@ ul.breadcrumb li a:hover {
 .filter-bar {
     text-align: center;
     padding: 15px;
-    background-color: rgba(0,0,0,0.5);
 }
-
-.affix {
-      top: 0;
-      width: 100%;
-      z-index: 9999 !important;
-  }
-
-  .affix + .container-fluid {
-      padding-top: 70px;
-  }
