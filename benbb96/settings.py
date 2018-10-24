@@ -126,3 +126,12 @@ STATICFILES_DIRS = [
 ]
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw'
+
+FIREBASE_CONFIG = {
+    "apiKey": "AIzaSyBZvRl1Q35AH9j4vYKwTM5YYMUZp6HAjLo",
+    "authDomain": "eminent-airport-148108.firebaseapp.com",
+    "databaseURL": "https://eminent-airport-148108.firebaseio.com",
+    "projectId": "eminent-airport-148108",
+    "storageBucket": "eminent-airport-148108.appspot.com",
+    "messagingSenderId": "994857141623"
+}

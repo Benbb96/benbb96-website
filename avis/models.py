@@ -1,3 +1,5 @@
+import pyrebase
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
@@ -95,7 +97,7 @@ class Avis(models.Model):
     avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le plat')
     note = models.PositiveIntegerField(default=5, help_text='Une note entre 0 et 10',
                                        validators=[MinValueValidator(0), MaxValueValidator(10)])
-    photo = models.ImageField(null=True, blank=True, upload_to="media/avis/")
+    photo = models.TextField(null=True, blank=True)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
     date_edition = models.DateTimeField(verbose_name="date de dernière modification", auto_now=True)
 
@@ -108,3 +110,9 @@ class Avis(models.Model):
     def apercu_avis(self):
         return apercu(self.avis)
     apercu_avis.short_description = "Aperçu de l'avis"
+
+    def get_photo_url(self):
+        """ Récupère l'URL complète de l'image """
+        firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
+        storage = firebase.storage()
+        return storage.child(self.photo).get_url(None)

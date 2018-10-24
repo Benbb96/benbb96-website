@@ -1,3 +1,5 @@
+import pyrebase
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Avg
@@ -7,7 +9,7 @@ from fontawesome.fields import IconField
 
 class Profil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')  # La liaison OneToOne vers le modèle User
-    avatar = models.ImageField(null=True, blank=True, upload_to="media/avatars/")
+    avatar = models.ImageField(null=True, blank=True, upload_to="avatars/")
     date_creation = models.DateTimeField(verbose_name="date de création", auto_now_add=True)
 
     def __str__(self):
@@ -27,7 +29,7 @@ class Projet(models.Model):
     """
     nom = models.CharField(max_length=100)
     lien = models.CharField(max_length=100, null=True, blank=True, help_text="Nom de la vue Django vers la page d'accueil du projet")
-    image = models.ImageField(null=True, blank=True, upload_to="media/projet/")
+    image = models.ImageField(null=True, blank=True, upload_to="projet/")
     actif = models.BooleanField(default=True)
 
     def __str__(self):
@@ -52,3 +54,13 @@ class LienReseauSocial(models.Model):
 
     def __str__(self):
         return str(self.reseau_social)
+
+
+class TestModel(models.Model):
+    url = models.TextField()
+
+    def get_url(self):
+        """ Récupère l'URL complète de l'image """
+        firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
+        storage = firebase.storage()
+        return storage.child(self.url).get_url(None)

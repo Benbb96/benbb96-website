@@ -2,7 +2,7 @@
 
 <div class="thumbnail">
     <a href="{{ avis.get_absolute_url }}">
-        <img src="{% if avis.photo %}{{ avis.photo.url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du plat {{ avis.plat }}" alt="Photo du plat {{ avis.plat }} prise par {{ avis.auteur }}" style="max-height: 250px"/>
+        <img src="{% if avis.photo %}{{ avis.get_photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du plat {{ avis.plat }}" alt="Photo du plat {{ avis.plat }} prise par {{ avis.auteur }}" style="max-height: 250px"/>
     </a>
     <div>
         Le {{ avis.date_edition|date:"l d N Y" }}

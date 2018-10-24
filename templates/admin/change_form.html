@@ -1,0 +1,9 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+
+{% block admin_change_form_document_ready %}
+    {{ block.super }}
+    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/5.5.3/firebase-storage.js"></script>
+    <script type="text/javascript" src="{% static 'base/js/firebase-upload.js' %}"></script>
+{% endblock %}
