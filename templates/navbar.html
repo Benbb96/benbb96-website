@@ -16,8 +16,8 @@
                 {% if request.user.is_authenticated %}
                 <li {% if tracker %}class="active"{% endif %}><a href="{% url 'tracker:liste-tracker' %}">Tracker</a></li>
                 {% endif %}
-                <li {% if gallery %}class="active"{% endif %}><a href="{% url 'gallery' %}">Gallerie</a></li>
-                <li><a href="#">Contact</a></li>
+{#                <li {% if gallery %}class="active"{% endif %}><a href="{% url 'gallery' %}">Gallerie</a></li>#}
+{#                <li><a href="#">Contact</a></li>#}
                 {% if request.user.is_superuser %}
                 <li><a href="{% url 'admin:index' %}">Administration</a></li>
                 {% endif %}

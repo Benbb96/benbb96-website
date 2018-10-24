@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
+from avis.forms import AvisForm
 from .models import Profil, Restaurant, Plat, Avis
 
 
@@ -126,6 +127,8 @@ class AvisAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('plat',)
 
+    form = AvisForm
+
     def restaurant(self, avis):
         return avis.plat.restaurant
 
@@ -136,3 +139,8 @@ class AvisAdmin(admin.ModelAdmin):
         form = super(AvisAdmin, self).get_form(request, obj, **kwargs)
         form.base_fields['auteur'].initial = Profil.objects.get(user=request.user)
         return form
+
+    def thumbnail(self, obj):
+        if obj.photo:
+            return format_html('<img src="{}" height="50px" />', obj.get_photo_url())
+        return 'Avis n°' + obj.id

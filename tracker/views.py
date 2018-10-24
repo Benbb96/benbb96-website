@@ -8,6 +8,10 @@ from tracker.models import Tracker
 class TrackerListView(ListView):
     model = Tracker
 
+    def get_queryset(self):
+        queryset = super(TrackerListView, self).get_queryset()
+        return queryset.filter(createur=self.request.user.profil)
+
 
 def tracker_detail(request, slug):
     tracker = get_object_or_404(Tracker, slug=slug)

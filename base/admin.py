@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
-from base.models import Projet, LienReseauSocial
+from base.forms import TestModelForm
+from base.models import Projet, LienReseauSocial, TestModel
 
 
 @admin.register(Projet)
@@ -19,3 +21,13 @@ class LienReseauSocialAdmin(admin.ModelAdmin):
     search_fields = ('reseau_social',)
     list_filter = ('actif',)
     ordering = ('id',)
+
+
+@admin.register(TestModel)
+class TestModelAdmin(admin.ModelAdmin):
+    list_display = ('img',)
+
+    form = TestModelForm
+
+    def img(self, obj):
+        return format_html('<img src="{}" height="50px" />', obj.get_url())

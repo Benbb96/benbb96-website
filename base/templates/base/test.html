@@ -1,0 +1,71 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block navbar %}
+{% include 'navbar.html' with home=False %}
+{% endblock %}
+
+{% block base_title %}Test{% endblock %}
+{% block jumbotron_title %}Test{% endblock %}
+
+
+{% block base_content %}
+    <form method="post" action="">
+        <input type="file" name="files[]" id="files">
+	    <input type="hidden" name="url" id="url">
+	    <button type="button" onclick="uploadimage()">Upload</button><br><br>
+    </form>
+
+    <p>url : {{ url }}</p>
+    <img id="img" src="{{ url }}" alt="Test" height="200px"/>
+{% endblock %}
+
+{% block javascript %}
+    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-storage.js"></script>
+    <script>
+        var config = {
+            apiKey: "AIzaSyBZvRl1Q35AH9j4vYKwTM5YYMUZp6HAjLo",
+            authDomain: "eminent-airport-148108.firebaseapp.com",
+            databaseURL: "https://eminent-airport-148108.firebaseio.com",
+            projectId: "eminent-airport-148108",
+            storageBucket: "eminent-airport-148108.appspot.com",
+            messagingSenderId: "994857141623"
+        };
+        firebase.initializeApp(config);
+
+
+        // Get a reference to the storage service, which is used to create references in your storage bucket
+
+        function uploadimage() {
+            var storage = firebase.storage();
+            var file = document.getElementById("files").files[0];
+            var storageRef = storage.ref();
+            var thisref = storageRef.child('test/' + file.name).put(file);
+            thisref.on('state_changed', function (snapshot) {
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case firebase.storage.TaskState.PAUSED: // or 'paused'
+                        console.log('Upload is paused');
+                        break;
+                    case firebase.storage.TaskState.RUNNING: // or 'running'
+                        console.log('Upload is running');
+                        break;
+                }
+            }, function (error) {
+                console.log('error')
+            },
+            function () {
+                // Upload completed successfully, now we can get the download URL
+                console.log('test');
+                thisref.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    console.log('File available at', downloadURL);
+                    document.getElementById("url").value = downloadURL;
+                    $('#img').attr("src", downloadURL);
+                });
+            });
+        }
+    </script>
+{% endblock %}
