@@ -51,7 +51,7 @@
                 </div>
                 <div id="statistiques" class="tab-pane fade">
                     <h2>Statistiques</h2>
-                    <p>Moyenne par jour : <strong>{{ avg }}</strong> {{ tracker.nom|lower }} / jour</p>
+                    <p>Moyenne par jour : <strong>{{ avg|floatformat }}</strong> {{ tracker.nom|lower }} / jour</p>
                     <div class="text-center">
                         <canvas id="myChart" width="600" height="400"></canvas>
                     </div>
