@@ -1,5 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from django.views.generic import ListView
+from django_pandas.io import read_frame
+import pandas as pd
 
 from tracker.forms import TrackForm
 from tracker.models import Tracker
@@ -23,15 +26,17 @@ def tracker_detail(request, slug):
         track.save()
         return redirect('tracker:detail-tracker', slug=tracker.slug)
 
-    data = [0] * 7
-    for track in tracker.tracks.all():
-        data[track.datetime.weekday()] += 1
-        
-    avg = sum(data) / len(data)
+    df = read_frame(tracker.tracks.all(), fieldnames=['datetime'])
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    df.index = df['datetime']
+    df['count'] = [1] * tracker.tracks.count()
+    data = df.resample('D').sum()
+
+    delta = timezone.now().date() - tracker.tracks.earliest('datetime').datetime.date()
 
     return render(request, 'tracker/tracker_detail.html', {
         'tracker': tracker,
         'form': form,
         'data': data,
-        'avg': avg
+        'avg': tracker.tracks.count() / delta.days
     })

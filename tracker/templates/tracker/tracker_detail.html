@@ -51,9 +51,9 @@
                 </div>
                 <div id="statistiques" class="tab-pane fade">
                     <h2>Statistiques</h2>
-                    <p>Moyenne par jour : <strong>{{ avg }}</strong></p>
+                    <p>Moyenne par jour : <strong>{{ avg }}</strong> {{ tracker.nom|lower }} / jour</p>
                     <div class="text-center">
-                        <canvas id="myChart" width="400" height="400"></canvas>
+                        <canvas id="myChart" width="600" height="400"></canvas>
                     </div>
                 </div>
             </div>
@@ -66,30 +66,11 @@
 <script>
     var ctx = document.getElementById("myChart");
     var myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
-            labels: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
+            labels: [{% for day in data.index.values %}'{{ day }}', {% endfor %}],
             datasets: [{
-                data: [{% for day in data %}{{ day }}, {% endfor %}],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(173, 240, 120, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
-                    'rgba(173, 240, 120, 1)'
-                ],
-                borderWidth: 1
+                data: [{% for value in data.count %}{{ value }}, {% endfor %}]
             }]
         },
         options: {
