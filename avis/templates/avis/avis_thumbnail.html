@@ -1,14 +1,16 @@
 {% load static %}
 
-<div class="thumbnail">
+<div class="thumbnail card">
     <a href="{{ avis.get_absolute_url }}">
-        <img src="{% if avis.photo %}{{ avis.get_photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du plat {{ avis.plat }}" alt="Photo du plat {{ avis.plat }} prise par {{ avis.auteur }}" style="max-height: 250px"/>
+        <img src="{% if avis.photo %}{{ avis.get_photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du plat {{ avis.plat }}" alt="Photo du plat {{ avis.plat }} prise par {{ avis.auteur }}" style="max-height: 70%"/>
     </a>
-    <div>
-        Le {{ avis.date_edition|date:"l d N Y" }}
+    <div class="text-center">
+        <a href="{{ avis.auteur.get_absolute_url }}">{{ avis.auteur }}</a>, le {{ avis.date_edition|date:"l d N Y" }}
     </div>
     <div class="caption">
-        <h3><a href="{{ avis.get_absolute_url }}">{{ avis.plat }}</a></h3>
+        <h4>
+            <a href="{{ avis.get_absolute_url }}">{{ avis.plat.restaurant }} - {{ avis.plat }}</a>
+        </h4>
     </div>
     <div class="note">
         {{ avis.note }}/10

@@ -1,3 +1,7 @@
+.card {
+    height: 300px;
+}
+
 .note {
     position: absolute;
     right: 30px;

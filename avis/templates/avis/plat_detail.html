@@ -15,10 +15,13 @@
             <h1>{{ object.nom }}</h1>
             <h3>Créé le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
             {% if object.description %}
-            <h4>{{ object.description|linebreaks }}</h4>
+                <h4>{{ object.description|linebreaks }}</h4>
             {% endif %}
             {% if object.prix %}
-            <h3>Prix : <strong>{{ object.prix }}€</strong></h3>
+                <h3>Prix : <strong>{{ object.prix }}€</strong></h3>
+            {% endif %}
+            {% if object.avis_set %}
+                <h3>Note moyenne : <strong>{{ object.note_moyenne|floatformat }}/10</strong></h3>
             {% endif %}
         </div>
         <div class="col-md-6 col-xs-12">
