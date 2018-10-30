@@ -10,7 +10,7 @@
     </ul>
 
     <h1>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.plat }}</h1>
-    <h3>Ajoutée le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
+    <h4>Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }} | Editée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}</h4>
     <div class="row">
         <div class="col-md-6 col-xs-12">
             {% if object.photo %}

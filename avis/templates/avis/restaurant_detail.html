@@ -7,19 +7,48 @@
     <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
     <div>
         {% if object.informations %}
-        <h4>{{ object.informations|linebreaksbr }}</h4>
+            <h4>{{ object.informations|linebreaksbr }}</h4>
         {% endif %}
         {% if object.telephone %}
-        <p>Téléphone : {{ object.telephone }}</p>
+            <p>Téléphone : {{ object.telephone }}</p>
+        {% endif %}
+        {% if object.lien %}
+            <p>Lien du site web : <a href="{{ object.lien }}" target="_blank">{{ object.lien }}</a></p>
         {% endif %}
         {% if object.adresse %}
-        <p>Adresse : {{ object.adresse }}</p>
+            <p>Adresse : {{ object.adresse }}</p>
         {% endif %}
     </div>
     <h2>Les plats</h2>
-    <ul>
-    {% for plat in object.plat_set.all %}
-        <li><a href="{{ plat.get_absolute_url }}">{{ plat }}</a></li>
-    {% endfor %}
-    </ul>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th class="text-center">Photo</th>
+            <th>Nom</th>
+            <th>Date d'ajout</th>
+            <th class="text-center">Prix</th>
+            <th class="text-center">Nombre d'avis</th>
+            <th class="text-center">Note moyenne (sur 10)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for plat in object.plat_set.all %}
+        <tr>
+            <td class="text-center">
+                {% if plat.avis_set.exists %}
+                    <a href="{{ plat.get_absolute_url }}">
+                        <img src="{{ plat.avis_set.first.get_photo_url }}" height="100px" alt="Photo du plat {{ plat }}">
+                    </a>
+                {% endif %}
+            </td>
+            <td><a href="{{ plat.get_absolute_url }}">{{ plat }}</a></td>
+            <td>{{ plat.date_creation }}</td>
+            <td class="text-center">{{ plat.prix}}</td>
+            <td class="text-center">{{ plat.avis_set.count}}</td>
+            <td class="text-center">{{ plat.note_moyenne|floatformat }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
