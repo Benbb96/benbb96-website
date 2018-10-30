@@ -73,6 +73,8 @@ class AvisInLine(admin.StackedInline):
     extra = 1
     show_change_link = True
 
+    form = AvisForm
+
 
 @admin.register(Plat)
 class PlatAdmin(admin.ModelAdmin):
