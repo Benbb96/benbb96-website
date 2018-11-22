@@ -72,6 +72,7 @@ class AvisInLine(admin.StackedInline):
     fields = ('avis', 'note', 'photo')
     extra = 1
     show_change_link = True
+    ordering = ('date_creation',)
 
     form = AvisForm
 

@@ -1,5 +1,7 @@
 {% extends 'avis/base_avis.html' %}
 
+{% load custom_tags %}
+
 {% block avis_title %}Restaurants{% endblock %}
 
 {% block avis_content %}
@@ -21,6 +23,13 @@
         <div class="panel-heading">
             <h2>
                 <a href="{{ restaurant.get_absolute_url }}">{{ restaurant.nom }}</a>
+                <span class="pull-right" style="width: 20%; margin-right: 20px">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-{{ restaurant.note_moyenne|color }}" role="progressbar" aria-valuenow="{{ restaurant.note_moyenne|multiply_10 }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ restaurant.note_moyenne|multiply_10 }}%">
+                            {{ restaurant.note_moyenne|floatformat }}/10
+                        </div>
+                    </div>
+                </span>
             </h2>
         </div>
         <div class="panel-body">
