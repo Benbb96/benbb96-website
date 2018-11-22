@@ -43,7 +43,7 @@
                     <div>
                         {% for track in tracker.tracks.all %}
                             <div>
-                                <strong>{{ track.datetime }}</strong>{% if track.commentaire %} -
+                                <strong>{{ track.datetime|date:"l d F Y à H:i" }}</strong>{% if track.commentaire %} -
                                 {{ track.commentaire }}{% endif %}
                             </div>
                         {% endfor %}

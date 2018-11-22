@@ -21,34 +21,36 @@
     </div>
     <h2>Les plats</h2>
 
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th class="text-center">Photo</th>
-            <th>Nom</th>
-            <th>Date d'ajout</th>
-            <th class="text-center">Prix</th>
-            <th class="text-center">Nombre d'avis</th>
-            <th class="text-center">Note moyenne (sur 10)</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for plat in object.plat_set.all %}
-        <tr>
-            <td class="text-center">
-                {% if plat.avis_set.exists %}
-                    <a href="{{ plat.get_absolute_url }}">
-                        <img src="{{ plat.avis_set.first.get_photo_url }}" height="100px" alt="Photo du plat {{ plat }}">
-                    </a>
-                {% endif %}
-            </td>
-            <td><a href="{{ plat.get_absolute_url }}">{{ plat }}</a></td>
-            <td>{{ plat.date_creation }}</td>
-            <td class="text-center">{{ plat.prix}}</td>
-            <td class="text-center">{{ plat.avis_set.count}}</td>
-            <td class="text-center">{{ plat.note_moyenne|floatformat }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th class="text-center">Photo</th>
+                <th>Nom</th>
+                <th>Date d'ajout</th>
+                <th class="text-center">Prix</th>
+                <th class="text-center">Nombre d'avis</th>
+                <th class="text-center">Note moyenne (sur 10)</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for plat in object.plat_set.all %}
+            <tr>
+                <td class="text-center">
+                    {% if plat.avis_set.exists %}
+                        <a href="{{ plat.get_absolute_url }}">
+                            <img src="{{ plat.avis_set.first.get_photo_url }}" height="100px" alt="Photo du plat {{ plat }}">
+                        </a>
+                    {% endif %}
+                </td>
+                <td><a href="{{ plat.get_absolute_url }}">{{ plat }}</a></td>
+                <td>{{ plat.date_creation }}</td>
+                <td class="text-center">{{ plat.prix}}</td>
+                <td class="text-center">{{ plat.avis_set.count}}</td>
+                <td class="text-center">{{ plat.note_moyenne|floatformat }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

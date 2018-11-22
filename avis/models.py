@@ -116,3 +116,7 @@ class Avis(models.Model):
         firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
         storage = firebase.storage()
         return storage.child(self.photo).get_url(None)
+
+    def has_been_edited(self):
+        """ Compare les dates de création et d'édition pour savoir si l'objet a été édité """
+        return self.date_creation.replace(microsecond=0) != self.date_edition.replace(microsecond=0)

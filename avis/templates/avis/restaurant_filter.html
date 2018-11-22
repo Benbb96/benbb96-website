@@ -20,10 +20,11 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h2>
-                <a href="{{ restaurant.get_absolute_url }}">{{ restaurant.nom }}</a> <small>(ajouté le {{ restaurant.date_creation|date }})</small>
+                <a href="{{ restaurant.get_absolute_url }}">{{ restaurant.nom }}</a>
             </h2>
         </div>
         <div class="panel-body">
+             <p>Ajouté le {{ restaurant.date_creation|date }}</p>
             {% if restaurant.informations %}
                 <div>{{ restaurant.informations }}</div>
             {% endif %}

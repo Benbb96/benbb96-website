@@ -128,6 +128,7 @@ class AvisAdmin(admin.ModelAdmin):
     search_fields = ('plat__nom', 'plat__restaurant__nom', 'auteur__user__username')
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('plat',)
+    readonly_fields = ('date_creation', 'date_edition')
 
     form = AvisForm
 
