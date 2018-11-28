@@ -2,11 +2,11 @@
 
 {% load static %}
 
-{% block avis_title %}Plat {{ object.nom }}{% endblock %}
+{% block avis_title %}Produit {{ object.nom }}{% endblock %}
 
 {% block avis_content %}
      <ul class="breadcrumb">
-        <li><a href="{{ object.restaurant.get_absolute_url }}">{{ object.restaurant }}</a></li>
+        <li><a href="{{ object.structure.get_absolute_url }}">{{ object.structure }}</a></li>
         <li>{{ object.nom }}</li>
     </ul>
 
@@ -22,6 +22,13 @@
             {% endif %}
             {% if object.avis_set %}
                 <h3>Note moyenne : <strong>{{ object.note_moyenne|floatformat }}/10</strong></h3>
+            {% endif %}
+            {% if object.categories.exists %}
+                {% for catgorie in object.categories.all %}
+                    <a href="{{ catgorie.get_absolute_url }}">
+                        <span class="label label-primary">{{ catgorie }}</span>
+                    </a>
+                {% endfor %}
             {% endif %}
         </div>
         <div class="col-md-6 col-xs-12">
@@ -41,15 +48,17 @@
                 <div class="carousel-inner">
 
                     {% for avis in object.avis_set.all %}
-                    <div class="item{% if forloop.first %} active{% endif %}">
-                        <a href="{{ avis.get_absolute_url }}">
-                            <img src="{% if avis.photo %}{{ avis.get_photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du plat {{ avis.plat }}" alt="Photo du plat {{ avis.plat }} prise par {{ avis.auteur }}" style="width: auto; height: 225px; max-height: 225px; margin: auto">
-                        </a>
-                        <div class="carousel-caption">
-                            <h3><a href="{{ avis.get_absolute_url }}">{{ avis.auteur }} - {{ avis.note }}/10</a></h3>
-                            <p>{{ avis.date_creation|date:"d/m/y" }}. {{ avis.apercu_avis }}</p>
-                        </div>
-                    </div>
+                        {% if request.user.is_authenticated or not avis.prive %}
+                            <div class="item{% if forloop.first %} active{% endif %}">
+                                <a href="{{ avis.get_absolute_url }}">
+                                    <img src="{% if avis.photo %}{{ avis.get_photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit }}" alt="Photo du produit {{ avis.produit }} prise par {{ avis.auteur }}" style="width: auto; height: 225px; max-height: 225px; margin: auto">
+                                </a>
+                                <div class="carousel-caption">
+                                    <h3><a href="{{ avis.get_absolute_url }}">{{ avis.auteur }} - {{ avis.note }}/10</a></h3>
+                                    <p>{{ avis.date_creation|date:"d/m/y" }}. {{ avis.apercu_avis }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endfor %}
 
                 </div>

@@ -25,11 +25,41 @@ def apercu(text):
     return apercu
 
 
-class Restaurant(models.Model):
+class CategorieProduit(models.Model):
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
-    informations = models.TextField(blank=True, help_text='Informations utiles et relatives au restaurant')
-    lien = models.URLField(max_length=255, blank=True, help_text='Le lien vers le site internet')
+
+    class Meta:
+        verbose_name = 'catégorie de produit'
+        verbose_name_plural = 'catégories de produit'
+
+    def __str__(self):
+        return self.nom
+
+    def get_absolute_url(self):
+        return reverse('avis:categorie', kwargs={'slug': self.slug})
+
+
+class TypeStructure(models.Model):
+    nom = models.CharField(max_length=100)
+    categories = models.ManyToManyField(
+        CategorieProduit, help_text='Selectionnez la ou les catégories de produit possibles pour ce type de structure.'
+    )
+
+    class Meta:
+        verbose_name = "type de structure"
+        verbose_name_plural = "types de structure"
+
+    def __str__(self):
+        return self.nom
+
+
+class Structure(models.Model):
+    nom = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, null=True)
+    type = models.ForeignKey(TypeStructure, on_delete=models.PROTECT, verbose_name='type de la structure')
+    informations = models.TextField(blank=True, help_text='Informations utiles et relatives à la structure.')
+    lien = models.URLField(max_length=255, blank=True, help_text='Le lien vers le site internet.')
     telephone = models.CharField(
         max_length=20, blank=True, help_text='Indicatif facultatif et sans espaces.', validators=[telephone_validator]
     )
@@ -37,14 +67,14 @@ class Restaurant(models.Model):
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
     def __str__(self):
-        return self.nom
+        return "%s - %s" % (self.type, self.nom)
 
     def get_absolute_url(self):
-        return reverse('avis:restaurant', kwargs={'slug': self.slug})
+        return reverse('avis:structure', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.slug)
-        super(Restaurant, self).save(*args, **kwargs)
+        super(Structure, self).save(*args, **kwargs)
 
     def apercu_informations(self):
         return apercu(self.informations)
@@ -55,27 +85,28 @@ class Restaurant(models.Model):
     def note_moyenne(self):
         moyenne = 0
         count = 0
-        for plat in self.plat_set.all():
-            if plat.avis_set.count():
-                moyenne += plat.avis_set.all().aggregate(Avg('note'))['note__avg']
+        for produit in self.produit_set.all():
+            if produit.avis_set.count():
+                moyenne += produit.avis_set.all().aggregate(Avg('note'))['note__avg']
                 count += 1
         if count:
             moyenne = moyenne / count
         return moyenne
 
 
-class Plat(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
+class Produit(models.Model):
+    structure = models.ForeignKey(Structure, on_delete=models.PROTECT)
     nom = models.CharField(max_length=100)
-    description = models.TextField(blank=True, help_text='Une description du plat')
+    description = models.TextField(blank=True, help_text='Une description du produit.')
     prix = models.DecimalField(max_digits=4, decimal_places=2)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
+    categories = models.ManyToManyField(CategorieProduit, help_text='Sélectionnez la ou les catégories de ce produit.', blank=True)
 
     def __str__(self):
-        return self.nom
+        return '%s [%s]' % (self.nom, self.structure)
 
     def get_absolute_url(self):
-        return reverse('avis:plat', kwargs={'pk': self.pk})
+        return reverse('avis:produit', kwargs={'pk': self.pk})
 
     def apercu_description(self):
         return apercu(self.description)
@@ -92,17 +123,19 @@ class Avis(models.Model):
         verbose_name_plural = 'avis'
         ordering = ('-date_edition',)
 
-    plat = models.ForeignKey(Plat, on_delete=models.PROTECT)
+    produit = models.ForeignKey(Produit, on_delete=models.PROTECT)
     auteur = models.ForeignKey(Profil, on_delete=models.PROTECT)
-    avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le plat')
+    avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le produit.')
     note = models.PositiveIntegerField(default=5, help_text='Une note entre 0 et 10',
                                        validators=[MinValueValidator(0), MaxValueValidator(10)])
     photo = models.TextField(null=True, blank=True)
+    prive = models.BooleanField('privé', default=False,
+                                help_text='Cochez pour cacher cet avis aux utilisateurs non connectés')
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
     date_edition = models.DateTimeField(verbose_name="date de dernière modification", auto_now=True)
 
     def __str__(self):
-        return str(self.auteur) + ' : ' + self.plat.nom + ' (' + str(self.note) + '/10)'
+        return '%s : %s (%d/10)' % (self.auteur, self.produit.nom, self.note)
 
     def get_absolute_url(self):
         return reverse('avis:detail-avis', kwargs={'pk': self.pk})
@@ -116,3 +149,7 @@ class Avis(models.Model):
         firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
         storage = firebase.storage()
         return storage.child(self.photo).get_url(None)
+
+    def has_been_edited(self):
+        """ Compare les dates de création et d'édition pour savoir si l'objet a été édité """
+        return self.date_creation.replace(microsecond=0) != self.date_edition.replace(microsecond=0)

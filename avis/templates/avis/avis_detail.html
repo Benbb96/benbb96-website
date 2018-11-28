@@ -1,26 +1,29 @@
 {% extends 'avis/base_avis.html' %}
 
-{% block avis_title %}Avis {{ object.plat }}{% endblock %}
+{% block avis_title %}Avis {{ object.produit }}{% endblock %}
 
 {% block avis_content %}
     <ul class="breadcrumb">
-        <li><a href="{{ object.plat.restaurant.get_absolute_url }}">{{ object.plat.restaurant }}</a></li>
-        <li><a href="{{ object.plat.get_absolute_url }}">{{ object.plat }}</a></li>
+        <li><a href="{{ object.produit.structure.get_absolute_url }}">{{ object.produit.structure }}</a></li>
+        <li><a href="{{ object.produit.get_absolute_url }}">{{ object.produit }}</a></li>
         <li>Avis n°{{ object.id }}</li>
     </ul>
 
-    <h1>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.plat }}</h1>
-    <h4>Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }} | Editée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}</h4>
+    <h1>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit }}</h1>
+    <h4>
+        Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }}
+        {% if object.has_been_edited %}
+            | Editée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}
+        {% endif %}
+    </h4>
     <div class="row">
         <div class="col-md-6 col-xs-12">
             {% if object.photo %}
-            <img src="{{ object.get_photo_url }}" width="100%" title="Photo du plat {{ object.plat }}" alt="Photo du plat {{ object.plat }} prise par {{ object.auteur }}" />
+            <img src="{{ object.get_photo_url }}" width="100%" title="Photo du produit {{ object.produit }}" alt="Photo du produit {{ object.produit }} prise par {{ object.auteur }}" />
             {% endif %}
         </div>
         <div class="col-md-6 col-xs-12 h4">
-            {{ object.avis|linebreaks }}<br>
-            <br>
-            Dernière mise à jour : {{ object.date_edition }}
+            {{ object.avis|linebreaks }}
         </div>
     </div>
     <div class="text-center">

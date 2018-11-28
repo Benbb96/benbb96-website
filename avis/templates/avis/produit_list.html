@@ -1,0 +1,14 @@
+{% extends 'avis/base_avis.html' %}
+
+{% block avis_title %}Produits{% endblock %}
+
+{% block avis_content %}
+<h1>Produits</h1>
+<ul>
+{% for produit in object_list %}
+    <li><a href="{{ produit.get_absolute_url }}">{{ produit.nom }}</a> (ajouté le {{ produit.date_creation|date }})</li>
+{% empty %}
+    <li>Pas de produit enregistré.</li>
+{% endfor %}
+</ul>
+{% endblock %}

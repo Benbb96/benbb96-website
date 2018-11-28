@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
-from avis.forms import AvisForm
-from .models import Profil, Restaurant, Plat, Avis
+from avis.forms import AvisForm, ProduitForm
+from .models import Profil, TypeStructure, Structure, Produit, Avis, CategorieProduit
 
 
 @admin.register(Profil)
@@ -18,41 +18,57 @@ class ProfilAdmin(admin.ModelAdmin):
     nbAvis.short_description = "Nombre d'avis"
 
 
-class PlatInLine(admin.StackedInline):
-    model = Plat
+@admin.register(CategorieProduit)
+class CategorieProduitAdmin(admin.ModelAdmin):
+    list_display = ('nom',)
+    search_fields = ('nom',)
+    prepopulated_fields = {'slug': ('nom',), }
+
+
+class ProduitInLine(admin.StackedInline):
+    model = Produit
     exclude = ('photo', )
     extra = 1
     show_change_link = True
 
+    form = ProduitForm
 
-@admin.register(Restaurant)
-class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nb_plat', 'moyenne', 'date_creation')
+
+@admin.register(TypeStructure)
+class TypeStructureAdmin(admin.ModelAdmin):
+    list_display = ('nom',)
+    search_fields = ('nom',)
+    autocomplete_fields = ('categories',)
+
+
+@admin.register(Structure)
+class StructureAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'type', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nb_produit', 'moyenne', 'date_creation')
     search_fields = ('nom', 'adresse')
     date_hierarchy = 'date_creation'
     ordering = ('nom', 'date_creation')
     prepopulated_fields = {'slug': ('nom',), }
 
     inlines = [
-        PlatInLine,
+        ProduitInLine,
     ]
 
     def get_queryset(self, request):
-        # Ajoute la moyenne et le nombre de plat sur chacun des restaurants
-        qs = super(RestaurantAdmin, self).get_queryset(request)
-        qs = qs.annotate(moyenne=models.Avg('plat__avis__note'))
-        qs = qs.annotate(nb_plat=models.Count('plat'))
+        # Ajoute la moyenne et le nombre de produit sur chacunes des structures
+        qs = super(StructureAdmin, self).get_queryset(request)
+        qs = qs.annotate(moyenne=models.Avg('produit__avis__note'))
+        qs = qs.annotate(nb_produit=models.Count('produit'))
         return qs
 
-    def moyenne(self, restaurant):
-        return restaurant.note_moyenne
+    def moyenne(self, structure):
+        return structure.note_moyenne
     moyenne.admin_order_field = 'moyenne'
 
-    def nb_plat(self, restaurant):
-        return restaurant.plat_set.count()
-    nb_plat.admin_order_field = 'nb_plat'
+    def nb_produit(self, structure):
+        return structure.produit_set.count()
+    nb_produit.admin_order_field = 'nb_produit'
 
-    nb_plat.short_description = 'Nombre de plat'
+    nb_produit.short_description = 'Nombre de produit'
 
     def position_map(self, instance):
         if instance.adresse is not None:
@@ -77,22 +93,24 @@ class AvisInLine(admin.StackedInline):
     form = AvisForm
 
 
-@admin.register(Plat)
-class PlatAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'restaurant', 'apercu_description', 'prix', 'moyenne', 'total_avis')
-    list_filter = ('restaurant', )
-    search_fields = ('nom', 'description', 'restaurant__nom')
+@admin.register(Produit)
+class ProduitAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'structure', 'apercu_description', 'prix', 'moyenne', 'total_avis')
+    list_filter = ('structure', )
+    search_fields = ('nom', 'description', 'structure__nom')
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
-    autocomplete_fields = ('restaurant',)
+    autocomplete_fields = ('structure', 'categories')
+
+    form = ProduitForm
 
     inlines = [
         AvisInLine,
     ]
 
     def get_queryset(self, request):
-        # Ajoute la note moyenne du plat et le nombre total d'avis sur chacun des plats
-        qs = super(PlatAdmin, self).get_queryset(request)
+        # Ajoute la note moyenne du produit et le nombre total d'avis sur chacun des produits
+        qs = super(ProduitAdmin, self).get_queryset(request)
         qs = qs.annotate(moyenne=models.Avg('avis__note'))
         qs = qs.annotate(total=models.Count('avis__note'))
         return qs
@@ -106,8 +124,8 @@ class PlatAdmin(admin.ModelAdmin):
         else:
             formset.save()
 
-    def nbAvis(self, plat):
-        return plat.avis_set.count()
+    def nbAvis(self, produit):
+        return produit.avis_set.count()
 
     nbAvis.short_description = "Nombre d'avis"
 
@@ -124,18 +142,19 @@ class PlatAdmin(admin.ModelAdmin):
 
 @admin.register(Avis)
 class AvisAdmin(admin.ModelAdmin):
-    list_display = ('id', 'restaurant', 'plat', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition')
-    list_filter = ('auteur', 'note')
-    search_fields = ('plat__nom', 'plat__restaurant__nom', 'auteur__user__username')
+    list_display = ('id', 'structure', 'produit', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition', 'prive')
+    list_filter = ('auteur', 'note', 'prive')
+    search_fields = ('produit__nom', 'produit__structure__nom', 'auteur__user__username')
     date_hierarchy = 'date_creation'
-    autocomplete_fields = ('plat',)
+    autocomplete_fields = ('produit',)
+    readonly_fields = ('date_creation', 'date_edition')
 
     form = AvisForm
 
-    def restaurant(self, avis):
-        return avis.plat.restaurant
+    def structure(self, avis):
+        return avis.produit.structure
 
-    restaurant.short_description = "Restaurant"
+    structure.short_description = "Structure"
 
     def get_form(self, request, obj=None, **kwargs):
         # Pré-rempli automatiquement avec l'utilisateur connecté

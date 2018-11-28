@@ -1,12 +1,13 @@
 import django_filters
 
-from avis.models import Restaurant
+from avis.models import Structure
 
 
-class RestaurantFilter(django_filters.FilterSet):
+class StructureFilter(django_filters.FilterSet):
     class Meta:
-        model = Restaurant
+        model = Structure
         fields = {
             'nom': ['icontains'],
-            'informations': ['icontains']
+            'informations': ['icontains'],
+            'type': ['exact']
         }

@@ -1,0 +1,10 @@
+{% extends 'avis/base_avis.html' %}
+
+{% load static %}
+
+{% block avis_title %}Catégorie {{ object.nom }}{% endblock %}
+
+{% block avis_content %}
+    <h1>Catégorie {{ object.nom }}</h1>
+    {% include 'avis/produit_table.html' %}
+{% endblock %}

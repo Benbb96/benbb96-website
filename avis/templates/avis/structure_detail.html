@@ -1,0 +1,25 @@
+{% extends 'avis/base_avis.html' %}
+
+{% block avis_title %}{{ object.type }} {{ object.nom }}{% endblock %}
+
+{% block avis_content %}
+    <h1>{{ object.nom }}</h1>
+    <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
+    <div>
+        {% if object.informations %}
+            <h4>{{ object.informations|linebreaksbr }}</h4>
+        {% endif %}
+        {% if object.telephone %}
+            <p>Téléphone : {{ object.telephone }}</p>
+        {% endif %}
+        {% if object.lien %}
+            <p>Lien du site web : <a href="{{ object.lien }}" target="_blank">{{ object.lien }}</a></p>
+        {% endif %}
+        {% if object.adresse %}
+            <p>Adresse : {{ object.adresse }}</p>
+        {% endif %}
+        <p>Moyenne général : <strong>{{ object.note_moyenne|floatformat }}/10</strong></p>
+    </div>
+    <h2>Les produits</h2>
+    {% include 'avis/produit_table.html' %}
+{% endblock %}
