@@ -23,6 +23,13 @@
             {% if object.avis_set %}
                 <h3>Note moyenne : <strong>{{ object.note_moyenne|floatformat }}/10</strong></h3>
             {% endif %}
+            {% if object.categories.exists %}
+                {% for catgorie in object.categories.all %}
+                    <a href="{{ catgorie.get_absolute_url }}">
+                        <span class="label label-primary">{{ catgorie }}</span>
+                    </a>
+                {% endfor %}
+            {% endif %}
         </div>
         <div class="col-md-6 col-xs-12">
             <h2>Les avis</h2>

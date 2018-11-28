@@ -2,7 +2,11 @@ from django.views.generic import ListView, DetailView
 from django_filters.views import FilterView
 
 from avis.filters import StructureFilter
-from avis.models import Structure, Avis, Produit
+from avis.models import Structure, Avis, Produit, CategorieProduit
+
+
+class CategorieProduitDetail(DetailView):
+    model = CategorieProduit
 
 
 class StructureList(FilterView):

@@ -25,8 +25,26 @@ def apercu(text):
     return apercu
 
 
+class CategorieProduit(models.Model):
+    nom = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, null=True)
+
+    class Meta:
+        verbose_name = 'catégorie de produit'
+        verbose_name_plural = 'catégories de produit'
+
+    def __str__(self):
+        return self.nom
+
+    def get_absolute_url(self):
+        return reverse('avis:categorie', kwargs={'slug': self.slug})
+
+
 class TypeStructure(models.Model):
     nom = models.CharField(max_length=100)
+    categories = models.ManyToManyField(
+        CategorieProduit, help_text='Selectionnez la ou les catégories de produit possibles pour ce type de structure.'
+    )
 
     class Meta:
         verbose_name = "type de structure"
@@ -40,8 +58,8 @@ class Structure(models.Model):
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
     type = models.ForeignKey(TypeStructure, on_delete=models.PROTECT, verbose_name='type de la structure')
-    informations = models.TextField(blank=True, help_text='Informations utiles et relatives à la structure')
-    lien = models.URLField(max_length=255, blank=True, help_text='Le lien vers le site internet')
+    informations = models.TextField(blank=True, help_text='Informations utiles et relatives à la structure.')
+    lien = models.URLField(max_length=255, blank=True, help_text='Le lien vers le site internet.')
     telephone = models.CharField(
         max_length=20, blank=True, help_text='Indicatif facultatif et sans espaces.', validators=[telephone_validator]
     )
@@ -79,9 +97,10 @@ class Structure(models.Model):
 class Produit(models.Model):
     structure = models.ForeignKey(Structure, on_delete=models.PROTECT)
     nom = models.CharField(max_length=100)
-    description = models.TextField(blank=True, help_text='Une description du produit')
+    description = models.TextField(blank=True, help_text='Une description du produit.')
     prix = models.DecimalField(max_digits=4, decimal_places=2)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
+    categories = models.ManyToManyField(CategorieProduit, help_text='Sélectionnez la ou les catégories de ce produit.', blank=True)
 
     def __str__(self):
         return self.nom
@@ -106,7 +125,7 @@ class Avis(models.Model):
 
     produit = models.ForeignKey(Produit, on_delete=models.PROTECT)
     auteur = models.ForeignKey(Profil, on_delete=models.PROTECT)
-    avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le produit')
+    avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le produit.')
     note = models.PositiveIntegerField(default=5, help_text='Une note entre 0 et 10',
                                        validators=[MinValueValidator(0), MaxValueValidator(10)])
     photo = models.TextField(null=True, blank=True)

@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
-from avis.forms import AvisForm
-from .models import Profil, TypeStructure, Structure, Produit, Avis
+from avis.forms import AvisForm, ProduitForm
+from .models import Profil, TypeStructure, Structure, Produit, Avis, CategorieProduit
 
 
 @admin.register(Profil)
@@ -18,17 +18,27 @@ class ProfilAdmin(admin.ModelAdmin):
     nbAvis.short_description = "Nombre d'avis"
 
 
+@admin.register(CategorieProduit)
+class CategorieProduitAdmin(admin.ModelAdmin):
+    list_display = ('nom',)
+    search_fields = ('nom',)
+    prepopulated_fields = {'slug': ('nom',), }
+
+
 class ProduitInLine(admin.StackedInline):
     model = Produit
     exclude = ('photo', )
     extra = 1
     show_change_link = True
 
+    form = ProduitForm
+
 
 @admin.register(TypeStructure)
 class TypeStructureAdmin(admin.ModelAdmin):
     list_display = ('nom',)
     search_fields = ('nom',)
+    autocomplete_fields = ('categories',)
 
 
 @admin.register(Structure)
@@ -90,7 +100,9 @@ class ProduitAdmin(admin.ModelAdmin):
     search_fields = ('nom', 'description', 'structure__nom')
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
-    autocomplete_fields = ('structure',)
+    autocomplete_fields = ('structure', 'categories')
+
+    form = ProduitForm
 
     inlines = [
         AvisInLine,
