@@ -1,5 +1,7 @@
 {% extends 'avis/base_avis.html' %}
 
+{% load custom_tags %}
+
 {% block avis_title %}Restaurant {{ object.nom }}{% endblock %}
 
 {% block avis_content %}
@@ -31,7 +33,7 @@
                 <th>Date d'ajout</th>
                 <th class="text-center">Prix</th>
                 <th class="text-center">Nombre d'avis</th>
-                <th class="text-center">Note moyenne (sur 10)</th>
+                <th class="text-center">Note moyenne</th>
             </tr>
             </thead>
             <tbody>
@@ -46,9 +48,15 @@
                 </td>
                 <td><a href="{{ plat.get_absolute_url }}">{{ plat }}</a></td>
                 <td>{{ plat.date_creation }}</td>
-                <td class="text-center">{{ plat.prix}}</td>
+                <td class="text-center">{{ plat.prix}}€</td>
                 <td class="text-center">{{ plat.avis_set.count}}</td>
-                <td class="text-center">{{ plat.note_moyenne|floatformat }}</td>
+                <td class="text-center">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-{{ restaurant.note_moyenne|color }}" role="progressbar" aria-valuenow="{{ restaurant.note_moyenne|multiply_10 }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ restaurant.note_moyenne|multiply_10 }}%">
+                            {{ restaurant.note_moyenne|floatformat }}/10
+                        </div>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
             </tbody>
