@@ -25,10 +25,22 @@ def apercu(text):
     return apercu
 
 
-class Restaurant(models.Model):
+class TypeStructure(models.Model):
+    nom = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = "type de structure"
+        verbose_name_plural = "types de structure"
+
+    def __str__(self):
+        return self.nom
+
+
+class Structure(models.Model):
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
-    informations = models.TextField(blank=True, help_text='Informations utiles et relatives au restaurant')
+    type = models.ForeignKey(TypeStructure, on_delete=models.PROTECT, verbose_name='type de la structure')
+    informations = models.TextField(blank=True, help_text='Informations utiles et relatives à la structure')
     lien = models.URLField(max_length=255, blank=True, help_text='Le lien vers le site internet')
     telephone = models.CharField(
         max_length=20, blank=True, help_text='Indicatif facultatif et sans espaces.', validators=[telephone_validator]
@@ -37,14 +49,14 @@ class Restaurant(models.Model):
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
     def __str__(self):
-        return self.nom
+        return "%s - %s" % (self.type, self.nom)
 
     def get_absolute_url(self):
-        return reverse('avis:restaurant', kwargs={'slug': self.slug})
+        return reverse('avis:structure', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.slug)
-        super(Restaurant, self).save(*args, **kwargs)
+        super(Structure, self).save(*args, **kwargs)
 
     def apercu_informations(self):
         return apercu(self.informations)
@@ -65,7 +77,7 @@ class Restaurant(models.Model):
 
 
 class Plat(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
+    structure = models.ForeignKey(Structure, on_delete=models.PROTECT)
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True, help_text='Une description du plat')
     prix = models.DecimalField(max_digits=4, decimal_places=2)

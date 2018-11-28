@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.html import format_html
 
 from avis.forms import AvisForm
-from .models import Profil, Restaurant, Plat, Avis
+from .models import Profil, TypeStructure, Structure, Plat, Avis
 
 
 @admin.register(Profil)
@@ -25,9 +25,15 @@ class PlatInLine(admin.StackedInline):
     show_change_link = True
 
 
-@admin.register(Restaurant)
-class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nb_plat', 'moyenne', 'date_creation')
+@admin.register(TypeStructure)
+class TypeStructureAdmin(admin.ModelAdmin):
+    list_display = ('nom',)
+    search_fields = ('nom',)
+
+
+@admin.register(Structure)
+class StructureAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'type', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nb_plat', 'moyenne', 'date_creation')
     search_fields = ('nom', 'adresse')
     date_hierarchy = 'date_creation'
     ordering = ('nom', 'date_creation')
@@ -39,7 +45,7 @@ class RestaurantAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         # Ajoute la moyenne et le nombre de plat sur chacun des restaurants
-        qs = super(RestaurantAdmin, self).get_queryset(request)
+        qs = super(StructureAdmin, self).get_queryset(request)
         qs = qs.annotate(moyenne=models.Avg('plat__avis__note'))
         qs = qs.annotate(nb_plat=models.Count('plat'))
         return qs
@@ -79,12 +85,12 @@ class AvisInLine(admin.StackedInline):
 
 @admin.register(Plat)
 class PlatAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'restaurant', 'apercu_description', 'prix', 'moyenne', 'total_avis')
-    list_filter = ('restaurant', )
-    search_fields = ('nom', 'description', 'restaurant__nom')
+    list_display = ('nom', 'structure', 'apercu_description', 'prix', 'moyenne', 'total_avis')
+    list_filter = ('structure', )
+    search_fields = ('nom', 'description', 'structure__nom')
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
-    autocomplete_fields = ('restaurant',)
+    autocomplete_fields = ('structure',)
 
     inlines = [
         AvisInLine,
@@ -124,7 +130,7 @@ class PlatAdmin(admin.ModelAdmin):
 
 @admin.register(Avis)
 class AvisAdmin(admin.ModelAdmin):
-    list_display = ('id', 'restaurant', 'plat', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition')
+    list_display = ('id', 'structure', 'plat', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition')
     list_filter = ('auteur', 'note')
     search_fields = ('plat__nom', 'plat__restaurant__nom', 'auteur__user__username')
     date_hierarchy = 'date_creation'
@@ -133,10 +139,10 @@ class AvisAdmin(admin.ModelAdmin):
 
     form = AvisForm
 
-    def restaurant(self, avis):
-        return avis.plat.restaurant
+    def structure(self, avis):
+        return avis.plat.structure
 
-    restaurant.short_description = "Restaurant"
+    structure.short_description = "Structure"
 
     def get_form(self, request, obj=None, **kwargs):
         # Pré-rempli automatiquement avec l'utilisateur connecté

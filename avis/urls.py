@@ -9,6 +9,6 @@ urlpatterns = [
     path('<int:pk>/', views.AvisDetailView.as_view(), name='detail-avis'),
     path('plats/', views.PlatList.as_view(), name='plats'),
     path('plats/<int:pk>/', views.PlatDetail.as_view(), name='plat'),
-    path('restaurants/', views.RestaurantList.as_view(), name='restaurants'),
-    path('restaurants/<slug:slug>/', views.RestaurantDetail.as_view(), name='restaurant')
+    path('structures/', views.StructureList.as_view(), name='structures'),
+    path('structures/<slug:slug>/', views.StructureDetail.as_view(), name='structure')
 ]

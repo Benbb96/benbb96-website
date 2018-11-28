@@ -4,7 +4,7 @@
 
 {% block avis_content %}
     <ul class="breadcrumb">
-        <li><a href="{{ object.plat.restaurant.get_absolute_url }}">{{ object.plat.restaurant }}</a></li>
+        <li><a href="{{ object.plat.structure.get_absolute_url }}">{{ object.plat.structure }}</a></li>
         <li><a href="{{ object.plat.get_absolute_url }}">{{ object.plat }}</a></li>
         <li>Avis n°{{ object.id }}</li>
     </ul>
