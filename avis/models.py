@@ -67,19 +67,19 @@ class Structure(models.Model):
     def note_moyenne(self):
         moyenne = 0
         count = 0
-        for plat in self.plat_set.all():
-            if plat.avis_set.count():
-                moyenne += plat.avis_set.all().aggregate(Avg('note'))['note__avg']
+        for produit in self.produit_set.all():
+            if produit.avis_set.count():
+                moyenne += produit.avis_set.all().aggregate(Avg('note'))['note__avg']
                 count += 1
         if count:
             moyenne = moyenne / count
         return moyenne
 
 
-class Plat(models.Model):
+class Produit(models.Model):
     structure = models.ForeignKey(Structure, on_delete=models.PROTECT)
     nom = models.CharField(max_length=100)
-    description = models.TextField(blank=True, help_text='Une description du plat')
+    description = models.TextField(blank=True, help_text='Une description du produit')
     prix = models.DecimalField(max_digits=4, decimal_places=2)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
@@ -87,7 +87,7 @@ class Plat(models.Model):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse('avis:plat', kwargs={'pk': self.pk})
+        return reverse('avis:produit', kwargs={'pk': self.pk})
 
     def apercu_description(self):
         return apercu(self.description)
@@ -104,9 +104,9 @@ class Avis(models.Model):
         verbose_name_plural = 'avis'
         ordering = ('-date_edition',)
 
-    plat = models.ForeignKey(Plat, on_delete=models.PROTECT)
+    produit = models.ForeignKey(Produit, on_delete=models.PROTECT)
     auteur = models.ForeignKey(Profil, on_delete=models.PROTECT)
-    avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le plat')
+    avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le produit')
     note = models.PositiveIntegerField(default=5, help_text='Une note entre 0 et 10',
                                        validators=[MinValueValidator(0), MaxValueValidator(10)])
     photo = models.TextField(null=True, blank=True)
@@ -114,7 +114,7 @@ class Avis(models.Model):
     date_edition = models.DateTimeField(verbose_name="date de dernière modification", auto_now=True)
 
     def __str__(self):
-        return str(self.auteur) + ' : ' + self.plat.nom + ' (' + str(self.note) + '/10)'
+        return '%s : %s (%d/10)' % (self.auteur, self.produit.nom, self.note)
 
     def get_absolute_url(self):
         return reverse('avis:detail-avis', kwargs={'pk': self.pk})

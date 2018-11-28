@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView
 from django_filters.views import FilterView
 
 from avis.filters import StructureFilter
-from avis.models import Structure, Avis, Plat
+from avis.models import Structure, Avis, Produit
 
 
 class StructureList(FilterView):
@@ -13,12 +13,12 @@ class StructureDetail(DetailView):
     model = Structure
 
 
-class PlatList(ListView):
-    model = Plat
+class ProduitList(ListView):
+    model = Produit
 
 
-class PlatDetail(DetailView):
-    model = Plat
+class ProduitDetail(DetailView):
+    model = Produit
 
 
 class AvisListView(ListView):

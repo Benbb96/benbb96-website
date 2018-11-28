@@ -22,7 +22,7 @@
         {% endif %}
         <p>Moyenne général : <strong>{{ object.note_moyenne|floatformat }}/10</strong></p>
     </div>
-    <h2>Les plats</h2>
+    <h2>Les produits</h2>
 
     <div class="table-responsive">
         <table class="table table-striped">
@@ -37,19 +37,19 @@
             </tr>
             </thead>
             <tbody>
-            {% for plat in object.plat_set.all %}
+            {% for produit in object.produit_set.all %}
             <tr>
                 <td class="text-center">
-                    {% if plat.avis_set.exists %}
-                        <a href="{{ plat.get_absolute_url }}">
-                            <img src="{{ plat.avis_set.first.get_photo_url }}" height="100px" alt="Photo du plat {{ plat }}">
+                    {% if produit.avis_set.exists %}
+                        <a href="{{ produit.get_absolute_url }}">
+                            <img src="{{ produit.avis_set.first.get_photo_url }}" height="100px" alt="Photo du produit {{ produit }}">
                         </a>
                     {% endif %}
                 </td>
-                <td><a href="{{ plat.get_absolute_url }}">{{ plat }}</a></td>
-                <td>{{ plat.date_creation }}</td>
-                <td class="text-center">{{ plat.prix}}€</td>
-                <td class="text-center">{{ plat.avis_set.count}}</td>
+                <td><a href="{{ produit.get_absolute_url }}">{{ produit }}</a></td>
+                <td>{{ produit.date_creation }}</td>
+                <td class="text-center">{{ produit.prix}}€</td>
+                <td class="text-center">{{ produit.avis_set.count}}</td>
                 <td class="text-center">
                     <div class="progress">
                         <div class="progress-bar progress-bar-{{ structure.note_moyenne|color }}" role="progressbar" aria-valuenow="{{ structure.note_moyenne|multiply_10 }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ structure.note_moyenne|multiply_10 }}%">

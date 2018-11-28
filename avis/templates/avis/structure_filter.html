@@ -37,11 +37,11 @@
             {% if structure.informations %}
                 <div>{{ structure.informations }}</div>
             {% endif %}
-            <h3>Ses plats</h3>
+            <h3>Ses produits</h3>
             <div class="row">
-                {% for plat in structure.plat_set.all %}
+                {% for produit in structure.produit_set.all %}
                     <div class="col-md-3 col-sm-4 col-xs-6">
-                        <h4><a href="{{ plat.get_absolute_url }}">{{ plat.nom }}</a></h4>
+                        <h4><a href="{{ produit.get_absolute_url }}">{{ produit.nom }}</a></h4>
                     </div>
                 {% endfor %}
             </div>
