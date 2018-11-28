@@ -103,7 +103,7 @@ class Produit(models.Model):
     categories = models.ManyToManyField(CategorieProduit, help_text='Sélectionnez la ou les catégories de ce produit.', blank=True)
 
     def __str__(self):
-        return self.nom
+        return '%s [%s]' % (self.nom, self.structure)
 
     def get_absolute_url(self):
         return reverse('avis:produit', kwargs={'pk': self.pk})
@@ -129,6 +129,8 @@ class Avis(models.Model):
     note = models.PositiveIntegerField(default=5, help_text='Une note entre 0 et 10',
                                        validators=[MinValueValidator(0), MaxValueValidator(10)])
     photo = models.TextField(null=True, blank=True)
+    prive = models.BooleanField('privé', default=False,
+                                help_text='Cochez pour cacher cet avis aux utilisateurs non connectés')
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
     date_edition = models.DateTimeField(verbose_name="date de dernière modification", auto_now=True)
 

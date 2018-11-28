@@ -29,6 +29,11 @@ class AvisListView(ListView):
     model = Avis
     ordering = '-date_creation'
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return super(AvisListView, self).get_queryset()
+        return super(AvisListView, self).get_queryset().exclude(prive=True)
+
 
 class AvisDetailView(DetailView):
     model = Avis

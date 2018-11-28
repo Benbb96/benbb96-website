@@ -48,15 +48,17 @@
                 <div class="carousel-inner">
 
                     {% for avis in object.avis_set.all %}
-                    <div class="item{% if forloop.first %} active{% endif %}">
-                        <a href="{{ avis.get_absolute_url }}">
-                            <img src="{% if avis.photo %}{{ avis.get_photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit }}" alt="Photo du produit {{ avis.produit }} prise par {{ avis.auteur }}" style="width: auto; height: 225px; max-height: 225px; margin: auto">
-                        </a>
-                        <div class="carousel-caption">
-                            <h3><a href="{{ avis.get_absolute_url }}">{{ avis.auteur }} - {{ avis.note }}/10</a></h3>
-                            <p>{{ avis.date_creation|date:"d/m/y" }}. {{ avis.apercu_avis }}</p>
-                        </div>
-                    </div>
+                        {% if request.user.is_authenticated or not avis.prive %}
+                            <div class="item{% if forloop.first %} active{% endif %}">
+                                <a href="{{ avis.get_absolute_url }}">
+                                    <img src="{% if avis.photo %}{{ avis.get_photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit }}" alt="Photo du produit {{ avis.produit }} prise par {{ avis.auteur }}" style="width: auto; height: 225px; max-height: 225px; margin: auto">
+                                </a>
+                                <div class="carousel-caption">
+                                    <h3><a href="{{ avis.get_absolute_url }}">{{ avis.auteur }} - {{ avis.note }}/10</a></h3>
+                                    <p>{{ avis.date_creation|date:"d/m/y" }}. {{ avis.apercu_avis }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endfor %}
 
                 </div>

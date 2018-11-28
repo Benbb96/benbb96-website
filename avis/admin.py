@@ -142,8 +142,8 @@ class ProduitAdmin(admin.ModelAdmin):
 
 @admin.register(Avis)
 class AvisAdmin(admin.ModelAdmin):
-    list_display = ('id', 'structure', 'produit', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition')
-    list_filter = ('auteur', 'note')
+    list_display = ('id', 'structure', 'produit', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition', 'prive')
+    list_filter = ('auteur', 'note', 'prive')
     search_fields = ('produit__nom', 'produit__structure__nom', 'auteur__user__username')
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('produit',)
