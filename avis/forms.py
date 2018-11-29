@@ -24,5 +24,5 @@ class ProduitForm(forms.ModelForm):
                 if not categorie in categories_possible:
                     raise forms.ValidationError({
                         'categories': 'Vous ne pouvez pas choisir la catégorie %s pour une structure de type %s' %
-                                      (categorie, structure)
+                                      (categorie, structure.type)
                     })

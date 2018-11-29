@@ -19,6 +19,7 @@ class StructureDetail(DetailView):
 
 class ProduitList(ListView):
     model = Produit
+    ordering = ('nom',)
 
 
 class ProduitDetail(DetailView):
