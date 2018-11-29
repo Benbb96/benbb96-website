@@ -19,15 +19,15 @@
             <td class="text-center">
                 {% if produit.avis_set.exists %}
                     <a href="{{ produit.get_absolute_url }}">
-                        <img src="{{ produit.avis_set.first.get_photo_url }}" height="100px" alt="Photo du produit {{ produit }}">
+                        <img src="{{ produit.avis_set.first.get_photo_url }}" height="100px" alt="Photo du produit {{ produit.nom }}">
                     </a>
                 {% endif %}
             </td>
-            <td><a href="{{ produit.get_absolute_url }}">{{ produit }}</a></td>
+            <td><a href="{{ produit.get_absolute_url }}">{{ produit.nom }}</a></td>
             <td>
                 {% if produit.categories.exists %}
-                    {% for catgorie in produit.categories.all %}
-                        <span class="label label-primary">{{ catgorie }}</span>
+                    {% for categorie in produit.categories.all %}
+                        <span class="label label-primary">{{ categorie }}</span>
                     {% endfor %}
                 {% endif %}
             </td>

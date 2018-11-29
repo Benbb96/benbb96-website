@@ -1,21 +1,32 @@
 {% extends 'avis/base_avis.html' %}
 
+{% load custom_tags %}
+
 {% block avis_title %}Avis {{ object.produit }}{% endblock %}
 
 {% block avis_content %}
     <ul class="breadcrumb">
         <li><a href="{{ object.produit.structure.get_absolute_url }}">{{ object.produit.structure }}</a></li>
-        <li><a href="{{ object.produit.get_absolute_url }}">{{ object.produit }}</a></li>
+        <li><a href="{{ object.produit.get_absolute_url }}">{{ object.produit.nom }}</a></li>
         <li>Avis n°{{ object.id }}</li>
     </ul>
 
-    <h1>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit }}</h1>
+    <h2>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit.nom }}</h2>
     <h4>
         Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }}
         {% if object.has_been_edited %}
             | Editée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}
         {% endif %}
     </h4>
+    <p>
+    {% if object.produit.categories.exists %}
+        {% for categorie in object.produit.categories.all %}
+            <a href="{{ categorie.get_absolute_url }}">
+                <span class="label label-primary">{{ categorie }}</span>
+            </a>
+        {% endfor %}
+    {% endif %}
+    </p>
     <div class="row">
         <div class="col-md-6 col-xs-12">
             {% if object.photo %}
@@ -23,10 +34,20 @@
             {% endif %}
         </div>
         <div class="col-md-6 col-xs-12 h4">
-            {{ object.avis|linebreaks }}
+            <div class="well">
+                {{ object.avis|linebreaks }}
+            </div>
+            <div class="pull-right">
+                <a href="{{ object.auteur.get_absolute_url }}">
+                    {{ object.auteur }}
+                    <img class="img-rounded" src="{{ object.auteur.avatar.url }}" alt="Avatar de {{ object.auteur }}" style="max-height: 30px"/>
+                </a>
+            </div>
         </div>
     </div>
-    <div class="text-center">
-        <h2>Note : <strong>{{ object.note }}/10</strong></h2>
+    <div class="panel panel-{{ object.note|color }}" style="margin: 15px auto; width: 44%">
+        <div class="panel-heading text-center">
+            <h2>Note : <strong>{{ object.note }}/10</strong></h2>
+        </div>
     </div>
 {% endblock %}

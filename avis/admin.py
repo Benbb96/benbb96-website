@@ -18,11 +18,17 @@ class ProfilAdmin(admin.ModelAdmin):
     nbAvis.short_description = "Nombre d'avis"
 
 
+class CategorieProduitInlineTypeStructure(admin.TabularInline):
+    model = TypeStructure.categories.through
+
+
 @admin.register(CategorieProduit)
 class CategorieProduitAdmin(admin.ModelAdmin):
     list_display = ('nom',)
     search_fields = ('nom',)
     prepopulated_fields = {'slug': ('nom',), }
+
+    inlines = [CategorieProduitInlineTypeStructure]
 
 
 class ProduitInLine(admin.StackedInline):
@@ -44,10 +50,12 @@ class TypeStructureAdmin(admin.ModelAdmin):
 @admin.register(Structure)
 class StructureAdmin(admin.ModelAdmin):
     list_display = ('nom', 'type', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nb_produit', 'moyenne', 'date_creation')
-    search_fields = ('nom', 'adresse')
+    list_filter = ('type',)
+    search_fields = ('nom', 'adresse', 'type')
     date_hierarchy = 'date_creation'
     ordering = ('nom', 'date_creation')
     prepopulated_fields = {'slug': ('nom',), }
+    save_on_top = True
 
     inlines = [
         ProduitInLine,
@@ -101,6 +109,7 @@ class ProduitAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
     autocomplete_fields = ('structure', 'categories')
+    list_select_related = ('structure',)
     save_on_top = True
 
     form = ProduitForm
@@ -149,6 +158,8 @@ class AvisAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('produit',)
     readonly_fields = ('date_creation', 'date_edition')
+    list_select_related = ('produit__structure',)
+    save_on_top = True
 
     form = AvisForm
 
