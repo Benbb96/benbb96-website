@@ -1,6 +1,5 @@
-from django.contrib.auth.models import User
 from django.urls import path
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView
 
 from . import views
 
