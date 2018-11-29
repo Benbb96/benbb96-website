@@ -32,6 +32,7 @@ class CategorieProduit(models.Model):
     class Meta:
         verbose_name = 'catégorie de produit'
         verbose_name_plural = 'catégories de produit'
+        ordering = ('nom',)
 
     def __str__(self):
         return self.nom

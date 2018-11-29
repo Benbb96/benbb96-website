@@ -101,6 +101,7 @@ class ProduitAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
     autocomplete_fields = ('structure', 'categories')
+    save_on_top = True
 
     form = ProduitForm
 
