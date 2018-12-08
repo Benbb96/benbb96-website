@@ -29,6 +29,7 @@ def tracker_detail(request, slug):
     # Regroupe les données par date pour faire des stats
     df = read_frame(tracker.tracks.all(), fieldnames=['datetime'])
     df['datetime'] = pd.to_datetime(df['datetime'])
+    df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
     df.index = df['datetime']
     df['count'] = [1] * tracker.tracks.count()
     data = df.resample('D').sum()
