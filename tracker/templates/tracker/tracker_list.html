@@ -5,15 +5,17 @@
 {% block avis_title %}Mes trackers{% endblock %}
 
 {% block content %}
-    <div class="row">
+    <div class="flex-container">
         {% for tracker in object_list %}
-            <a href="{{ tracker.get_absolute_url }}">
-                <div class="col-md-3 col-sm-4 col-xs-6 text-center" style="background-color: {{ tracker.color }}">
-                    <h1>{% fontawesome_icon tracker.icone %}</h1>
-                    <h3>{{ tracker.nom }}</h3>
-                    <div>{{ tracker.tracks.count }} tracks</div>
-                </div>
-            </a>
+            <div class="flex-item">
+                <a href="{{ tracker.get_absolute_url }}">
+                    <div class="text-center" style="background-color: {{ tracker.color }}; padding: 5px 10px">
+                        <h1>{% fontawesome_icon tracker.icone %}</h1>
+                        <h3>{{ tracker.nom }}</h3>
+                        <div>{{ tracker.tracks.count }} tracks</div>
+                    </div>
+                </a>
+            </div>
         {% empty %}
             <div>Pas de tracker enregistré.</div>
         {% endfor %}
