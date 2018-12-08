@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import ListView
@@ -16,8 +17,9 @@ class TrackerListView(ListView):
         return queryset.filter(createur=self.request.user.profil)
 
 
+@login_required
 def tracker_detail(request, slug):
-    tracker = get_object_or_404(Tracker, slug=slug)
+    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), slug=slug)
 
     form = TrackForm(request.POST or None)
     if form.is_valid():

@@ -135,3 +135,5 @@ FIREBASE_CONFIG = {
     "storageBucket": "eminent-airport-148108.appspot.com",
     "messagingSenderId": "994857141623"
 }
+
+LOGIN_URL = '/admin/login/'
