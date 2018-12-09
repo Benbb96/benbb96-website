@@ -51,7 +51,7 @@ class TypeStructureAdmin(admin.ModelAdmin):
 class StructureAdmin(admin.ModelAdmin):
     list_display = ('nom', 'type', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nb_produit', 'moyenne', 'date_creation')
     list_filter = ('type',)
-    search_fields = ('nom', 'adresse', 'type')
+    search_fields = ('nom', 'adresse')
     date_hierarchy = 'date_creation'
     ordering = ('nom', 'date_creation')
     prepopulated_fields = {'slug': ('nom',), }
