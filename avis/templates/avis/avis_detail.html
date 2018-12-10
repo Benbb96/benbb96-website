@@ -36,6 +36,13 @@
         <div class="col-md-6 col-xs-12 h4">
             <div class="well">
                 {{ object.avis|linebreaks }}
+                {% if request.user.id == object.auteur.id %}
+                    <div class="text-right">
+                        <a href="{% url 'admin:avis_avis_change' object.id %}">
+                            Editer <i class="fa fa-edit" title="Editer cet avis"></i>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
             <div class="pull-right">
                 <a href="{{ object.auteur.get_absolute_url }}">
@@ -45,9 +52,9 @@
             </div>
         </div>
     </div>
-    <div class="panel panel-{{ object.note|color }}" style="margin: 15px auto; width: 44%">
+    <div class="panel panel-{{ object.note|color }}" style="margin: 15px auto; width: 30%">
         <div class="panel-heading text-center">
-            <h2>Note : <strong>{{ object.note }}/10</strong></h2>
+            <h2><strong>{{ object.note }}/10</strong></h2>
         </div>
     </div>
 {% endblock %}
