@@ -93,7 +93,7 @@ class StructureAdmin(admin.ModelAdmin):
 
 class AvisInLine(admin.StackedInline):
     model = Avis
-    fields = ('avis', 'note', 'photo')
+    fields = ('avis', 'note', 'photo', 'prive')
     extra = 1
     show_change_link = True
     ordering = ('date_creation',)
