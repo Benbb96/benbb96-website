@@ -10,6 +10,22 @@ footer {
     padding: 25px;
 }
 
+footer p a
+{
+    margin: 0;
+    transition: margin 600ms;
+}
+
+footer p a:hover
+{
+    margin: 0 13px;
+    transition: margin 300ms;
+}
+
+footer p a i:hover {
+    color: white;
+}
+
 .content {
     margin: 20px;
 }
