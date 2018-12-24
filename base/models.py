@@ -54,13 +54,3 @@ class LienReseauSocial(models.Model):
 
     def __str__(self):
         return str(self.reseau_social)
-
-
-class TestModel(models.Model):
-    url = models.TextField()
-
-    def get_url(self):
-        """ Récupère l'URL complète de l'image """
-        firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
-        storage = firebase.storage()
-        return storage.child(self.url).get_url(None)
