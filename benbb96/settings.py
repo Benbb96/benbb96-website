@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'avis.apps.AvisConfig',
     'base.apps.BaseConfig',
     'tracker.apps.TrackerConfig',
+    'music.apps.MusicConfig',
     'bootstrap3',
     'geoposition',
     'fontawesome',
