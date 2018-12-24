@@ -1,9 +1,13 @@
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
 
 
 class Pays(models.Model):
     nom = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        verbose_name_plural = 'Pays'
 
     def __str__(self):
         return self.nom
@@ -35,6 +39,12 @@ class Artiste(models.Model):
     facebook_id = models.BigIntegerField(null=True, blank=True)
     soundcloud_id = models.BigIntegerField(null=True, blank=True)
     spotify_id = models.BigIntegerField(null=True, blank=True)
+    createur = models.ForeignKey(User, related_name='artistes_crees', on_delete=models.SET_NULL, null=True, blank=True)
+    date_creation = models.DateTimeField(verbose_name="date de création", auto_now_add=True)
+    date_modification = models.DateTimeField(verbose_name="dernière modification", auto_now=True)
+
+    def __str__(self):
+        return self.nom_artiste
 
 
 class Label(models.Model):
