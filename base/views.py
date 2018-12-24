@@ -13,4 +13,3 @@ class ProfilDetailView(DetailView):
 class ProjetListView(ListView):
     model = Projet
     template_name = 'base/home.html'
-
