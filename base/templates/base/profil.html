@@ -20,7 +20,7 @@
 {% block base_content %}
     <h1>Ses derniers avis</h1>
     <div class="row">
-    {% for avis in object.profil.avis_set.all %}
+    {% for avis in object.profil.avis_set.all|slice:"6" %}
         {% if request.user.is_authenticated or not avis.prive %}
             <div class="col-sm-4 col-xs-12">
                 {% include 'avis/avis_thumbnail.html' %}
