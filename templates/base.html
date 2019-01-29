@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Benbb96{% endblock %} | Benbb96</title>
+
+    <!-- Favicon -->
+    {% include 'favicon.html' %}
+
     {# Load the tag library #}
-    {% load bootstrap3 static fontawesome  %}
+    {% load bootstrap3 static fontawesome %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'avis/css/avis-style.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap-social.css' %}">
@@ -19,7 +23,7 @@
 <body>
 
 {% block navbar %}
-{% include 'navbar.html' %}
+    {% include 'navbar.html' %}
 {% endblock %}
 
 <div class="jumbotron">
