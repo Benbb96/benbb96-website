@@ -1,3 +1,4 @@
+import soundcloud
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -45,6 +46,11 @@ class Artiste(models.Model):
 
     def __str__(self):
         return self.nom_artiste
+
+    @property
+    def soundcloud_followers(self):
+        # client = soundcloud.Client(client_id=YOUR_CLIENT_ID)
+        return 4
 
 
 class Label(models.Model):

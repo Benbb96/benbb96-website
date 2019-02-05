@@ -26,6 +26,7 @@ class TrackerAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_creation'
     ordering = ('-date_modification',)
     prepopulated_fields = {'slug': ('nom_artiste',), }
+    readonly_fields = ('soundcloud_followers', )
 
     def get_form(self, request, obj=None, **kwargs):
         # Pré-rempli automatiquement avec l'utilisateur connecté
