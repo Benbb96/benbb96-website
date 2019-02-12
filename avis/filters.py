@@ -1,6 +1,6 @@
 import django_filters
 
-from avis.models import Structure, TypeStructure
+from avis.models import Structure, TypeStructure, Produit
 
 
 class StructureFilter(django_filters.FilterSet):
@@ -13,3 +13,11 @@ class StructureFilter(django_filters.FilterSet):
     class Meta:
         model = Structure
         fields = ('nom', 'informations', 'type')
+
+
+class ProduitFilter(django_filters.FilterSet):
+    nom = django_filters.CharFilter(lookup_expr='icontains', label='Nom')
+
+    class Meta:
+        model = Produit
+        fields = ('nom',)

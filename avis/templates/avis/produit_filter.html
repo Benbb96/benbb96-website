@@ -1,18 +1,28 @@
 {% extends 'avis/base_avis.html' %}
 
-{% load custom_tags %}
+{% load custom_tags bootstrap3 %}
 
 {% block avis_title %}Produits{% endblock %}
 
 {% block avis_content %}
     <h1>Produits</h1>
+    <hr />
+    <div class="filter-bar">
+        <form class="form-inline" action="" method="get">
+            {% bootstrap_form filter.form %}
+            {% buttons submit='Filtrer <i class="fa fa-filter"></i>' %}{% endbuttons %}
+        </form>
+    </div>
+    <hr />
+    {% include 'components/pagination.html' with objects=produits %}
     <div class="row">
         <div class="list-group col-md-8 col-md-offset-2">
-        {% for produit in object_list %}
+        {% for produit in produits %}
             <a class="list-group-item{% if produit.note_moyenne %} list-group-item-{{ produit.note_moyenne|color }}{% endif %}" href="{{ produit.get_absolute_url }}">{{ produit.nom }}{% if produit.note_moyenne %} <span class="badge">{{ produit.note_moyenne|floatformat }}/10</span>{% endif %}</a>
         {% empty %}
             <li>Pas de produit enregistré.</li>
         {% endfor %}
         </div>
     </div>
+    {% include 'components/pagination.html' with objects=produits %}
 {% endblock %}
