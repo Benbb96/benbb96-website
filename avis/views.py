@@ -11,6 +11,9 @@ class CategorieProduitDetail(DetailView):
 
 class StructureList(FilterView):
     filterset_class = StructureFilter
+    context_object_name = 'structures'
+    paginate_by = 10
+
 
 
 class StructureDetail(DetailView):
