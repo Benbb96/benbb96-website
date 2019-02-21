@@ -33,12 +33,55 @@
             <br>
 
             <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a data-toggle="tab" href="#historique">Historique</a></li>
-                <li><a data-toggle="tab" href="#statistiques">Statistiques</a></li>
+                <li class="active"><a data-toggle="tab" href="#statistiques">Statistiques</a></li>
+                <li><a data-toggle="tab" href="#historique">Historique</a></li>
             </ul>
 
             <div class="tab-content">
-                <div id="historique" class="tab-pane fade in active">
+                <div id="statistiques" class="tab-pane fade in active">
+                    <h2>Statistiques</h2>
+                    <p>
+                        Moyenne par
+                        {% if frequency == 'H' %}
+                            heure
+                        {% elif frequency == 'D' %}
+                            jour
+                        {% elif frequency == 'W' %}
+                            semaine
+                        {% elif frequency == 'M' %}
+                            mois
+                        {% elif frequency == 'Q' %}
+                            quart d'année
+                        {% elif frequency == 'Y' %}
+                            année
+                        {% endif %}
+                        : <strong>{{ avg|floatformat }}</strong> {{ tracker.nom|lower }}
+                    </p>
+                    <div class="text-center">
+                        <canvas id="myChart" width="600" height="400"></canvas>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-xs-6 text-center">
+                            <a class="btn btn-default{% if frequency == 'H' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=H">Heure</a>
+                        </div>
+                        <div class="col-md-2 col-xs-6 text-center">
+                            <a class="btn btn-default{% if frequency == 'D' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=D">Jour</a>
+                        </div>
+                        <div class="col-md-2 col-xs-6 text-center">
+                            <a class="btn btn-default{% if frequency == 'W' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=W">Semaine</a>
+                        </div>
+                        <div class="col-md-2 col-xs-6 text-center">
+                            <a class="btn btn-default{% if frequency == 'M' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=M">Mois</a>
+                        </div>
+                        <div class="col-md-2 col-xs-6 text-center">
+                            <a class="btn btn-default{% if frequency == 'Q' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=Q">Quart d'année</a>
+                        </div>
+                        <div class="col-md-2 col-xs-6 text-center">
+                            <a class="btn btn-default{% if frequency == 'Y' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=Y">Année</a>
+                        </div>
+                    </div>
+                </div>
+                <div id="historique" class="tab-pane fade">
                     <h2>Historique <small>{{ tracker.tracks.count }} tracks</small></h2>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
@@ -64,13 +107,6 @@
                             {% endfor %}
                             </tbody>
                         </table>
-                    </div>
-                </div>
-                <div id="statistiques" class="tab-pane fade">
-                    <h2>Statistiques</h2>
-                    <p>Moyenne par jour : <strong>{{ avg|floatformat }}</strong> {{ tracker.nom|lower }} / jour</p>
-                    <div class="text-center">
-                        <canvas id="myChart" width="600" height="400"></canvas>
                     </div>
                 </div>
             </div>
