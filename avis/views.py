@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView
 from django_filters.views import FilterView
 
-from avis.filters import StructureFilter
+from avis.filters import StructureFilter, ProduitFilter
 from avis.models import Structure, Avis, Produit, CategorieProduit
 
 
@@ -11,14 +11,18 @@ class CategorieProduitDetail(DetailView):
 
 class StructureList(FilterView):
     filterset_class = StructureFilter
+    context_object_name = 'structures'
+    paginate_by = 10
 
 
 class StructureDetail(DetailView):
     model = Structure
 
 
-class ProduitList(ListView):
-    model = Produit
+class ProduitList(FilterView):
+    filterset_class = ProduitFilter
+    context_object_name = 'produits'
+    paginate_by = 30
     ordering = ('nom',)
 
 
