@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
     'avis.apps.AvisConfig',
     'base.apps.BaseConfig',
     'tracker.apps.TrackerConfig',
@@ -34,6 +36,8 @@ INSTALLED_APPS = [
     'django_filters',
     'colorfield'
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
