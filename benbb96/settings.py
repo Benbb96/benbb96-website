@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'avis.apps.AvisConfig',
     'base.apps.BaseConfig',
     'tracker.apps.TrackerConfig',
+    'versus.apps.VersusConfig',
     'bootstrap3',
     'geoposition',
     'fontawesome',
