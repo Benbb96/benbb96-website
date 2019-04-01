@@ -2,6 +2,7 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.contrib.sitemaps import GenericSitemap
+from django.http import HttpResponse
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
@@ -42,5 +43,13 @@ urlpatterns = [
             'structures': GenericSitemap(structure_dict, priority=0.5)
         }},
         name='django.contrib.sitemaps.views.sitemap'
+    ),
+    path(
+        'robots.txt',
+        lambda x: HttpResponse(
+            "User-Agent: *\nDisallow:\n\nSitemap: http://benbb96.pythonanywhere.com/sitemap.xml",
+            content_type="text/plain"
+        ),
+        name="robots_file"
     )
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
