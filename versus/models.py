@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 from base.models import Profil
@@ -20,6 +21,9 @@ class Jeu(models.Model):
 
     def __str__(self):
         return self.nom
+
+    def get_absolute_url(self):
+        return reverse('versus:detail-jeu', kwargs={'slug': self.slug})
 
 
 class Partie(models.Model):

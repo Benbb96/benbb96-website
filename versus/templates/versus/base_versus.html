@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}{% block tracker_title %}Jeux{% endblock %} | Versus{% endblock %}
+
+{% block navbar %}
+    {% include 'navbar.html' %}
+{% endblock %}
+
+{% block jumbotron_title %}<a href="{% url 'versus:liste-jeux' %}">Jeux</a>{% endblock %}
+{% block jumbotron_description %}
+    Les jeux sur lesquelles on s'affronte et on veut garder des statistiques avec mes amis
+{% endblock %}

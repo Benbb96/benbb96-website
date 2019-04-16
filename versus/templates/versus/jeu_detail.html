@@ -1,0 +1,14 @@
+{% extends 'versus/base_versus.html' %}
+
+{% block avis_title %}Jeu {{ jeu.nom }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-xs-12">
+            <div class="text-center">
+                <h1>{{ jeu.nom }}</h1>
+                <div>Créé le {{ jeu.date_creation|date }} à {{ jeu.date_creation|time }}</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
