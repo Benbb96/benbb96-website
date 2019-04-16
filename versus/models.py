@@ -31,6 +31,9 @@ class Partie(models.Model):
     date = models.DateTimeField(default=timezone.now)
     joueurs = models.ManyToManyField(Profil, through='PartieJoueur')
 
+    class Meta:
+        ordering = ('-date',)
+
     def __str__(self):
         return '%s (%s)' % (self.jeu, self.date)
 
@@ -39,3 +42,6 @@ class PartieJoueur(models.Model):
     partie = models.ForeignKey(Partie, on_delete=models.CASCADE)
     joueur = models.ForeignKey(Profil, on_delete=models.CASCADE)
     score_classement = models.PositiveSmallIntegerField('score ou classement')
+
+    class Meta:
+        unique_together = (('partie', 'joueur'), ('partie', 'score_classement'))
