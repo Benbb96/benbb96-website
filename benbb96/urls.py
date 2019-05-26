@@ -8,7 +8,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 
 from avis.models import Avis, Produit, Structure
-from benbb96 import settings
+from benbb96.settings import prod, dev
 from benbb96.sitemaps import StaticViewSitemap
 
 avis_dict = {
@@ -53,4 +53,4 @@ urlpatterns = [
         ),
         name="robots_file"
     )
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(dev.MEDIA_URL, document_root=dev.MEDIA_ROOT) + static(prod.MEDIA_URL, document_root=prod.MEDIA_ROOT)
