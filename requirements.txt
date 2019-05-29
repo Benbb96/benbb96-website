@@ -7,6 +7,7 @@ django-bootstrap3==11.0.0
 django-colorfield==0.1.15
 django-filter==2.1.0
 django-fontawesome==1.0
+django-geoposition-2==0.3.6
 django-pandas==0.6.0
 firebase-admin==2.15.0
 gcloud==0.18.3
