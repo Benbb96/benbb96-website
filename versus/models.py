@@ -5,6 +5,19 @@ from django.utils import timezone
 from base.models import Profil
 
 
+class Joueur(models.Model):
+    nom = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, null=True)
+    profil = models.ForeignKey(Profil, on_delete=models.SET_NULL, null=True, blank=True)
+    date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
+
+    def __str__(self):
+        return self.profil.user.username if self.profil else self.nom
+
+    def get_absolute_url(self):
+        return reverse('versus:detail-joueur', kwargs={'slug': self.slug})
+
+
 class Jeu(models.Model):
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
@@ -29,7 +42,7 @@ class Jeu(models.Model):
 class Partie(models.Model):
     jeu = models.ForeignKey(Jeu, on_delete=models.CASCADE, related_name='parties')
     date = models.DateTimeField(default=timezone.now)
-    joueurs = models.ManyToManyField(Profil, through='PartieJoueur')
+    joueurs = models.ManyToManyField(Joueur, through='PartieJoueur')
 
     class Meta:
         ordering = ('-date',)
@@ -40,7 +53,7 @@ class Partie(models.Model):
 
 class PartieJoueur(models.Model):
     partie = models.ForeignKey(Partie, on_delete=models.CASCADE)
-    joueur = models.ForeignKey(Profil, on_delete=models.CASCADE)
+    joueur = models.ForeignKey(Joueur, on_delete=models.CASCADE)
     score_classement = models.PositiveSmallIntegerField('score ou classement')
 
     class Meta:

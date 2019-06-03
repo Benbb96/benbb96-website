@@ -1,7 +1,17 @@
 from django.contrib import admin
 
 from base.models import Profil
-from versus.models import Jeu, Partie, PartieJoueur
+from versus.models import Joueur, Jeu, Partie, PartieJoueur
+
+
+@admin.register(Joueur)
+class JoueurAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'profil')
+    search_fields = ('nom', 'profil__user__username')
+    ordering = ('nom',)
+    date_hierarchy = 'date_creation'
+    prepopulated_fields = {'slug': ('nom',), }
+
 
 
 @admin.register(Jeu)
