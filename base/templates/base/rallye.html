@@ -2,8 +2,8 @@
 
 {% block title %}Rallye des Colocs{% endblock %}
 
-{% block jumbotron_title %}<a href="https://www.facebook.com/events/1899140316784594/" target="_blank">Rallye des Colocs</a>{% endblock %}
-{% block jumbotron_description %}Mardi 19 Juin 2018, de 19h à 23h, réservé aux étudiants de G4 !{% endblock %}
+{% block jumbotron_title %}<a href="{# TODO https://www.facebook.com/events/1899140316784594/ #}" target="_blank">Rallye des Colocs</a>{% endblock %}
+{% block jumbotron_description %}Mardi 18 Juin 2018, de 19h à 23h30, réservé aux étudiants de G4 !{% endblock %}
 
 {% block content %}
 <h3>La carte des Hôtes !</h3>
@@ -11,11 +11,11 @@
 <div class="hotes">
     <div class="hote">
         <span class="number">1</span>
-        <h2>Sam Mignot</h2>
-        <p><i>Numéro de téléphone</i> : <a href="tel:+33664686568">06 64 68 65 68</a></p>
+        <h2>Antoine Clancier<small>Toinou</small></h2>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33675027978">06 75 02 79 78</a></p>
         <p>
-            <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=2 rue de l'Oiselière, Lyon 69009">2 rue de l'Oiselière</a>, code B00000 1er étage (porte MIGNOT)<br>
-            <i>Accès TCL depuis G4</i> : marcher 13 minutes dans la direction indiqué par votre GPS :p
+            <i>Adresse</i> : <a target="_blank" href="https://goo.gl/maps/JNrLHRedV9ofQT5c8">107 Avenue Barthélémy Buyer</a>, appeller par facebook pour qu'il ouvre le portail.<br>
+            <i>Accès TCL depuis G4</i> : marcher 25 minutes dans la direction indiqué par votre GPS :p
         </p>
     </div>
     <div class="hote">
@@ -24,7 +24,7 @@
         <p><i>Numéro de téléphone</i> : <a href="tel:+33605041666">06 05 04 16 66</a></p>
         <p>
             <i>Adresse</i> : <a target="_blank" href="https://maps.google.com/?q=11 rue Mottet de Gerando, Lyon 69001">11 rue Mottet de Gérando</a><br>
-            <i>Accès TCL depuis chez Sam</i> : Bus 45 (traverser le pont pour aller à l'arrêt Serin - Saint-Charles) pui jusqu'au terminus <b>Croix-Rousse</b> ou bien Métro D => A => C.
+            <i>Accès TCL depuis chez Toinou</i> : Bus 45 (traverser le pont pour aller à l'arrêt Serin - Saint-Charles) pui jusqu'au terminus <b>Croix-Rousse</b> ou bien Métro D => A => C.
         </p>
     </div>
     <div class="hote">
@@ -66,7 +66,7 @@ function initMap() {
 
     var steps = [
         {lat: 45.7713346, lng: 4.799},  // G4
-        {lat: 45.7754479, lng: 4.8022},  // Sam
+        {lat: 45.7661856, lng: 4.7922999},  // Toinou
         {lat: 45.773364, lng: 4.8349},  // BBB
         {lat: 45.7438883, lng: 4.86},  // Julie
         {lat: 45.7438825, lng: 4.8655},  // Joan
@@ -89,14 +89,14 @@ function initMap() {
         new google.maps.InfoWindow({content: '<div><h4>0. Institut G4</h4></div>'}).open(map, g4);
     });
 
-    var sam = new google.maps.Marker(
-        {position: steps[1], map: map, title: 'Chez Sam', animation: google.maps.Animation.DROP,
+    var toinou = new google.maps.Marker(
+        {position: steps[1], map: map, title: 'Chez Toinou', animation: google.maps.Animation.DROP,
         label: '1'}
     );
-    sam.addListener('click', function() {
+    toinou.addListener('click', function() {
         new google.maps.InfoWindow(
-        {content: '<div><h4>1. Sam</h4><p>2 rue de l\'Oiselière<br><a href="tel:+33664686568">06 64 68 65 68</a></p></div>'}
-        ).open(map, sam);
+        {content: '<div><h4>1. Toinou</h4><p>107 Avenue Barthélémy Buyer<br><a href="tel:+33640605718">06 40 60 57 18</a></p></div>'}
+        ).open(map, toinou);
     });
 
     var bbb = new google.maps.Marker(
