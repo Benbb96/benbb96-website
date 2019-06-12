@@ -2,8 +2,8 @@
 
 {% block title %}Rallye des Colocs{% endblock %}
 
-{% block jumbotron_title %}<a href="{# TODO https://www.facebook.com/events/1899140316784594/ #}" target="_blank">Rallye des Colocs</a>{% endblock %}
-{% block jumbotron_description %}Mardi 18 Juin 2019, de 19h à 23h30, réservé aux étudiants de G4 !{% endblock %}
+{% block jumbotron_title %}<a href="https://www.facebook.com/events/341401093167605/" target="_blank">Rallye des Colocs <i class="fa fa-external-link"></i></a>{% endblock %}
+{% block jumbotron_description %}Mardi 18 Juin 2019, de 19h à 23h30, une soirée fun dans Lyon organisée par les Sharkies !{% endblock %}
 
 {% block content %}
 <h3>
@@ -27,26 +27,37 @@
             <i>Informations</i> : appeller par facebook pour qu'il ouvre le portail
         </p>
     </div>
+{#    <div class="hote">#}
+{#        <span class="number">2</span>#}
+{#        <h2>Tom Masson <small>(MadLife)</small></h2>#}
+{#        <h4>La Destination Finale</h4>#}
+{#        <p><i>Numéro de téléphone</i> : <a href="tel:+33652087510">06 52 08 75 10</a></p>#}
+{#        <p>#}
+{#            <i>Adresse</i> : <a target="_blank" href="https://goo.gl/maps/eVp3y3Kaj9CxSnRk6">51 rue Magenta <i class="fa fa-external-link"></i></a><br>#}
+{#            <i>Accès TCL depuis chez Toinou</i> : Métro D jusqu'à Bellecour, puis métro A direction Carré de Soie, arrêt <b>République</b>.<br>#}
+{#            <i>Informations</i> : 2ème étage, code entrée : 869#}
+{#        </p>#}
+{#    </div>#}
     <div class="hote">
         <span class="number">2</span>
-        <h2>Tom Masson <small>(MadLife)</small></h2>
-        <h4>La Destination Finale</h4>
-        <p><i>Numéro de téléphone</i> : <a href="tel:+33652087510">06 52 08 75 10</a></p>
-        <p>
-            <i>Adresse</i> : <a target="_blank" href="https://goo.gl/maps/eVp3y3Kaj9CxSnRk6">51 rue Magenta <i class="fa fa-external-link"></i></a><br>
-            <i>Accès TCL depuis chez Toinou</i> : Métro D jusqu'à Bellecour, puis métro A direction Carré de Soie, arrêt <b>République</b>.<br>
-            <i>Informations</i> : 2ème étage, code entrée : 869
-        </p>
-    </div>
-    <div class="hote">
-        <span class="number">3</span>
         <h2>Mathieu Chorier <small>(ReggaeSark)</small></h2>
         <h4>Babylone</h4>
         <p><i>Numéro de téléphone</i> : <a href="tel:+33624756228">06 24 75 62 28</a></p>
         <p>
             <i>Adresse</i> : <a target="_blank" href="https://goo.gl/maps/nuiRhm5SJEX4ybTV8">22 rue Branly <i class="fa fa-external-link"></i></a><br>
-            <i>Accès depuis chez Tom</i> : 1 arrêt de métro A (<b>Gratte-Ciel)</b> ou 15 minutes à pied.<br>
+            <i>Accès depuis chez Toinou</i> : métro D jusqu'à <b>Bellecour</b>, puis métro A direction Carré de Soie, arrêt <b>Gratte-Ciel</b><br>
             <i>Informations</i> : Sonner à Perronnet/Chapiteau, 3ème étage
+        </p>
+    </div>
+    <div class="hote">
+        <span class="number">3</span>
+        <h2>Fabien Simon <small>(Fab)</small></h2>
+        <h4>Chez le bon vieux Fab</h4>
+        <p><i>Numéro de téléphone</i> : <a href="tel:+33645189066">06 45 18 90 66</a></p>
+        <p>
+            <i>Adresse</i> : <a target="_blank" href="https://goo.gl/maps/5HtSgf3WiFAEmWs36">42 Rue de Château Gaillard <i class="fa fa-external-link"></i></a><br>
+            <i>Accès depuis chez Mathieu</i> : Marcher 15 minutes à pied.<br>
+            <i>Informations</i> : Sonner à Simon, et après Chabert Brun, 2ème étage
         </p>
     </div>
     <div class="hote">
@@ -56,7 +67,7 @@
         <p><i>Numéro de téléphone</i> : <a href="tel:+33605041666">06 05 04 16 66</a></p>
         <p>
             <i>Adresse</i> : <a target="_blank" href="https://goo.gl/maps/14d67VYZw4XrfcXv9">81 rue Jean Jaurès</a><br>
-            <i>Accès TCL depuis chez Matthieu</i> : Bus C26 jusqu'à <b>Grandclément</b> ou bien marcher 20 minutes.<br>
+            <i>Accès TCL depuis chez Fabien</i> : Bus C26 (arrêt Antonin) direction Grange Blanche jusqu'à <b>Grandclément</b> puis marcher 7 minutes<br>
             <i>Informations</i> : 2ème étage, code ascenseur : 1305
         </p>
     </div>
@@ -70,8 +81,9 @@ function initMap() {
     var steps = [
         {lat: 45.7713346, lng: 4.799},  // G4
         {lat: 45.76255, lng: 4.8017},  // Toinou
-        {lat: 45.7679, lng: 4.8713283},  // Tom
+        {#{lat: 45.7679, lng: 4.8713283},  // Tom#}
         {lat: 45.7699, lng: 4.8815},  // Mathieu
+        {lat: 45.77723, lng: 4.88505},  // Fab
         {lat: 45.7582, lng: 4.8846299}  // BBB
     ];
     var path = new google.maps.Polyline({
@@ -109,22 +121,22 @@ function initMap() {
         toinouWindow.open(map, toinou);
     });
 
-    var tom = new google.maps.Marker(
-        {position: steps[2], map: map, title: 'Chez Tom', animation: google.maps.Animation.DROP,
-        label: '2'}
-    );
-    var tomWindow = new google.maps.InfoWindow(
-        {content: '<div><h4>2. Tom</h4><p>51 rue Magenta<br><a href="tel:+33652087510">06 52 08 75 10</a></p></div>'}
-    );
-    allWindows.push(tomWindow);
-    tom.addListener('click', function() {
-        closeAllWindows();
-        tomWindow.open(map, tom);
-    });
+    {#var tom = new google.maps.Marker(#}
+    {#    {position: steps[2], map: map, title: 'Chez Tom', animation: google.maps.Animation.DROP,#}
+    {#    label: '2'}#}
+    {#);#}
+    {#var tomWindow = new google.maps.InfoWindow(#}
+    {#    {content: '<div><h4>2. Tom</h4><p>51 rue Magenta<br><a href="tel:+33652087510">06 52 08 75 10</a></p></div>'}#}
+    {#);#}
+    {#allWindows.push(tomWindow);#}
+    {#tom.addListener('click', function() {#}
+    {#    closeAllWindows();#}
+    {#    tomWindow.open(map, tom);#}
+    {# });#}
 
     var mathieu = new google.maps.Marker(
-        {position: steps[3], map: map, title: 'Chez Mathieu', animation: google.maps.Animation.DROP,
-        label: '3'}
+        {position: steps[2], map: map, title: 'Chez Mathieu', animation: google.maps.Animation.DROP,
+        label: '2'}
     );
     var mathieuWindow = new google.maps.InfoWindow(
         {content: '<div><h4>3. Mathieu</h4><p>22 rue Branly<br><a href="tel:+33624756228">06 24 75 62 28</a></p></div>'}
@@ -133,6 +145,19 @@ function initMap() {
     mathieu.addListener('click', function() {
         closeAllWindows();
         mathieuWindow.open(map, mathieu);
+    });
+
+    var fab = new google.maps.Marker(
+        {position: steps[3], map: map, title: 'Chez Fab', animation: google.maps.Animation.DROP,
+        label: '3'}
+    );
+    var fabWindow = new google.maps.InfoWindow(
+        {content: '<div><h4>3. Fabien</h4><p>42 Rue de Château Gaillard<br><a href="tel:+33645189066">06 45 18 90 66</a></p></div>'}
+    );
+    allWindows.push(fabWindow);
+    fab.addListener('click', function() {
+        closeAllWindows();
+        fabWindow.open(map, fab);
     });
 
     var bbb = new google.maps.Marker(
