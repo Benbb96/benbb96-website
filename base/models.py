@@ -4,12 +4,14 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Avg
 from django.urls import reverse
+from django.utils import timezone
 from fontawesome.fields import IconField
 
 
 class Profil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')  # La liaison OneToOne vers le modèle User
     avatar = models.ImageField(null=True, blank=True, upload_to="avatars/")
+    birthday = models.DateField('date anniversaire', null=True, blank=True)
     date_creation = models.DateTimeField(verbose_name="date de création", auto_now_add=True)
 
     def __str__(self):
@@ -21,6 +23,13 @@ class Profil(models.Model):
     @property
     def note_moyenne(self):
         return self.avis_set.all().aggregate(Avg('note'))['note__avg']
+
+    @property
+    def age(self):
+        if not self.birthday:
+            return None
+        today = timezone.now().date()
+        return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
 
 
 class Projet(models.Model):
