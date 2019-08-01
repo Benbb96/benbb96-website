@@ -44,6 +44,9 @@ class Projet(models.Model):
     def __str__(self):
         return self.nom
 
+    def get_absolute_url(self):
+        return reverse(self.lien)
+
 
 class LienReseauSocial(models.Model):
     """

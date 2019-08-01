@@ -5,11 +5,11 @@
 {% block title %}{% block tracker_title %}Trackers{% endblock %} | Tracker{% endblock %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'tracker/css/tracker-style.css' %}">
+    <link rel="stylesheet" href="{% static 'tracker/css/tracker-style.css' %}">
 {% endblock %}
 
 {% block navbar %}
-{% include 'navbar.html' with tracker=True %}
+    {% include 'navbar.html' with tracker=True %}
 {% endblock %}
 
 {% block jumbotron_title %}<a href="{% url 'tracker:liste-tracker' %}">Trackers</a>{% endblock %}
