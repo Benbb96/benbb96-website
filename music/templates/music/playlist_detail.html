@@ -12,7 +12,7 @@
                 <div class="panel-body">
                     <div>
                         Créé le {{ playlist.date_creation|date }} à {{ playlist.date_creation|time }}
-                        par <a href="{{ playlist.createur.profil.get_absolute_url }}">{{ playlist.createur }}</a>.
+                        par <a href="{{ playlist.createur.get_absolute_url }}">{{ playlist.createur }}</a>.
                     </div>
                     {% if playlist.description %}
                         <h3>Description</h3>

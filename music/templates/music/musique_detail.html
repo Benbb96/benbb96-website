@@ -8,7 +8,7 @@
             <h1>{{ musique }}</h1>
             <div>
                 Ajouté le {{ musique.date_creation|date }} à {{ musique.date_creation|time }}
-                par <a href="{{ musique.createur.profil.get_absolute_url }}">{{ musique.createur }}</a>.
+                par <a href="{{ musique.createur.get_absolute_url }}">{{ musique.createur }}</a>.
             </div>
             {% if musique.album %}
                 <p>Album : {{ musique.album }}</p>

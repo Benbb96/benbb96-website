@@ -1,7 +1,6 @@
 import random
 
 import soundcloud
-from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -30,7 +29,7 @@ class Playlist(models.Model):
     nom = models.CharField(max_length=200)
     slug = models.SlugField()
     description = models.TextField(blank=True)
-    createur = models.ForeignKey(User, related_name='playlists_crees', on_delete=models.CASCADE)
+    createur = models.ForeignKey(Profil, related_name='playlists_crees', on_delete=models.CASCADE)
     styles = models.ManyToManyField(Style, related_name='playlists', blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
@@ -61,7 +60,7 @@ class Artiste(models.Model):
     facebook_id = models.BigIntegerField(null=True, blank=True)
     soundcloud_id = models.BigIntegerField(null=True, blank=True)
     spotify_id = models.BigIntegerField(null=True, blank=True)
-    createur = models.ForeignKey(User, related_name='artistes_crees', on_delete=models.SET_NULL, null=True, blank=True)
+    createur = models.ForeignKey(Profil, related_name='artistes_crees', on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
 
@@ -86,7 +85,7 @@ class Musique(models.Model):
     album = models.CharField(max_length=200, blank=True)
     styles = models.ManyToManyField(Style, related_name='musics', blank=True)
     playlists = models.ManyToManyField(Playlist, related_name='musics', blank=True, through='MusiquePlaylist')
-    createur = models.ForeignKey(User, related_name='musiques_crees', on_delete=models.SET_NULL, null=True, blank=True)
+    createur = models.ForeignKey(Profil, related_name='musiques_crees', on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
 
@@ -117,7 +116,7 @@ class MusiquePlaylist(models.Model):
 class Lien(models.Model):
     musique = models.ForeignKey(Musique, on_delete=models.CASCADE)
     url = models.URLField('lien vers la musique')
-    createur = models.ForeignKey(User, related_name='liens_crees', on_delete=models.SET_NULL, null=True, blank=True)
+    createur = models.ForeignKey(Profil, related_name='liens_crees', on_delete=models.SET_NULL, null=True, blank=True)
     SOUNDCLOUD = 'SC'
     YOUTUBE = 'YT'
     SPOTIFY= 'SP'
