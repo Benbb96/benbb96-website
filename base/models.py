@@ -9,7 +9,7 @@ from fontawesome.fields import IconField
 
 
 class Profil(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')  # La liaison OneToOne vers le modèle User
+    user = models.OneToOneField(User, on_delete=models.PROTECT, related_name='profil')
     avatar = models.ImageField(null=True, blank=True, upload_to="avatars/")
     birthday = models.DateField('date anniversaire', null=True, blank=True)
     date_creation = models.DateTimeField(verbose_name="date de création", auto_now_add=True)
