@@ -36,7 +36,7 @@
                 <h3>Cette musique est présente dans les playlists :</h3>
                 <div class="list-group">
                     {% for playlist in musique.playlists.all %}
-                        <a class="list-group-item col-sm-6 col-xs-12" href="{{ playlist.get_absolute_url }}" title="Créé par {{ playlist.createur }} le {{ playlist.date_creation|date:"d/m/y" }}">
+                        <a class="list-group-item col-sm-4 col-xs-12" href="{{ playlist.get_absolute_url }}" title="Créé par {{ playlist.createur }} le {{ playlist.date_creation|date:"d/m/y" }}">
                             {{ playlist.nom }}
                             <span class="badge" title="Nombre de musique dans la playlist">{{ playlist.musiqueplaylist_set.count }}</span>
                         </a>
