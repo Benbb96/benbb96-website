@@ -1,0 +1,67 @@
+{% extends 'music/base_music.html' %}
+
+{% block music_title %}Musique {{ playlist.nom }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <h1>{{ musique }}</h1>
+            <div>
+                Ajouté le {{ musique.date_creation|date }} à {{ musique.date_creation|time }}
+                par <a href="{{ musique.createur.profil.get_absolute_url }}">{{ musique.createur }}</a>.
+            </div>
+            {% if musique.album %}
+                <p>Album : {{ musique.album }}</p>
+            {% endif %}
+            {% if musiques.styles.exists %}
+                <div class="panel-footer">
+                    <h3>Styles</h3>
+                    <ul>
+                        {% for style in musique.styles.all %}
+                            <li>{{ style.nom }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            {% if musique.lien_set.exists %}
+                <h2>Liens</h2>
+                {% for lien in musique.lien_set.all %}
+                    <a class="platformLink" data-link-id="{{ lien.id }}" data-link-url="{% url 'music:incremente_link_click_count' lien.id %}" href="{{ lien.url }}" target="_blank"><b>{{ lien.get_plateforme_display }}</b> <i class="fa fa-external-link"></i></a>
+                    <div>
+                        Ajouté par {{ lien.createur }} le {{ lien.date_creation|date:'d/m/y' }}, vu <span class="click_count" id="{{ lien.id }}">{{ lien.click_count }}</span> fois.
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if musique.playlists.exists %}
+                <h3>Cette musique est présente dans les playlists :</h3>
+                <div class="list-group">
+                    {% for playlist in musique.playlists.all %}
+                        <a class="list-group-item col-sm-6 col-xs-12" href="{{ playlist.get_absolute_url }}" title="Créé par {{ playlist.createur }} le {{ playlist.date_creation|date:"d/m/y" }}">
+                            {{ playlist.nom }}
+                            <span class="badge" title="Nombre de musique dans la playlist">{{ playlist.musiqueplaylist_set.count }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% csrf_token %}
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(() => {
+            $('.platformLink').click(function () {
+                $.post($(this).data('linkUrl'))
+                    .done(response => {
+                        if (response.success) {
+                            $('.click_count#' + $(this).data('linkId')).text(response.click_count);
+                        }
+                    })
+                    .fail((xhr, textStatus, errorThrown) => {
+                        console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
+                    })
+            })
+        })
+    </script>
+{% endblock %}

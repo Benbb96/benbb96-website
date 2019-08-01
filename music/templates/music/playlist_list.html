@@ -1,0 +1,23 @@
+{% extends 'music/base_music.html' %}
+
+{% block music_title %}Mes playlists{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <div class="list-group">
+                {% for playlist in object_list %}
+                    <a class="list-group-item" href="{{ playlist.get_absolute_url }}">
+                        <b>{{ playlist.nom }}</b>
+                        <small>
+                            - {{ playlist.createur }}, le {{ playlist.date_creation|date:"d/m/y" }}
+                        </small>
+                        <span class="badge" title="Nombre de musique dans la playlist">{{ playlist.musiqueplaylist_set.count }}</span>
+                    </a>
+                {% empty %}
+                    <li>Aucune playlist n'a encore été créée.</li>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

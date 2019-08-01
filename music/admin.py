@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Count
 
 from music.models import Pays, Artiste, Style, Label, Playlist, Musique, MusiquePlaylist, Lien
 
@@ -44,9 +45,14 @@ class PlaylistAdmin(admin.ModelAdmin):
         form.base_fields['createur'].initial = request.user
         return form
 
+    def get_queryset(self, request):
+        qs = super(PlaylistAdmin, self).get_queryset(request)
+        return qs.annotate(nb_musique=Count('musiqueplaylist'))
+
     def nb_musique(self, obj):
-        return obj.musiqueplaylist_set.count()
+        return obj.nb_musique
     nb_musique.short_description = 'Nombre de musique'
+    nb_musique.admin_order_field = 'nb_musique'
 
 
 class MusiqueInline(admin.TabularInline):
