@@ -1,7 +1,18 @@
 from django.contrib import admin
-from django.utils.html import format_html
 
-from base.models import Projet, LienReseauSocial
+from base.models import Projet, LienReseauSocial, Profil
+
+
+@admin.register(Profil)
+class ProfilAdmin(admin.ModelAdmin):
+    list_display = ('user', 'nbAvis', 'note_moyenne', 'age', 'date_creation')
+    search_fields = ('user__username',)
+    ordering = ('user',)
+
+    def nbAvis(self, profil):
+        return profil.avis_set.count()
+
+    nbAvis.short_description = "Nombre d'avis"
 
 
 @admin.register(Projet)

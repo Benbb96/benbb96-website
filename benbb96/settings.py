@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'tracker.apps.TrackerConfig',
     'versus.apps.VersusConfig',
+    'music.apps.MusicConfig',
     'bootstrap3',
     'geoposition',
     'fontawesome',
