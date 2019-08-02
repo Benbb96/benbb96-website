@@ -26,6 +26,14 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
+                    {% if playlist.musiqueplaylist_set.exists %}
+                        <h3>Artistes de cette playlist</h3>
+                        <div class="list-group">
+                            {% for artiste in playlist.artistes.all %}
+                                <a class="list-group-item" href="{{ artiste.get_absolute_url }}">{{ artiste }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -36,6 +44,8 @@
                     <b>{{ musiqueplaylist.musique }}</b>
                 </a>
                 <div>Ajouté le {{ musiqueplaylist.date_ajout|date:'l j F Y, H:i' }}</div>
+            {% empty %}
+                <p>Cette playlist est vide :(</p>
             {% endfor %}
         </div>
     </div>

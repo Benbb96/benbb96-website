@@ -40,12 +40,15 @@ class Playlist(models.Model):
     def get_absolute_url(self):
         return reverse('music:detail-playlist', kwargs={'slug': self.slug})
 
+    def artistes(self):
+        return Artiste.objects.filter(musiques__musiqueplaylist__playlist=self).distinct()
+
 
 class Artiste(models.Model):
     nom_artiste = models.CharField("nom d'artiste", max_length=100, unique=True)
     slug = models.SlugField(unique=True)
-    nom = models.CharField(max_length=100, blank=True)
     prenom = models.CharField('prénom', max_length=100, blank=True)
+    nom = models.CharField(max_length=100, blank=True)
     styles = models.ManyToManyField(Style, related_name='artistes', blank=True)
     ville = models.CharField(max_length=100, blank=True)
     pays = models.ForeignKey(Pays, on_delete=models.SET_NULL, null=True, blank=True)
@@ -70,6 +73,17 @@ class Artiste(models.Model):
     def __str__(self):
         return self.nom_artiste
 
+    def get_absolute_url(self):
+        return reverse('music:detail-artiste', kwargs={'slug': self.slug})
+
+    def full_name(self):
+        if self.nom and self.prenom:
+            return self.prenom + ' ' + self.nom
+        return None
+
+    def playlists(self):
+        return Playlist.objects.filter(musiqueplaylist__musique__artiste=self).distinct()
+
     @property
     def soundcloud_followers(self):
         # client = soundcloud.Client(client_id=YOUR_CLIENT_ID)
@@ -81,10 +95,10 @@ class Artiste(models.Model):
 class Musique(models.Model):
     titre = models.CharField(max_length=50)
     slug = models.SlugField()
-    artiste = models.ForeignKey(Artiste, on_delete=models.PROTECT)
+    artiste = models.ForeignKey(Artiste, on_delete=models.PROTECT, related_name='musiques')
     album = models.CharField(max_length=200, blank=True)
-    styles = models.ManyToManyField(Style, related_name='musics', blank=True)
-    playlists = models.ManyToManyField(Playlist, related_name='musics', blank=True, through='MusiquePlaylist')
+    styles = models.ManyToManyField(Style, related_name='musiques', blank=True)
+    playlists = models.ManyToManyField(Playlist, related_name='musiques', blank=True, through='MusiquePlaylist')
     createur = models.ForeignKey(Profil, related_name='musiques_crees', on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
@@ -98,6 +112,11 @@ class Musique(models.Model):
 
     def get_absolute_url(self):
         return reverse('music:detail-musique', kwargs={'slug_artist': self.artiste.slug, 'slug': self.slug, 'pk': self.pk})
+
+    def nb_vue(self):
+        # TODO Essayer d'utiliser une aggrégation
+        return sum((lien.click_count for lien in self.liens.all()))
+    nb_vue.short_description = 'Nombre de vue'
 
 
 class MusiquePlaylist(models.Model):
@@ -114,7 +133,7 @@ class MusiquePlaylist(models.Model):
 
 
 class Lien(models.Model):
-    musique = models.ForeignKey(Musique, on_delete=models.CASCADE)
+    musique = models.ForeignKey(Musique, on_delete=models.CASCADE, related_name='liens')
     url = models.URLField('lien vers la musique')
     createur = models.ForeignKey(Profil, related_name='liens_crees', on_delete=models.SET_NULL, null=True, blank=True)
     SOUNDCLOUD = 'SC'

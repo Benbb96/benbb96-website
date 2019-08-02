@@ -1,0 +1,105 @@
+{% extends 'music/base_music.html' %}
+
+{% block music_title %}Artiste {{ artiste.nom }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4 col-xs-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h2 class="text-center">{{ artiste.nom_artiste }}</h2>
+                </div>
+                <div class="panel-body">
+                    <div>
+                        {% if artiste.full_name %}
+                            <p>{{ artiste.full_name }}</p>
+                        {% endif %}
+                        {% if artiste.pays %}
+                            <p>Pays : {{ artiste.pays }}</p>
+                        {% endif %}
+                        {% if artiste.ville %}
+                            <p>Ville : {{ artiste.ville }}</p>
+                        {% endif %}
+                        {% if artiste.site_web %}
+                            <p>
+                                Site web :
+                                <a href="{{ artiste.site_web }}" target="_blank">
+                                    {{ artiste.site_web }} <i class="fa fa-external-link"></i>
+                                </a>
+                            </p>
+                        {% endif %}
+                        {% if artiste.mail_contact %}
+                            <p>Mail contact :
+                                <a href="mailto: {{ artiste.mail_contact }}">{{ artiste.mail_contact }}</a>
+                            </p>
+                        {% endif %}
+                        {% if artiste.telephone_contact %}
+                            <p>Téléphone contact :
+                                <a href="tel: {{ artiste.mail_contact }}">{{ artiste.telephone_contact }}</a>
+                            </p>
+                        {% endif %}
+                        {# TODO Ajouter liens réseaux sociaux #}
+                    </div>
+                    {% if artiste.labels.exists %}
+                        <h3>Labels</h3>
+                        <ul>
+                            {% for label in artiste.labels.all %}
+                                <li>{{ label.nom }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if artiste.styles.exists %}
+                        <h3>Styles</h3>
+                        <ul>
+                            {% for style in artiste.styles.all %}
+                                <li>{{ style.nom }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="panel-footer">
+                    Créé le {{ artiste.date_creation|date }} à {{ artiste.date_creation|time }}
+                    par <a href="{{ artiste.createur.get_absolute_url }}">{{ artiste.createur }}</a>.
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8 col-xs-12">
+            <h2>Ses musiques</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Date ajout</th>
+                        <th>Nombre de vue</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for musique in artiste.musiques.all %}
+                        <tr>
+                        <td>
+                            <a href="{{ musique.get_absolute_url }}">
+                                <b>{{ musique.titre }}</b>
+                            </a>
+                        </td>
+                        <td>{{ musique.date_creation|date:'l j F Y, H:i' }}</td>
+                        <td>{{ musique.nb_vue }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if artiste.playlists.exists %}
+                <h3>Playlists avec du {{ artiste.nom_artiste }} :</h3>
+                <div class="list-group">
+                    {% for playlist in artiste.playlists.all %}
+                        <a class="list-group-item col-xs-12" href="{{ playlist.get_absolute_url }}" title="Créé par {{ playlist.createur }} le {{ playlist.date_creation|date:"d/m/y" }}">
+                            {{ playlist.nom }}
+                            <span class="badge" title="Nombre de musique dans la playlist">{{ playlist.musiqueplaylist_set.count }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

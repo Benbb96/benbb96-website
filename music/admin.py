@@ -60,6 +60,8 @@ class MusiqueInline(admin.TabularInline):
     prepopulated_fields = {'slug': ('titre',), }
     autocomplete_fields = ('styles',)
 
+    # Remplir automatiquement le créateur pour la musique
+
 
 @admin.register(Artiste)
 class ArtisteAdmin(admin.ModelAdmin):
@@ -73,6 +75,7 @@ class ArtisteAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('nom_artiste',), }
     readonly_fields = ('soundcloud_followers', )
     autocomplete_fields = ('styles',)
+    save_on_top = True
 
     inlines = [MusiqueInline]
 
@@ -89,7 +92,7 @@ class LienInline(admin.TabularInline):
 
 @admin.register(Musique)
 class MusiqueAdmin(admin.ModelAdmin):
-    list_display = ('artiste', 'titre', 'album', 'createur', 'date_creation', 'date_modification')
+    list_display = ('artiste', 'titre', 'album', 'createur', 'date_creation', 'date_modification', 'nb_vue')
     list_display_links = ('titre',)
     list_filter = ('styles', 'createur')
     search_fields = (
