@@ -30,7 +30,6 @@ class Playlist(models.Model):
     slug = models.SlugField()
     description = models.TextField(blank=True)
     createur = models.ForeignKey(Profil, related_name='playlists_crees', on_delete=models.CASCADE)
-    styles = models.ManyToManyField(Style, related_name='playlists', blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
 
@@ -39,6 +38,9 @@ class Playlist(models.Model):
 
     def get_absolute_url(self):
         return reverse('music:detail-playlist', kwargs={'slug': self.slug})
+
+    def styles(self):
+        return Style.objects.filter(musiques__musiqueplaylist__playlist=self).distinct()
 
     def artistes(self):
         return Artiste.objects.filter(musiques__musiqueplaylist__playlist=self).distinct()
