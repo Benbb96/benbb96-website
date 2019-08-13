@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'geoposition',
     'fontawesome',
     'django_filters',
-    'colorfield'
+    'colorfield',
+    'adminsortable'
 ]
 
 SITE_ID = 1
@@ -62,6 +63,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'base.context_processors.liens_reseaux_sociaux'

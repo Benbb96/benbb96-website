@@ -1,6 +1,8 @@
 import random
 
 import soundcloud
+from adminsortable.fields import SortableForeignKey
+from adminsortable.models import SortableMixin
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -121,16 +123,16 @@ class Musique(models.Model):
     nb_vue.short_description = 'Nombre de vue'
 
 
-class MusiquePlaylist(models.Model):
-    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+class MusiquePlaylist(SortableMixin):
+    playlist = SortableForeignKey(Playlist, on_delete=models.CASCADE)
     musique = models.ForeignKey(Musique, on_delete=models.CASCADE)
-    position = models.PositiveIntegerField()
+    position = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     date_ajout = models.DateTimeField("date d'ajout de la musique dans la playlist", auto_now_add=True)
 
     class Meta:
         verbose_name = 'Musique de la playlist'
         verbose_name_plural = 'Musiques de la playlist'
-        unique_together = (('playlist', 'musique'), ('playlist', 'position'))
+        unique_together = (('playlist', 'musique'),)
         ordering = ('position',)
 
 

@@ -1,3 +1,4 @@
+from adminsortable.admin import SortableTabularInline, NonSortableParentAdmin
 from django.contrib import admin
 from django.db.models import Count
 
@@ -24,13 +25,14 @@ class StyleAdmin(admin.ModelAdmin):
     inlines = [MusiqueStyleInline]
 
 
-class MusiquePlaylistInline(admin.TabularInline):
+class MusiquePlaylistInline(SortableTabularInline):
     model = MusiquePlaylist
     autocomplete_fields = ('musique',)
+    readonly_fields = ('date_ajout',)
 
 
 @admin.register(Playlist)
-class PlaylistAdmin(admin.ModelAdmin):
+class PlaylistAdmin(NonSortableParentAdmin):
     list_display = ('nom', 'description', 'createur', 'nb_musique')
     search_fields = ('nom',)
     prepopulated_fields = {'slug': ('nom',), }
