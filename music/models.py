@@ -1,6 +1,8 @@
 import random
 
 import soundcloud
+from adminsortable.fields import SortableForeignKey
+from adminsortable.models import SortableMixin
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -30,7 +32,6 @@ class Playlist(models.Model):
     slug = models.SlugField()
     description = models.TextField(blank=True)
     createur = models.ForeignKey(Profil, related_name='playlists_crees', on_delete=models.CASCADE)
-    styles = models.ManyToManyField(Style, related_name='playlists', blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
 
@@ -39,6 +40,9 @@ class Playlist(models.Model):
 
     def get_absolute_url(self):
         return reverse('music:detail-playlist', kwargs={'slug': self.slug})
+
+    def styles(self):
+        return Style.objects.filter(musiques__musiqueplaylist__playlist=self).distinct()
 
     def artistes(self):
         return Artiste.objects.filter(musiques__musiqueplaylist__playlist=self).distinct()
@@ -63,7 +67,9 @@ class Artiste(models.Model):
     facebook_id = models.BigIntegerField(null=True, blank=True)
     soundcloud_id = models.BigIntegerField(null=True, blank=True)
     spotify_id = models.BigIntegerField(null=True, blank=True)
-    createur = models.ForeignKey(Profil, related_name='artistes_crees', on_delete=models.SET_NULL, null=True, blank=True)
+    createur = models.ForeignKey(
+        Profil, related_name='artistes_crees', on_delete=models.SET_NULL, null=True, blank=True
+    )
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
 
@@ -89,7 +95,7 @@ class Artiste(models.Model):
         # client = soundcloud.Client(client_id=YOUR_CLIENT_ID)
         # L'API de Soundcloud ne propose plus de Client ID :
         # https://docs.google.com/forms/d/e/1FAIpQLSfNxc82RJuzC0DnISat7n4H-G7IsPQIdaMpe202iiHZEoso9w/closedform
-        return random.randint(1,10000)
+        return random.randint(1, 10000)
 
 
 class Musique(models.Model):
@@ -99,7 +105,9 @@ class Musique(models.Model):
     album = models.CharField(max_length=200, blank=True)
     styles = models.ManyToManyField(Style, related_name='musiques', blank=True)
     playlists = models.ManyToManyField(Playlist, related_name='musiques', blank=True, through='MusiquePlaylist')
-    createur = models.ForeignKey(Profil, related_name='musiques_crees', on_delete=models.SET_NULL, null=True, blank=True)
+    createur = models.ForeignKey(
+        Profil, related_name='musiques_crees', on_delete=models.SET_NULL, null=True, blank=True
+    )
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
 
@@ -111,24 +119,26 @@ class Musique(models.Model):
         return '%s - %s' % (self.artiste, self.titre)
 
     def get_absolute_url(self):
-        return reverse('music:detail-musique', kwargs={'slug_artist': self.artiste.slug, 'slug': self.slug, 'pk': self.pk})
+        return reverse('music:detail-musique',
+                       kwargs={'slug_artist': self.artiste.slug, 'slug': self.slug, 'pk': self.pk})
 
     def nb_vue(self):
         # TODO Essayer d'utiliser une aggrégation
         return sum((lien.click_count for lien in self.liens.all()))
+
     nb_vue.short_description = 'Nombre de vue'
 
 
-class MusiquePlaylist(models.Model):
-    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+class MusiquePlaylist(SortableMixin):
+    playlist = SortableForeignKey(Playlist, on_delete=models.CASCADE)
     musique = models.ForeignKey(Musique, on_delete=models.CASCADE)
-    position = models.PositiveIntegerField()
+    position = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     date_ajout = models.DateTimeField("date d'ajout de la musique dans la playlist", auto_now_add=True)
 
     class Meta:
         verbose_name = 'Musique de la playlist'
         verbose_name_plural = 'Musiques de la playlist'
-        unique_together = (('playlist', 'musique'), ('playlist', 'position'))
+        unique_together = (('playlist', 'musique'),)
         ordering = ('position',)
 
 
@@ -138,7 +148,7 @@ class Lien(models.Model):
     createur = models.ForeignKey(Profil, related_name='liens_crees', on_delete=models.SET_NULL, null=True, blank=True)
     SOUNDCLOUD = 'SC'
     YOUTUBE = 'YT'
-    SPOTIFY= 'SP'
+    SPOTIFY = 'SP'
     PLATEFORMES_MUSIQUE = [
         (SOUNDCLOUD, 'Soundcloud'),
         (YOUTUBE, 'YouTube'),

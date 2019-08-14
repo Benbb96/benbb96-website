@@ -13,25 +13,7 @@
             <h2>Dernières parties jouées</h2>
             {% for partie in jeu.parties.all %}
                 <h3>{{ partie.date|date:'l j F Y, H:i'|capfirst }}</h3>
-                <p>{% if jeu.classement %}Classement{% else %}Score{% endif %} :</p>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            {% for partie_joueur in partie.partiejoueur_set.all %}
-                                <th class="text-center">{{ partie_joueur.joueur }}</th>
-                            {% endfor %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            {% for partie_joueur in partie.partiejoueur_set.all %}
-                                <td class="text-center">{{ partie_joueur.score_classement }}</td>
-                            {% endfor %}
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                {% include 'versus/partie_table.html' %}
             {% endfor %}
         </div>
     </div>

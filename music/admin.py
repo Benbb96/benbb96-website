@@ -1,3 +1,4 @@
+from adminsortable.admin import SortableTabularInline, NonSortableParentAdmin
 from django.contrib import admin
 from django.db.models import Count
 
@@ -24,16 +25,16 @@ class StyleAdmin(admin.ModelAdmin):
     inlines = [MusiqueStyleInline]
 
 
-class MusiquePlaylistInline(admin.TabularInline):
+class MusiquePlaylistInline(SortableTabularInline):
     model = MusiquePlaylist
     autocomplete_fields = ('musique',)
+    readonly_fields = ('date_ajout',)
 
 
 @admin.register(Playlist)
-class PlaylistAdmin(admin.ModelAdmin):
+class PlaylistAdmin(NonSortableParentAdmin):
     list_display = ('nom', 'description', 'createur', 'nb_musique')
     search_fields = ('nom',)
-    autocomplete_fields = ('styles',)
     prepopulated_fields = {'slug': ('nom',), }
     save_on_top = True
 
@@ -90,6 +91,10 @@ class LienInline(admin.TabularInline):
     model = Lien
 
 
+class PlaylistInline(admin.TabularInline):
+    model = Playlist.musiques.through
+
+
 @admin.register(Musique)
 class MusiqueAdmin(admin.ModelAdmin):
     list_display = ('artiste', 'titre', 'album', 'createur', 'date_creation', 'date_modification', 'nb_vue')
@@ -102,7 +107,7 @@ class MusiqueAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('titre',), }
     autocomplete_fields = ('artiste', 'styles')
 
-    inlines = [LienInline]
+    inlines = [LienInline, PlaylistInline]
 
     def get_form(self, request, obj=None, **kwargs):
         # Pré-rempli automatiquement avec l'utilisateur connecté

@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -6,33 +8,51 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'home' %}">Benbb96</a>
+            <a class="navbar-brand" href="{% url 'base:home' %}">Benbb96</a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-                <li {% if home %}class="active"{% endif %}><a href="{% url 'home' %}">Accueil</a></li>
-                <li {% if about %}class="active"{% endif %}><a href="{% url 'about' %}">A propos</a></li>
-                <li {% if avis %}class="active"{% endif %}><a href="{% url 'avis:liste-avis' %}">Avis</a></li>
+                <li {% if home %}class="active"{% endif %}><a href="{% url 'base:home' %}">{% trans "Home" %}</a></li>
+                <li {% if about %}class="active"{% endif %}><a href="{% url 'base:about' %}">{% trans "About" %}</a></li>
+                <li {% if avis %}class="active"{% endif %}><a href="{% url 'avis:liste-avis' %}">{% trans "Reviews" %}</a></li>
                 {% if request.user.is_authenticated %}
-                <li {% if tracker %}class="active"{% endif %}><a href="{% url 'tracker:liste-tracker' %}">Tracker</a></li>
+                <li {% if tracker %}class="active"{% endif %}><a href="{% url 'tracker:liste-tracker' %}">{% trans "Tracker" %}</a></li>
                 {% endif %}
 {#                <li {% if gallery %}class="active"{% endif %}><a href="{% url 'gallery' %}">Gallerie</a></li>#}
 {#                <li><a href="#">Contact</a></li>#}
                 {% if request.user.is_superuser %}
-                <li><a href="{% url 'admin:index' %}">Administration</a></li>
+                <li><a href="{% url 'admin:index' %}">{% trans "Administration" %}</a></li>
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <form class="navbar-form navbar-left" action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <div class="input-group">
+                        <select name="language" class="form-control">
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% get_language_info_list for LANGUAGES as languages %}
+                            {% for language in languages %}
+                                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                    {{ language.name_local|capfirst }}{#  ({{ language.code }})#}
+                                </option>
+                            {% endfor %}
+                        </select>
+                         <div class="input-group-btn">
+                             <button type="submit" class="btn btn-default">{% trans "OK" %}</button>
+                         </div>
+                    </div>
+                </form>
                 {% if not request.user.is_authenticated %}
                     <li>
-                        <a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Se connecter</a>
+                        <a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> {% trans "Login" %}</a>
                     </li>
                 {% else %}
                     <li>
-                        <a href="{% url 'profil' request.user.username %}">{{ request.user }}</a>
+                        <a href="{% url 'base:profil' request.user.username %}">{{ request.user }}</a>
                     </li>
                     <li>
-                        <a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Se déconnecter</a>
+                        <a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> {% trans "Logout" %}</a>
                     </li>
                 {% endif %}
             </ul>

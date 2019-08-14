@@ -4,10 +4,6 @@
 
 {% block title %}{% block music_title %}{% endblock %} | Musique{% endblock %}
 
-{% block navbar %}
-    {% include 'navbar.html' %}
-{% endblock %}
-
 {% block jumbotron_title %}<a href="{% url 'music:liste-playlists' %}">Musique</a>{% endblock %}
 {% block jumbotron_description %}
     Mon nouveau projet pour sauvegarder toutes mes playlists qui sont sur mon téléphones avec un système de
