@@ -14,11 +14,14 @@
                 </div>
                 <div class="panel-body">
                     <p>Créé le {{ joueur.date_creation|date }} à {{ joueur.date_creation|time }}</p>
-                    <h4>Statistiques :</h4>
-                    <div class="well">
-                        <p>Nombre de victoire : <b>{{ joueur.nb_victoire }}</b></p>
-                        <p>Ratio : <b>{{ joueur.ratio }}%</b></p>
-                    </div>
+                    {% if joueur.partiejoueur_set.exists %}
+                        <h4>Statistiques :</h4>
+                        <div class="well">
+                            <p>Nombre de parties jouées : <b>{{ joueur.partiejoueur_set.count }}</b></p>
+                            <p>Nombre de victoire : <b>{{ joueur.nb_victoire }}</b></p>
+                            <p>Ratio : <b>{{ joueur.ratio }}%</b></p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
