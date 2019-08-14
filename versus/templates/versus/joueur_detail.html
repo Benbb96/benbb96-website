@@ -10,6 +10,7 @@
                 <h4>Profil : <a href="{{ joueur.profil.get_absolute_url }}">{{ joueur.profil }}</a></h4>
             {% endif %}
             <div>Créé le {{ joueur.date_creation|date }} à {{ joueur.date_creation|time }}</div>
+            <p>Nombre de victoire : {{ joueur.nb_victoire }}</p>
         </div>
         <div class="col-sm-8 col-xs-12">
             <h2>Dernières parties jouées</h2>
@@ -21,14 +22,18 @@
                         <thead>
                         <tr>
                             {% for partie_joueur in partie.partiejoueur_set.all %}
-                                <th class="text-center">{{ partie_joueur.joueur }}</th>
+                                <th class="text-center{% if partie_joueur.joueur in partie.get_winners %} bg-info{% endif %}">
+                                    {{ partie_joueur.joueur }}
+                                </th>
                             {% endfor %}
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
                             {% for partie_joueur in partie.partiejoueur_set.all %}
-                                <td class="text-center">{{ partie_joueur.score_classement }}</td>
+                                <td class="text-center{% if partie_joueur.joueur in partie.get_winners %} bg-info{% endif %}">
+                                    {{ partie_joueur.score_classement }}
+                                </td>
                             {% endfor %}
                         </tr>
                         </tbody>

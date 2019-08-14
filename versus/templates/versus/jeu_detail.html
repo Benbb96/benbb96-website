@@ -19,7 +19,7 @@
                         <thead>
                         <tr>
                             {% for partie_joueur in partie.partiejoueur_set.all %}
-                                <th class="text-center">
+                                <th class="text-center{% if partie_joueur.joueur in partie.get_winners %} bg-info{% endif %}">
                                     <a href="{{ partie_joueur.joueur.get_absolute_url }}">
                                         {{ partie_joueur.joueur }}
                                     </a>
@@ -30,7 +30,9 @@
                         <tbody>
                         <tr>
                             {% for partie_joueur in partie.partiejoueur_set.all %}
-                                <td class="text-center">{{ partie_joueur.score_classement }}</td>
+                                <td class="text-center{% if partie_joueur.joueur in partie.get_winners %} bg-info{% endif %}">
+                                    {{ partie_joueur.score_classement }}
+                                </td>
                             {% endfor %}
                         </tr>
                         </tbody>

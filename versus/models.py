@@ -12,10 +12,18 @@ class Joueur(models.Model):
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
     def __str__(self):
-        return self.profil.user.username if self.profil else self.nom
+        return self.nom
 
     def get_absolute_url(self):
         return reverse('versus:detail-joueur', kwargs={'slug': self.slug})
+
+    @property
+    def nb_victoire(self):
+        nb = 0
+        for partiejoueur in self.partiejoueur_set.all():
+            if self in partiejoueur.partie.get_winners():
+                nb += 1
+        return nb
 
 
 class Jeu(models.Model):
@@ -42,7 +50,7 @@ class Jeu(models.Model):
 class Partie(models.Model):
     jeu = models.ForeignKey(Jeu, on_delete=models.CASCADE, related_name='parties')
     date = models.DateTimeField(default=timezone.now)
-    joueurs = models.ManyToManyField(Profil, through='PartieJoueur')
+    joueurs = models.ManyToManyField(Joueur, through='PartieJoueur')
 
     class Meta:
         ordering = ('-date',)
@@ -50,11 +58,22 @@ class Partie(models.Model):
     def __str__(self):
         return '%s (%s)' % (self.jeu, self.date)
 
+    def get_winners(self):
+        """ Retourne le ou les gagnants de cette partie """
+        if self.jeu.classement:
+            # On veut la ou les personnes arrivées en première place
+            return Joueur.objects.filter(partiejoueur__partie=self, partiejoueur__score_classement=1)
+        else:
+            # On cherche d'abord le score maximum
+            maximum = max(partiejoueur.score_classement for partiejoueur in self.partiejoueur_set.all())
+            # Puis on retourne tous les joueurs ayant ce score
+            return Joueur.objects.filter(partiejoueur__partie=self, partiejoueur__score_classement=maximum)
+
 
 class PartieJoueur(models.Model):
     partie = models.ForeignKey(Partie, on_delete=models.CASCADE)
-    joueur = models.ForeignKey(Profil, on_delete=models.CASCADE)
+    joueur = models.ForeignKey(Joueur, on_delete=models.CASCADE)
     score_classement = models.PositiveSmallIntegerField('score ou classement')
 
     class Meta:
-        unique_together = (('partie', 'joueur'), ('partie', 'score_classement'))
+        unique_together = (('partie', 'joueur'),)
