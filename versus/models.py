@@ -42,7 +42,7 @@ class Jeu(models.Model):
 class Partie(models.Model):
     jeu = models.ForeignKey(Jeu, on_delete=models.CASCADE, related_name='parties')
     date = models.DateTimeField(default=timezone.now)
-    joueurs = models.ManyToManyField(Joueur, through='PartieJoueur')
+    joueurs = models.ManyToManyField(Profil, through='PartieJoueur')
 
     class Meta:
         ordering = ('-date',)
@@ -53,7 +53,7 @@ class Partie(models.Model):
 
 class PartieJoueur(models.Model):
     partie = models.ForeignKey(Partie, on_delete=models.CASCADE)
-    joueur = models.ForeignKey(Joueur, on_delete=models.CASCADE)
+    joueur = models.ForeignKey(Profil, on_delete=models.CASCADE)
     score_classement = models.PositiveSmallIntegerField('score ou classement')
 
     class Meta:

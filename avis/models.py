@@ -1,6 +1,5 @@
 import pyrebase
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
 from django.db.models import Avg

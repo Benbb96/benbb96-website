@@ -21,7 +21,7 @@ class ProduitForm(forms.ModelForm):
             structure = self.cleaned_data['structure']
             categories_possible = structure.type.categories.all()
             for categorie in self.cleaned_data['categories'].all():
-                if not categorie in categories_possible:
+                if categorie not in categories_possible:
                     raise forms.ValidationError({
                         'categories': 'Vous ne pouvez pas choisir la catégorie %s pour une structure de type %s' %
                                       (categorie, structure.type)

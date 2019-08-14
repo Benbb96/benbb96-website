@@ -1,0 +1,52 @@
+{% extends 'music/base_music.html' %}
+
+{% block music_title %}Playlist {{ playlist.nom }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="text-center">{{ playlist.nom }}</h2>
+                </div>
+                <div class="panel-body">
+                    <div>
+                        Créé le {{ playlist.date_creation|date }} à {{ playlist.date_creation|time }}
+                        par <a href="{{ playlist.createur.get_absolute_url }}">{{ playlist.createur }}</a>.
+                    </div>
+                    {% if playlist.description %}
+                        <h3>Description</h3>
+                        <p>{{ playlist.description }}</p>
+                    {% endif %}
+                    {% if playlist.styles.exists %}
+                        <h3>Styles</h3>
+                        <ul>
+                            {% for style in playlist.styles.all %}
+                                <li>{{ style.nom }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if playlist.musiqueplaylist_set.exists %}
+                        <h3>Artistes de cette playlist</h3>
+                        <div class="list-group">
+                            {% for artiste in playlist.artistes.all %}
+                                <a class="list-group-item" href="{{ artiste.get_absolute_url }}">{{ artiste }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8 col-xs-12">
+            <h2>Musiques</h2>
+            {% for musiqueplaylist in playlist.musiqueplaylist_set.all %}
+                <a href="{{ musiqueplaylist.musique.get_absolute_url }}">
+                    <b>{{ musiqueplaylist.musique }}</b>
+                </a>
+                <div>Ajouté le {{ musiqueplaylist.date_ajout|date:'l j F Y, H:i' }}</div>
+            {% empty %}
+                <p>Cette playlist est vide :(</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
