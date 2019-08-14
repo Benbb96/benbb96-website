@@ -27,7 +27,9 @@ class Joueur(models.Model):
 
     @property
     def ratio(self):
-        return round(self.nb_victoire / self.partiejoueur_set.count() * 100)
+        if self.partiejoueur_set.exists():
+            return round(self.nb_victoire / self.partiejoueur_set.count() * 100)
+        return None
 
 
 class Jeu(models.Model):
