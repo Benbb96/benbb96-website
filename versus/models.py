@@ -25,6 +25,10 @@ class Joueur(models.Model):
                 nb += 1
         return nb
 
+    @property
+    def ratio(self):
+        return round(self.nb_victoire / self.partiejoueur_set.count() * 100)
+
 
 class Jeu(models.Model):
     nom = models.CharField(max_length=100)

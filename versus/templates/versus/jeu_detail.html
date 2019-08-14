@@ -13,7 +13,6 @@
             <h2>Dernières parties jouées</h2>
             {% for partie in jeu.parties.all %}
                 <h3>{{ partie.date|date:'l j F Y, H:i'|capfirst }}</h3>
-                <p>{% if jeu.classement %}Classement{% else %}Score{% endif %} :</p>
                 {% include 'versus/partie_table.html' %}
             {% endfor %}
         </div>

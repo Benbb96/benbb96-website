@@ -1,24 +1,36 @@
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead>
-        <tr>
-            {% for partie_joueur in partie.partiejoueur_set.all %}
-                <th class="text-center{% if partie_joueur.joueur in partie.get_winners %} bg-info{% endif %}">
-                    <a href="{{ partie_joueur.joueur.get_absolute_url }}">
-                        {{ partie_joueur.joueur }}
-                    </a>
-                </th>
-            {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            {% for partie_joueur in partie.partiejoueur_set.all %}
-                <td class="text-center{% if partie_joueur.joueur in partie.get_winners %} bg-info{% endif %}">
-                    {{ partie_joueur.score_classement }}
-                </td>
-            {% endfor %}
-        </tr>
-        </tbody>
-    </table>
-</div>
+{% if partie.jeu.classement %}
+    Classement :
+    <div class="list-group">
+        {% for partie_joueur in partie.partiejoueur_set.all %}
+            <a href="{{ partie_joueur.joueur.get_absolute_url }}" class="list-group-item{% if partie_joueur.joueur in partie.get_winners %} active{% endif %}">
+                <span class="badge">{{ partie_joueur.score_classement }}</span> {{ partie_joueur.joueur }}
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    Scores :
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+            <tr>
+                {% for partie_joueur in partie.partiejoueur_set.all %}
+                    <th class="text-center{% if partie_joueur.joueur in partie.get_winners %} bg-info{% endif %}">
+                        <a href="{{ partie_joueur.joueur.get_absolute_url }}">
+                            {{ partie_joueur.joueur }}
+                        </a>
+                    </th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                {% for partie_joueur in partie.partiejoueur_set.all %}
+                    <td class="text-center{% if partie_joueur.joueur in partie.get_winners %} bg-info{% endif %}">
+                        {{ partie_joueur.score_classement }}
+                    </td>
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+{% endif %}
