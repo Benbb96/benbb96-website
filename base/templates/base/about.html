@@ -1,26 +1,28 @@
 {% extends 'base/base.html' %}
 
-{% load static %}
+{% load static i18n %}
 
 {% block navbar %}
 {% include 'navbar.html' with about=True %}
 {% endblock %}
 
-{% block base_title %}A propos{% endblock %}
-{% block jumbotron_title %}A propos de moi{% endblock %}
+{% block base_title %}{% trans "About" %}{% endblock %}
+{% block jumbotron_title %}{% trans "About me" %}{% endblock %}
 {% block jumbotron_description %}{% endblock %}
 
 {% block base_content %}
     <div class="row">
         <div class="col-sm-4 text-center">
-            <img src="{% static 'img/bbb.jpg' %}" alt="Photo de moi" title="C'est moi !" style="width: 80%; margin-bottom: 15px"/>
+            <img src="{% static 'img/bbb.jpg' %}" alt="{% trans "Picture of me" %}" title="{% trans "It's me!" %}" style="width: 80%; margin-bottom: 15px"/>
         </div>
         <div class="col-sm-8">
-            Salut, moi c'est Benjamin, mais beaucoup m'appelle BBB !<br><br>
-            J'adore coder en Python avec le Framework <a href="https://www.djangoproject.com/" target="_blank">Django</a>. C'est ainsi que ce site existe !<br>
-            Je souhaite y héberger de nombreux projets perso qui découlent de simples idées ou des besoins surevenus dans mon quotidien.<br><br>
-            Vous pouvez suivre l'avancement de ce projet sur mon repository Github : <a href="https://github.com/Benbb96/benbb96/"target="_blank">https://github.com/Benbb96/benbb96/</a>.<br>
-            Retrouvez-moi également sur de nombreux réseaux sociaux affichés ci-dessous ;)
+            {% blocktrans with django_site='https://www.djangoproject.com/' github='https://github.com/Benbb96/benbb96/' %}
+                Hey, it's me, Benjamin, but everybody call me BBB !<br><br>
+                I love to code in Python with the Framework <a href="{{ django_site }}" target="_blank">Django</a>. That's why this website exists !<br>
+                I'd like to host a lot of personal projects which come from simple ideas or needs I have in my daily life.<br><br>
+                You can follow the project flow on my Github repository : <a href="{{ github }}" target="_blank">{{github}}</a>.<br>
+                Also find me on numerous social networks displayed on the bottom ;)
+            {% endblocktrans %}
         </div>
     </div>
 {% endblock %}
