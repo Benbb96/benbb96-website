@@ -17,6 +17,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.42.62', 'benbb96.pythonanywhere.com']
 
+INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
 
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'fontawesome',
     'django_filters',
     'colorfield',
-    'adminsortable'
+    'adminsortable',
+    'debug_toolbar',
 ]
 
 SITE_ID = 1
@@ -47,6 +49,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
