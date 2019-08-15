@@ -75,6 +75,7 @@
                         <th>{% trans "Title" %}</th>
                         <th>{% trans "Date add" %}</th>
                         <th>{% trans "View count" %}</th>
+                        <th>{% trans "Liens" %}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -87,6 +88,19 @@
                         </td>
                         <td>{{ musique.date_creation|date:'l j F Y, H:i' }}</td>
                         <td>{{ musique.nb_vue }}</td>
+                        <td>
+                            <ul class="list-inline">
+                            {% for lien in musique.liens.all %}
+                                <li>
+                                    <a class="platformLink" data-link-id="{{ lien.id }}"
+                                       data-link-url="{% url 'music:incremente_link_click_count' lien.id %}"
+                                       href="{{ lien.url }}" target="_blank">
+                                        {{ lien.get_plateforme_display }} <i class="fa fa-external-link"></i>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </td>
                         </tr>
                     {% endfor %}
                     </tbody>

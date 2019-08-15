@@ -93,6 +93,7 @@ class LienInline(admin.TabularInline):
 
 class PlaylistInline(admin.TabularInline):
     model = Playlist.musiques.through
+    autocomplete_fields = ('playlist',)
 
 
 @admin.register(Musique)

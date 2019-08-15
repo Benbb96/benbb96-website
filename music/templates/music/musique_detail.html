@@ -53,21 +53,3 @@
     </div>
     {% csrf_token %}
 {% endblock %}
-
-{% block javascript %}
-    <script>
-        $(() => {
-            $('.platformLink').click(function () {
-                $.post($(this).data('linkUrl'))
-                    .done(response => {
-                        if (response.success) {
-                            $('.click_count#' + $(this).data('linkId')).text(response.click_count);
-                        }
-                    })
-                    .fail((xhr, textStatus, errorThrown) => {
-                        console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
-                    })
-            })
-        })
-    </script>
-{% endblock %}
