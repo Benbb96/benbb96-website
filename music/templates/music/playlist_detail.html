@@ -1,6 +1,7 @@
 {% extends 'music/base_music.html' %}
+{% load i18n %}
 
-{% block music_title %}Playlist {{ playlist.nom }}{% endblock %}
+{% block music_title %}{% trans "Playlist" %} {{ playlist.nom }}{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -11,15 +12,17 @@
                 </div>
                 <div class="panel-body">
                     <div>
-                        Créé le {{ playlist.date_creation|date }} à {{ playlist.date_creation|time }}
-                        par <a href="{{ playlist.createur.get_absolute_url }}">{{ playlist.createur }}</a>.
+                        {% blocktrans with playlist_date=playlist.date_creation|date playlist_time=playlist.date_creation|time playlist_createur_url=playlist.createur.get_absolute_url playlist_createur=playlist.createur %}
+                            Created on {{ playlist_date }} at {{ playlist_time }}
+                            by <a href="{{ playlist_createur_url }}">{{ playlist_createur }}</a>.
+                        {% endblocktrans %}
                     </div>
                     {% if playlist.description %}
-                        <h3>Description</h3>
+                        <h3>{% trans "Description" %}</h3>
                         <p>{{ playlist.description }}</p>
                     {% endif %}
                     {% if playlist.styles.exists %}
-                        <h3>Styles</h3>
+                        <h3>{% trans "Styles" %}</h3>
                         <ul>
                             {% for style in playlist.styles.all %}
                                 <li>{{ style.nom }}</li>
@@ -27,7 +30,7 @@
                         </ul>
                     {% endif %}
                     {% if playlist.musiqueplaylist_set.exists %}
-                        <h3>Artistes de cette playlist</h3>
+                        <h3>{% blocktrans %}Playlist artists{% endblocktrans %}</h3>
                         <div class="list-group">
                             {% for artiste in playlist.artistes.all %}
                                 <a class="list-group-item" href="{{ artiste.get_absolute_url }}">{{ artiste }}</a>
@@ -38,14 +41,18 @@
             </div>
         </div>
         <div class="col-sm-8 col-xs-12">
-            <h2>Musiques</h2>
+            <h2>{% trans "Musics" %}</h2>
             {% for musiqueplaylist in playlist.musiqueplaylist_set.all %}
                 <a href="{{ musiqueplaylist.musique.get_absolute_url }}">
                     <b>{{ musiqueplaylist.musique }}</b>
                 </a>
-                <div>Ajouté le {{ musiqueplaylist.date_ajout|date:'l j F Y, H:i' }}</div>
+                <div>
+                    {% blocktrans with date=musiqueplaylist.date_ajout|date:'l j F Y, H:i' %}
+                        Added on {{ date }}
+                    {% endblocktrans %}
+                </div>
             {% empty %}
-                <p>Cette playlist est vide :(</p>
+                <p>{% blocktrans %}This playlist is empty...{% endblocktrans %}</p>
             {% endfor %}
         </div>
     </div>
