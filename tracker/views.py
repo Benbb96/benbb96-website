@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.text import slugify
 from django.views.decorators.http import require_POST
+from django.views.generic import UpdateView, DeleteView
 from django_pandas.io import read_frame
 import pandas as pd
 
@@ -43,6 +45,15 @@ def tracker_detail(request, slug):
         'form': form
     })
 
+
+class TrackerUpdateView(UpdateView):
+    model = Tracker
+    form_class = TrackerForm
+
+
+class TrackerDeleteView(DeleteView):
+    model = Tracker
+    success_url = reverse_lazy('tracker:liste-tracker')
 
 @require_POST
 def tracker_data(request):
