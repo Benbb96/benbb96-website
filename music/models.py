@@ -23,6 +23,9 @@ class Pays(models.Model):
 class Style(models.Model):
     nom = models.CharField(max_length=50, unique=True)
 
+    class Meta:
+        ordering = ('nom',)
+
     def __str__(self):
         return self.nom
 

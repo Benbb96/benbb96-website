@@ -1,11 +1,31 @@
 {% extends 'base.html' %}
 
-{% load static %}
+{% load static i18n %}
 
-{% block title %}{% block music_title %}{% endblock %} | Musique{% endblock %}
+{% block title %}{% block music_title %}{% endblock %} | {% trans "Music" %}{% endblock %}
 
-{% block jumbotron_title %}<a href="{% url 'music:liste-playlists' %}">Musique</a>{% endblock %}
+{% block jumbotron_title %}<a href="{% url 'music:liste-playlists' %}">{% trans "Music" %}</a>{% endblock %}
 {% block jumbotron_description %}
-    Mon nouveau projet pour sauvegarder toutes mes playlists qui sont sur mon téléphones avec un système de
-    lien vers différentes plate-formes pour écouter les musiques.
+    {% blocktrans %}
+        My new project to save all my playlists which are on my phone and with a link system to different
+        platforms to listening to music
+    {% endblocktrans %}
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(() => {
+            $('.platformLink').click(function () {
+                $.post($(this).data('linkUrl'))
+                    .done(response => {
+                        if (response.success) {
+                            $('.click_count#' + $(this).data('linkId')).text(response.click_count);
+                        }
+                    })
+                    .fail((xhr, textStatus, errorThrown) => {
+                        console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
+                    })
+            })
+        })
+    </script>
 {% endblock %}

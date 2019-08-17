@@ -17,6 +17,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['benbb96.pythonanywhere.com']
 
+INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
 
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'fontawesome',
     'django_filters',
     'colorfield',
-    'adminsortable'
+    'adminsortable',
+    'debug_toolbar',
 ]
 
 SITE_ID = 1

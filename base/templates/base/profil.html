@@ -18,6 +18,7 @@
 {% endblock %}
 
 {% block base_content %}
+    {% if object.profil.avis_set.exists %}
     <h1>Ses derniers avis</h1>
     <div class="row">
     {% for avis in object.profil.avis_set.all|slice:"6" %}
@@ -28,4 +29,5 @@
         {% endif %}
     {% endfor %}
     </div>
+    {% endif %}
 {% endblock %}

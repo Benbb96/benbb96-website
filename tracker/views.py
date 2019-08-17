@@ -1,20 +1,32 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import ListView
+from django.utils.text import slugify
+from django.views.decorators.http import require_POST
+from django.views.generic import UpdateView, DeleteView
 from django_pandas.io import read_frame
 import pandas as pd
 
-from tracker.forms import TrackForm
+from tracker.forms import TrackForm, TrackerForm
 from tracker.models import Tracker
 
 
-class TrackerListView(ListView):
-    model = Tracker
+@login_required
+def tracker_list(request):
+    trackers = Tracker.objects.filter(createur=request.user.profil)
 
-    def get_queryset(self):
-        queryset = super(TrackerListView, self).get_queryset()
-        return queryset.filter(createur=self.request.user.profil)
+    form = TrackerForm(request.POST or None)
+    if form.is_valid():
+        tracker = form.save(commit=False)
+        tracker.createur = request.user.profil
+        tracker.slug = slugify(tracker.nom)
+        tracker.save()
+
+        return redirect('tracker:liste-tracker')
+
+    return render(request, 'tracker/tracker_list.html', {'trackers': trackers, 'form': form})
 
 
 @login_required
@@ -28,8 +40,30 @@ def tracker_detail(request, slug):
         track.save()
         return redirect('tracker:detail-tracker', slug=tracker.slug)
 
+    return render(request, 'tracker/tracker_detail.html', {
+        'tracker': tracker,
+        'form': form
+    })
+
+
+class TrackerUpdateView(UpdateView):
+    model = Tracker
+    form_class = TrackerForm
+
+
+class TrackerDeleteView(DeleteView):
+    model = Tracker
+    success_url = reverse_lazy('tracker:liste-tracker')
+
+@require_POST
+def tracker_data(request):
+    if not request.is_ajax():
+        return JsonResponse({'error':'Unauthorized access'}, status_code=401)
+
+    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=request.POST.get('id'))
+
     # Regroupe les données par date pour faire des stats
-    frequency = request.GET.get('frequency', 'D')
+    frequency = request.POST.get('frequency', 'D')
     df = read_frame(tracker.tracks.all(), fieldnames=['datetime'])
     df['datetime'] = pd.to_datetime(df['datetime'])
     df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
@@ -59,10 +93,12 @@ def tracker_detail(request, slug):
 
     data.index = data.index.strftime(format)
 
-    return render(request, 'tracker/tracker_detail.html', {
-        'tracker': tracker,
-        'form': form,
+    labels = data.index.values.tolist()
+    data= data.values.tolist()
+
+    return JsonResponse({
+        'labels': labels,
         'data': data,
-        'frequency': frequency,
-        'avg': avg
+        'avg': round(avg, 2)
     })
+

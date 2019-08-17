@@ -2,13 +2,21 @@
 
 {% load fontawesome admin_urls %}
 
-{% block avis_title %}Tracker {{ tracker.nom }}{% endblock %}
+{% block tracker_title %}Tracker {{ tracker.nom }}{% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-md-8 col-md-offset-2 col-xs-12">
             <div class="text-center">
-                <h1>{{ tracker.nom }} {% fontawesome_icon tracker.icone %}</h1>
+                <h1 style="background-color: {{ tracker.color }}; padding: 4px 0; border: solid 1px black; border-radius: 4px;">
+                    {{ tracker.nom }} {% fontawesome_icon tracker.icone %}
+                    <a class="btn btn-info" href="{% url 'tracker:update-tracker' tracker.slug %}">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a class="btn btn-danger" href="{% url 'tracker:delete-tracker' tracker.slug %}">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </h1>
                 <div>Créé le {{ tracker.date_creation|date }} à {{ tracker.date_creation|time }}</div>
             </div>
 
@@ -40,46 +48,36 @@
             <div class="tab-content">
                 <div id="statistiques" class="tab-pane fade in active">
                     <h2>Statistiques</h2>
+                    {% if tracker.tracks.count < 3 %}
+                    <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
+                    {% else %}
                     <p>
-                        Moyenne par
-                        {% if frequency == 'H' %}
-                            heure
-                        {% elif frequency == 'D' %}
-                            jour
-                        {% elif frequency == 'W' %}
-                            semaine
-                        {% elif frequency == 'M' %}
-                            mois
-                        {% elif frequency == 'Q' %}
-                            quart d'année
-                        {% elif frequency == 'Y' %}
-                            année
-                        {% endif %}
-                        : <strong>{{ avg|floatformat }}</strong> {{ tracker.nom|lower }}
+                        Moyenne par <span id="frequency"></span> : <strong id="avg"></strong> {{ tracker.nom|lower }}
                     </p>
                     <div class="text-center">
                         <canvas id="myChart" width="600" height="400"></canvas>
                     </div>
                     <div class="row">
                         <div class="col-md-2 col-xs-6 text-center">
-                            <a class="btn btn-default{% if frequency == 'H' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=H">Heure</a>
+                            <button type="button" class="btn btn-default btn-frequency" data-frequency="H">Heure</button>
                         </div>
                         <div class="col-md-2 col-xs-6 text-center">
-                            <a class="btn btn-default{% if frequency == 'D' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=D">Jour</a>
+                            <button type="button" class="btn btn-default btn-frequency" data-frequency="D" id="default">Jour</button>
                         </div>
                         <div class="col-md-2 col-xs-6 text-center">
-                            <a class="btn btn-default{% if frequency == 'W' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=W">Semaine</a>
+                            <button type="button" class="btn btn-default btn-frequency" data-frequency="W">Semaine</button>
                         </div>
                         <div class="col-md-2 col-xs-6 text-center">
-                            <a class="btn btn-default{% if frequency == 'M' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=M">Mois</a>
+                            <button type="button" class="btn btn-default btn-frequency" data-frequency="M">Mois</button>
                         </div>
                         <div class="col-md-2 col-xs-6 text-center">
-                            <a class="btn btn-default{% if frequency == 'Q' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=Q">Quart d'année</a>
+                            <button type="button" class="btn btn-default btn-frequency" data-frequency="Q">Quart d'année</button>
                         </div>
                         <div class="col-md-2 col-xs-6 text-center">
-                            <a class="btn btn-default{% if frequency == 'Y' %} active{% endif %}" href="{% url 'tracker:detail-tracker' tracker.slug %}?frequency=Y">Année</a>
+                            <button type="button" class="btn btn-default btn-frequency" data-frequency="Y">Année</button>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
                 <div id="historique" class="tab-pane fade">
                     <h2>Historique <small>{{ tracker.tracks.count }} tracks</small></h2>
@@ -117,27 +115,61 @@
 {% block javascript %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 <script>
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [{% for day in data.index.values %}'{{ day }}', {% endfor %}],
-            datasets: [{
-                data: [{% for value in data.count %}{{ value }}, {% endfor %}]
-            }]
-        },
-        options: {
-            legend: {
-                display:false
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
+    $(() => {
+        var ctx = document.getElementById("myChart");
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    data: []
                 }]
+            },
+            options: {
+                legend: {
+                    display:false
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
             }
-        }
-    });
+        });
+
+        var trackerId = {{ tracker.id }};
+        var url = "{% url 'tracker:tracker-data' %}";
+        const frequency_map = {
+            H: 'heure',
+            D: 'jour',
+            W: 'semaine',
+            M: 'mois',
+            Q: "quart d'année",
+            Y: 'année',
+        };
+
+        //
+        $('.btn-frequency').click(function (e) {
+            const frequency = $(this).data('frequency');
+            $.post(url, {id: trackerId, frequency: frequency})
+                .done(response => {
+                    myChart.data.labels = response.labels;
+                    myChart.data.datasets[0].data = response.data;
+                    myChart.update();
+                    $('span#frequency').text(frequency_map[frequency]);
+                    $('strong#avg').text(response.avg);
+                    $('.btn-frequency').removeClass('active');
+                    $(this).addClass('active')
+                })
+                .fail((xhr, textStatus, errorThrown) => {
+                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
+                })
+        });
+
+        // Trigger the default one
+        $('.btn-frequency#default').trigger('click');
+    })
 </script>
 {% endblock %}

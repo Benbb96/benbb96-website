@@ -1,3 +1,4 @@
+from adminsortable.admin import SortableAdmin
 from django.contrib import admin
 
 from base.models import Profil
@@ -9,7 +10,7 @@ class TrackInline(admin.TabularInline):
 
 
 @admin.register(Tracker)
-class TrackerAdmin(admin.ModelAdmin):
+class TrackerAdmin(SortableAdmin):
     list_display = ('nom', 'createur', 'icone', 'color', 'date_creation')
     search_fields = ('createur__user__username', 'nom')
     date_hierarchy = 'date_creation'
