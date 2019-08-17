@@ -19,7 +19,7 @@
                 </table>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Valider</button>
-                    <a class="btn btn-default" href="{% url 'tracker:detail-tracker' object.slug %}">Annuler</a>
+                    <a class="btn btn-default" href="{{ object.get_absolute_url }}">Annuler</a>
                 </div>
             </form>
         </div>

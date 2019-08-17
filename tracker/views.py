@@ -3,7 +3,6 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.utils.text import slugify
 from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView, DeleteView
 from django_pandas.io import read_frame
@@ -25,23 +24,22 @@ def tracker_list(request):
             tracker = form.save(commit=False)
             tracker.createur = request.user.profil
             tracker.save()
-            tracker.slug = '%s-%d' % (slugify(tracker.nom), tracker.id)
-            tracker.save(update_fields=['slug'])
+
             return redirect('tracker:liste-tracker')
 
     return render(request, 'tracker/tracker_list.html', {'trackers': trackers, 'form': form})
 
 
 @login_required
-def tracker_detail(request, slug):
-    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), slug=slug)
+def tracker_detail(request, id):
+    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=id)
 
     form = TrackForm(request.POST or None)
     if form.is_valid():
         track = form.save(commit=False)
         track.tracker = tracker
         track.save()
-        return redirect('tracker:detail-tracker', slug=tracker.slug)
+        return redirect(tracker)
 
     return render(request, 'tracker/tracker_detail.html', {
         'tracker': tracker,

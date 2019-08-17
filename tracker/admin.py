@@ -14,7 +14,6 @@ class TrackerAdmin(admin.ModelAdmin):
     search_fields = ('createur__user__username', 'nom')
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
-    prepopulated_fields = {'slug': ('nom',), }
 
     inlines = [TrackInline]
 

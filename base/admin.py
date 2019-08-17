@@ -7,7 +7,6 @@ from tracker.models import Tracker
 
 class TrackerInline(SortableTabularInline):
     model = Tracker
-    prepopulated_fields = {'slug': ('nom',), }
 
 
 @admin.register(Profil)

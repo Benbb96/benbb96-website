@@ -11,7 +11,7 @@
                 <form method="post">{% csrf_token %}
                     <p>Êtes-vous sûr de vouloir supprimer le tracker "{{ object }}"?</p>
                     <button class="btn btn-primary" type="submit">Confirmer</button>
-                    <a class="btn btn-warning" href="{% url 'tracker:detail-tracker' object.slug %}">Annuler</a>
+                    <a class="btn btn-warning" href="{{ object.get_absolute_url }}">Annuler</a>
                 </form>
             </div>
         </div>
