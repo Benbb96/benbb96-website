@@ -6,6 +6,7 @@ from . import views
 app_name = 'tracker'
 
 urlpatterns = [
-    path('', login_required(views.TrackerListView.as_view(), login_url='admin:login'), name='liste-tracker'),
-    path('<slug:slug>', views.tracker_detail, name='detail-tracker')
+    path('', views.tracker_list, name='liste-tracker'),
+    path('<slug:slug>', views.tracker_detail, name='detail-tracker'),
+    path('get/data/', views.tracker_data, name='tracker-data')
 ]

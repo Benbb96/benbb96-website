@@ -9,12 +9,12 @@ from base.models import Profil
 
 
 class Tracker(SortableMixin):
-    createur = models.ForeignKey(Profil, related_name='trackers', on_delete=models.CASCADE)
+    createur = models.ForeignKey(Profil, verbose_name='créateur', related_name='trackers', on_delete=models.CASCADE)
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
-    icone = IconField()
-    color = ColorField(default='#FFFFFF')
-    date_creation = models.DateTimeField(verbose_name="date de création", auto_now_add=True)
+    icone = IconField('icône')
+    color = ColorField('couleur', default='#FFFFFF')
+    date_creation = models.DateTimeField('date de création', auto_now_add=True)
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
     class Meta:
