@@ -1,4 +1,4 @@
-from adminsortable.models import SortableMixin
+from adminsortable.models import SortableMixin, SortableForeignKey
 from colorfield.fields import ColorField
 from django.db import models
 from django.urls import reverse
@@ -9,7 +9,7 @@ from base.models import Profil
 
 
 class Tracker(SortableMixin):
-    createur = models.ForeignKey(Profil, verbose_name='créateur', related_name='trackers', on_delete=models.CASCADE)
+    createur = SortableForeignKey(Profil, verbose_name='créateur', related_name='trackers', on_delete=models.CASCADE)
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
     icone = IconField('icône')

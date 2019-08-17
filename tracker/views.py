@@ -19,12 +19,15 @@ def tracker_list(request):
 
     form = TrackerForm(request.POST or None)
     if form.is_valid():
-        tracker = form.save(commit=False)
-        tracker.createur = request.user.profil
-        tracker.slug = slugify(tracker.nom)
-        tracker.save()
-
-        return redirect('tracker:liste-tracker')
+        if request.user.profil.trackers.filter(nom=form.cleaned_data['nom']).exists():
+            form.add_error('nom', 'Vous avez déjà créé un tracker du même nom.')
+        else:
+            tracker = form.save(commit=False)
+            tracker.createur = request.user.profil
+            tracker.save()
+            tracker.slug = '%s-%d' % (slugify(tracker.nom), tracker.id)
+            tracker.save(update_fields=['slug'])
+            return redirect('tracker:liste-tracker')
 
     return render(request, 'tracker/tracker_list.html', {'trackers': trackers, 'form': form})
 
