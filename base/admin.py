@@ -1,13 +1,21 @@
+from adminsortable.admin import NonSortableParentAdmin, SortableTabularInline
 from django.contrib import admin
 
 from base.models import Projet, LienReseauSocial, Profil
+from tracker.models import Tracker
+
+
+class TrackerInline(SortableTabularInline):
+    model = Tracker
 
 
 @admin.register(Profil)
-class ProfilAdmin(admin.ModelAdmin):
+class ProfilAdmin(NonSortableParentAdmin):
     list_display = ('user', 'nbAvis', 'note_moyenne', 'age', 'date_creation')
     search_fields = ('user__username',)
     ordering = ('user',)
+
+    inlines = [TrackerInline]
 
     def nbAvis(self, profil):
         return profil.avis_set.count()

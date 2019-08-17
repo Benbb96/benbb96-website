@@ -10,10 +10,10 @@
             <div class="text-center">
                 <h1 style="background-color: {{ tracker.color }}; padding: 4px 0; border: solid 1px black; border-radius: 4px;">
                     {{ tracker.nom }} {% fontawesome_icon tracker.icone %}
-                    <a class="btn btn-info" href="{% url 'tracker:update-tracker' tracker.slug %}">
+                    <a class="btn btn-info" href="{% url 'tracker:update-tracker' tracker.id %}">
                         <i class="fa fa-edit"></i>
                     </a>
-                    <a class="btn btn-danger" href="{% url 'tracker:delete-tracker' tracker.slug %}">
+                    <a class="btn btn-danger" href="{% url 'tracker:delete-tracker' tracker.id %}">
                         <i class="fa fa-trash"></i>
                     </a>
                 </h1>
@@ -52,7 +52,7 @@
                     <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
                     {% else %}
                     <p>
-                        Moyenne par <span id="frequency"></span> : <strong id="avg"></strong> {{ tracker.nom|lower }}
+                        <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
                     </p>
                     <div class="text-center">
                         <canvas id="myChart" width="600" height="400"></canvas>
@@ -147,7 +147,7 @@
             W: 'semaine',
             M: 'mois',
             Q: "quart d'année",
-            Y: 'année',
+            Y: 'an',
         };
 
         //

@@ -30,6 +30,10 @@ footer p a i:hover {
     margin: 20px;
 }
 
+.errorlist {
+    color: red;
+}
+
 .flex-container {
     display: flex;
     flex-wrap: wrap;
