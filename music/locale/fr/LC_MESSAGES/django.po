@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-15 14:39+0200\n"
+"POT-Creation-Date: 2019-08-18 13:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,7 +68,7 @@ msgstr ""
 "                    "
 
 #: templates/music/artiste_detail.html:70
-#: templates/music/playlist_detail.html:44
+#: templates/music/playlist_detail.html:55
 msgid "Musics"
 msgstr "Musiques"
 
@@ -84,7 +84,12 @@ msgstr "Date d'ajout"
 msgid "View count"
 msgstr "Nombre de vue"
 
-#: templates/music/artiste_detail.html:97
+#: templates/music/artiste_detail.html:78
+#: templates/music/musique_detail.html:33
+msgid "Liens"
+msgstr "Liens"
+
+#: templates/music/artiste_detail.html:111
 #, python-format
 msgid "Playlists with %(artiste_name)s"
 msgstr "Playlists avec du %(artiste_name)s"
@@ -139,10 +144,6 @@ msgstr ""
 msgid "Album"
 msgstr "Album"
 
-#: templates/music/musique_detail.html:33
-msgid "Liens"
-msgstr "Liens"
-
 #: templates/music/musique_detail.html:39
 #, python-format
 msgid ""
@@ -177,8 +178,7 @@ msgid ""
 "                        "
 msgstr ""
 "\n"
-"                            Crée le %(playlist_date)s à "
-"%(playlist_time)s\n"
+"                            Crée le %(playlist_date)s à %(playlist_time)s\n"
 "                            par <a href=\"%(playlist_createur_url)s\">"
 "%(playlist_createur)s</a>.\n"
 "                        "
@@ -191,7 +191,11 @@ msgstr "Description"
 msgid "Playlist artists"
 msgstr "Artistes de la playlist"
 
-#: templates/music/playlist_detail.html:50
+#: templates/music/playlist_detail.html:39
+msgid "See all..."
+msgstr "Voir tout"
+
+#: templates/music/playlist_detail.html:61
 #, python-format
 msgid ""
 "\n"
@@ -202,7 +206,7 @@ msgstr ""
 "                        Ajouté le %(date)s\n"
 "                    "
 
-#: templates/music/playlist_detail.html:55
+#: templates/music/playlist_detail.html:66
 msgid "This playlist is empty..."
 msgstr "Cette playlist est vide..."
 
