@@ -193,7 +193,7 @@ msgstr "Artistes de la playlist"
 
 #: templates/music/playlist_detail.html:39
 msgid "See all..."
-msgstr "Voir tout"
+msgstr "Voir tout..."
 
 #: templates/music/playlist_detail.html:61
 #, python-format

@@ -19,7 +19,7 @@
                     </div>
                     {% if playlist.description %}
                         <h3>{% trans "Description" %}</h3>
-                        <p>{{ playlist.description }}</p>
+                        <p>{{ playlist.description|linebreaksbr }}</p>
                     {% endif %}
                     {% if playlist.styles.exists %}
                         <h3>{% trans "Styles" %}</h3>

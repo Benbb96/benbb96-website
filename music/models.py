@@ -5,6 +5,7 @@ from adminsortable.fields import SortableForeignKey
 from adminsortable.models import SortableMixin
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 
 from base.models import Profil
@@ -48,7 +49,11 @@ class Playlist(models.Model):
         return Style.objects.filter(musiques__musiqueplaylist__playlist=self).distinct()
 
     def artistes(self):
-        return Artiste.objects.filter(musiques__musiqueplaylist__playlist=self).distinct()
+        return Artiste.objects.filter(
+            Q(musiques__musiqueplaylist__playlist=self)
+            | Q(remixes__musiqueplaylist__playlist=self)
+            | Q(musiques_featuring__musiqueplaylist__playlist=self)
+        ).distinct()
 
 
 class Artiste(models.Model):
@@ -90,8 +95,15 @@ class Artiste(models.Model):
             return self.prenom + ' ' + self.nom
         return None
 
+    def all_musics(self):
+        return Musique.objects.filter(Q(artiste=self) | Q(remixed_by=self) | Q(featuring=self))
+
     def playlists(self):
-        return Playlist.objects.filter(musiqueplaylist__musique__artiste=self).distinct()
+        return Playlist.objects.filter(
+            Q(musiqueplaylist__musique__artiste=self)
+            | Q(musiqueplaylist__musique__remixed_by=self)
+            | Q(musiqueplaylist__musique__featuring=self)
+        ).distinct()
 
     @property
     def soundcloud_followers(self):
@@ -104,7 +116,25 @@ class Artiste(models.Model):
 class Musique(models.Model):
     titre = models.CharField(max_length=50)
     slug = models.SlugField()
-    artiste = models.ForeignKey(Artiste, on_delete=models.PROTECT, related_name='musiques')
+    artiste = models.ForeignKey(
+        Artiste,
+        on_delete=models.PROTECT,
+        related_name='musiques',
+        help_text='Artiste principal de la musique.'
+    )
+    featuring = models.ManyToManyField(
+        Artiste,
+        help_text='Les artistes qui ont participé à la musique.',
+        related_name='musiques_featuring',
+        blank=True
+    )
+    remixed_by = models.ForeignKey(
+        Artiste,
+        verbose_name='remixé par',
+        on_delete=models.PROTECT,
+        related_name='remixes',
+        null=True, blank=True
+    )
     album = models.CharField(max_length=200, blank=True)
     styles = models.ManyToManyField(Style, related_name='musiques', blank=True)
     playlists = models.ManyToManyField(Playlist, related_name='musiques', blank=True, through='MusiquePlaylist')
@@ -119,7 +149,21 @@ class Musique(models.Model):
         unique_together = ('artiste', 'titre')
 
     def __str__(self):
-        return '%s - %s' % (self.artiste, self.titre)
+        return '%s - %s' % (self.artiste_display(), self.titre_display())
+
+    def artiste_display(self):
+        if self.featuring.exists():
+            return '%s & %s' % (self.artiste, ' & '.join(self.featuring.values_list('nom_artiste', flat=True)))
+        return self.artiste.nom_artiste
+    artiste_display.short_description = 'Artistes'
+    artiste_display.admin_order_field = 'artiste'
+
+    def titre_display(self):
+        if self.remixed_by:
+            return '%s (%s Remix)' % (self.titre, self.remixed_by.nom_artiste)
+        return self.titre
+    titre_display.short_description = 'Titre'
+    titre_display.admin_order_field = 'titre'
 
     def get_absolute_url(self):
         return reverse('music:detail-musique',

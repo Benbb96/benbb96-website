@@ -79,11 +79,11 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for musique in artiste.musiques.all %}
+                    {% for musique in artiste.all_musics %}
                         <tr>
                         <td>
                             <a href="{{ musique.get_absolute_url }}">
-                                <b>{{ musique.titre }}</b>
+                                <b>{{ musique.titre_display }}</b>
                             </a>
                         </td>
                         <td>{{ musique.date_creation|date:'l j F Y, H:i' }}</td>
