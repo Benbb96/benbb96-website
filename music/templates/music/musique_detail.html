@@ -7,9 +7,15 @@
     <div class="row">
         <div class="col-sm-8 col-sm-offset-2 col-xs-12">
             <h1>
-                <a href="{{ musique.artiste.get_absolute_url }}" title="{% trans "See artist page" %}">
-                    {{ musique.artiste }}
-                </a>
+                {% if musique.artiste %}
+                    <a href="{{ musique.artiste.get_absolute_url }}" title="{% trans "See artist page" %}">
+                        {{ musique.artiste }}
+                    </a>
+                {% else %}
+                    <a href="{{ musique.groupe.get_absolute_url }}" title="{% trans "See group page" %}">
+                        {{ musique.groupe }}
+                    </a>
+                {% endif %}
                 {% if musique.featuring.exists %}
                     {% for featuring_artist in musique.featuring.all %}
                         & <a href="{{ featuring_artist.get_absolute_url }}">{{ featuring_artist }}</a>

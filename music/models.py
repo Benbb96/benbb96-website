@@ -3,6 +3,7 @@ import random
 import soundcloud
 from adminsortable.fields import SortableForeignKey
 from adminsortable.models import SortableMixin
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
@@ -113,6 +114,26 @@ class Artiste(models.Model):
         return random.randint(1, 10000)
 
 
+class Groupe(models.Model):
+    nom = models.CharField(max_length=150, unique=True)
+    slug = models.SlugField(unique=True)
+    artistes = models.ManyToManyField(Artiste, related_name='artistes')
+    createur = models.ForeignKey(
+        Profil, related_name='groupes_crees', on_delete=models.SET_NULL, null=True, blank=True
+    )
+    date_creation = models.DateTimeField('date de création', auto_now_add=True)
+    date_modification = models.DateTimeField('dernière modification', auto_now=True)
+
+    class Meta:
+        ordering = ('nom',)
+
+    def __str__(self):
+        return self.nom
+
+    def get_absolute_url(self):
+        pass
+
+
 class Musique(models.Model):
     titre = models.CharField(max_length=50)
     slug = models.SlugField()
@@ -120,8 +141,10 @@ class Musique(models.Model):
         Artiste,
         on_delete=models.PROTECT,
         related_name='musiques',
+        null = True, blank = True,
         help_text='Artiste principal de la musique.'
     )
+    groupe = models.ForeignKey(Groupe, on_delete=models.PROTECT, related_name='musiques', null=True, blank=True)
     featuring = models.ManyToManyField(
         Artiste,
         help_text='Les artistes qui ont participé à la musique.',
@@ -149,12 +172,29 @@ class Musique(models.Model):
         unique_together = ('artiste', 'titre')
 
     def __str__(self):
+        if not self.artiste and not self.groupe:
+            return self.titre
         return '%s - %s' % (self.artiste_display(), self.titre_display())
 
+    def clean(self):
+        if self.artiste and self.groupe:
+            raise ValidationError(
+                message="Une musique peut être réalisé soit par un artiste, soit par un groupe. Pas les deux."
+            )
+        if not self.artiste and not self.groupe:
+            raise ValidationError(
+                message="Tu dois choisir un artiste ou un groupe."
+            )
+
     def artiste_display(self):
+        if self.groupe:
+            artiste_principal = self.groupe.nom
+        else:
+            artiste_principal = self.artiste.nom_artiste
+
         if self.featuring.exists():
-            return '%s & %s' % (self.artiste, ' & '.join(self.featuring.values_list('nom_artiste', flat=True)))
-        return self.artiste.nom_artiste
+            return '%s & %s' % (artiste_principal, ' & '.join(self.featuring.values_list('nom_artiste', flat=True)))
+        return artiste_principal
     artiste_display.short_description = 'Artistes'
     artiste_display.admin_order_field = 'artiste'
 
@@ -167,7 +207,7 @@ class Musique(models.Model):
 
     def get_absolute_url(self):
         return reverse('music:detail-musique',
-                       kwargs={'slug_artist': self.artiste.slug, 'slug': self.slug, 'pk': self.pk})
+                       kwargs={'slug_artist': self.artiste.slug if self.artiste else self.groupe.slug, 'slug': self.slug, 'pk': self.pk})
 
     def nb_vue(self):
         # TODO Essayer d'utiliser une aggrégation

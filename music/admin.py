@@ -2,7 +2,7 @@ from adminsortable.admin import SortableTabularInline, NonSortableParentAdmin
 from django.contrib import admin
 from django.db.models import Count
 
-from music.models import Pays, Artiste, Style, Label, Playlist, Musique, MusiquePlaylist, Lien
+from music.models import Pays, Artiste, Style, Label, Playlist, Musique, MusiquePlaylist, Lien, Groupe
 
 
 @admin.register(Pays)
@@ -58,6 +58,7 @@ class PlaylistAdmin(NonSortableParentAdmin):
 
 class MusiqueInline(admin.StackedInline):
     model = Musique
+    exclude = ('groupe',)
     prepopulated_fields = {'slug': ('titre',), }
     autocomplete_fields = ('featuring', 'remixed_by', 'styles',)
     fk_name = 'artiste'
@@ -101,6 +102,38 @@ class ArtisteAdmin(admin.ModelAdmin):
         return form
 
 
+class MusiqueGroupeInline(admin.StackedInline):
+    model = Musique
+    exclude = ('artiste',)
+    prepopulated_fields = {'slug': ('titre',), }
+    autocomplete_fields = ('featuring', 'remixed_by', 'styles',)
+    fk_name = 'groupe'
+    extra = 0
+
+    # TODO Remplir automatiquement le créateur pour la musique
+
+
+@admin.register(Groupe)
+class GroupeAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'date_creation', 'date_modification')
+    list_filter = ('createur',)
+    search_fields = (
+        'nom',
+    )
+    date_hierarchy = 'date_creation'
+    ordering = ('-date_modification',)
+    prepopulated_fields = {'slug': ('nom',), }
+    autocomplete_fields = ('artistes',)
+
+    inlines = [MusiqueGroupeInline]
+
+    def get_form(self, request, obj=None, **kwargs):
+        # Pré-rempli automatiquement avec l'utilisateur connecté
+        form = super(GroupeAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['createur'].initial = request.user
+        return form
+
+
 class LienInline(admin.TabularInline):
     model = Lien
 
@@ -121,7 +154,7 @@ class MusiqueAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_creation'
     ordering = ('-date_modification',)
     prepopulated_fields = {'slug': ('titre',), }
-    autocomplete_fields = ('artiste', 'featuring', 'remixed_by', 'styles')
+    autocomplete_fields = ('artiste', 'groupe', 'featuring', 'remixed_by', 'styles')
     list_select_related = ('artiste', 'remixed_by', 'createur')
     save_on_top = True
 
