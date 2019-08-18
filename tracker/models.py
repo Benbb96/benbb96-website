@@ -26,6 +26,35 @@ class Tracker(SortableMixin):
     def get_absolute_url(self):
         return reverse('tracker:detail-tracker', kwargs={'id': self.id})
 
+    def track_by_hour(self):
+        hours = {}
+        for i in range(24):
+            hours[str(i)] = 0
+
+        for track in self.tracks.all():
+            hours[str(track.datetime.hour)] += 1
+
+        return hours
+
+    def track_by_day(self):
+        weekdays = {
+            0: 'Lundi',
+            1: 'Mardi',
+            2: 'Mercredi',
+            3: 'Jeudi',
+            4: 'Vendredi',
+            5: 'Samedi',
+            6: 'Dimanche'
+        }
+        days = {}
+        for weekday in weekdays.values():
+            days[weekday] = 0
+
+        for track in self.tracks.all():
+            days[weekdays[track.datetime.weekday()]] += 1
+
+        return days
+
 
 class Track(models.Model):
     tracker = models.ForeignKey(Tracker, related_name='tracks', on_delete=models.CASCADE)
