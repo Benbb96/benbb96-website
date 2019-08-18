@@ -56,12 +56,26 @@ class PlaylistAdmin(NonSortableParentAdmin):
     nb_musique.admin_order_field = 'nb_musique'
 
 
-class MusiqueInline(admin.TabularInline):
+class MusiqueInline(admin.StackedInline):
     model = Musique
     prepopulated_fields = {'slug': ('titre',), }
-    autocomplete_fields = ('styles',)
+    autocomplete_fields = ('featuring', 'remixed_by', 'styles',)
+    fk_name = 'artiste'
+    extra = 0
 
-    # Remplir automatiquement le créateur pour la musique
+    # TODO Remplir automatiquement le créateur pour la musique
+
+
+class MusiqueRemixInline(admin.StackedInline):
+    model = Musique
+    prepopulated_fields = {'slug': ('titre',), }
+    autocomplete_fields = ('featuring', 'remixed_by', 'styles',)
+    fk_name = 'remixed_by'
+    extra = 0
+    verbose_name_plural = 'remixes'
+    verbose_name = 'remix'
+
+    # TODO Remplir automatiquement le créateur pour le remix
 
 
 @admin.register(Artiste)
@@ -78,7 +92,7 @@ class ArtisteAdmin(admin.ModelAdmin):
     autocomplete_fields = ('styles',)
     save_on_top = True
 
-    inlines = [MusiqueInline]
+    inlines = [MusiqueInline, MusiqueRemixInline]
 
     def get_form(self, request, obj=None, **kwargs):
         # Pré-rempli automatiquement avec l'utilisateur connecté
@@ -98,15 +112,18 @@ class PlaylistInline(admin.TabularInline):
 
 @admin.register(Musique)
 class MusiqueAdmin(admin.ModelAdmin):
-    list_display = ('artiste', 'titre', 'album', 'createur', 'date_creation', 'date_modification', 'nb_vue')
-    list_display_links = ('titre',)
+    list_display = ('artiste_display', 'titre_display', 'album', 'createur', 'date_creation', 'date_modification', 'nb_vue')
+    list_display_links = ('titre_display',)
     list_filter = ('styles', 'createur')
     search_fields = (
         'titre', 'artiste__nom_artiste', 'album', 'styles__nom', 'musiqueplaylist__playlist__nom'
     )
     date_hierarchy = 'date_creation'
+    ordering = ('-date_modification',)
     prepopulated_fields = {'slug': ('titre',), }
-    autocomplete_fields = ('artiste', 'styles')
+    autocomplete_fields = ('artiste', 'featuring', 'remixed_by', 'styles')
+    list_select_related = ('artiste', 'remixed_by', 'createur')
+    save_on_top = True
 
     inlines = [LienInline, PlaylistInline]
 
@@ -126,6 +143,7 @@ class LienAdmin(admin.ModelAdmin):
     )
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('musique',)
+    list_select_related = ('musique', 'createur')
 
     def get_form(self, request, obj=None, **kwargs):
         # Pré-rempli automatiquement avec l'utilisateur connecté

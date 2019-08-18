@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-15 14:39+0200\n"
+"POT-Creation-Date: 2019-08-18 13:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,7 +63,7 @@ msgid ""
 msgstr ""
 
 #: templates/music/artiste_detail.html:70
-#: templates/music/playlist_detail.html:44
+#: templates/music/playlist_detail.html:55
 msgid "Musics"
 msgstr ""
 
@@ -79,7 +79,12 @@ msgstr ""
 msgid "View count"
 msgstr ""
 
-#: templates/music/artiste_detail.html:97
+#: templates/music/artiste_detail.html:78
+#: templates/music/musique_detail.html:33
+msgid "Liens"
+msgstr ""
+
+#: templates/music/artiste_detail.html:111
 #, python-format
 msgid "Playlists with %(artiste_name)s"
 msgstr ""
@@ -124,10 +129,6 @@ msgstr ""
 msgid "Album"
 msgstr ""
 
-#: templates/music/musique_detail.html:33
-msgid "Liens"
-msgstr ""
-
 #: templates/music/musique_detail.html:39
 #, python-format
 msgid ""
@@ -165,7 +166,11 @@ msgstr ""
 msgid "Playlist artists"
 msgstr ""
 
-#: templates/music/playlist_detail.html:50
+#: templates/music/playlist_detail.html:39
+msgid "See all..."
+msgstr ""
+
+#: templates/music/playlist_detail.html:61
 #, python-format
 msgid ""
 "\n"
@@ -173,7 +178,7 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/music/playlist_detail.html:55
+#: templates/music/playlist_detail.html:66
 msgid "This playlist is empty..."
 msgstr ""
 
@@ -186,7 +191,7 @@ msgid "on"
 msgstr ""
 
 #: templates/music/playlist_list.html:17
-msgid "Nomberof music in the playlist"
+msgid "Nomber of music in the playlist"
 msgstr ""
 
 #: templates/music/playlist_list.html:20

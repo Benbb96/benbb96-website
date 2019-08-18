@@ -1,0 +1,5 @@
+<div class="list-group">
+    {% for artiste in playlist.artistes.all %}
+        <a class="list-group-item" href="{{ artiste.get_absolute_url }}">{{ artiste }}</a>
+    {% endfor %}
+</div>

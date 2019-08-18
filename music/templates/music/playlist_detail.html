@@ -19,7 +19,7 @@
                     </div>
                     {% if playlist.description %}
                         <h3>{% trans "Description" %}</h3>
-                        <p>{{ playlist.description }}</p>
+                        <p>{{ playlist.description|linebreaksbr }}</p>
                     {% endif %}
                     {% if playlist.styles.exists %}
                         <h3>{% trans "Styles" %}</h3>
@@ -31,11 +31,22 @@
                     {% endif %}
                     {% if playlist.musiqueplaylist_set.exists %}
                         <h3>{% blocktrans %}Playlist artists{% endblocktrans %}</h3>
-                        <div class="list-group">
-                            {% for artiste in playlist.artistes.all %}
-                                <a class="list-group-item" href="{{ artiste.get_absolute_url }}">{{ artiste }}</a>
-                            {% endfor %}
+                        {% if playlist.artistes.count > 4 %}
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title text-center">
+                                        <a data-toggle="collapse" href="#collapse1">{% trans "See all..." %}</a>
+                                    </h4>
+                                </div>
+                                <div id="collapse1" class="panel-collapse collapse">
+                                    {% include 'tracker/include/playlist_artist_list.html' %}
+                                </div>
+                            </div>
                         </div>
+                        {% else %}
+                            {% include 'tracker/include/playlist_artist_list.html' %}
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
