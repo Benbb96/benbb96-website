@@ -1,0 +1,199 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-08-18 13:22+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/music/artiste_detail.html:4
+msgid "Artist"
+msgstr ""
+
+#: templates/music/artiste_detail.html:19
+msgid "Country"
+msgstr ""
+
+#: templates/music/artiste_detail.html:22
+msgid "City"
+msgstr ""
+
+#: templates/music/artiste_detail.html:26
+msgid "Website"
+msgstr ""
+
+#: templates/music/artiste_detail.html:33
+msgid "Mail contact"
+msgstr ""
+
+#: templates/music/artiste_detail.html:38
+msgid "Contact phone number"
+msgstr ""
+
+#: templates/music/artiste_detail.html:45
+msgid "Labels"
+msgstr ""
+
+#: templates/music/artiste_detail.html:53
+#: templates/music/musique_detail.html:24
+#: templates/music/playlist_detail.html:25
+msgid "Styles"
+msgstr ""
+
+#: templates/music/artiste_detail.html:62
+#, python-format
+msgid ""
+"\n"
+"                        Created on %(artiste_date)s at %(artiste_time)s\n"
+"                        by <a href=\"%(artiste_createur_url)s\">"
+"%(artiste_createur)s</a>.\n"
+"                    "
+msgstr ""
+
+#: templates/music/artiste_detail.html:70
+#: templates/music/playlist_detail.html:55
+msgid "Musics"
+msgstr ""
+
+#: templates/music/artiste_detail.html:75
+msgid "Title"
+msgstr ""
+
+#: templates/music/artiste_detail.html:76
+msgid "Date add"
+msgstr ""
+
+#: templates/music/artiste_detail.html:77
+msgid "View count"
+msgstr ""
+
+#: templates/music/artiste_detail.html:78
+#: templates/music/musique_detail.html:33
+msgid "Liens"
+msgstr ""
+
+#: templates/music/artiste_detail.html:111
+#, python-format
+msgid "Playlists with %(artiste_name)s"
+msgstr ""
+
+#: templates/music/base_music.html:5 templates/music/base_music.html:7
+msgid "Music"
+msgstr ""
+
+#: templates/music/base_music.html:9
+msgid ""
+"\n"
+"        My new project to save all my playlists which are on my phone and "
+"with a link system to different\n"
+"        platforms to listening to music\n"
+"    "
+msgstr ""
+
+#: templates/music/list_group_playlist.html:6
+#, python-format
+msgid "Created by %(playlist_createur)s on %(playlist_date)s"
+msgstr ""
+
+#: templates/music/list_group_playlist.html:8
+msgid "Playlist music count"
+msgstr ""
+
+#: templates/music/musique_detail.html:10
+msgid "See artist page"
+msgstr ""
+
+#: templates/music/musique_detail.html:14
+#, python-format
+msgid ""
+"\n"
+"                    Added on %(musique_date)s at %(musique_time)s\n"
+"                by <a href=\"%(musique_createur_url)s\">"
+"%(musique_createur)s</a>.\n"
+"                "
+msgstr ""
+
+#: templates/music/musique_detail.html:20
+msgid "Album"
+msgstr ""
+
+#: templates/music/musique_detail.html:39
+#, python-format
+msgid ""
+"\n"
+"                            Added by %(lien_createur)s on %(lien_date)s,\n"
+"                            seen <span class=\"click_count\" id=\"%(lien_id)s"
+"\">%(lien_click_count)s</span> times.\n"
+"                        "
+msgstr ""
+
+#: templates/music/musique_detail.html:48
+msgid "This music is present in these playlists"
+msgstr ""
+
+#: templates/music/playlist_detail.html:4
+msgid "Playlist"
+msgstr ""
+
+#: templates/music/playlist_detail.html:15
+#, python-format
+msgid ""
+"\n"
+"                            Created on %(playlist_date)s at "
+"%(playlist_time)s\n"
+"                            by <a href=\"%(playlist_createur_url)s\">"
+"%(playlist_createur)s</a>.\n"
+"                        "
+msgstr ""
+
+#: templates/music/playlist_detail.html:21
+msgid "Description"
+msgstr ""
+
+#: templates/music/playlist_detail.html:33
+msgid "Playlist artists"
+msgstr ""
+
+#: templates/music/playlist_detail.html:39
+msgid "See all..."
+msgstr ""
+
+#: templates/music/playlist_detail.html:61
+#, python-format
+msgid ""
+"\n"
+"                        Added on %(date)s\n"
+"                    "
+msgstr ""
+
+#: templates/music/playlist_detail.html:66
+msgid "This playlist is empty..."
+msgstr ""
+
+#: templates/music/playlist_list.html:5
+msgid "My playlists"
+msgstr ""
+
+#: templates/music/playlist_list.html:15
+msgid "on"
+msgstr ""
+
+#: templates/music/playlist_list.html:17
+msgid "Nomber of music in the playlist"
+msgstr ""
+
+#: templates/music/playlist_list.html:20
+msgid "No playlist has been created yet..."
+msgstr ""

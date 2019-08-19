@@ -1,0 +1,72 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-08-14 16:09+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\base\templates\base\about.html:9
+msgid "About"
+msgstr ""
+
+#: .\base\templates\base\about.html:10
+msgid "About me"
+msgstr ""
+
+#: .\base\templates\base\about.html:16
+msgid "Picture of me"
+msgstr ""
+
+#: .\base\templates\base\about.html:16
+msgid "It's me!"
+msgstr ""
+
+#: .\base\templates\base\about.html:19
+#, python-format
+msgid ""
+"\n"
+"                Hey, it's me, Benjamin, but everybody call me BBB !<br><br>\n"
+"                I love to code in Python with the Framework <a href="
+"\"%(django_site)s\" target=\"_blank\">Django</a>. That's why this website "
+"exists !<br>\n"
+"                I'd like to host a lot of personal projects which come from "
+"simple ideas or needs I have in my daily life.<br><br>\n"
+"                You can follow the project flow on my Github repository : <a "
+"href=\"%(github)s\" target=\"_blank\">%(github)s</a>.<br>\n"
+"                Also find me on numerous social networks displayed on the "
+"bottom ;)\n"
+"            "
+msgstr ""
+
+#: .\base\templates\base\home.html:5
+msgid "Home"
+msgstr ""
+
+#: .\base\templates\base\home.html:6
+msgid "My projects"
+msgstr ""
+
+#: .\base\templates\base\home.html:7
+msgid "Here is the list of the projects I make public for the moment."
+msgstr ""
+
+#: .\base\templates\base\home.html:17
+msgid "Project"
+msgstr ""
+
+#: .\base\urls.py:11
+msgid "about"
+msgstr ""

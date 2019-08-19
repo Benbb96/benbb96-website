@@ -6,18 +6,6 @@ from avis.forms import AvisForm, ProduitForm
 from .models import Profil, TypeStructure, Structure, Produit, Avis, CategorieProduit
 
 
-@admin.register(Profil)
-class ProfilAdmin(admin.ModelAdmin):
-    list_display = ('user', 'nbAvis', 'note_moyenne', 'date_creation')
-    search_fields = ('user__username',)
-    ordering = ('user',)
-
-    def nbAvis(self, profil):
-        return profil.avis_set.count()
-
-    nbAvis.short_description = "Nombre d'avis"
-
-
 class CategorieProduitInlineTypeStructure(admin.TabularInline):
     model = TypeStructure.categories.through
 
