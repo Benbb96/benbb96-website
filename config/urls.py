@@ -1,5 +1,6 @@
 from django.conf.urls import include
 from django.conf.urls.i18n import i18n_patterns
+from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.contrib.sitemaps import GenericSitemap
@@ -10,8 +11,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.utils.translation import gettext_lazy as _
 
 from avis.models import Avis, Produit, Structure
-from benbb96.settings import prod, dev
-from benbb96.sitemaps import StaticViewSitemap
+from config.sitemaps import StaticViewSitemap
 
 avis_dict = {
     'queryset': Avis.objects.all(),
@@ -49,7 +49,7 @@ urlpatterns = [
         ),
         name="robots_file"
     )
-] + static(dev.MEDIA_URL, document_root=dev.MEDIA_ROOT) + static(prod.MEDIA_URL, document_root=prod.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(
     path('', include('base.urls')),
@@ -63,7 +63,7 @@ urlpatterns += i18n_patterns(
 )
 
 
-if settings.DEBUG:
+if 'debug_toolbar' in settings.INSTALLED_APPS:
     import debug_toolbar
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls)),
