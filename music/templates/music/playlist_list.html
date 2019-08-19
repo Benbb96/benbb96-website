@@ -1,0 +1,25 @@
+{% extends 'music/base_music.html' %}
+
+{% load i18n %}
+
+{% block music_title %}{% trans "My playlists" %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <div class="list-group">
+                {% for playlist in object_list %}
+                    <a class="list-group-item" href="{{ playlist.get_absolute_url }}">
+                        <b>{{ playlist.nom }}</b>
+                        <small>
+                            - {{ playlist.createur }}, {% trans "on" %} {{ playlist.date_creation|date:"d/m/y" }}
+                        </small>
+                        <span class="badge" title="{% trans "Nomber of music in the playlist" %}">{{ playlist.musiqueplaylist_set.count }}</span>
+                    </a>
+                {% empty %}
+                    <li>{% blocktrans %}No playlist has been created yet...{% endblocktrans %}</li>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

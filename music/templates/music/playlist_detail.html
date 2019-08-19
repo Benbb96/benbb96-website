@@ -1,0 +1,70 @@
+{% extends 'music/base_music.html' %}
+{% load i18n %}
+
+{% block music_title %}{% trans "Playlist" %} {{ playlist.nom }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="text-center">{{ playlist.nom }}</h2>
+                </div>
+                <div class="panel-body">
+                    <div>
+                        {% blocktrans with playlist_date=playlist.date_creation|date playlist_time=playlist.date_creation|time playlist_createur_url=playlist.createur.get_absolute_url playlist_createur=playlist.createur %}
+                            Created on {{ playlist_date }} at {{ playlist_time }}
+                            by <a href="{{ playlist_createur_url }}">{{ playlist_createur }}</a>.
+                        {% endblocktrans %}
+                    </div>
+                    {% if playlist.description %}
+                        <h3>{% trans "Description" %}</h3>
+                        <p>{{ playlist.description|linebreaksbr }}</p>
+                    {% endif %}
+                    {% if playlist.styles.exists %}
+                        <h3>{% trans "Styles" %}</h3>
+                        <ul>
+                            {% for style in playlist.styles.all %}
+                                <li>{{ style.nom }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if playlist.musiqueplaylist_set.exists %}
+                        <h3>{% blocktrans %}Playlist artists{% endblocktrans %}</h3>
+                        {% if playlist.artistes.count > 4 %}
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title text-center">
+                                        <a data-toggle="collapse" href="#collapse1">{% trans "See all..." %}</a>
+                                    </h4>
+                                </div>
+                                <div id="collapse1" class="panel-collapse collapse">
+                                    {% include 'tracker/include/playlist_artist_list.html' %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                            {% include 'tracker/include/playlist_artist_list.html' %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8 col-xs-12">
+            <h2>{% trans "Musics" %}</h2>
+            {% for musiqueplaylist in playlist.musiqueplaylist_set.all %}
+                <a href="{{ musiqueplaylist.musique.get_absolute_url }}">
+                    <b>{{ musiqueplaylist.musique }}</b>
+                </a>
+                <div>
+                    {% blocktrans with date=musiqueplaylist.date_ajout|date:'l j F Y, H:i' %}
+                        Added on {{ date }}
+                    {% endblocktrans %}
+                </div>
+            {% empty %}
+                <p>{% blocktrans %}This playlist is empty...{% endblocktrans %}</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,5 +1,7 @@
 import os
 
+from django.utils.translation import gettext_lazy as _
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -13,8 +15,9 @@ SECRET_KEY = 'qk0ynkcp0jux=jd8^oh!6gq86bbgc07a#!aex7h9x5%m*73cm#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '192.168.42.62', 'benbb96.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.42.62', 'benbb96.pythonanywhere.com']
 
+INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
 
@@ -31,11 +34,14 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'tracker.apps.TrackerConfig',
     'versus.apps.VersusConfig',
+    'music.apps.MusicConfig',
     'bootstrap3',
     'geoposition',
     'fontawesome',
     'django_filters',
-    'colorfield'
+    'colorfield',
+    'adminsortable',
+    'debug_toolbar',
 ]
 
 SITE_ID = 1
@@ -43,6 +49,8 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -61,6 +69,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'base.context_processors.liens_reseaux_sociaux'
@@ -108,7 +117,16 @@ LOGOUT_REDIRECT_URL = '/'
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'fr-FR'
+LANGUAGE_CODE = 'fr'
+
+LANGUAGES = [
+  ('fr', _('French')),
+  ('en', _('English')),
+]
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
 
 TIME_ZONE = 'Europe/Paris'
 

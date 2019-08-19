@@ -1,3 +1,4 @@
+from adminsortable.models import SortableMixin, SortableForeignKey
 from colorfield.fields import ColorField
 from django.db import models
 from django.urls import reverse
@@ -7,19 +8,52 @@ from fontawesome.fields import IconField
 from base.models import Profil
 
 
-class Tracker(models.Model):
-    createur = models.ForeignKey(Profil, related_name='trackers', on_delete=models.CASCADE)
+class Tracker(SortableMixin):
+    createur = SortableForeignKey(Profil, verbose_name='créateur', related_name='trackers', on_delete=models.CASCADE)
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
-    icone = IconField()
-    color = ColorField(default='#FFFFFF')
-    date_creation = models.DateTimeField(verbose_name="date de création", auto_now_add=True)
+    icone = IconField('icône')
+    color = ColorField('couleur', default='#FFFFFF')
+    date_creation = models.DateTimeField('date de création', auto_now_add=True)
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+
+    class Meta:
+        unique_together = (('createur', 'nom'),)
+        ordering = ['order']
 
     def __str__(self):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse('tracker:detail-tracker', kwargs={'slug': self.slug})
+        return reverse('tracker:detail-tracker', kwargs={'id': self.id})
+
+    def track_by_hour(self):
+        hours = {}
+        for i in range(24):
+            hours[str(i)] = 0
+
+        for track in self.tracks.all():
+            hours[str(track.datetime.hour)] += 1
+
+        return hours
+
+    def track_by_day(self):
+        weekdays = {
+            0: 'Lundi',
+            1: 'Mardi',
+            2: 'Mercredi',
+            3: 'Jeudi',
+            4: 'Vendredi',
+            5: 'Samedi',
+            6: 'Dimanche'
+        }
+        days = {}
+        for weekday in weekdays.values():
+            days[weekday] = 0
+
+        for track in self.tracks.all():
+            days[weekdays[track.datetime.weekday()]] += 1
+
+        return days
 
 
 class Track(models.Model):

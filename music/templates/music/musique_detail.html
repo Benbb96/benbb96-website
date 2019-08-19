@@ -1,0 +1,65 @@
+{% extends 'music/base_music.html' %}
+{% load i18n %}
+
+{% block music_title %}{{ musique }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <h1>
+                <a href="{{ musique.artiste.get_absolute_url }}" title="{% trans "See artist page" %}">
+                    {{ musique.artiste }}
+                </a>
+                {% if musique.featuring.exists %}
+                    {% for featuring_artist in musique.featuring.all %}
+                        & <a href="{{ featuring_artist.get_absolute_url }}">{{ featuring_artist }}</a>
+                    {% endfor %}
+                {% endif %}
+                - {{ musique.titre }}
+                {% if musique.remixed_by %}
+                    (<a href="{{ musique.remixed_by.get_absolute_url }}">{{ musique.remixed_by }}</a> {% trans "Remix" %})
+                {% endif %}
+            </h1>
+            <div>
+                {% blocktrans with musique_date=musique.date_creation|date musique_time=musique.date_creation|time musique_createur_url=musique.createur.get_absolute_url musique_createur=musique.createur %}
+                    Added on {{ musique_date }} at {{ musique_time }}
+                by <a href="{{ musique_createur_url }}">{{ musique_createur }}</a>.
+                {% endblocktrans %}
+            </div>
+            {% if musique.album %}
+                <p>{% trans "Album" %} : {{ musique.album }}</p>
+            {% endif %}
+            {% if musiques.styles.exists %}
+                <div class="panel-footer">
+                    <h3>{% trans "Styles" %}</h3>
+                    <ul>
+                        {% for style in musique.styles.all %}
+                            <li>{{ style.nom }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            {% if musique.liens.exists %}
+                <h2>{% trans "Liens" %}</h2>
+                {% for lien in musique.liens.all %}
+                    <a class="platformLink" data-link-id="{{ lien.id }}" data-link-url="{% url 'music:incremente_link_click_count' lien.id %}" href="{{ lien.url }}" target="_blank">
+                        <b>{{ lien.get_plateforme_display }}</b> <i class="fa fa-external-link"></i>
+                    </a>
+                    <div>
+                        {% blocktrans with lien_createur=lien.createur lien_date=lien.date_creation|date:'d/m/y' lien_id=lien.id lien_click_count=lien.click_count %}
+                            Added by {{ lien_createur }} on {{ lien_date }},
+                            seen <span class="click_count" id="{{ lien_id }}">{{ lien_click_count }}</span> times.
+                        {% endblocktrans %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if musique.playlists.exists %}
+                <h3>
+                    {% blocktrans %}This music is present in these playlists{% endblocktrans %} :
+                </h3>
+                {% include 'music/list_group_playlist.html' with playlists=musique.playlists.all %}
+            {% endif %}
+        </div>
+    </div>
+    {% csrf_token %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'tracker/base_tracker.html' %}
+
+{% load fontawesome admin_urls %}
+
+{% block tracker_title %}Edition Tracker {{ tracker.nom }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-xs-12">
+            <div class="well well-lg text-center">
+                <form method="post">{% csrf_token %}
+                    <p>Êtes-vous sûr de vouloir supprimer le tracker "{{ object }}"?</p>
+                    <button class="btn btn-primary" type="submit">Confirmer</button>
+                    <a class="btn btn-warning" href="{{ object.get_absolute_url }}">Annuler</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
