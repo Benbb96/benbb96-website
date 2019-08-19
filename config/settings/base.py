@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-with open(os.path.abspath("secrets.json")) as f:
+with open(os.path.join(BASE_DIR, 'secrets.json')) as f:
     secrets = json.loads(f.read())
 
 
