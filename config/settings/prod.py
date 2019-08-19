@@ -6,7 +6,7 @@ SECRET_KEY = get_secret_setting('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.42.62', 'benbb96.pythonanywhere.com']
+ALLOWED_HOSTS = ['benbb96.pythonanywhere.com']
 
 # DATABASES = {
 #     'default': {
