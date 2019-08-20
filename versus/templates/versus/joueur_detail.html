@@ -29,7 +29,7 @@
             <h2>Dernières parties jouées</h2>
             {% for partie in joueur.partie_set.all %}
                 <h3>
-                    <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a>
+                    <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a> -
                     <small>{{ partie.date|date:'l j F Y, H:i' }}</small>
                 </h3>
                 {% include 'versus/partie_table.html' %}

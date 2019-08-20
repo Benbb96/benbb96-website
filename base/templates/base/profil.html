@@ -6,28 +6,87 @@
 {% include 'navbar.html' with home=False %}
 {% endblock %}
 
-{% block base_title %}Profil de {{ object }}{% endblock %}
-{% block jumbotron_title %}{% if object.get_full_name %}{{ object.get_full_name }}{% else %}{{ object }}{% endif %}{% endblock %}
+{% block base_title %}Profil de {{ user }}{% endblock %}
+{% block jumbotron_title %}{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user }}{% endif %}{% endblock %}
 {% block jumbotron_description %}
-    {% if object.profil.avatar %}
+    {% if user.profil.avatar %}
     <div class="text-center">
-        <img class="img-rounded" src="{{ object.profil.avatar.url }}" alt="Avatar de {{ object }}" style="max-height: 300px"/>
+        <img class="img-rounded" src="{{ user.profil.avatar.url }}" alt="Avatar de {{ user }}" style="max-height: 300px"/>
     </div>
     {% endif %}
-    Inscrit le {{ object.date_joined|date }}
+    Inscrit le {{ user.date_joined|date }}
 {% endblock %}
 
 {% block base_content %}
-    {% if object.profil.avis_set.exists %}
-    <h1>Ses derniers avis</h1>
     <div class="row">
-    {% for avis in object.profil.avis_set.all|slice:"6" %}
-        {% if request.user.is_authenticated or not avis.prive %}
-            <div class="col-sm-4 col-xs-12">
-                {% include 'avis/avis_thumbnail.html' %}
-            </div>
-        {% endif %}
-    {% endfor %}
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <ul class="nav nav-pills nav-justified">
+                <li class="active"><a data-toggle="pill" href="#avis">Avis</a></li>
+                <li><a data-toggle="pill" href="#music">Musique</a></li>
+                <li><a data-toggle="pill" href="#versus">Versus</a></li>
+            </ul>
+        </div>
     </div>
-    {% endif %}
+
+    <div class="tab-content">
+        <div id="avis" class="tab-pane fade in active">
+            <h1>Ses derniers avis</h1>
+            <div class="row">
+                {% for avis in user.profil.derniers_avis|slice:"6" %}
+                    {% if request.user.is_authenticated or not avis.prive %}
+                        <div class="col-sm-4 col-xs-12">
+                            {% include 'avis/avis_thumbnail.html' %}
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <div class="col-xs-12">{{ user }} n'a donné aucun avis pour le moment.</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div id="music" class="tab-pane fade">
+            <h1>Musique</h1>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h2>Ses playlists</h2>
+                        </div>
+                        <div class="panel-body">
+                            {% include 'music/list_group_playlist.html' with playlists=user.profil.playlists_crees.all %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h2>Les musiques ajoutées</h2>
+                        </div>
+                        <div class="panel-body">
+                            <div class="list-group">
+                                {% for musique in user.profil.musiques_crees.all|slice:"10" %}
+                                    <a class="list-group-item col-sm-6 col-xs-12" href="{{ musique.get_absolute_url }}">
+                                        {{ musique }}
+                                    </a>
+                                {% empty %}
+                                    <div class="list-group-item">Aucune musique créée par {{ user }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="versus" class="tab-pane fade">
+            <h1>Ses dernières parties</h1>
+            {% for partie in user.profil.joueur.partie_set.all|slice:"6" %}
+                <h3>
+                    <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a> -
+                    <small>{{ partie.date|date:'l j F Y, H:i' }}</small>
+                </h3>
+                {% include 'versus/partie_table.html' %}
+            {% empty %}
+                <div>{{ user }} n'a fait aucune parties.</div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
