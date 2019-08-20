@@ -119,10 +119,6 @@ class Produit(models.Model):
 
 
 class Avis(models.Model):
-    class Meta:
-        verbose_name_plural = 'avis'
-        ordering = ('-date_edition',)
-
     produit = models.ForeignKey(Produit, on_delete=models.PROTECT)
     auteur = models.ForeignKey(Profil, on_delete=models.PROTECT)
     avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le produit.')
@@ -133,6 +129,10 @@ class Avis(models.Model):
                                 help_text='Cochez pour cacher cet avis aux utilisateurs non connectés')
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
     date_edition = models.DateTimeField(verbose_name="date de dernière modification", auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'avis'
+        ordering = ('-date_edition',)
 
     def __str__(self):
         return '%s : %s (%d/10)' % (self.auteur, self.produit.nom, self.note)

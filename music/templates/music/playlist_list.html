@@ -17,7 +17,7 @@
                         <span class="badge" title="{% trans "Nomber of music in the playlist" %}">{{ playlist.musiqueplaylist_set.count }}</span>
                     </a>
                 {% empty %}
-                    <li>{% blocktrans %}No playlist has been created yet...{% endblocktrans %}</li>
+                    <div class="list-group-item">{% blocktrans %}No playlist has been created yet...{% endblocktrans %}</div>
                 {% endfor %}
             </div>
         </div>
