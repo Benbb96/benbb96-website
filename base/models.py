@@ -31,6 +31,10 @@ class Profil(models.Model):
         today = timezone.now().date()
         return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
 
+    @property
+    def derniers_avis(self):
+        return self.avis_set.order_by('-date_creation').prefetch_related('produit__structure__type')
+
 
 class Projet(models.Model):
     """
