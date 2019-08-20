@@ -112,11 +112,13 @@ class PlaylistInline(admin.TabularInline):
 
 @admin.register(Musique)
 class MusiqueAdmin(admin.ModelAdmin):
-    list_display = ('artiste_display', 'titre_display', 'album', 'createur', 'date_creation', 'date_modification', 'nb_vue')
+    list_display = ('artiste_display', 'titre_display', 'album', 'createur',
+                    'date_creation', 'date_modification', 'nb_vue')
     list_display_links = ('titre_display',)
-    list_filter = ('styles', 'createur')
+    list_filter = ('styles', 'createur', 'remixed_by')
     search_fields = (
-        'titre', 'artiste__nom_artiste', 'album', 'styles__nom', 'musiqueplaylist__playlist__nom'
+        'titre', 'artiste__nom_artiste', 'remixed_by__nom_artiste', 'featuring__nom_artiste',
+        'album', 'styles__nom', 'musiqueplaylist__playlist__nom'
     )
     date_hierarchy = 'date_creation'
     ordering = ('-date_modification',)
