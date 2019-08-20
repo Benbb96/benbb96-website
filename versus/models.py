@@ -8,7 +8,7 @@ from base.models import Profil
 class Joueur(models.Model):
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
-    profil = models.ForeignKey(Profil, on_delete=models.SET_NULL, null=True, blank=True)
+    profil = models.OneToOneField(Profil, on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
     def __str__(self):
