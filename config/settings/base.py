@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'versus.apps.VersusConfig',
     'music.apps.MusicConfig',
     'bootstrap3',
+    'rest_framework',
     'geoposition',
     'fontawesome',
     'django_filters',
@@ -156,3 +157,11 @@ GEOPOSITION_GOOGLE_MAPS_API_KEY = get_secret_setting('GEOPOSITION_GOOGLE_MAPS_AP
 FIREBASE_CONFIG = get_secret_setting('FIREBASE_CONFIG')
 
 LOGIN_URL = '/admin/login/'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}
