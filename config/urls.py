@@ -30,6 +30,7 @@ structure_dict = {
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
+    path('api-auth/', include('rest_framework.urls')),
     path(
         'sitemap.xml',
         sitemap,

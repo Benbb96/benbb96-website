@@ -7,9 +7,11 @@ from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView, DeleteView
 from django_pandas.io import read_frame
 import pandas as pd
+from rest_framework import generics
 
 from tracker.forms import TrackForm, TrackerForm
-from tracker.models import Tracker
+from tracker.models import Tracker, Track
+from tracker.serializers import TrackSerializer
 
 
 @login_required
@@ -30,23 +32,6 @@ def tracker_list(request):
     return render(request, 'tracker/tracker_list.html', {'trackers': trackers, 'form': form})
 
 
-@login_required
-def tracker_detail(request, id):
-    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=id)
-
-    form = TrackForm(request.POST or None)
-    if form.is_valid():
-        track = form.save(commit=False)
-        track.tracker = tracker
-        track.save()
-        return redirect(tracker)
-
-    return render(request, 'tracker/tracker_detail.html', {
-        'tracker': tracker,
-        'form': form
-    })
-
-
 class TrackerUpdateView(UpdateView):
     model = Tracker
     form_class = TrackerForm
@@ -55,6 +40,34 @@ class TrackerUpdateView(UpdateView):
 class TrackerDeleteView(DeleteView):
     model = Tracker
     success_url = reverse_lazy('tracker:liste-tracker')
+
+
+@login_required
+def tracker_detail(request, id):
+    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=id)
+
+    form = TrackForm(request.POST or None, initial={'datetime': timezone.now()})
+    if form.is_valid():
+        track = form.save(commit=False)
+        track.tracker = tracker
+        track.save()
+        return redirect(tracker)
+
+    tracks = tracker.tracks.all()
+    for track in tracks:
+        track.form = TrackForm(instance=track)
+
+    return render(request, 'tracker/tracker_detail.html', {
+        'tracker': tracker,
+        'tracks': tracks,
+        'form': form
+    })
+
+
+class TrackUpdateView(generics.UpdateAPIView):
+    queryset = Track.objects.all()
+    serializer_class = TrackSerializer
+
 
 @require_POST
 def tracker_data(request):

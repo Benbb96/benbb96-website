@@ -1,6 +1,6 @@
 {% extends 'tracker/base_tracker.html' %}
 
-{% load fontawesome admin_urls %}
+{% load fontawesome admin_urls static i18n %}
 
 {% block tracker_title %}Tracker {{ tracker.nom }}{% endblock %}
 
@@ -33,8 +33,17 @@
                         </button>
                     </div>
                 </div>
-                <div class="input-group">
+                <div class="form-group">
                     {{ form.commentaire.errors }}
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-4 col-xs-12">
+                        <a id="toggleDatetime">Changer la date et l'heure</a>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-sm-4 col-xs-12" id="datetime" style="display: none">
+                        <input type="datetime-local" name="datetime" value="{{ form.datetime.value|date:"Y-m-d" }}T{{ form.datetime.value|time:"H:i" }}" class="form-control" required="" id="id_datetime">
+                    </div>
                 </div>
             </form>
 
@@ -93,24 +102,43 @@
                 <div id="historique" class="tab-pane fade">
                     <h2>Historique <small>{{ tracker.tracks.count }} tracks</small></h2>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
+                        <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Heure</th>
                                 <th>Commentaire</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {% for track in tracker.tracks.all %}
-                                <tr>
-                                    <td>{{ track.datetime|date:"l d F Y"|capfirst }}</td>
-                                    <td>{{ track.datetime|time }}</td>
+                            {% for track in tracks %}
+                                <tr class="track" id="track-{{ track.id }}">
+                                    <td class="date">{{ track.datetime|date }} {{ track.datetime|time }}</td>
                                     <td>
-                                        {{ track.commentaire }}
-                                        <a href="{% url 'admin:tracker_track_change' track.id %}" target="_blank">
+                                        <span class="commentaire">{{ track.commentaire }}</span>
+                                        <a class="displayForm">
                                             <i class="fa fa-edit" title="Editer ce track"></i>
                                         </a>
+                                    </td>
+                                </tr>
+                                <tr class="trackForm hidden" id="form-{{ track.id }}">
+                                    <td colspan="3">
+                                        <form class="form" action="{% url 'tracker:update-track' track.id %}">
+                                            {% csrf_token %}
+                                            <div class="col-xs-5">
+                                                <input type="datetime-local" name="datetime" value="{{ track.datetime|date:"Y-m-d" }}T{{ track.datetime|time:"H:i" }}" class="form-control" required="" id="id_datetime">
+                                            </div>
+                                            <div class="col-xs-5">
+                                                {{ track.form.commentaire }}
+                                            </div>
+                                            <div class="col-xs-2">
+                                                <button type="submit" class="btn btn-primary validateBtn">
+                                                    <i class="fa fa-check"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-default cancelBtn">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </form>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -125,8 +153,12 @@
 
 {% block javascript %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="{% static 'js/moment-with-locales.js' %}"></script>
 <script>
     $(() => {
+        {% get_current_language as LANGUAGE_CODE %}
+        moment.locale('{{ LANGUAGE_CODE }}');
+
         var myChart = new Chart(document.getElementById("myChart"), {
             type: 'line',
             data: {
@@ -249,6 +281,44 @@
 
         // Trigger the default one
         $('.btn-frequency#default').trigger('click');
+
+        $('a#toggleDatetime').click(function () {
+            $('#datetime').toggle()
+        });
+
+        // Display a track form and hide all the others
+        $('.displayForm').click(function () {
+            const track = $(this).closest('tr');
+            $('.track').removeClass('hidden');
+            track.addClass('hidden');
+            $('.trackForm').addClass('hidden');
+            track.next().removeClass('hidden')
+        });
+
+        // Hide a track form
+        $('.cancelBtn').click(function () {
+            const trackForm = $(this).closest('tr');
+            trackForm.addClass('hidden');
+            trackForm.prev().removeClass('hidden');
+        });
+
+        // Submit a track edit form in AJAX
+        $('.trackForm form').submit(function (e) {
+            e.preventDefault();
+            $.ajax({url: $(this).attr('action'), type: 'PUT', dataType: 'json', data: $(this).serialize()})
+                .done((response) => {
+                    const track = $(this).closest('tr').prev();
+                    track.find('span.commentaire').text(response.commentaire);
+                    const datetime = moment(response.datetime).format('LLL');
+                    track.find('td.date').text(datetime);
+                    $(this).find('.cancelBtn').trigger('click')
+                })
+                .fail(err => {
+                    $.each(err.responseJSON, (name, error) => {
+                        $(this).find('input[name=' + name + ']').parent().addClass('has-error').append('<div class="errorlist">' + error + '</div>')
+                    })
+                })
+        })
     })
 </script>
 {% endblock %}

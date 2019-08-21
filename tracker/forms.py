@@ -13,7 +13,15 @@ class TrackerForm(forms.ModelForm):
 
 
 class TrackForm(forms.ModelForm):
+    datetime = forms.DateTimeField(
+        required=True,
+        input_formats=['%Y-%m-%dT%H:%M']
+    )
+
     class Meta:
         model = Track
-        fields = ('commentaire',)
-        widgets = {'commentaire': forms.TextInput(attrs={'placeholder': 'Facultatif', 'class': 'form-control'})}
+        fields = ('commentaire', 'datetime')
+        widgets = {
+            'tracker': forms.HiddenInput(),
+            'commentaire': forms.TextInput(attrs={'placeholder': 'Facultatif', 'class': 'form-control'})
+        }
