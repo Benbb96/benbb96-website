@@ -1,6 +1,15 @@
+from django.conf import settings
+
 from .models import LienReseauSocial
 
 
-def liens_reseaux_sociaux(request):
-    """ Ajoute les liens actifs vers mes réseaux sociaux dans le context processor """
-    return {'liens_reseaux_sociaux': LienReseauSocial.objects.filter(actif=True)}
+def base_context(request):
+    """
+    Ajoute les variables de contexte global avec :
+      - La clé d'API Google Analytics
+      - les liens actifs vers mes réseaux sociaux dans le context processor
+    """
+    return {
+        'GOOGLE_ANALYTICS_KEY': settings.GOOGLE_ANALYTICS_KEY,
+        'liens_reseaux_sociaux': LienReseauSocial.objects.filter(actif=True)
+    }

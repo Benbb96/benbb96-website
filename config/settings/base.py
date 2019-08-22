@@ -74,7 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'base.context_processors.liens_reseaux_sociaux'
+                'base.context_processors.base_context'
             ],
         },
     },
@@ -151,6 +151,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets')
 ]
+
+GOOGLE_ANALYTICS_KEY = ''
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = get_secret_setting('GEOPOSITION_GOOGLE_MAPS_API_KEY'),
 
