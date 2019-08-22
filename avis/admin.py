@@ -121,7 +121,7 @@ class ProduitAdmin(admin.ModelAdmin):
 @admin.register(Avis)
 class AvisAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'structure', 'produit', 'auteur', 'apercu_avis', 'note',
+        'id', 'produit', 'auteur', 'apercu_avis', 'note',
         'date_creation', 'date_edition', 'prive', 'thumbnail'
     )
     list_filter = ('auteur', 'note', 'prive')
@@ -136,7 +136,6 @@ class AvisAdmin(admin.ModelAdmin):
 
     def structure(self, avis):
         return avis.produit.structure
-
     structure.short_description = "Structure"
 
     def get_changeform_initial_data(self, request):
@@ -146,4 +145,4 @@ class AvisAdmin(admin.ModelAdmin):
     def thumbnail(self, obj):
         if obj.photo:
             return format_html('<img src="{}" height="50px" />', obj.get_photo_url())
-        return 'Avis n°' + obj.id
+        return None
