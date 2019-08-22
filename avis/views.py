@@ -23,7 +23,6 @@ class ProduitList(FilterView):
     filterset_class = ProduitFilter
     context_object_name = 'produits'
     paginate_by = 30
-    ordering = ('nom',)
 
 
 class ProduitDetail(DetailView):

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
@@ -37,7 +38,9 @@ class TypeStructureAdmin(admin.ModelAdmin):
 
 @admin.register(Structure)
 class StructureAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'type', 'apercu_informations', 'adresse', 'position_map', 'telephone', 'nb_produit', 'moyenne', 'date_creation')
+    list_display = (
+        'nom', 'type', 'apercu_informations', 'position_map', 'nb_produit', 'moyenne', 'date_creation'
+    )
     list_filter = ('type',)
     search_fields = ('nom', 'adresse')
     date_hierarchy = 'date_creation'
@@ -45,31 +48,22 @@ class StructureAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('nom',), }
     save_on_top = True
 
-    inlines = [
-        ProduitInLine,
-    ]
-
-    def get_queryset(self, request):
-        # Ajoute la moyenne et le nombre de produit sur chacunes des structures
-        qs = super(StructureAdmin, self).get_queryset(request)
-        qs = qs.annotate(moyenne=models.Avg('produit__avis__note'))
-        qs = qs.annotate(nb_produit=models.Count('produit'))
-        return qs
+    inlines = [ProduitInLine]
 
     def moyenne(self, structure):
-        return structure.note_moyenne
+        return structure.moyenne
     moyenne.admin_order_field = 'moyenne'
 
     def nb_produit(self, structure):
-        return structure.produit_set.count()
-    nb_produit.admin_order_field = 'nb_produit'
-
+        return structure.produit_count
+    nb_produit.admin_order_field = 'produit_count'
     nb_produit.short_description = 'Nombre de produit'
 
     def position_map(self, instance):
         if instance.adresse is not None:
             # TODO Maybe need to add client ID and signature
-            return format_html('<img src="http://maps.googleapis.com/maps/api/staticmap?key=AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw&center=%(latitude)s,%(longitude)s&zoom=%(zoom)s&size=%(width)sx%(height)s&maptype=roadmap&markers=%(latitude)s,%(longitude)s&sensor=false&visual_refresh=true&scale=%(scale)s" width="%(width)s" height="%(height)s">' % {
+            return format_html('<img src="http://maps.googleapis.com/maps/api/staticmap?key=%(map_api_key)s&center=%(latitude)s,%(longitude)s&zoom=%(zoom)s&size=%(width)sx%(height)s&maptype=roadmap&markers=%(latitude)s,%(longitude)s&sensor=false&visual_refresh=true&scale=%(scale)s" width="%(width)s" height="%(height)s">' % {
+                'map_api_key': settings.GEOPOSITION_GOOGLE_MAPS_API_KEY[0],
                 'latitude': instance.adresse.latitude,
                 'longitude': instance.adresse.longitude,
                 'zoom': 14,
@@ -77,6 +71,7 @@ class StructureAdmin(admin.ModelAdmin):
                 'height': 100,
                 'scale': 2
             })
+    position_map.short_description = 'Localisation'
 
 
 class AvisInLine(admin.StackedInline):
@@ -91,27 +86,18 @@ class AvisInLine(admin.StackedInline):
 
 @admin.register(Produit)
 class ProduitAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'structure', 'apercu_description', 'prix', 'moyenne', 'total_avis')
+    list_display = ('nom', 'structure', 'apercu_description', 'prix', 'moyenne', 'avis_count')
     list_filter = ('structure', )
     search_fields = ('nom', 'description', 'structure__nom')
     date_hierarchy = 'date_creation'
     ordering = ('-date_creation',)
     autocomplete_fields = ('structure', 'categories')
-    list_select_related = ('structure',)
+    list_select_related = ('structure__type',)
     save_on_top = True
 
     form = ProduitForm
 
-    inlines = [
-        AvisInLine,
-    ]
-
-    def get_queryset(self, request):
-        # Ajoute la note moyenne du produit et le nombre total d'avis sur chacun des produits
-        qs = super(ProduitAdmin, self).get_queryset(request)
-        qs = qs.annotate(moyenne=models.Avg('avis__note'))
-        qs = qs.annotate(total=models.Count('avis__note'))
-        return qs
+    inlines = [AvisInLine]
 
     def save_formset(self, request, form, formset, change):
         if formset.model == Avis:
@@ -122,25 +108,22 @@ class ProduitAdmin(admin.ModelAdmin):
         else:
             formset.save()
 
-    def nbAvis(self, produit):
-        return produit.avis_set.count()
-
-    nbAvis.short_description = "Nombre d'avis"
-
     def moyenne(self, obj):
         return obj.moyenne
-
     moyenne.admin_order_field = 'moyenne'
 
-    def total_avis(self, obj):
-        return obj.total
-
-    total_avis.admin_order_field = 'total'
+    def avis_count(self, obj):
+        return obj.avis_count
+    avis_count.short_description = 'nb avis'
+    avis_count.admin_order_field = 'avis_count'
 
 
 @admin.register(Avis)
 class AvisAdmin(admin.ModelAdmin):
-    list_display = ('id', 'structure', 'produit', 'auteur', 'apercu_avis', 'note', 'date_creation', 'date_edition', 'prive')
+    list_display = (
+        'id', 'structure', 'produit', 'auteur', 'apercu_avis', 'note',
+        'date_creation', 'date_edition', 'prive', 'thumbnail'
+    )
     list_filter = ('auteur', 'note', 'prive')
     search_fields = ('produit__nom', 'produit__structure__nom', 'auteur__user__username')
     date_hierarchy = 'date_creation'
@@ -156,11 +139,9 @@ class AvisAdmin(admin.ModelAdmin):
 
     structure.short_description = "Structure"
 
-    def get_form(self, request, obj=None, **kwargs):
-        # Pré-rempli automatiquement avec l'utilisateur connecté
-        form = super(AvisAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['auteur'].initial = Profil.objects.get(user=request.user)
-        return form
+    def get_changeform_initial_data(self, request):
+        """ Pré-rempli automatiquement avec l'utilisateur connecté """
+        return {'auteur': request.user}
 
     def thumbnail(self, obj):
         if obj.photo:
