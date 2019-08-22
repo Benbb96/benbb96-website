@@ -10,9 +10,9 @@ with open(os.path.join(BASE_DIR, 'secrets.json')) as f:
     secrets = json.loads(f.read())
 
 
-def get_secret_setting(setting, secrets=secrets):
+def get_secret_setting(setting, json_conf=secrets):
     try:
-        val = secrets[setting]
+        val = json_conf[setting]
         if val == 'True':
             val = True
         elif val == 'False':
