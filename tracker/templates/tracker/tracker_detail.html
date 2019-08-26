@@ -5,6 +5,25 @@
 {% block tracker_title %}Tracker {{ tracker.nom }}{% endblock %}
 
 {% block content %}
+    <!-- Confirm Track delete modal -->
+    <div id="modalConfirmDelete" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Supprimer un track</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer le track datant du <span id="toDeleteTrackDate"></span> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="deleteTrackBtn">Oui</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-8 col-md-offset-2 col-xs-12">
             <div class="text-center">
@@ -117,18 +136,21 @@
                             </thead>
                             <tbody>
                             {% for track in tracks %}
-                                <tr class="track" id="track-{{ track.id }}">
+                                <tr class="track" id="{{ track.id }}">
                                     <td class="date">{{ track.datetime|date }} {{ track.datetime|time }}</td>
                                     <td class="commentaire">
                                         {{ track.commentaire }}
                                     </td>
                                     <td>
-                                        <a class="btn btn-default displayForm">
+                                        <button type="button" class="btn btn-default displayForm">
                                             <i class="fa fa-edit" title="Editer ce track"></i>
-                                        </a>
+                                        </button>
+                                        <button type="button" class="btn btn-warning modalConfirmDelete" data-target-url="{% url 'tracker:delete-track' track.id %}">
+                                            <i class="fa fa-trash" title="Supprimer ce track"></i>
+                                        </button>
                                     </td>
                                 </tr>
-                                <tr class="trackForm hidden" id="form-{{ track.id }}">
+                                <tr class="trackForm hidden">
                                     <td colspan="3">
                                         <form class="form" action="{% url 'tracker:update-track' track.id %}">
                                             {% csrf_token %}
@@ -270,7 +292,6 @@
                 Y: 'an',
             };
 
-            //
             $('.btn-frequency').click(function (e) {
                 const frequency = $(this).data('frequency');
                 $.post(url, {id: trackerId, frequency: frequency})
@@ -329,6 +350,26 @@
                     $.each(err.responseJSON, (name, error) => {
                         $(this).find('input[name=' + name + ']').parent().addClass('has-error').append('<div class="errorlist">' + error + '</div>')
                     })
+                })
+        });
+
+        // Display the confirm track delete modal
+        $('.modalConfirmDelete').click(function () {
+            const track = $(this).closest('tr');
+            $('#deleteTrackBtn').data('trackId', track.attr('id')).data('url', $(this).data('targetUrl'));
+            $('#toDeleteTrackDate').text(track.find('td.date').text());
+            $("#modalConfirmDelete").modal();
+        });
+
+        // Call the api endpoint to delete the track and then hide the modal
+        $('#deleteTrackBtn').click(function () {
+            $.ajax({url: $(this).data('url'), type: 'DELETE'})
+                .done((response) => {
+                    $('.track#' + $(this).data('trackId')).fadeOut();
+                    $("#modalConfirmDelete").modal('hide')
+                })
+                .fail((xhr, textStatus, errorThrown) => {
+                    alert(textStatus + ' - ' + errorThrown)
                 })
         })
     })

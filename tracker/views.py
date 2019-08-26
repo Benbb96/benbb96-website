@@ -69,6 +69,11 @@ class TrackUpdateView(generics.UpdateAPIView):
     serializer_class = TrackSerializer
 
 
+class TrackDeleteView(generics.DestroyAPIView):
+    queryset = Track.objects.all()
+    serializer_class = TrackSerializer
+
+
 @require_POST
 def tracker_data(request):
     if not request.is_ajax():
