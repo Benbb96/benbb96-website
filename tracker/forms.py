@@ -23,5 +23,6 @@ class TrackForm(forms.ModelForm):
         fields = ('commentaire', 'datetime')
         widgets = {
             'tracker': forms.HiddenInput(),
-            'commentaire': forms.TextInput(attrs={'placeholder': 'Facultatif', 'class': 'form-control'})
+            'commentaire': forms.TextInput(attrs={'placeholder': 'Commentaire facultatif', 'class': 'form-control'})
         }
+        labels = {'commentaire': 'Ajouter un nouveau track'}

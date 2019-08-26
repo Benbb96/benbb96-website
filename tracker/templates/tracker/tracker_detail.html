@@ -29,7 +29,12 @@
                     {{ form.commentaire }}
                     <div class="input-group-btn">
                         <button class="btn btn-primary" type="submit">
-                            <i class="glyphicon glyphicon-plus"></i>
+                            <i class="glyphicon glyphicon-plus" title="Ajouter un nouveau track"></i>
+                        </button>
+                    </div>
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="toggleDatetime">
+                            <i class="glyphicon glyphicon-time" title="Changer la date et l'heure"></i>
                         </button>
                     </div>
                 </div>
@@ -37,13 +42,13 @@
                     {{ form.commentaire.errors }}
                 </div>
                 <div class="form-group row">
-                    <div class="col-sm-4 col-xs-12">
-                        <a id="toggleDatetime">Changer la date et l'heure</a>
-                    </div>
-                    <div class="clearfix"></div>
                     <div class="col-sm-4 col-xs-12" id="datetime" style="display: none">
+                        <label for="id_datetime">Changer la date et l'heure :</label>
                         <input type="datetime-local" name="datetime" value="{{ form.datetime.value|date:"Y-m-d" }}T{{ form.datetime.value|time:"H:i" }}" class="form-control" required="" id="id_datetime">
                     </div>
+                </div>
+                <div class="form-group">
+                    {{ form.datetime.errors }}
                 </div>
             </form>
 
@@ -64,7 +69,7 @@
                             <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
                         </p>
                         <div class="text-center">
-                            <canvas id="myChart" width="600" height="400"></canvas>
+                            <canvas id="allTracks" width="600" height="400"></canvas>
                         </div>
                         <div class="row">
                             <div class="col-md-2 col-xs-6 text-center">
@@ -107,15 +112,18 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Commentaire</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for track in tracks %}
                                 <tr class="track" id="track-{{ track.id }}">
                                     <td class="date">{{ track.datetime|date }} {{ track.datetime|time }}</td>
+                                    <td class="commentaire">
+                                        {{ track.commentaire }}
+                                    </td>
                                     <td>
-                                        <span class="commentaire">{{ track.commentaire }}</span>
-                                        <a class="displayForm">
+                                        <a class="btn btn-default displayForm">
                                             <i class="fa fa-edit" title="Editer ce track"></i>
                                         </a>
                                     </td>
@@ -159,130 +167,134 @@
         {% get_current_language as LANGUAGE_CODE %}
         moment.locale('{{ LANGUAGE_CODE }}');
 
-        var myChart = new Chart(document.getElementById("myChart"), {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    data: []
-                }]
-            },
-            options: {
-                legend: {
-                    display:false
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
+        if (document.getElementById("allTracks") !== null) {
+            var allTracks = new Chart(document.getElementById("allTracks"), {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: []
                     }]
-                }
-            }
-        });
-
-        var trackByHourChart = new Chart(document.getElementById("trackByHourChart"), {
-            type: 'bar',
-            data: {
-                labels: [{% for hour in tracker.track_by_hour.keys %}'{{ hour }}h',{% endfor %}],
-                datasets: [{
-                    label: 'Total',
-                    backgroundColor: '#337ab7',
-                    data: [{% for value in tracker.track_by_hour.values %}{{ value }},{% endfor %}]
-                }]
-            },
-            options: {
-                legend: {
-                    display:false
                 },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
+                options: {
+                    legend: {
+                        display:false
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var trackByHourChart = new Chart(document.getElementById("trackByHourChart"), {
+                type: 'bar',
+                data: {
+                    labels: [{% for hour in tracker.track_by_hour.keys %}'{{ hour }}h',{% endfor %}],
+                    datasets: [{
+                        label: 'Total',
+                        backgroundColor: '#337ab7',
+                        data: [{% for value in tracker.track_by_hour.values %}{{ value }},{% endfor %}]
                     }]
-                }
-            }
-        });
-
-        var trackByDayChart = new Chart(document.getElementById("trackByDayChart"), {
-            type: 'doughnut',
-            data: {
-                labels: [{% for day in tracker.track_by_day.keys %}'{{ day }}',{% endfor %}],
-                datasets: [{
-                    label: 'Total',
-                    backgroundColor: [
-                        'rgba(255, 0, 0, 0.5)',
-                        'rgba(0, 255, 0, 0.5)',
-                        'rgba(0, 0, 255, 0.5)',
-                        'rgba(255, 255, 0, 0.5)',
-                        'rgba(255, 0, 255, 0.5)',
-                        'rgba(0, 255, 255, 0.5)',
-                        'rgba(0, 0, 0, 0.5)'
-                    ],
-                    data: [{% for value in tracker.track_by_day.values %}{{ value }},{% endfor %}]
-                }]
-            },
-            options: {
-                legend: {
-                    display:true,
-                    position: 'bottom'
                 },
-                tooltips: {
-                    // https://stackoverflow.com/a/37260662/8439435 - Pour ajouter le pourcentage
-                    callbacks: {
-                        label: function (tooltipItem, data) {
-                            // Get the concerned dataset
-                            var dataset = data.datasets[tooltipItem.datasetIndex];
-                            // Calculate the total of this data set
-                            var total = dataset.data.reduce(function (previousValue, currentValue, currentIndex, array) {
-                                return previousValue + currentValue;
-                            });
-                            // Get the current items value
-                            var currentValue = dataset.data[tooltipItem.index];
-                            // Calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
-                            var percentage = Math.floor(((currentValue / total) * 100) + 0.5);
+                options: {
+                    legend: {
+                        display:false
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
 
-                            return data.labels[tooltipItem.index] + ' : ' + currentValue + ' (' + percentage + "%)";
+            var trackByDayChart = new Chart(document.getElementById("trackByDayChart"), {
+                type: 'doughnut',
+                data: {
+                    labels: [{% for day in tracker.track_by_day.keys %}'{{ day }}',{% endfor %}],
+                    datasets: [{
+                        label: 'Total',
+                        backgroundColor: [
+                            'rgba(255, 0, 0, 0.5)',
+                            'rgba(0, 255, 0, 0.5)',
+                            'rgba(0, 0, 255, 0.5)',
+                            'rgba(255, 255, 0, 0.5)',
+                            'rgba(255, 0, 255, 0.5)',
+                            'rgba(0, 255, 255, 0.5)',
+                            'rgba(0, 0, 0, 0.5)'
+                        ],
+                        data: [{% for value in tracker.track_by_day.values %}{{ value }},{% endfor %}]
+                    }]
+                },
+                options: {
+                    legend: {
+                        display:true,
+                        position: 'bottom'
+                    },
+                    tooltips: {
+                        // https://stackoverflow.com/a/37260662/8439435 - Pour ajouter le pourcentage
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                // Get the concerned dataset
+                                var dataset = data.datasets[tooltipItem.datasetIndex];
+                                // Calculate the total of this data set
+                                var total = dataset.data.reduce(function (previousValue, currentValue, currentIndex, array) {
+                                    return previousValue + currentValue;
+                                });
+                                // Get the current items value
+                                var currentValue = dataset.data[tooltipItem.index];
+                                // Calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
+                                var percentage = Math.floor(((currentValue / total) * 100) + 0.5);
+
+                                return data.labels[tooltipItem.index] + ' : ' + currentValue + ' (' + percentage + "%)";
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        var trackerId = {{ tracker.id }};
-        var url = "{% url 'tracker:tracker-data' %}";
-        const frequency_map = {
-            H: 'heure',
-            D: 'jour',
-            W: 'semaine',
-            M: 'mois',
-            Q: "quart d'année",
-            Y: 'an',
-        };
+            var trackerId = {{ tracker.id }};
+            var url = "{% url 'tracker:tracker-data' %}";
+            const frequency_map = {
+                H: 'heure',
+                D: 'jour',
+                W: 'semaine',
+                M: 'mois',
+                Q: "quart d'année",
+                Y: 'an',
+            };
 
-        //
-        $('.btn-frequency').click(function (e) {
-            const frequency = $(this).data('frequency');
-            $.post(url, {id: trackerId, frequency: frequency})
-                .done(response => {
-                    myChart.data.labels = response.labels;
-                    myChart.data.datasets[0].data = response.data;
-                    myChart.update();
-                    $('span#frequency').text(frequency_map[frequency]);
-                    $('strong#avg').text(response.avg);
-                    $('.btn-frequency').removeClass('active');
-                    $(this).addClass('active')
-                })
-                .fail((xhr, textStatus, errorThrown) => {
-                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
-                })
-        });
+            //
+            $('.btn-frequency').click(function (e) {
+                const frequency = $(this).data('frequency');
+                $.post(url, {id: trackerId, frequency: frequency})
+                    .done(response => {
+                        allTracks.data.labels = response.labels;
+                        allTracks.data.datasets[0].data = response.data;
+                        allTracks.update();
+                        $('span#frequency').text(frequency_map[frequency]);
+                        $('strong#avg').text(response.avg);
+                        $('.btn-frequency').removeClass('active');
+                        $(this).addClass('active')
+                    })
+                    .fail((xhr, textStatus, errorThrown) => {
+                        console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
+                    })
+            });
 
-        // Trigger the default one
-        $('.btn-frequency#default').trigger('click');
+            // Trigger the default one
+            $('.btn-frequency#default').trigger('click');
+        }
 
-        $('a#toggleDatetime').click(function () {
+        // Tracker Management
+
+        $('button#toggleDatetime').click(function () {
             $('#datetime').toggle()
         });
 
@@ -308,7 +320,7 @@
             $.ajax({url: $(this).attr('action'), type: 'PUT', dataType: 'json', data: $(this).serialize()})
                 .done((response) => {
                     const track = $(this).closest('tr').prev();
-                    track.find('span.commentaire').text(response.commentaire);
+                    track.find('td.commentaire').text(response.commentaire);
                     const datetime = moment(response.datetime).format('LLL');
                     track.find('td.date').text(datetime);
                     $(this).find('.cancelBtn').trigger('click')
