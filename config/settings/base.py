@@ -10,9 +10,9 @@ with open(os.path.join(BASE_DIR, 'secrets.json')) as f:
     secrets = json.loads(f.read())
 
 
-def get_secret_setting(setting, secrets=secrets):
+def get_secret_setting(setting, json_conf=secrets):
     try:
-        val = secrets[setting]
+        val = json_conf[setting]
         if val == 'True':
             val = True
         elif val == 'False':
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'versus.apps.VersusConfig',
     'music.apps.MusicConfig',
     'bootstrap3',
+    'rest_framework',
     'geoposition',
     'fontawesome',
     'django_filters',
@@ -73,7 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'base.context_processors.liens_reseaux_sociaux'
+                'base.context_processors.base_context'
             ],
         },
     },
@@ -151,8 +152,18 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets')
 ]
 
+GOOGLE_ANALYTICS_KEY = ''
+
 GEOPOSITION_GOOGLE_MAPS_API_KEY = get_secret_setting('GEOPOSITION_GOOGLE_MAPS_API_KEY'),
 
 FIREBASE_CONFIG = get_secret_setting('FIREBASE_CONFIG')
 
 LOGIN_URL = '/admin/login/'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}

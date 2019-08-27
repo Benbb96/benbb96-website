@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    {% if GOOGLE_ANALYTICS_KEY %}
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12237344-8"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_KEY }}"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'UA-12237344-8');
+      gtag('config', '{{ GOOGLE_ANALYTICS_KEY }}');
     </script>
-
+    {% endif %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Benbb96{% endblock %} | Benbb96</title>

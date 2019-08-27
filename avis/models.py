@@ -2,7 +2,6 @@ import pyrebase
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
-from django.db.models import Avg
 from django.urls import reverse
 from django.utils.text import slugify
 
@@ -54,9 +53,16 @@ class TypeStructure(models.Model):
         return self.nom
 
 
+class StructureManager(models.Manager):
+    def get_queryset(self):
+        return super(StructureManager, self).get_queryset()\
+            .select_related('type').prefetch_related('produit_set')\
+            .annotate(moyenne=models.Avg('produit__avis__note'), produit_count=models.Count('produit', distinct=True))
+
+
 class Structure(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
     type = models.ForeignKey(TypeStructure, on_delete=models.PROTECT, verbose_name='type de la structure')
     informations = models.TextField(blank=True, help_text='Informations utiles et relatives à la structure.')
     lien = models.URLField(max_length=255, blank=True, help_text='Le lien vers le site internet.')
@@ -66,6 +72,11 @@ class Structure(models.Model):
     adresse = GeopositionField(blank=True)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
+    objects = StructureManager()
+
+    class Meta:
+        ordering = ('nom',)
+
     def __str__(self):
         return "%s - %s" % (self.type, self.nom)
 
@@ -73,25 +84,21 @@ class Structure(models.Model):
         return reverse('avis:structure', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.slug)
+        if not self.slug:
+            self.slug = slugify(self.nom)
         super(Structure, self).save(*args, **kwargs)
 
     def apercu_informations(self):
         return apercu(self.informations)
-
     apercu_informations.short_description = 'Aperçu des informations'
+    apercu_informations.admin_order_field = 'description'
 
-    @property
-    def note_moyenne(self):
-        moyenne = 0
-        count = 0
-        for produit in self.produit_set.all():
-            if produit.avis_set.count():
-                moyenne += produit.avis_set.all().aggregate(Avg('note'))['note__avg']
-                count += 1
-        if count:
-            moyenne = moyenne / count
-        return moyenne
+
+class ProduitManager(models.Manager):
+    def get_queryset(self):
+        return super(ProduitManager, self).get_queryset()\
+            .select_related('structure__type').prefetch_related('avis_set')\
+            .annotate(moyenne=models.Avg('avis__note'), avis_count=models.Count('avis', distinct=True))
 
 
 class Produit(models.Model):
@@ -100,7 +107,14 @@ class Produit(models.Model):
     description = models.TextField(blank=True, help_text='Une description du produit.')
     prix = models.DecimalField(max_digits=4, decimal_places=2)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
-    categories = models.ManyToManyField(CategorieProduit, help_text='Sélectionnez la ou les catégories de ce produit.', blank=True)
+    categories = models.ManyToManyField(
+        CategorieProduit, help_text='Sélectionnez la ou les catégories de ce produit.', blank=True
+    )
+
+    objects = ProduitManager()
+
+    class Meta:
+        ordering = ('nom',)
 
     def __str__(self):
         return '%s [%s]' % (self.nom, self.structure)
@@ -110,12 +124,8 @@ class Produit(models.Model):
 
     def apercu_description(self):
         return apercu(self.description)
-
     apercu_description.short_description = 'Description'
-
-    @property
-    def note_moyenne(self):
-        return self.avis_set.all().aggregate(Avg('note'))['note__avg']
+    apercu_description.admin_order_field = 'description'
 
 
 class Avis(models.Model):

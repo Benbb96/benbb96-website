@@ -21,7 +21,7 @@
                 <h3>Prix : <strong>{{ object.prix }}€</strong></h3>
             {% endif %}
             {% if object.avis_set %}
-                <h3>Note moyenne : <strong>{{ object.note_moyenne|floatformat }}/10</strong></h3>
+                <h3>Note moyenne : <strong>{{ object.moyenne|floatformat }}/10</strong></h3>
             {% endif %}
             {% if object.categories.exists %}
                 {% for categorie in object.categories.all %}

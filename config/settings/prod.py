@@ -26,3 +26,5 @@ DATABASES = {
 }
 
 MEDIA_ROOT = '/home/benbb96/media'
+
+GOOGLE_ANALYTICS_KEY = get_secret_setting('GOOGLE_ANALYTICS_KEY')

@@ -18,11 +18,11 @@
     <div class="row">
         <div class="list-group col-md-8 col-md-offset-2">
             {% for produit in produits %}
-                <a class="list-group-item{% if produit.note_moyenne %} list-group-item-{{ produit.note_moyenne|color }}{% endif %}"
+                <a class="list-group-item{% if produit.moyenne %} list-group-item-{{ produit.moyenne|color }}{% endif %}"
                    href="{{ produit.get_absolute_url }}">
                     {{ produit.nom }} - {{ produit.prix }}€
-                    {% if produit.note_moyenne %}
-                        <span class="badge">{{ produit.note_moyenne|floatformat }}/10</span>
+                    {% if produit.moyenne %}
+                        <span class="badge">{{ produit.moyenne|floatformat }}/10</span>
                     {% endif %}
                 </a>
             {% empty %}
