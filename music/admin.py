@@ -40,11 +40,8 @@ class PlaylistAdmin(NonSortableParentAdmin):
 
     inlines = [MusiquePlaylistInline]
 
-    def get_form(self, request, obj=None, **kwargs):
-        # Pré-rempli automatiquement avec l'utilisateur connecté
-        form = super(PlaylistAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['createur'].initial = request.user
-        return form
+    def get_changeform_initial_data(self, request):
+        return {'createur': request.user}
 
     def get_queryset(self, request):
         qs = super(PlaylistAdmin, self).get_queryset(request)
@@ -94,11 +91,8 @@ class ArtisteAdmin(admin.ModelAdmin):
 
     inlines = [MusiqueInline, MusiqueRemixInline]
 
-    def get_form(self, request, obj=None, **kwargs):
-        # Pré-rempli automatiquement avec l'utilisateur connecté
-        form = super(ArtisteAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['createur'].initial = request.user
-        return form
+    def get_changeform_initial_data(self, request):
+        return {'createur': request.user}
 
 
 class LienInline(admin.TabularInline):
@@ -129,11 +123,8 @@ class MusiqueAdmin(admin.ModelAdmin):
 
     inlines = [LienInline, PlaylistInline]
 
-    def get_form(self, request, obj=None, **kwargs):
-        # Pré-rempli automatiquement avec l'utilisateur connecté
-        form = super(MusiqueAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['createur'].initial = request.user
-        return form
+    def get_changeform_initial_data(self, request):
+        return {'createur': request.user}
 
 
 @admin.register(Lien)
@@ -147,11 +138,8 @@ class LienAdmin(admin.ModelAdmin):
     autocomplete_fields = ('musique',)
     list_select_related = ('musique', 'createur')
 
-    def get_form(self, request, obj=None, **kwargs):
-        # Pré-rempli automatiquement avec l'utilisateur connecté
-        form = super(LienAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['createur'].initial = request.user
-        return form
+    def get_changeform_initial_data(self, request):
+        return {'createur': request.user}
 
 
 @admin.register(Label)

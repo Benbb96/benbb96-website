@@ -22,11 +22,8 @@ class JeuAdmin(admin.ModelAdmin):
     ordering = ('nom',)
     date_hierarchy = 'date_creation'
 
-    def get_form(self, request, obj=None, **kwargs):
-        # Pré-rempli automatiquement avec l'utilisateur connecté
-        form = super(JeuAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['createur'].initial = Profil.objects.get(user=request.user)
-        return form
+    def get_changeform_initial_data(self, request):
+        return {'createur': request.user}
 
 
 class PartieJoueurInline(admin.TabularInline):

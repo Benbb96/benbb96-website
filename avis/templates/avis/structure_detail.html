@@ -1,25 +1,53 @@
 {% extends 'avis/base_avis.html' %}
 
+{% load l10n %}
+
 {% block avis_title %}{{ object.type }} {{ object.nom }}{% endblock %}
 
 {% block avis_content %}
     <h1>{{ object.nom }}</h1>
-    <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
-    <div>
-        {% if object.informations %}
-            <h4>{{ object.informations|linebreaksbr }}</h4>
-        {% endif %}
-        {% if object.telephone %}
-            <p>Téléphone : {{ object.telephone }}</p>
-        {% endif %}
-        {% if object.lien %}
-            <p>Lien du site web : <a href="{{ object.lien }}" target="_blank">{{ object.lien }}</a></p>
-        {% endif %}
+    <div class="row">
+        <div class="col-sm-6 col-xs-12">
+            <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
+            <div>
+                {% if object.informations %}
+                    <h4>{{ object.informations|linebreaksbr }}</h4>
+                {% endif %}
+                {% if object.telephone %}
+                    <p>Téléphone : {{ object.telephone }}</p>
+                {% endif %}
+                {% if object.lien %}
+                    <p>Lien du site web : <a href="{{ object.lien }}" target="_blank">{{ object.lien }}</a></p>
+                {% endif %}
+                <p>Moyenne général : <strong>{{ object.moyenne|floatformat }}/10</strong></p>
+            </div>
+        </div>
         {% if object.adresse %}
-            <p>Adresse : {{ object.adresse }}</p>
+            <div class="col-sm-6 col-xs-12">
+                <div id="map" style="height: 200px"></div>
+            </div>
         {% endif %}
-        <p>Moyenne général : <strong>{{ object.note_moyenne|floatformat }}/10</strong></p>
     </div>
-    <h2>Les produits</h2>
+    <h2>Les produits <small>({{ object.produit_count }})</small></h2>
     {% include 'avis/produit_table.html' %}
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        function initMap() {
+            const position = {
+                lat: {{ object.adresse.latitude|unlocalize }},
+                lng: {{ object.adresse.longitude|unlocalize }}
+            };
+
+            let map = new google.maps.Map(document.getElementById('map'), {zoom: 13, center: position});
+
+            let marker = new google.maps.Marker(
+                {position: position, map: map, title: '{{ object }}', animation: google.maps.Animation.DROP}
+            );
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw&callback=initMap">
+    </script>
 {% endblock %}

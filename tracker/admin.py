@@ -17,11 +17,8 @@ class TrackerAdmin(admin.ModelAdmin):
 
     inlines = [TrackInline]
 
-    def get_form(self, request, obj=None, **kwargs):
-        # Pré-rempli automatiquement avec l'utilisateur connecté
-        form = super(TrackerAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['createur'].initial = Profil.objects.get(user=request.user)
-        return form
+    def get_changeform_initial_data(self, request):
+        return {'createur': request.user}
 
 
 @admin.register(Track)
