@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -81,9 +83,18 @@ def tracker_data(request):
 
     tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=request.POST.get('id'))
 
+    start = request.POST.get('start', None)
+    end = request.POST.get('end', None)
+
+    trackers = tracker.tracks.all()
+    if start:
+        trackers = trackers.filter(date_creation__gte=datetime.strptime(start))
+    if end:
+        trackers = trackers.filter(date_creation__lte=datetime.strptime(end))
+
     # Regroupe les données par date pour faire des stats
     frequency = request.POST.get('frequency', 'D')
-    df = read_frame(tracker.tracks.all(), fieldnames=['datetime'])
+    df = read_frame(trackers, fieldnames=['datetime'])
     df['datetime'] = pd.to_datetime(df['datetime'])
     df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
     df.index = df['datetime']
