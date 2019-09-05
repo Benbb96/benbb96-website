@@ -199,14 +199,15 @@
             {% get_current_language as LANGUAGE_CODE %}
             moment.locale('{{ LANGUAGE_CODE }}');
 
-            const start = moment().subtract(29, 'days');
-            const end = moment();
+            let allTracks = undefined;
+            let start = moment().subtract(29, 'days');
+            let end = moment();
 
-            function cb(start, end) {
-                $('#reportrange span').html(start.format('LLLL') + ' - ' + end.format('LLLL'));
-                console.log(start.format('YY-MM-DD HH:mm:ss'));
-                console.log(end.format('YY-MM-DD HH:mm:ss'))
-                // TODO Ajax call and update graphs
+            function cb(s, e) {
+                $('#reportrange span').html(s.format('LLLL') + ' - ' + e.format('LLLL'));
+                start = s.format('YY-MM-DD HH:mm:ss');
+                end = e.format('YY-MM-DD HH:mm:ss');
+                update_track_graph(allTracks, $('button.btn-frequency.active').data('frequency'), start, end)
             }
 
             $('input[name="dates"]').daterangepicker({
@@ -260,7 +261,7 @@
             cb(start, end);
 
             if (document.getElementById("allTracks") !== null) {
-                var allTracks = new Chart(document.getElementById("allTracks"), {
+                allTracks = new Chart(document.getElementById("allTracks"), {
                     type: 'line',
                     data: {
                         labels: [],
@@ -282,7 +283,7 @@
                     }
                 });
 
-                var trackByHourChart = new Chart(document.getElementById("trackByHourChart"), {
+                const trackByHourChart = new Chart(document.getElementById("trackByHourChart"), {
                     type: 'bar',
                     data: {
                         labels: [{% for hour in tracker.track_by_hour.keys %}'{{ hour }}h',{% endfor %}],
@@ -306,7 +307,7 @@
                     }
                 });
 
-                var trackByDayChart = new Chart(document.getElementById("trackByDayChart"), {
+                const trackByDayChart = new Chart(document.getElementById("trackByDayChart"), {
                     type: 'doughnut',
                     data: {
                         labels: [{% for day in tracker.track_by_day.keys %}'{{ day }}',{% endfor %}],
@@ -351,32 +352,8 @@
                     }
                 });
 
-                var trackerId = {{ tracker.id }};
-                var url = "{% url 'tracker:tracker-data' %}";
-                const frequency_map = {
-                    H: 'heure',
-                    D: 'jour',
-                    W: 'semaine',
-                    M: 'mois',
-                    Q: "quart d'année",
-                    Y: 'an',
-                };
-
                 $('.btn-frequency').click(function (e) {
-                    const frequency = $(this).data('frequency');
-                    $.post(url, {id: trackerId, frequency: frequency})
-                        .done(response => {
-                            allTracks.data.labels = response.labels;
-                            allTracks.data.datasets[0].data = response.data;
-                            allTracks.update();
-                            $('span#frequency').text(frequency_map[frequency]);
-                            $('strong#avg').text(response.avg);
-                            $('.btn-frequency').removeClass('active');
-                            $(this).addClass('active')
-                        })
-                        .fail((xhr, textStatus, errorThrown) => {
-                            console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
-                        })
+                    update_track_graph(allTracks, $(this).data('frequency'), start, end)
                 });
 
                 // Trigger the default one
@@ -442,6 +419,33 @@
                         alert(textStatus + ' - ' + errorThrown)
                     })
             })
-        })
+        });
+
+        const trackerId = '{{ tracker.id }}';
+        const url = "{% url 'tracker:tracker-data' %}";
+        const frequency_map = {
+            H: 'heure',
+            D: 'jour',
+            W: 'semaine',
+            M: 'mois',
+            Q: "quart d'année",
+            Y: 'an',
+        };
+
+        const update_track_graph = (allTracks, frequency, start, end) => {
+            $.post(url, {id: trackerId, frequency: frequency, start: start, end: end})
+                .done(response => {
+                    allTracks.data.labels = response.labels;
+                    allTracks.data.datasets[0].data = response.data;
+                    allTracks.update();
+                    $('span#frequency').text(frequency_map[frequency]);
+                    $('strong#avg').text(response.avg);
+                    $('.btn-frequency').removeClass('active');
+                    $(this).addClass('active')
+                })
+                .fail((xhr, textStatus, errorThrown) => {
+                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
+                })
+        }
     </script>
 {% endblock %}

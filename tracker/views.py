@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView, DeleteView
 from django_pandas.io import read_frame
@@ -86,45 +87,52 @@ def tracker_data(request):
     start = request.POST.get('start', None)
     end = request.POST.get('end', None)
 
-    trackers = tracker.tracks.all()
+    tracks = tracker.tracks.all()
     if start:
-        trackers = trackers.filter(date_creation__gte=datetime.strptime(start))
+        start = make_aware(datetime.strptime(start, '%y-%m-%d %H:%M:%S'))
+        tracks = tracks.filter(datetime__gte=start)
     if end:
-        trackers = trackers.filter(date_creation__lte=datetime.strptime(end))
+        end = make_aware(datetime.strptime(end, '%y-%m-%d %H:%M:%S'))
+        tracks = tracks.filter(datetime__lte=end)
 
-    # Regroupe les données par date pour faire des stats
-    frequency = request.POST.get('frequency', 'D')
-    df = read_frame(trackers, fieldnames=['datetime'])
-    df['datetime'] = pd.to_datetime(df['datetime'])
-    df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
-    df.index = df['datetime']
-    df['count'] = [1] * tracker.tracks.count()
-    data = df.resample(frequency).sum()
+    labels = []
+    data = []
+    avg = 0
 
-    delta = timezone.now().date() - tracker.tracks.earliest('datetime').datetime.date()
+    if tracks.exists():
+        # Regroupe les données par date pour faire des stats
+        frequency = request.POST.get('frequency', 'D')
+        df = read_frame(tracks, fieldnames=['datetime'])
+        df['datetime'] = pd.to_datetime(df['datetime'])
+        df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
+        df.index = df['datetime']
+        df['count'] = [1] * tracks.count()
+        data = df.resample(frequency).sum()
 
-    format = '%d/%m/%y'
-    avg = tracker.tracks.count() / (delta.days + 1)  # On ajoute un jour pour éviter la division par 0
+        delta = timezone.now().date() - tracks.earliest('datetime').datetime.date()
 
-    if frequency == 'H':
-        format = '%d/%m/%y %M:%H'
-        avg /= 24
-    elif frequency == 'W':
-        avg *= 7
-    elif frequency == 'M':
-        format = '%B %Y'
-        avg *= 30
-    elif frequency == 'Q':
-        format = '%B %Y'
-        avg *= 120
-    elif frequency == 'Y':
-        format = '%Y'
-        avg *= 365
+        format = '%d/%m/%y'
+        avg = tracks.count() / (delta.days + 1)  # On ajoute un jour pour éviter la division par 0
 
-    data.index = data.index.strftime(format)
+        if frequency == 'H':
+            format = '%d/%m/%y %M:%H'
+            avg /= 24
+        elif frequency == 'W':
+            avg *= 7
+        elif frequency == 'M':
+            format = '%B %Y'
+            avg *= 30
+        elif frequency == 'Q':
+            format = '%B %Y'
+            avg *= 120
+        elif frequency == 'Y':
+            format = '%Y'
+            avg *= 365
 
-    labels = data.index.values.tolist()
-    data= data.values.tolist()
+        data.index = data.index.strftime(format)
+
+        labels = data.index.values.tolist()
+        data= data.values.tolist()
 
     return JsonResponse({
         'labels': labels,
