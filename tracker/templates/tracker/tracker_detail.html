@@ -40,7 +40,11 @@
                         <i class="fa fa-trash"></i>
                     </a>
                 </h1>
-                <div>Créé le {{ tracker.date_creation|date }} à {{ tracker.date_creation|time }}</div>
+                <div>
+                    {% with tracks_count=tracker.tracks.count %}
+                        Créé le {{ tracker.date_creation|date }} à {{ tracker.date_creation|time }}, <b>{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
+                    {% endwith %}
+                </div>
             </div>
 
             <form method="post">
@@ -138,7 +142,7 @@
                     {% endif %}
                 </div>
                 <div id="historique" class="tab-pane fade">
-                    <h2>Historique <small>{{ tracker.tracks.count }} tracks</small></h2>
+                    <h2>Historique <small><span id="trackCount"></span> {{ tracker.nom|lower }}s</small></h2>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -148,44 +152,8 @@
                                 <th>Actions</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            {% for track in tracks %}
-                                <tr class="track" id="{{ track.id }}">
-                                    <td class="date">{{ track.datetime|date }} {{ track.datetime|time }}</td>
-                                    <td class="commentaire">
-                                        {{ track.commentaire }}
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-default displayForm">
-                                            <i class="fa fa-edit" title="Editer ce track"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-warning modalConfirmDelete" data-target-url="{% url 'tracker:delete-track' track.id %}">
-                                            <i class="fa fa-trash" title="Supprimer ce track"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="trackForm hidden">
-                                    <td colspan="3">
-                                        <form class="form" action="{% url 'tracker:update-track' track.id %}">
-                                            {% csrf_token %}
-                                            <div class="col-xs-5">
-                                                <input type="datetime-local" name="datetime" value="{{ track.datetime|date:"Y-m-d" }}T{{ track.datetime|time:"H:i" }}" class="form-control" required="" id="id_datetime">
-                                            </div>
-                                            <div class="col-xs-5">
-                                                {{ track.form.commentaire }}
-                                            </div>
-                                            <div class="col-xs-2">
-                                                <button type="submit" class="btn btn-primary validateBtn">
-                                                    <i class="fa fa-check"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-default cancelBtn">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
+                            <tbody id="tracks">
+                            {# Will be filled in AJAX #}
                             </tbody>
                         </table>
                     </div>
@@ -428,7 +396,9 @@
         });
 
         const trackerId = '{{ tracker.id }}';
-        const url = "{% url 'tracker:tracker-data' %}";
+        const graph_url = "{% url 'tracker:tracker-data' %}";
+        const other_stats_url = "{% url 'tracker:tracker-other-stats' %}";
+        const history_url = "{% url 'tracker:tracker-history' %}";
         const frequency_map = {
             H: 'heure',
             D: 'jour',
@@ -439,7 +409,7 @@
         };
 
         const update_track_graph = (allTracks, frequency, start, end) => {
-            $.post(url, {id: trackerId, frequency: frequency, start: start, end: end})
+            $.post(graph_url, {id: trackerId, frequency: frequency, start: start, end: end})
                 .done(response => {
                     if (response.labels.length > 0) {
                         $('div#noTracks').addClass('hidden');
@@ -458,7 +428,25 @@
                 })
                 .fail((xhr, textStatus, errorThrown) => {
                     console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
+                });
+
+            $.post(other_stats_url, {id: trackerId, start: start, end: end})
+                .done(response => {
+                    console.log(response)
+                    // TODO next
                 })
+                .fail((xhr, textStatus, errorThrown) => {
+                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
+                });
+
+            $.post(history_url, {id: trackerId, start: start, end: end})
+                .done(response => {
+                    $('tbody#tracks').html(response.html);
+                    $('span#trackCount').text(response.trackCount)
+                })
+                .fail((xhr, textStatus, errorThrown) => {
+                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
+                });
         }
     </script>
 {% endblock %}
