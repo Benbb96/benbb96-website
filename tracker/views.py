@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.timezone import make_aware
@@ -77,8 +78,7 @@ class TrackDeleteView(generics.DestroyAPIView):
     serializer_class = TrackSerializer
 
 
-@require_POST
-def tracker_data(request):
+def get_tracks_from_request(request):
     if not request.is_ajax():
         return JsonResponse({'error':'Unauthorized access'}, status_code=401)
 
@@ -94,6 +94,13 @@ def tracker_data(request):
     if end:
         end = make_aware(datetime.strptime(end, '%y-%m-%d %H:%M:%S'))
         tracks = tracks.filter(datetime__lte=end)
+
+    return tracks
+
+
+@require_POST
+def tracker_data(request):
+    tracks = get_tracks_from_request(request)
 
     labels = []
     data = []
@@ -140,3 +147,42 @@ def tracker_data(request):
         'avg': round(avg, 2)
     })
 
+
+def get_other_stats(request):
+    tracks = get_tracks_from_request(request)
+
+    hours = {}
+    for i in range(24):
+        hours[str(i)] = 0
+
+    weekdays = {
+        0: 'Lundi',
+        1: 'Mardi',
+        2: 'Mercredi',
+        3: 'Jeudi',
+        4: 'Vendredi',
+        5: 'Samedi',
+        6: 'Dimanche'
+    }
+    days = {}
+    for weekday in weekdays.values():
+        days[weekday] = 0
+
+    for track in tracks:
+        hours[str(track.datetime.hour)] += 1
+        days[weekdays[track.datetime.weekday()]] += 1
+
+    return JsonResponse({
+        'trackByHourChart': hours,
+        'trackByDayChart': days,
+    })
+
+
+@require_POST
+def tracker_history(request):
+    tracks = get_tracks_from_request(request)
+    html = render_to_string('tracker/include/tbody_tracks.html', {'tracks': tracks})
+    return JsonResponse({
+        'html': html,
+        'trackCount': tracks.count()
+    })
