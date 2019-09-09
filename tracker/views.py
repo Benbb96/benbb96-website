@@ -77,7 +77,7 @@ class TrackDeleteView(generics.DestroyAPIView):
 @require_POST
 def tracker_data(request):
     if not request.is_ajax():
-        return JsonResponse({'error':'Unauthorized access'}, status_code=401)
+        return JsonResponse({'error':'Unauthorized access'}, status=401)
 
     tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=request.POST.get('id'))
 
