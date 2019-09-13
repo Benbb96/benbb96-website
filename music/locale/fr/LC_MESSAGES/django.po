@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-18 13:22+0200\n"
+"POT-Creation-Date: 2019-09-13 14:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,41 +18,41 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: templates/music/artiste_detail.html:4
+#: .\templates\music\artiste_detail.html:4
 msgid "Artist"
 msgstr "Artiste"
 
-#: templates/music/artiste_detail.html:19
+#: .\templates\music\artiste_detail.html:19
 msgid "Country"
 msgstr "Pays"
 
-#: templates/music/artiste_detail.html:22
+#: .\templates\music\artiste_detail.html:22
 msgid "City"
 msgstr "Ville"
 
-#: templates/music/artiste_detail.html:26
+#: .\templates\music\artiste_detail.html:26
 msgid "Website"
 msgstr "Site web"
 
-#: templates/music/artiste_detail.html:33
+#: .\templates\music\artiste_detail.html:33
 msgid "Mail contact"
 msgstr "Contact par mail"
 
-#: templates/music/artiste_detail.html:38
+#: .\templates\music\artiste_detail.html:38
 msgid "Contact phone number"
 msgstr "Contact par téléphone"
 
-#: templates/music/artiste_detail.html:45
+#: .\templates\music\artiste_detail.html:45
 msgid "Labels"
 msgstr "Labels"
 
-#: templates/music/artiste_detail.html:53
-#: templates/music/musique_detail.html:24
-#: templates/music/playlist_detail.html:25
+#: .\templates\music\artiste_detail.html:53
+#: .\templates\music\musique_detail.html:34
+#: .\templates\music\playlist_detail.html:25
 msgid "Styles"
 msgstr "Styles"
 
-#: templates/music/artiste_detail.html:62
+#: .\templates\music\artiste_detail.html:62
 #, python-format
 msgid ""
 "\n"
@@ -67,38 +67,38 @@ msgstr ""
 "%(artiste_createur)s</a>.\n"
 "                    "
 
-#: templates/music/artiste_detail.html:70
-#: templates/music/playlist_detail.html:55
+#: .\templates\music\artiste_detail.html:70
+#: .\templates\music\playlist_detail.html:55
 msgid "Musics"
 msgstr "Musiques"
 
-#: templates/music/artiste_detail.html:75
+#: .\templates\music\artiste_detail.html:75
 msgid "Title"
 msgstr "Titre"
 
-#: templates/music/artiste_detail.html:76
+#: .\templates\music\artiste_detail.html:76
 msgid "Date add"
 msgstr "Date d'ajout"
 
-#: templates/music/artiste_detail.html:77
+#: .\templates\music\artiste_detail.html:77
 msgid "View count"
 msgstr "Nombre de vue"
 
-#: templates/music/artiste_detail.html:78
-#: templates/music/musique_detail.html:33
+#: .\templates\music\artiste_detail.html:78
+#: .\templates\music\musique_detail.html:43
 msgid "Liens"
 msgstr "Liens"
 
-#: templates/music/artiste_detail.html:111
+#: .\templates\music\artiste_detail.html:111
 #, python-format
 msgid "Playlists with %(artiste_name)s"
 msgstr "Playlists avec du %(artiste_name)s"
 
-#: templates/music/base_music.html:5 templates/music/base_music.html:7
+#: .\templates\music\base_music.html:5 .\templates\music\base_music.html:7
 msgid "Music"
 msgstr "Musique"
 
-#: templates/music/base_music.html:9
+#: .\templates\music\base_music.html:9
 msgid ""
 "\n"
 "        My new project to save all my playlists which are on my phone and "
@@ -108,24 +108,28 @@ msgid ""
 msgstr ""
 "\n"
 "        Mon nouveau projet pour sauvegarder toutes mes playlists qui sont "
-"sur mon téléphones avec un système\n"
+"sur mon téléphone avec un système\n"
 "        de lien vers différentes plate-formes pour écouter les musiques.\n"
 "    "
 
-#: templates/music/list_group_playlist.html:6
+#: .\templates\music\list_group_playlist.html:6
 #, python-format
 msgid "Created by %(playlist_createur)s on %(playlist_date)s"
 msgstr "Crée par %(playlist_createur)s le %(playlist_date)s"
 
-#: templates/music/list_group_playlist.html:8
+#: .\templates\music\list_group_playlist.html:8
 msgid "Playlist music count"
 msgstr "Nombre de musique de la playlist"
 
-#: templates/music/musique_detail.html:10
+#: .\templates\music\musique_detail.html:10
 msgid "See artist page"
 msgstr "Voir la page de l'artiste"
 
-#: templates/music/musique_detail.html:14
+#: .\templates\music\musique_detail.html:20
+msgid "Remix"
+msgstr ""
+
+#: .\templates\music\musique_detail.html:24
 #, python-format
 msgid ""
 "\n"
@@ -140,11 +144,11 @@ msgstr ""
 "%(musique_createur)s</a>.\n"
 "                "
 
-#: templates/music/musique_detail.html:20
+#: .\templates\music\musique_detail.html:30
 msgid "Album"
 msgstr "Album"
 
-#: templates/music/musique_detail.html:39
+#: .\templates\music\musique_detail.html:49
 #, python-format
 msgid ""
 "\n"
@@ -159,15 +163,15 @@ msgstr ""
 "\">%(lien_click_count)s</span> fois.\n"
 "                        "
 
-#: templates/music/musique_detail.html:48
+#: .\templates\music\musique_detail.html:58
 msgid "This music is present in these playlists"
 msgstr "Cette musique est présente dans les playlists"
 
-#: templates/music/playlist_detail.html:4
+#: .\templates\music\playlist_detail.html:4
 msgid "Playlist"
 msgstr "Playlist"
 
-#: templates/music/playlist_detail.html:15
+#: .\templates\music\playlist_detail.html:15
 #, python-format
 msgid ""
 "\n"
@@ -183,19 +187,19 @@ msgstr ""
 "%(playlist_createur)s</a>.\n"
 "                        "
 
-#: templates/music/playlist_detail.html:21
+#: .\templates\music\playlist_detail.html:21
 msgid "Description"
 msgstr "Description"
 
-#: templates/music/playlist_detail.html:33
+#: .\templates\music\playlist_detail.html:33
 msgid "Playlist artists"
 msgstr "Artistes de la playlist"
 
-#: templates/music/playlist_detail.html:39
+#: .\templates\music\playlist_detail.html:39
 msgid "See all..."
 msgstr "Voir tout..."
 
-#: templates/music/playlist_detail.html:61
+#: .\templates\music\playlist_detail.html:61
 #, python-format
 msgid ""
 "\n"
@@ -206,22 +210,22 @@ msgstr ""
 "                        Ajouté le %(date)s\n"
 "                    "
 
-#: templates/music/playlist_detail.html:66
+#: .\templates\music\playlist_detail.html:66
 msgid "This playlist is empty..."
 msgstr "Cette playlist est vide..."
 
-#: templates/music/playlist_list.html:5
+#: .\templates\music\playlist_list.html:5
 msgid "My playlists"
 msgstr "Mes playlists"
 
-#: templates/music/playlist_list.html:15
+#: .\templates\music\playlist_list.html:15
 msgid "on"
 msgstr "le"
 
-#: templates/music/playlist_list.html:17
+#: .\templates\music\playlist_list.html:17
 msgid "Nomber of music in the playlist"
 msgstr "Nombre de musiques dans la playlist"
 
-#: templates/music/playlist_list.html:20
+#: .\templates\music\playlist_list.html:20
 msgid "No playlist has been created yet..."
 msgstr "Aucune playlist n'a encore été créée"
