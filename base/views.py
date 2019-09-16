@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView
 
 from base.models import Projet
@@ -24,6 +25,7 @@ class ProjetListView(ListView):
     template_name = 'base/home.html'
 
 
+@csrf_exempt
 def test_notification(request):
     print(request.POST)
     return HttpResponse('OK')
