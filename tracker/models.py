@@ -56,11 +56,19 @@ class Tracker(SortableMixin):
         return days
 
 
+class TrackManager(models.Manager):
+    def first_track(self):
+        return self.get_queryset().earliest('datetime')
+
+
 class Track(models.Model):
     tracker = models.ForeignKey(Tracker, related_name='tracks', on_delete=models.CASCADE)
     datetime = models.DateTimeField('date et heure', default=timezone.now)
-    commentaire = models.CharField(max_length=255, help_text='Un texte pour donner une explication sur ce track.',
-                                   blank=True)
+    commentaire = models.CharField(
+        max_length=255, help_text='Un texte pour donner une explication sur ce track.', blank=True
+    )
+
+    objects = TrackManager()
 
     class Meta:
         ordering = ('-datetime',)

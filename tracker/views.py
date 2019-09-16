@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.utils.timezone import make_aware
+from django.utils.timezone import make_aware, make_naive
 from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView, DeleteView
 from django_pandas.io import read_frame
@@ -151,6 +151,9 @@ def tracker_data(request):
 def get_other_stats(request):
     tracks = get_tracks_from_request(request)
 
+    if not tracks.exists():
+        return JsonResponse({})
+
     hours = {}
     for i in range(24):
         hours[str(i)] = 0
@@ -169,12 +172,19 @@ def get_other_stats(request):
         days[weekday] = 0
 
     for track in tracks:
-        hours[str(track.datetime.hour)] += 1
-        days[weekdays[track.datetime.weekday()]] += 1
+        dt = make_naive(track.datetime)
+        hours[str(dt.hour)] += 1
+        days[weekdays[dt.weekday()]] += 1
 
     return JsonResponse({
-        'trackByHourChart': hours,
-        'trackByDayChart': days,
+        'trackByHourChart': {
+            'labels': list(x + 'h' for x in hours.keys()),
+            'values': list(hours.values())
+        },
+        'trackByDayChart': {
+            'labels': list(days.keys()),
+            'values': list(days.values())
+        },
     })
 
 
