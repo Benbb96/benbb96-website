@@ -7,7 +7,7 @@ class StaticViewSitemap(sitemaps.Sitemap):
     changefreq = 'monthly'
 
     def items(self):
-        return ['home', 'about']
+        return ['base:home', 'base:about']
 
     def location(self, item):
         return reverse(item)

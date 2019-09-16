@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 from avis.models import Avis, Produit, Structure
 from config.sitemaps import StaticViewSitemap
+from music.models import Playlist, Musique
 
 avis_dict = {
     'queryset': Avis.objects.all(),
@@ -28,6 +29,16 @@ structure_dict = {
     'date_field': 'date_creation',
 }
 
+palylist_dict = {
+    'queryset': Playlist.objects.all(),
+    'date_field': 'date_creation',
+}
+
+musique_dict = {
+    'queryset': Musique.objects.all(),
+    'date_field': 'date_creation',
+}
+
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('api-auth/', include('rest_framework.urls')),
@@ -38,7 +49,9 @@ urlpatterns = [
             'static': StaticViewSitemap,
             'avis': GenericSitemap(avis_dict, priority=0.6),
             'produits': GenericSitemap(produit_dict, priority=0.4),
-            'structures': GenericSitemap(structure_dict, priority=0.5)
+            'structures': GenericSitemap(structure_dict, priority=0.5),
+            'playlists': GenericSitemap(palylist_dict, priority=0.5),
+            'musiques': GenericSitemap(musique_dict, priority=0.4)
         }},
         name='django.contrib.sitemaps.views.sitemap'
     ),
