@@ -47,7 +47,9 @@
             <div class="pull-right">
                 <a href="{{ object.auteur.get_absolute_url }}">
                     {{ object.auteur }}
-                    <img class="img-rounded" src="{{ object.auteur.avatar.url }}" alt="Avatar de {{ object.auteur }}" style="max-height: 30px"/>
+                    {% if object.auteur.avatar %}
+                        <img class="img-rounded" src="{{ object.auteur.avatar.url }}" alt="Avatar de {{ object.auteur }}" style="max-height: 30px"/>
+                    {% endif %}
                 </a>
             </div>
         </div>
