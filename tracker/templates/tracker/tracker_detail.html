@@ -42,7 +42,7 @@
                 </h1>
                 <div>
                     {% with tracks_count=tracker.tracks.count %}
-                        Créé le {{ tracker.date_creation|date }} à {{ tracker.date_creation|time }}, <b>{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
+                        Créé le {{ tracker.date_creation|date }} à {{ tracker.date_creation|time }}, <b id="totalCount">{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
                     {% endwith %}
                 </div>
             </div>
@@ -87,61 +87,12 @@
             </div>
 
             <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a data-toggle="tab" href="#statistiques">Statistiques</a></li>
-                <li><a data-toggle="tab" href="#historique">Historique</a></li>
+                <li class="active"><a data-toggle="tab" href="#historique">Historique</a></li>
+                <li><a data-toggle="tab" href="#statistiques">Statistiques</a></li>
             </ul>
 
             <div class="tab-content">
-                <div id="statistiques" class="tab-pane fade in active">
-                    <h2>Statistiques</h2>
-                    {% if not tracker.tracks.exists %}
-                        <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
-                    {% else %}
-                        <div id="track_gaph">
-                            <p>
-                                <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
-                            </p>
-                            <div class="text-center">
-                                <canvas id="allTracks" width="600" height="400"></canvas>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2 col-xs-6 text-center">
-                                    <button type="button" class="btn btn-default btn-frequency" data-frequency="H">Heure</button>
-                                </div>
-                                <div class="col-md-2 col-xs-6 text-center">
-                                    <button type="button" class="btn btn-default btn-frequency" data-frequency="D" id="default">Jour</button>
-                                </div>
-                                <div class="col-md-2 col-xs-6 text-center">
-                                    <button type="button" class="btn btn-default btn-frequency" data-frequency="W">Semaine</button>
-                                </div>
-                                <div class="col-md-2 col-xs-6 text-center">
-                                    <button type="button" class="btn btn-default btn-frequency" data-frequency="M">Mois</button>
-                                </div>
-                                <div class="col-md-2 col-xs-6 text-center">
-                                    <button type="button" class="btn btn-default btn-frequency" data-frequency="Q">Quart d'année</button>
-                                </div>
-                                <div class="col-md-2 col-xs-6 text-center">
-                                    <button type="button" class="btn btn-default btn-frequency" data-frequency="Y">Année</button>
-                                </div>
-                            </div>
-                            <h3>Répartition</h3>
-                            <div class="row">
-                                <div class="col-sm-6 col-xs-12 text-center">
-                                    <h4>Par heure de la journée</h4>
-                                    <canvas id="trackByHourChart" width="600" height="400"></canvas>
-                                </div>
-                                <div class="col-sm-6 col-xs-12 text-center">
-                                    <h4>Par jour de la semaine</h4>
-                                    <canvas id="trackByDayChart" width="600" height="400"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="well hidden text-danger text-center" id="noTracks">
-                            Aucun track pour la période donnée.
-                        </div>
-                    {% endif %}
-                </div>
-                <div id="historique" class="tab-pane fade">
+                <div id="historique" class="tab-pane fade in active">
                     <h2>Historique <small><span id="trackCount"></span> {{ tracker.nom|lower }}s</small></h2>
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -158,6 +109,54 @@
                         </table>
                     </div>
                 </div>
+                <div id="statistiques" class="tab-pane fade">
+                    <h2>Statistiques</h2>
+                    {% if not tracker.tracks.exists %}
+                        <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
+                    {% endif %}
+                    <div id="track_gaph"{% if not tracker.tracks.exists %} class="hidden" {% endif %}>
+                        <p>
+                            <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
+                        </p>
+                        <div class="text-center">
+                            <canvas id="allTracks" width="600" height="400"></canvas>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 col-xs-6 text-center">
+                                <button type="button" class="btn btn-default btn-frequency" data-frequency="H">Heure</button>
+                            </div>
+                            <div class="col-md-2 col-xs-6 text-center">
+                                <button type="button" class="btn btn-default btn-frequency" data-frequency="D" id="default">Jour</button>
+                            </div>
+                            <div class="col-md-2 col-xs-6 text-center">
+                                <button type="button" class="btn btn-default btn-frequency" data-frequency="W">Semaine</button>
+                            </div>
+                            <div class="col-md-2 col-xs-6 text-center">
+                                <button type="button" class="btn btn-default btn-frequency" data-frequency="M">Mois</button>
+                            </div>
+                            <div class="col-md-2 col-xs-6 text-center">
+                                <button type="button" class="btn btn-default btn-frequency" data-frequency="Q">Quart d'année</button>
+                            </div>
+                            <div class="col-md-2 col-xs-6 text-center">
+                                <button type="button" class="btn btn-default btn-frequency" data-frequency="Y">Année</button>
+                            </div>
+                        </div>
+                        <h3>Répartition</h3>
+                        <div class="row">
+                            <div class="col-sm-6 col-xs-12 text-center">
+                                <h4>Par heure de la journée</h4>
+                                <canvas id="trackByHourChart" width="600" height="400"></canvas>
+                            </div>
+                            <div class="col-sm-6 col-xs-12 text-center">
+                                <h4>Par jour de la semaine</h4>
+                                <canvas id="trackByDayChart" width="600" height="400"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="well hidden text-danger text-center" id="noTracks">
+                        Aucun track pour la période donnée.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -168,19 +167,31 @@
     <script src="{% static 'js/moment-with-locales.js' %}"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
+        {% get_current_language as LANGUAGE_CODE %}
+        moment.locale('{{ LANGUAGE_CODE }}');
+
+        let allTracks = undefined;
+        let trackByHourChart = undefined;
+        let trackByDayChart = undefined;
+        let start = moment().subtract(1, 'month');
+        let end = moment();
+
+        const trackerId = '{{ tracker.id }}';
+        const frequency_map = {
+            H: 'heure',
+            D: 'jour',
+            W: 'semaine',
+            M: 'mois',
+            Q: "quart d'année",
+            Y: 'an',
+        };
+
         $(() => {
-            {% get_current_language as LANGUAGE_CODE %}
-            moment.locale('{{ LANGUAGE_CODE }}');
-
-            let allTracks = undefined;
-            let start = moment().subtract(29, 'days');
-            let end = moment();
-
-            function cb(s, e) {
+            function daterange_callback(s, e) {
                 $('#reportrange span').html(s.format('LLLL') + ' - ' + e.format('LLLL'));
                 start = s.format('YY-MM-DD HH:mm:ss');
                 end = e.format('YY-MM-DD HH:mm:ss');
-                update_track_graph(allTracks, $('button.btn-frequency.active').data('frequency'), start, end)
+                update_all($('button.btn-frequency.active').data('frequency'))
             }
 
             $('input[name="dates"]').daterangepicker({
@@ -189,6 +200,7 @@
                 timePicker24Hour: true,
                 startDate: start,
                 endDate: end,
+                minDate: moment("{{ tracker.tracks.first_track.datetime|date:"c" }}"),
                 maxDate: moment(),
                 locale: {
                     format: 'LLLL',
@@ -223,116 +235,113 @@
                     ]
                 },
                 ranges: {
-                   "Aujourd'hui": [moment(), moment()],
-                   'Hier': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                    'Les 7 derniers jours': [moment().subtract(6, 'days'), moment()],
-                   'Les 30 derniers jours': [moment().subtract(29, 'days'), moment()],
-                   'Ce mois-ci': [moment().startOf('month'), moment().endOf('month')],
-                   'Le mois derniers': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                   'Les 30 derniers jours': [moment().subtract(1, 'month'), moment()],
+                   'Les 3 derniers mois': [moment().subtract(3, 'month'), moment()],
+                   'Les 6 derniers mois': [moment().subtract(6, 'month'), moment()],
+                   'Les 12 derniers mois': [moment().subtract(1, 'year'), moment()],
                 }
-            }, cb);
+            }, daterange_callback);
 
-            cb(start, end);
-
-            if (document.getElementById("allTracks") !== null) {
-                allTracks = new Chart(document.getElementById("allTracks"), {
-                    type: 'line',
-                    data: {
-                        labels: [],
-                        datasets: [{
-                            data: []
-                        }]
+            allTracks = new Chart(document.getElementById("allTracks"), {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: []
+                    }]
+                },
+                options: {
+                    legend: {
+                        display:false
                     },
-                    options: {
-                        legend: {
-                            display:false
-                        },
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero:true
-                                }
-                            }]
-                        }
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
                     }
-                });
+                }
+            });
 
-                const trackByHourChart = new Chart(document.getElementById("trackByHourChart"), {
-                    type: 'bar',
-                    data: {
-                        labels: [{% for hour in tracker.track_by_hour.keys %}'{{ hour }}h',{% endfor %}],
-                        datasets: [{
-                            label: 'Total',
-                            backgroundColor: '#337ab7',
-                            data: [{% for value in tracker.track_by_hour.values %}{{ value }},{% endfor %}]
-                        }]
+            trackByHourChart = new Chart(document.getElementById("trackByHourChart"), {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Total',
+                        backgroundColor: '#337ab7',
+                        data: []
+                    }]
+                },
+                options: {
+                    legend: {
+                        display:false
                     },
-                    options: {
-                        legend: {
-                            display:false
-                        },
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero:true
-                                }
-                            }]
-                        }
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
                     }
-                });
+                }
+            });
 
-                const trackByDayChart = new Chart(document.getElementById("trackByDayChart"), {
-                    type: 'doughnut',
-                    data: {
-                        labels: [{% for day in tracker.track_by_day.keys %}'{{ day }}',{% endfor %}],
-                        datasets: [{
-                            label: 'Total',
-                            backgroundColor: [
-                                'rgba(255, 0, 0, 0.5)',
-                                'rgba(0, 255, 0, 0.5)',
-                                'rgba(0, 0, 255, 0.5)',
-                                'rgba(255, 255, 0, 0.5)',
-                                'rgba(255, 0, 255, 0.5)',
-                                'rgba(0, 255, 255, 0.5)',
-                                'rgba(0, 0, 0, 0.5)'
-                            ],
-                            data: [{% for value in tracker.track_by_day.values %}{{ value }},{% endfor %}]
-                        }]
+            trackByDayChart = new Chart(document.getElementById("trackByDayChart"), {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Total',
+                        backgroundColor: [
+                            'rgba(255, 0, 0, 0.5)',
+                            'rgba(0, 255, 0, 0.5)',
+                            'rgba(0, 0, 255, 0.5)',
+                            'rgba(255, 255, 0, 0.5)',
+                            'rgba(255, 0, 255, 0.5)',
+                            'rgba(0, 255, 255, 0.5)',
+                            'rgba(0, 0, 0, 0.5)'
+                        ],
+                        data: []
+                    }]
+                },
+                options: {
+                    legend: {
+                        display:true,
+                        position: 'bottom'
                     },
-                    options: {
-                        legend: {
-                            display:true,
-                            position: 'bottom'
-                        },
-                        tooltips: {
-                            // https://stackoverflow.com/a/37260662/8439435 - Pour ajouter le pourcentage
-                            callbacks: {
-                                label: function (tooltipItem, data) {
-                                    // Get the concerned dataset
-                                    var dataset = data.datasets[tooltipItem.datasetIndex];
-                                    // Calculate the total of this data set
-                                    var total = dataset.data.reduce(function (previousValue, currentValue, currentIndex, array) {
-                                        return previousValue + currentValue;
-                                    });
-                                    // Get the current items value
-                                    var currentValue = dataset.data[tooltipItem.index];
-                                    // Calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
-                                    var percentage = Math.floor(((currentValue / total) * 100) + 0.5);
+                    tooltips: {
+                        // https://stackoverflow.com/a/37260662/8439435 - Pour ajouter le pourcentage
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                // Get the concerned dataset
+                                var dataset = data.datasets[tooltipItem.datasetIndex];
+                                // Calculate the total of this data set
+                                var total = dataset.data.reduce(function (previousValue, currentValue, currentIndex, array) {
+                                    return previousValue + currentValue;
+                                });
+                                // Get the current items value
+                                var currentValue = dataset.data[tooltipItem.index];
+                                // Calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
+                                var percentage = Math.floor(((currentValue / total) * 100) + 0.5);
 
-                                    return data.labels[tooltipItem.index] + ' : ' + currentValue + ' (' + percentage + "%)";
-                                }
+                                return data.labels[tooltipItem.index] + ' : ' + currentValue + ' (' + percentage + "%)";
                             }
                         }
                     }
-                });
+                }
+            });
 
-                $('.btn-frequency').click(function (e) {
-                    update_track_graph(allTracks, $(this).data('frequency'), start, end)
-                });
+            daterange_callback(start, end);
 
-                // Trigger the default one
-                $('.btn-frequency#default').trigger('click');
-            }
+            $('.btn-frequency').click(function (e) {
+                update_track_graph($(this).data('frequency'), start, end)
+            });
+
+            // Trigger the default one
+            $('.btn-frequency#default').trigger('click');
 
             // Tracker Management
 
@@ -340,54 +349,15 @@
                 $('#datetime').toggle()
             });
 
-            // Display a track form and hide all the others
-            $('.displayForm').click(function () {
-                const track = $(this).closest('tr');
-                $('.track').removeClass('hidden');
-                track.addClass('hidden');
-                $('.trackForm').addClass('hidden');
-                track.next().removeClass('hidden')
-            });
-
-            // Hide a track form
-            $('.cancelBtn').click(function () {
-                const trackForm = $(this).closest('tr');
-                trackForm.addClass('hidden');
-                trackForm.prev().removeClass('hidden');
-            });
-
-            // Submit a track edit form in AJAX
-            $('.trackForm form').submit(function (e) {
-                e.preventDefault();
-                $.ajax({url: $(this).attr('action'), type: 'PUT', dataType: 'json', data: $(this).serialize()})
-                    .done((response) => {
-                        const track = $(this).closest('tr').prev();
-                        track.find('td.commentaire').text(response.commentaire);
-                        const datetime = moment(response.datetime).format('LLL');
-                        track.find('td.date').text(datetime);
-                        $(this).find('.cancelBtn').trigger('click')
-                    })
-                    .fail(err => {
-                        $.each(err.responseJSON, (name, error) => {
-                            $(this).find('input[name=' + name + ']').parent().addClass('has-error').append('<div class="errorlist">' + error + '</div>')
-                        })
-                    })
-            });
-
-            // Display the confirm track delete modal
-            $('.modalConfirmDelete').click(function () {
-                const track = $(this).closest('tr');
-                $('#deleteTrackBtn').data('trackId', track.attr('id')).data('url', $(this).data('targetUrl'));
-                $('#toDeleteTrackDate').text(track.find('td.date').text());
-                $("#modalConfirmDelete").modal();
-            });
-
             // Call the api endpoint to delete the track and then hide the modal
             $('#deleteTrackBtn').click(function () {
                 $.ajax({url: $(this).data('url'), type: 'DELETE'})
                     .done((response) => {
                         $('.track#' + $(this).data('trackId')).fadeOut();
-                        $("#modalConfirmDelete").modal('hide')
+                        $("#modalConfirmDelete").modal('hide');
+                        $('span#trackCount').text(parseInt($('span#trackCount').text()) - 1);
+                        $('b#totalCount').text(parseInt($('b#totalCount').text()) - 1);
+                        update_all($('button.btn-frequency.active').data('frequency'))
                     })
                     .fail((xhr, textStatus, errorThrown) => {
                         alert(textStatus + ' - ' + errorThrown)
@@ -395,21 +365,8 @@
             })
         });
 
-        const trackerId = '{{ tracker.id }}';
-        const graph_url = "{% url 'tracker:tracker-data' %}";
-        const other_stats_url = "{% url 'tracker:tracker-other-stats' %}";
-        const history_url = "{% url 'tracker:tracker-history' %}";
-        const frequency_map = {
-            H: 'heure',
-            D: 'jour',
-            W: 'semaine',
-            M: 'mois',
-            Q: "quart d'année",
-            Y: 'an',
-        };
-
-        const update_track_graph = (allTracks, frequency, start, end) => {
-            $.post(graph_url, {id: trackerId, frequency: frequency, start: start, end: end})
+        const update_track_graph = frequency => {
+            $.post("{% url 'tracker:tracker-data' %}", {id: trackerId, frequency: frequency, start: start, end: end})
                 .done(response => {
                     if (response.labels.length > 0) {
                         $('div#noTracks').addClass('hidden');
@@ -429,20 +386,72 @@
                 .fail((xhr, textStatus, errorThrown) => {
                     console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
                 });
+        };
 
-            $.post(other_stats_url, {id: trackerId, start: start, end: end})
+        const update_all = frequency => {
+            update_track_graph(frequency);
+
+            $.post("{% url 'tracker:tracker-other-stats' %}", {id: trackerId, start: start, end: end})
                 .done(response => {
-                    console.log(response)
-                    // TODO next
+                    if (response.trackByHourChart !== undefined && response.trackByDayChart !== undefined) {
+                        trackByHourChart.data.labels = response.trackByHourChart.labels;
+                        trackByHourChart.data.datasets[0].data = response.trackByHourChart.values;
+                        trackByHourChart.update();
+                        trackByDayChart.data.labels = response.trackByDayChart.labels;
+                        trackByDayChart.data.datasets[0].data = response.trackByDayChart.values;
+                        trackByDayChart.update();
+                    }
                 })
                 .fail((xhr, textStatus, errorThrown) => {
                     console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
                 });
 
-            $.post(history_url, {id: trackerId, start: start, end: end})
+            $.post("{% url 'tracker:tracker-history' %}", {id: trackerId, start: start, end: end})
                 .done(response => {
                     $('tbody#tracks').html(response.html);
-                    $('span#trackCount').text(response.trackCount)
+                    $('span#trackCount').text(response.trackCount);
+
+                    // Display a track form and hide all the others
+                    $('.displayForm').click(function () {
+                        const track = $(this).closest('tr');
+                        $('.track').removeClass('hidden');
+                        track.addClass('hidden');
+                        $('.trackForm').addClass('hidden');
+                        track.next().removeClass('hidden')
+                    });
+
+                    // Hide a track form
+                    $('.cancelBtn').click(function () {
+                        const trackForm = $(this).closest('tr');
+                        trackForm.addClass('hidden');
+                        trackForm.prev().removeClass('hidden');
+                    });
+
+                    // Submit a track edit form in AJAX
+                    $('.trackForm form').submit(function (e) {
+                        e.preventDefault();
+                        $.ajax({url: $(this).attr('action'), type: 'PUT', dataType: 'json', data: $(this).serialize()})
+                            .done((response) => {
+                                const track = $(this).closest('tr').prev();
+                                track.find('td.commentaire').text(response.commentaire);
+                                const datetime = moment(response.datetime).format('LLL');
+                                track.find('td.date').text(datetime);
+                                $(this).find('.cancelBtn').trigger('click')
+                            })
+                            .fail(err => {
+                                $.each(err.responseJSON, (name, error) => {
+                                    $(this).find('input[name=' + name + ']').parent().addClass('has-error').append('<div class="errorlist">' + error + '</div>')
+                                })
+                            })
+                    });
+
+                    // Display the confirm track delete modal
+                    $('.modalConfirmDelete').click(function () {
+                        const track = $(this).closest('tr');
+                        $('#deleteTrackBtn').data('trackId', track.attr('id')).data('url', $(this).data('targetUrl'));
+                        $('#toDeleteTrackDate').text(track.find('td.date').text());
+                        $("#modalConfirmDelete").modal();
+                    });
                 })
                 .fail((xhr, textStatus, errorThrown) => {
                     console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
