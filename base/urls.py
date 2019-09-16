@@ -11,5 +11,6 @@ urlpatterns = [
     path(_('about'), TemplateView.as_view(template_name='base/about.html'), name='about'),
     path('rallye-des-colocs', TemplateView.as_view(template_name='base/rallye.html'), name='rallye'),
     path('gallery', TemplateView.as_view(template_name='base/gallery.html'), name='gallery'),
-    path('profil/<str:slug>', views.UserDetailView.as_view(), name='profil')
+    path('profil/<str:slug>', views.UserDetailView.as_view(), name='profil'),
+    path('test_notification', views.test_notification, name='test')
 ]
