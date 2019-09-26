@@ -12,6 +12,11 @@
     {% if user.profil.avatar %}
     <div class="text-center">
         <img class="img-rounded" src="{{ user.profil.avatar.url }}" alt="Avatar de {{ user }}" style="max-height: 300px"/>
+        {% if user.username == 'Benbb96' %}
+            <a href="https://dev.to/benbb96">
+                <img src="https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg" alt="BBB's DEV Profile" height="30" width="30" style="vertical-align: bottom">
+            </a>
+        {% endif %}
     </div>
     {% endif %}
     Inscrit le {{ user.date_joined|date }}
