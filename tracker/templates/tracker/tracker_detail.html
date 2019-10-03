@@ -411,6 +411,8 @@
                     $('tbody#tracks').html(response.html);
                     $('span#trackCount').text(response.trackCount);
 
+                    // Next functions are added only after the table has been built in order to make these events work
+
                     // Display a track form and hide all the others
                     $('.displayForm').click(function () {
                         const track = $(this).closest('tr');
