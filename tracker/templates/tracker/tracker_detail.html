@@ -336,7 +336,7 @@
 
             daterange_callback(start, end);
 
-            $('.btn-frequency').click(function (e) {
+            $('.btn-frequency').click(function () {
                 update_track_graph($(this).data('frequency'), start, end)
             });
 
@@ -377,7 +377,7 @@
                         $('span#frequency').text(frequency_map[frequency]);
                         $('strong#avg').text(response.avg);
                         $('.btn-frequency').removeClass('active');
-                        $(this).addClass('active')
+                        $('.btn-frequency[data-frequency=' + frequency + ']').addClass('active')
                     } else {
                         $('div#track_gaph').addClass('hidden');
                         $('div#noTracks').removeClass('hidden');
