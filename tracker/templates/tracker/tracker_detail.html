@@ -362,7 +362,49 @@
                     .fail((xhr, textStatus, errorThrown) => {
                         alert(textStatus + ' - ' + errorThrown)
                     })
-            })
+            });
+
+            // Display a track form and hide all the others
+                $('.displayForm').click(function () {
+                    const track = $(this).closest('tr');
+                    $('.track').removeClass('hidden');
+                    track.addClass('hidden');
+                    $('.trackForm').addClass('hidden');
+                    track.next().removeClass('hidden')
+                });
+
+                // Hide a track form
+                $('.cancelBtn').click(function () {
+                    const trackForm = $(this).closest('tr');
+                    trackForm.addClass('hidden');
+                    trackForm.prev().removeClass('hidden');
+                });
+
+                // Submit a track edit form in AJAX
+                $('.trackForm form').submit(function (e) {
+                    e.preventDefault();
+                    $.ajax({url: $(this).attr('action'), type: 'PUT', dataType: 'json', data: $(this).serialize()})
+                        .done((response) => {
+                            const track = $(this).closest('tr').prev();
+                            track.find('td.commentaire').text(response.commentaire);
+                            const datetime = moment(response.datetime).format('LLL');
+                            track.find('td.date').text(datetime);
+                            $(this).find('.cancelBtn').trigger('click')
+                        })
+                        .fail(err => {
+                            $.each(err.responseJSON, (name, error) => {
+                                $(this).find('input[name=' + name + ']').parent().addClass('has-error').append('<div class="errorlist">' + error + '</div>')
+                            })
+                        })
+                });
+
+                // Display the confirm track delete modal
+                $('.modalConfirmDelete').click(function () {
+                    const track = $(this).closest('tr');
+                    $('#deleteTrackBtn').data('trackId', track.attr('id')).data('url', $(this).data('targetUrl'));
+                    $('#toDeleteTrackDate').text(track.find('td.date').text());
+                    $("#modalConfirmDelete").modal();
+                });
         });
 
         const update_track_graph = frequency => {
@@ -410,48 +452,6 @@
                 .done(response => {
                     $('tbody#tracks').html(response.html);
                     $('span#trackCount').text(response.trackCount);
-
-                    // Display a track form and hide all the others
-                    $('.displayForm').click(function () {
-                        const track = $(this).closest('tr');
-                        $('.track').removeClass('hidden');
-                        track.addClass('hidden');
-                        $('.trackForm').addClass('hidden');
-                        track.next().removeClass('hidden')
-                    });
-
-                    // Hide a track form
-                    $('.cancelBtn').click(function () {
-                        const trackForm = $(this).closest('tr');
-                        trackForm.addClass('hidden');
-                        trackForm.prev().removeClass('hidden');
-                    });
-
-                    // Submit a track edit form in AJAX
-                    $('.trackForm form').submit(function (e) {
-                        e.preventDefault();
-                        $.ajax({url: $(this).attr('action'), type: 'PUT', dataType: 'json', data: $(this).serialize()})
-                            .done((response) => {
-                                const track = $(this).closest('tr').prev();
-                                track.find('td.commentaire').text(response.commentaire);
-                                const datetime = moment(response.datetime).format('LLL');
-                                track.find('td.date').text(datetime);
-                                $(this).find('.cancelBtn').trigger('click')
-                            })
-                            .fail(err => {
-                                $.each(err.responseJSON, (name, error) => {
-                                    $(this).find('input[name=' + name + ']').parent().addClass('has-error').append('<div class="errorlist">' + error + '</div>')
-                                })
-                            })
-                    });
-
-                    // Display the confirm track delete modal
-                    $('.modalConfirmDelete').click(function () {
-                        const track = $(this).closest('tr');
-                        $('#deleteTrackBtn').data('trackId', track.attr('id')).data('url', $(this).data('targetUrl'));
-                        $('#toDeleteTrackDate').text(track.find('td.date').text());
-                        $("#modalConfirmDelete").modal();
-                    });
                 })
                 .fail((xhr, textStatus, errorThrown) => {
                     console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
