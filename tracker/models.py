@@ -60,6 +60,9 @@ class TrackManager(models.Manager):
     def first_track(self):
         return self.get_queryset().earliest('datetime')
 
+    def last_track(self):
+        return self.get_queryset().latest('datetime')
+
 
 class Track(models.Model):
     tracker = models.ForeignKey(Tracker, related_name='tracks', on_delete=models.CASCADE)

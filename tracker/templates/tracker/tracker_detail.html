@@ -175,6 +175,8 @@
         let trackByDayChart = undefined;
         let start = moment().subtract(1, 'month');
         let end = moment();
+        const minDate = moment("{{ tracker.tracks.first_track.datetime|date:"c" }}");
+        const maxDate = moment("{{ tracker.tracks.last_track.datetime|date:"c" }}").add(1, 'minute');
 
         const trackerId = '{{ tracker.id }}';
         const frequency_map = {
@@ -200,8 +202,8 @@
                 timePicker24Hour: true,
                 startDate: start,
                 endDate: end,
-                minDate: moment("{{ tracker.tracks.first_track.datetime|date:"c" }}"),
-                maxDate: moment(),
+                minDate: minDate,
+                maxDate: maxDate,
                 locale: {
                     format: 'LLLL',
                     applyLabel: "OK",
@@ -240,6 +242,7 @@
                    'Les 3 derniers mois': [moment().subtract(3, 'month'), moment()],
                    'Les 6 derniers mois': [moment().subtract(6, 'month'), moment()],
                    'Les 12 derniers mois': [moment().subtract(1, 'year'), moment()],
+                   'Tous': [minDate, maxDate],
                 }
             }, daterange_callback);
 
