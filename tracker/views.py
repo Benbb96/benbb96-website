@@ -47,8 +47,8 @@ class TrackerDeleteView(DeleteView):
 
 
 @login_required
-def tracker_detail(request, id):
-    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=id)
+def tracker_detail(request, pk):
+    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=pk)
 
     form = TrackForm(request.POST or None, initial={'datetime': timezone.now()})
     if form.is_valid():
@@ -191,6 +191,8 @@ def get_other_stats(request):
 @require_POST
 def tracker_history(request):
     tracks = get_tracks_from_request(request)
+    for track in tracks:
+        track.form = TrackForm(instance=track)
     html = render_to_string('tracker/include/tbody_tracks.html', {'tracks': tracks})
     return JsonResponse({
         'html': html,
