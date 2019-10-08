@@ -24,7 +24,7 @@ class Tracker(SortableMixin):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse('tracker:detail-tracker', kwargs={'id': self.id})
+        return reverse('tracker:detail-tracker', kwargs={'pk': self.id})
 
     def track_by_hour(self):
         hours = {}
