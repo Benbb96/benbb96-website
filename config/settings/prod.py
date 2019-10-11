@@ -1,9 +1,7 @@
 from .base import *
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret_setting('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 ALLOWED_HOSTS = ['benbb96.pythonanywhere.com']
@@ -28,3 +26,13 @@ DATABASES = {
 MEDIA_ROOT = '/home/benbb96/media'
 
 GOOGLE_ANALYTICS_KEY = get_secret_setting('GOOGLE_ANALYTICS_KEY')
+
+# Security
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_HSTS_SECONDS = 30
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
