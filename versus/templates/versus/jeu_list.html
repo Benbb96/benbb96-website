@@ -3,7 +3,7 @@
 {% block versus_title %}Les jeux{% endblock %}
 
 {% block content %}
-    <div class="row">
+    <div class="flex-container row">
         {% for jeu in object_list %}
             <div class="col-sm-4 col-xs-12">
                 <h2>
@@ -12,7 +12,7 @@
                     </a>
                 </h2>
                 <a href="{{ jeu.get_absolute_url }}">
-                    <img src="{% if jeu.image %}{{ jeu.image.url }}{% endif %}" class="img-responsive" style="max-height: 300px; margin: auto" alt="Jeu {{ jeu.nom }}">
+                    <img src="{% if jeu.image %}{{ jeu.image.url }}{% endif %}" class="img-responsive" style="max-height: 250px; margin: auto" alt="Jeu {{ jeu.nom }}">
                 </a>
             </div>
         {% empty %}
