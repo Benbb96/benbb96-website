@@ -39,6 +39,9 @@ class Playlist(models.Model):
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
 
+    class Meta:
+        ordering = ('nom',)
+
     def __str__(self):
         return self.nom
 
