@@ -34,6 +34,8 @@
     </div>
 
     <div class="tab-content">
+
+        {# Avis #}
         <div id="avis" class="tab-pane fade in active">
             <h1>Ses derniers avis</h1>
             <div class="row">
@@ -48,6 +50,8 @@
                 {% endfor %}
             </div>
         </div>
+
+        {# Musique #}
         <div id="music" class="tab-pane fade">
             <h1>Musique</h1>
             <div class="row">
@@ -81,6 +85,8 @@
                 </div>
             </div>
         </div>
+
+        {# Versus #}
         <div id="versus" class="tab-pane fade">
             <h1>Ses dernières parties</h1>
             {% for partie in user.profil.joueur.partie_set.all|slice:"6" %}
@@ -93,5 +99,6 @@
                 <div>{{ user }} n'a fait aucune parties.</div>
             {% endfor %}
         </div>
+
     </div>
 {% endblock %}

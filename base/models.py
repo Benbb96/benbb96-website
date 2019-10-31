@@ -1,6 +1,5 @@
-import pyrebase
-from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg
 from django.urls import reverse
@@ -41,9 +40,21 @@ class Projet(models.Model):
     Gestion des projets à afficher sur la page d'accueil
     """
     nom = models.CharField(max_length=100)
-    lien = models.CharField(max_length=100, null=True, blank=True, help_text="Nom de la vue Django vers la page d'accueil du projet")
+    lien = models.CharField(
+        max_length=100,
+        null=True, blank=True,
+        help_text="Nom de la vue Django vers la page d'accueil du projet"
+    )
     image = models.ImageField(null=True, blank=True, upload_to="projet/")
     actif = models.BooleanField(default=True)
+    logged_only = models.BooleanField(
+        'connecté seulement', default=False,
+        help_text="Cochez pour afficher ce projet qu'aux personnes connecté sur le site."
+    )
+    staff_only = models.BooleanField(
+        'staff seulement', default=False,
+        help_text="Cochez pour afficher ce projet qu'aux personnes faisant partis du staff."
+    )
 
     def __str__(self):
         return self.nom
@@ -51,13 +62,18 @@ class Projet(models.Model):
     def get_absolute_url(self):
         return reverse(self.lien)
 
+    def clean(self):
+        from config.urls import VIEW_NAMES
+        if self.actif and self.lien not in VIEW_NAMES:
+            raise ValidationError({'lien': "%s n'est pas un nom de vue correcte." % self.lien})
+
 
 class LienReseauSocial(models.Model):
     """
-    Getsion des liens vers mes réseaux sociaux
+    Gestion des liens vers mes réseaux sociaux
     """
     reseau_social = IconField('réseau social')
-    lien=models.URLField()
+    lien = models.URLField()
     ouvrir_nouvel_onglet = models.BooleanField(
         help_text="Indique s'il faut ouvrir le lien dans un nouvel onglet",
         default=False
