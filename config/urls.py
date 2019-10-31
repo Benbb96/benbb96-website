@@ -3,58 +3,19 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
-from django.contrib.sitemaps import GenericSitemap
 from django.http import HttpResponse
-from django.urls import path
+from django.urls import path, URLResolver, URLPattern
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 from django.utils.translation import gettext_lazy as _
 
-from avis.models import Avis, Produit, Structure
-from config.sitemaps import StaticViewSitemap
-from music.models import Playlist, Musique
+from base.sitemap import sitemaps
 
-avis_dict = {
-    'queryset': Avis.objects.all(),
-    'date_field': 'date_creation',
-}
-
-produit_dict = {
-    'queryset': Produit.objects.all(),
-    'date_field': 'date_creation',
-}
-
-structure_dict = {
-    'queryset': Structure.objects.all(),
-    'date_field': 'date_creation',
-}
-
-palylist_dict = {
-    'queryset': Playlist.objects.all(),
-    'date_field': 'date_creation',
-}
-
-musique_dict = {
-    'queryset': Musique.objects.all(),
-    'date_field': 'date_creation',
-}
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('api-auth/', include('rest_framework.urls')),
-    path(
-        'sitemap.xml',
-        sitemap,
-        {'sitemaps': {
-            'static': StaticViewSitemap,
-            'avis': GenericSitemap(avis_dict, priority=0.6),
-            'produits': GenericSitemap(produit_dict, priority=0.4),
-            'structures': GenericSitemap(structure_dict, priority=0.5),
-            'playlists': GenericSitemap(palylist_dict, priority=0.5),
-            'musiques': GenericSitemap(musique_dict, priority=0.4)
-        }},
-        name='django.contrib.sitemaps.views.sitemap'
-    ),
+    path('sitemap.xml', sitemap, sitemaps, name='django.contrib.sitemaps.views.sitemap'),
     path(
         'robots.txt',
         lambda x: HttpResponse(
@@ -75,6 +36,25 @@ urlpatterns += i18n_patterns(
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout')
 )
+
+VIEW_NAMES = []  # Maintain a global list
+
+
+def get_all_view_names(url_patterns, app_name=None):
+    global VIEW_NAMES
+    for pattern in url_patterns:
+        if isinstance(pattern, URLResolver):
+            get_all_view_names(pattern.url_patterns, pattern.namespace)  # call this function recursively
+        elif isinstance(pattern, URLPattern):
+            view_name = pattern.name  # get the view name
+            if app_name:
+                view_name = app_name + ':' + view_name
+            VIEW_NAMES.append(view_name)  # add the view to the global list
+    return VIEW_NAMES
+
+
+# Load VIEW NAMES
+get_all_view_names(urlpatterns)
 
 
 if 'debug_toolbar' in settings.INSTALLED_APPS:

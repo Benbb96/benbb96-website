@@ -24,6 +24,15 @@ class ProjetListView(ListView):
     model = Projet
     template_name = 'base/home.html'
 
+    def get_queryset(self):
+        """ If the user isn't authenticated or staff, exclude the private projects """
+        qs = super(ProjetListView, self).get_queryset()
+        if not self.request.user.is_authenticated:
+            qs = qs.exclude(logged_only=True)
+        elif not self.request.user.is_staff:
+            qs = qs.exclude(staff_only=True)
+        return qs
+
 
 @csrf_exempt
 def test_notification(request):
