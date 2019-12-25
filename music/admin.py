@@ -121,7 +121,7 @@ class MusiqueAdmin(admin.ModelAdmin):
     list_select_related = ('artiste', 'remixed_by', 'createur')
     save_on_top = True
 
-    inlines = [LienInline, PlaylistInline]
+    inlines = [PlaylistInline, LienInline]
 
     def get_changeform_initial_data(self, request):
         return {'createur': request.user}
@@ -129,7 +129,7 @@ class MusiqueAdmin(admin.ModelAdmin):
 
 @admin.register(Lien)
 class LienAdmin(admin.ModelAdmin):
-    list_display = ('id', 'musique', 'url', 'plateforme', 'createur', 'click_count', 'date_creation')
+    list_display = ('id', 'musique', 'url', 'plateforme', 'createur', 'click_count', 'date_creation', 'date_validation')
     list_filter = ('plateforme', 'createur')
     search_fields = (
         'musique__titre', 'musique__artiste__nom_artiste', 'plateforme'
