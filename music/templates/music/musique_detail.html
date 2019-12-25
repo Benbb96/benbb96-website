@@ -1,5 +1,5 @@
 {% extends 'music/base_music.html' %}
-{% load i18n %}
+{% load i18n custom_tags %}
 
 {% block music_title %}{{ musique }}{% endblock %}
 
@@ -53,6 +53,18 @@
                     </div>
                 {% endfor %}
             {% endif %}
+            <div>
+                Rechercher sur :
+                <a class="btn btn-social-icon btn-google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="Recherche sur Google" target="_blank">
+                    <i class="fa fa-google"></i>
+                </a>
+                <a class="btn btn-social-icon btn-youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="Recherche sur Youtube" target="_blank">
+                    <i class="fa fa-youtube"></i>
+                </a>
+                <a class="btn btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="Recherche sur Soundcloud" target="_blank">
+                    <i class="fa fa-soundcloud"></i>
+                </a>
+            </div>
             {% if musique.playlists.exists %}
                 <h3>
                     {% blocktrans %}This music is present in these playlists{% endblocktrans %} :
