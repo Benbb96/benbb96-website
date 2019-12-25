@@ -192,6 +192,14 @@ class MusiquePlaylist(SortableMixin):
         ordering = ('position',)
 
 
+class LienQuerySet(models.QuerySet):
+    def valide_seulement(self):
+        return self.filter(date_validation__isnull=False)
+
+    def a_valider(self):
+        return self.filter(date_validation__isnull=True)
+
+
 class Lien(models.Model):
     musique = models.ForeignKey(Musique, on_delete=models.CASCADE, related_name='liens')
     url = models.URLField('lien vers la musique')
@@ -206,7 +214,10 @@ class Lien(models.Model):
     ]
     plateforme = models.CharField(max_length=2, choices=PLATEFORMES_MUSIQUE, blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
+    date_validation = models.DateTimeField('date de validation', null=True, blank=True)
     click_count = models.PositiveIntegerField(default=0)
+
+    objects = LienQuerySet.as_manager()
 
     def __str__(self):
         return '(%s) %s' % (self.get_plateforme_display(), self.url)

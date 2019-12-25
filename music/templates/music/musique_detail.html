@@ -39,33 +39,42 @@
                     </ul>
                 </div>
             {% endif %}
-            {% if musique.liens.exists %}
-                <h2>{% trans "Liens" %}</h2>
-                {% for lien in musique.liens.all %}
-                    <a class="platformLink" data-link-id="{{ lien.id }}" data-link-url="{% url 'music:incremente_link_click_count' lien.id %}" href="{{ lien.url }}" target="_blank">
-                        <b>{{ lien.get_plateforme_display }}</b> <i class="fa fa-external-link"></i>
-                    </a>
-                    <div>
-                        {% blocktrans with lien_createur=lien.createur lien_date=lien.date_creation|date:'d/m/y' lien_id=lien.id lien_click_count=lien.click_count %}
-                            Added by {{ lien_createur }} on {{ lien_date }},
-                            seen <span class="click_count" id="{{ lien_id }}">{{ lien_click_count }}</span> times.
-                        {% endblocktrans %}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            <div>
-                Rechercher sur :
-                <a class="btn btn-social-icon btn-google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="Recherche sur Google" target="_blank">
+            <p>
+                {% trans "Search on :" %}
+                <a class="btn btn-sm btn-social-icon btn-google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">
                     <i class="fa fa-google"></i>
                 </a>
-                <a class="btn btn-social-icon btn-youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="Recherche sur Youtube" target="_blank">
+                <a class="btn btn-sm btn-social-icon btn-youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="{% trans "Search on YouTube" %}" target="_blank">
                     <i class="fa fa-youtube"></i>
                 </a>
-                <a class="btn btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="Recherche sur Soundcloud" target="_blank">
+                <a class="btn btn-sm btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
                     <i class="fa fa-soundcloud"></i>
                 </a>
-            </div>
+            </p>
+            {% if musique.liens.exists %}
+                <hr>
+                {% if musique.liens.valide_seulement.exists %}
+                    <div class="col-sm-6 col-xs-12">
+                        <h2>{% trans "Links" %}</h2>
+                        {% for lien in musique.liens.valide_seulement %}
+                            {% include 'music/lien.html' %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if request.user == musique.createur.user or request.user.is_superuser %}
+                    {% if musique.liens.a_valider.exists %}
+                        <div class="col-sm-6 col-xs-12">
+                            <h3>{% trans "Links to validate" %}</h3>
+                            {% for lien in musique.liens.a_valider %}
+                                {% include 'music/lien.html' with a_valider=True %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <div class="clearfix"></div>
             {% if musique.playlists.exists %}
+                <hr>
                 <h3>
                     {% blocktrans %}This music is present in these playlists{% endblocktrans %} :
                 </h3>

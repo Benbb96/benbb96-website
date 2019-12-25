@@ -12,5 +12,6 @@ urlpatterns = [
     path(
         'lien/<int:lien_id>/incremente_click_count',
         views.incremente_link_click_count, name='incremente_link_click_count'
-    )
+    ),
+    path('lien/<int:lien_id>/valider_lien', views.valider_lien, name="valider_lien")
 ]
