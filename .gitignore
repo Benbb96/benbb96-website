@@ -15,3 +15,5 @@ __pycache__/
 # Django stuff:
 *.log
 *.pot
+
+test_mails/
