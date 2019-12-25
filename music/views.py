@@ -4,8 +4,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormMixin
 
 from music.models import Playlist, Musique, Lien, Artiste
+from music.templates.music.forms import LienForm
 
 
 class PlaylistListView(ListView):
@@ -17,10 +19,36 @@ class PlaylistDetailView(DetailView):
     slug_field = 'slug'
 
 
-class MusiqueDetailView(DetailView):
+class MusiqueDetailView(FormMixin, DetailView):
     model = Musique
     slug_field = 'slug'
     query_pk_and_slug = True
+    form_class = LienForm
+
+    def get_context_data(self, **kwargs):
+        context = super(MusiqueDetailView, self).get_context_data(**kwargs)
+        context['form'] = self.get_form()
+        return context
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        lien = form.save(commit=False)
+        lien.musique = self.object
+        if self.request.user.profil:
+            lien.createur = self.request.user.profil
+            # Son lien est automatiquement validé si c'est la musique qu'il a créé
+            if self.request.user == self.object.createur.user:
+                lien.date_validation = timezone.now()
+        lien.save()
+        messages.success(self.request, 'Le lien a bien été ajouté.')
+        return redirect(self.object.get_absolute_url())
 
 
 class ArtisteDetailView(DetailView):
