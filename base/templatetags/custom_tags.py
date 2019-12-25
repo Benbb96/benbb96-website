@@ -1,3 +1,5 @@
+from urllib.parse import quote_plus
+
 from django import template
 
 register = template.Library()
@@ -17,6 +19,11 @@ def color(value):
     if value >= 4:
         return 'warning'
     return 'danger'
+
+
+@register.filter
+def url_quote_plus(obj):
+    return quote_plus(str(obj))
 
 
 @register.simple_tag(takes_context=True)
