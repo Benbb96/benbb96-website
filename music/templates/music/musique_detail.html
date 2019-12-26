@@ -96,6 +96,7 @@
 {% endblock %}
 
 {% block javascript %}
+    {{ block.super }}
     <script type="text/javascript">
         $(() => {
             $('#id_url').on('input', function() {
