@@ -1,16 +1,12 @@
-{% extends 'base/base.html' %}
+{% extends 'base.html' %}
 
 {% load bootstrap3 %}
 
-{% block navbar %}
-{% include 'navbar.html' %}
-{% endblock %}
-
-{% block base_title %}Se connecter{% endblock %}
+{% block title %}Se connecter{% endblock %}
 {% block jumbotron_title %}Connexion{% endblock %}
 {% block jumbotron_description %}{% endblock %}
 
-{% block base_content %}
+{% block content %}
     <div class="row">
         <div class="col-md-6 col-md-offset-3 col-xs-12">
             {% if next %}
