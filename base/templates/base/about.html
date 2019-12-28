@@ -1,16 +1,16 @@
-{% extends 'base/base.html' %}
+{% extends 'base.html' %}
 
 {% load static i18n %}
 
 {% block navbar %}
-{% include 'navbar.html' with about=True %}
+    {% include 'navbar.html' with about=True %}
 {% endblock %}
 
-{% block base_title %}{% trans "About" %}{% endblock %}
+{% block title %}{% trans "About" %}{% endblock %}
 {% block jumbotron_title %}{% trans "About me" %}{% endblock %}
 {% block jumbotron_description %}{% endblock %}
 
-{% block base_content %}
+{% block content %}
     <div class="row">
         <div class="col-sm-4 text-center">
             <img src="{% static 'img/bbb.jpg' %}" alt="{% trans "Picture of me" %}" title="{% trans "It's me!" %}" style="width: 80%; margin-bottom: 15px"/>

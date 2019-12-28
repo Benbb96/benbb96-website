@@ -1,12 +1,16 @@
-{% extends 'base/base.html' %}
+{% extends 'base.html' %}
 
 {% load static i18n %}
 
-{% block base_title %}{% trans "Home" %}{% endblock %}
+{% block navbar %}
+    {% include 'navbar.html' with home=True %}
+{% endblock %}
+
+{% block title %}{% trans "Home" %}{% endblock %}
 {% block jumbotron_title %}{% trans "My projects" %}{% endblock %}
 {% block jumbotron_description %}{% trans "Here is the list of the projects I make public for the moment." %}{% endblock %}
 
-{% block base_content %}
+{% block content %}
     <div class="container-fluid bg-3 text-center">
         <div class="row">
         {% for projet in object_list %}

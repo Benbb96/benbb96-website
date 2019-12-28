@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}
+{% extends 'base.html' %}
 
 {% load static %}
 
@@ -6,7 +6,7 @@
 {% include 'navbar.html' with home=False %}
 {% endblock %}
 
-{% block base_title %}Profil de {{ user }}{% endblock %}
+{% block title %}Profil de {{ user }}{% endblock %}
 {% block jumbotron_title %}{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user }}{% endif %}{% endblock %}
 {% block jumbotron_description %}
     {% if user.profil.avatar %}
@@ -22,7 +22,7 @@
     Inscrit le {{ user.date_joined|date }}
 {% endblock %}
 
-{% block base_content %}
+{% block content %}
     <div class="row">
         <div class="col-sm-8 col-sm-offset-2 col-xs-12">
             <ul class="nav nav-pills nav-justified">
