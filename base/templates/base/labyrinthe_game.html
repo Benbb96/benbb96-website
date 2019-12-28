@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load static i18n %}
+
+{% block title %}{% trans "Labyrinthe Game" %}{% endblock %}
+{% block jumbotron_title %}{% trans "Labyrinthe Game" %}{% endblock %}
+{% block jumbotron_description %}
+    {% trans "I made a game few years ago. It's about a maze that keep regenerating itself each times bigger !" %}
+{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <div id="sketch-holder"></div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.js"></script>
+    <script src="{% static 'base/js/sketch.js' %}"></script>
+{% endblock %}
