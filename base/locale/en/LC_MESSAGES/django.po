@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-14 16:09+0200\n"
+"POT-Creation-Date: 2019-12-30 23:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,23 +18,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\base\templates\base\about.html:9
+#: templates/base/about.html:9
 msgid "About"
 msgstr ""
 
-#: .\base\templates\base\about.html:10
+#: templates/base/about.html:10
 msgid "About me"
 msgstr ""
 
-#: .\base\templates\base\about.html:16
+#: templates/base/about.html:16
 msgid "Picture of me"
 msgstr ""
 
-#: .\base\templates\base\about.html:16
+#: templates/base/about.html:16
 msgid "It's me!"
 msgstr ""
 
-#: .\base\templates\base\about.html:19
+#: templates/base/about.html:19
 #, python-format
 msgid ""
 "\n"
@@ -51,22 +51,60 @@ msgid ""
 "            "
 msgstr ""
 
-#: .\base\templates\base\home.html:5
+#: templates/base/home.html:9
 msgid "Home"
 msgstr ""
 
-#: .\base\templates\base\home.html:6
+#: templates/base/home.html:10
 msgid "My projects"
 msgstr ""
 
-#: .\base\templates\base\home.html:7
+#: templates/base/home.html:11
 msgid "Here is the list of the projects I make public for the moment."
 msgstr ""
 
-#: .\base\templates\base\home.html:17
+#: templates/base/home.html:21
 msgid "Project"
 msgstr ""
 
-#: .\base\urls.py:11
+#: templates/base/labyrinthe_game.html:5 templates/base/labyrinthe_game.html:6
+msgid "Labyrinthe Game"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:8
+msgid ""
+"I made a game few years ago. It's about a maze that keep regenerating itself "
+"each times bigger !"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:15
+msgid "Les commandes"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:17
+msgid ""
+"\n"
+"            Pour se déplacer, vous pouvez soit utilisez votre clavier : les "
+"flèches de directions pour vous déplacer\n"
+"            <b>rapidement</b> d'un bout à l'autre, et les touches Z, Q, S et "
+"D pour vous déplacer <b>case par case</b> ;\n"
+"            ou bien avec la souris en <b>cliquant d'abord</b>> sur le joueur "
+"puis en déplaçant la souris. Cliquez de nouveau\n"
+"            sur le joueur pour arrêter le déplacement.\n"
+"        "
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:25
+msgid ""
+"\n"
+"            Il existe quelques touches spéciales :\n"
+"        "
+msgstr ""
+
+#: urls.py:11
 msgid "about"
+msgstr ""
+
+#: urls.py:12
+msgid "labyrinthe-game"
 msgstr ""

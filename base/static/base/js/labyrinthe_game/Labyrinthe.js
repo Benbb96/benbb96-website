@@ -34,6 +34,7 @@ class Labyrinthe {
 
     // Affichage du labyrinthe en général
     display() {
+        push();
         fill(color(0, 0, 255));
         noStroke();
         // Affichage des points/carrés de déplacements
@@ -64,7 +65,7 @@ class Labyrinthe {
         // Information sur la case départ du niveau du labyrinthe
         fill(wallColor);
         textSize(tailleY / 2);
-        textAlign(LEFT_ARROW);
+        textAlign(LEFT);
         text(niveau, tailleX / 3, tailleY - tailleY / 3);
 
         // Affichage des murs
@@ -79,6 +80,7 @@ class Labyrinthe {
         line(0, 0, 0, tailleY * nbCase);
         line(tailleX * nbCase, 0, tailleX * nbCase, tailleY * nbCase - 1);
         line(0, tailleY * nbCase, tailleX * nbCase, tailleY * nbCase);
+        pop();
     }
 
     resetAlpha() {
