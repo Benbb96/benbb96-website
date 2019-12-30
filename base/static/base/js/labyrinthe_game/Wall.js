@@ -12,10 +12,11 @@ class Wall {
         // Calcul de la diminution de l'alpha (peut-être à adpater)
         if (disappear) this.alpha -= 1.2 / (nbCase / 2);
         if (this.alpha < niveau * -5) state = GAME_OVER;  // Si tous les murs ont disparu depuis un certain temps, le joueur a perdu
-        stroke(wallColor, alpha); // TODO alpha doesn't work
-        console.log(this.alpha);
+        push();
+        stroke(color(4, this.alpha));
         strokeWeight((width + height) / (nbCase * 40));
         line(this.a.x * tailleX, this.a.y * tailleY, this.b.x * tailleX, this.b.y * tailleY);
+        pop();
     }
 
 }

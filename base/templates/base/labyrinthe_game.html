@@ -12,6 +12,46 @@
     <div class="text-center">
         <div id="sketch-holder"></div>
     </div>
+    <h3>{% trans "Les commandes" %}</h3>
+    <p>
+        {% blocktrans %}
+            Pour se déplacer, vous pouvez soit utilisez votre clavier : les flèches de directions pour vous déplacer
+            <b>rapidement</b> d'un bout à l'autre, et les touches Z, Q, S et D pour vous déplacer <b>case par case</b> ;
+            ou bien avec la souris en <b>cliquant d'abord</b>> sur le joueur puis en déplaçant la souris. Cliquez de nouveau
+            sur le joueur pour arrêter le déplacement.
+        {% endblocktrans %}
+    </p>
+    <div>
+        {% blocktrans %}
+            Il existe quelques touches spéciales :
+        {% endblocktrans %}
+        <div class="row">
+            <dl class="col-sm-3 col-xs-6">
+                <dt>X</dt>
+                <dd>Met en pause le jeu</dd>
+                <dt>P</dt>
+                <dd>Affiche/Cache les cases par lesquelles est passé le joueur</dd>
+            </dl>
+            <dl class="col-sm-3 col-xs-6">
+                <dt>R</dt>
+                <dd>Redémarre le jeu</dd>
+                <dt>B</dt>
+                <dd>Active/désactive le mode Blind (les murs qui disparaissent)</dd>
+            </dl>
+            <dl class="col-sm-3 col-xs-6">
+                <dt>L</dt>
+                <dd>Passe directement au niveau supérieur</dd>
+                <dt>A</dt>
+                <dd>Remet à zéro la disparition des murs</dd>
+            </dl>
+            <dl class="col-sm-3 col-xs-6">
+                <dt>C</dt>
+                <dd>Active/désactive le tracé du parcours du joueur</dd>
+                <dt>W</dt>
+                <dd>Affiche dans la console la position du joueur dans la Matrice</dd>
+            </dl>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascript %}

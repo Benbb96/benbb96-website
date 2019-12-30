@@ -68,8 +68,8 @@ function setup() {
     let canvas = createCanvas(444, 444);
     canvas.parent('sketch-holder');
 
-    backgroundColor = color(4);
-    wallColor = color(244);
+    backgroundColor = color(255);
+    wallColor = color(4);
     background(backgroundColor);
 
     //Construction des boutons du menu
@@ -95,10 +95,13 @@ function draw() {
         case MENU :
             // Affichage du menu
             background(backgroundColor);
+            push();
             fill(wallColor);
             textAlign(RIGHT);
             textSize(width / 13);
-            text("Le Labyrinthe Infini", width - 30, height / 3);
+            strokeWeight(3);
+            text("Le Labyrinthe Infini", width - 50, height / 4);
+            pop();
 
             drawAnimatedMaze();
 
@@ -255,8 +258,8 @@ function keyPressed() {
                 case 'w' :
                     condole.log(player.posOnMatrice());
                     break;
-                case 'p' :
-                    // La touche P permet de mettre le jeu en pause
+                case 'x' :
+                    // La touche X permet de mettre le jeu en pause
                     key = 0;  // Empêche le jeu de se fermer
                     timer.pause();  // On met le timer en pause
                     if (mode === BLIND) {  // Dans ce mode on stoppe la disparition des murs
@@ -279,7 +282,7 @@ function keyPressed() {
         case PAUSE :
             if (keyCode === ENTER) {
                 gameOver();  // Le jeu est terminé, on appelle donc Game Over
-            } else if (keyCode === ESCAPE) {
+            } else if (key === 'x') {
                 key = 0;
                 if (mode === BLIND) {
                     disappear = true;  // On remet la disparition des murs
@@ -354,7 +357,7 @@ function popUp(message) {
     push();
     fill(255, 255, 255, 200);
     stroke(0);
-    strokeWeight(3);
+    strokeWeight(1);
     rect(width / 5, (height * 2 / 6), (width * 3) / 5, (height * 2) / 6);
     fill(0);
     textSize(width / 30);
@@ -377,6 +380,7 @@ function drawAnimatedMaze() {
     pop();
 }
 
+// Empêche de scroller la page
 window.addEventListener("keydown", function(e) {
     // space and arrow keys
     if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
