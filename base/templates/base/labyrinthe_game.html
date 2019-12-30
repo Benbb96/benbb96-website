@@ -15,6 +15,13 @@
 {% endblock %}
 
 {% block javascript %}
-    <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.js"></script>
-    <script src="{% static 'base/js/sketch.js' %}"></script>
+    <script src="{% static 'base/js/p5.min.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/LabyrintheGame.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/Button.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/Chemin.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/Labyrinthe.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/MovingLine.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/Player.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/Timer.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/Wall.js' %}"></script>
 {% endblock %}
