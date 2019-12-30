@@ -20,7 +20,7 @@ class Button {
             this.selected = true;
             selectedButton = this.id;
         }
-
+        push();
         if (this.selected) {  // Si le bouton est sélectionné, on utilise sa couleur de survol et on grossit un peu la taille du texte
             fill(this.overColor);
             stroke(this.overColor);
@@ -30,10 +30,12 @@ class Button {
             line(this.x + textWidth(this.text) / 2 + 27, this.y + 3, this.x + textWidth(this.text) / 2 + 8, this.y + 3);
         } else {
             fill(wallColor);
+            strokeWeight(2);
             textSize(width / 21);
         }
         textAlign(CENTER, CENTER);
         text(this.text, this.x, this.y);
+        pop();
     }
 
     // Fonction qui initialise tous les paramètres propres à un mode de jeu

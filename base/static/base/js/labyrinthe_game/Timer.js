@@ -28,19 +28,19 @@ class Timer {
   }
   
   getDays() {
-    return this.time / 1000 / 60 / 60 / 24;  // Calcul du nombre de jours
+    return round(this.time / 1000 / 60 / 60 / 24);  // Calcul du nombre de jours
   }
   
   getHours() {
-    return this.time / 1000 / 60 / 60;  // Calcul du nombre d'heures
+    return round(this.time / 1000 / 60 / 60);  // Calcul du nombre d'heures
   }
   
   getMinutes() {
-    return this.time / 1000 / 60;  // Calcul du nombre de minutes
+    return round(this.time / 1000 / 60);  // Calcul du nombre de minutes
   }
   
   getSeconds() {
-    return this.time / 1000;  // Calcul du nombre de seconde
+    return round(this.time / 1000);  // Calcul du nombre de seconde
   }
   
   
@@ -58,7 +58,7 @@ class Timer {
       }
       text += this.getSeconds() % 60 + "s ";
     }
-    text += this.time % 1000 + "ms";
+    text += round(this.time % 1000) + "ms";
     return text;
   }
 }

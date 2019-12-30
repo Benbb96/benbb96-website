@@ -85,7 +85,7 @@ class MovingLine {
         this.initialR = 0;
         this.initialT.set(this.t.x, this.t.y);
         this.r = 0;
-        if (this.rotation) this.replace();
+        if (rotation) this.replace();
         this.animation = 0;
         this.ready = true;
     }
