@@ -79,9 +79,6 @@ class TrackDeleteView(generics.DestroyAPIView):
 
 
 def get_tracks_from_request(request):
-    if not request.is_ajax():
-        return JsonResponse({'error':'Unauthorized access'}, status=401)
-
     tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=request.POST.get('id'))
 
     start = request.POST.get('start', None)
@@ -100,6 +97,9 @@ def get_tracks_from_request(request):
 
 @require_POST
 def tracker_data(request):
+    if not request.is_ajax():
+        return JsonResponse({'error': 'Unauthorized access'}, status=401)
+
     tracks = get_tracks_from_request(request)
 
     labels = []
@@ -139,7 +139,14 @@ def tracker_data(request):
         data.index = data.index.strftime(format)
 
         labels = data.index.values.tolist()
-        data= data.values.tolist()
+        data = data.values.tolist()
+
+        # TODO Faire en sorte que tous les dates entre le dernier track et ojd apparaissent
+        # Ajoute la date d'aujourd'hui si elle n'y est pas déjà
+        # today = timezone.now().strftime(format)
+        # if today not in labels:
+        #     labels.append(today)
+        #     data.append([0])
 
     return JsonResponse({
         'labels': labels,
@@ -149,6 +156,9 @@ def tracker_data(request):
 
 
 def get_other_stats(request):
+    if not request.is_ajax():
+        return JsonResponse({'error': 'Unauthorized access'}, status=401)
+
     tracks = get_tracks_from_request(request)
 
     if not tracks.exists():
@@ -190,10 +200,13 @@ def get_other_stats(request):
 
 @require_POST
 def tracker_history(request):
+    if not request.is_ajax():
+        return JsonResponse({'error': 'Unauthorized access'}, status=401)
+
     tracks = get_tracks_from_request(request)
     for track in tracks:
         track.form = TrackForm(instance=track)
-    html = render_to_string('tracker/include/tbody_tracks.html', {'tracks': tracks})
+    html = render_to_string('tracker/include/tbody_tracks.html', {'tracks': tracks}, request)
     return JsonResponse({
         'html': html,
         'trackCount': tracks.count()
