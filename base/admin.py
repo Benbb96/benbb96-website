@@ -25,11 +25,10 @@ class ProfilAdmin(NonSortableParentAdmin):
 
 @admin.register(Projet)
 class ProjetAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nom', 'lien', 'actif', 'logged_only', 'staff_only')
-    list_editable = ('nom', 'lien', 'actif', 'logged_only', 'staff_only')
-    search_fields = ('nom',)
+    list_display = ('id', 'nom', 'lien', 'external', 'position', 'actif', 'logged_only', 'staff_only')
+    list_editable = ('nom', 'lien', 'external', 'position', 'actif', 'logged_only', 'staff_only')
+    search_fields = ('nom', 'lien')
     list_filter = ('actif', 'logged_only', 'staff_only')
-    ordering = ('id',)
 
 
 @admin.register(LienReseauSocial)

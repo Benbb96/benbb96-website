@@ -55,17 +55,34 @@ class Projet(models.Model):
         'staff seulement', default=False,
         help_text="Cochez pour afficher ce projet qu'aux personnes faisant partis du staff."
     )
+    external = models.BooleanField(
+        'externe', default=False,
+        help_text='Cochez lorsque le lien pointe vers un site externe à benbb96.com.'
+    )
+    position = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        ordering = ('position',)
 
     def __str__(self):
         return self.nom
 
     def get_absolute_url(self):
+        if self.lien.startswith('http'):
+            return self.lien
         return reverse(self.lien)
 
     def clean(self):
         from config.urls import VIEW_NAMES
-        if self.actif and self.lien not in VIEW_NAMES:
-            raise ValidationError({'lien': "%s n'est pas un nom de vue correcte." % self.lien})
+        if self.external:
+            if not self.lien.startswith('http'):
+                raise ValidationError(
+                    {'lien': "%s n'est pas un lien direct (il doit commencer par http)." % self.lien}
+                )
+        elif self.lien not in VIEW_NAMES:
+            raise ValidationError(
+                {'lien': "%s n'est pas un nom de vue correcte (ne pas oublier le namespace)." % self.lien}
+            )
 
 
 class LienReseauSocial(models.Model):
