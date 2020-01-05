@@ -173,3 +173,4 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'test_mails')
 
 ADMINS = [('Benbb96', 'benbb96@gmail.com')]
 EMAIL_SUBJECT_PREFIX = '[Benbb96] '
+DEFAULT_FROM_EMAIL = 'webmaster@benbb96.com'

@@ -9,6 +9,7 @@ django-colorfield==0.1.15
 django-filter==2.1.0
 django-fontawesome==1.0
 django-geoposition-2==0.3.6
+django-mailgun==0.9.1
 django-pandas==0.6.1
 djangorestframework==3.10.2
 entrypoints==0.3
