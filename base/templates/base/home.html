@@ -16,9 +16,13 @@
         {% for projet in object_list %}
             {% if projet.actif %}
             <div class="col-md-4 col-sm-6 col-xs-12">
-                <h3><a href="{{ projet.get_absolute_url }}">{{ projet.nom }}</a></h3>
-                <a href="{{ projet.get_absolute_url }}">
-                    <img src="{% if projet.image %}{{ projet.image.url }}{% endif %}" class="img-responsive" style="max-height: 300px; margin: auto" alt="{% trans "Project" %} {{ projet.nom }}">
+                <h3>
+                    <a href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
+                        {{ projet.nom }}
+                    </a>
+                </h3>
+                <a href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
+                    <img src="{% if projet.image %}{{ projet.image.url }}{% endif %}" class="img-responsive projet" style="max-height: 300px; margin: auto" alt="{% trans "Project" %} {{ projet.nom }}">
                 </a>
             </div>
             {% endif %}

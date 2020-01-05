@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -46,6 +48,16 @@ class MusiqueDetailView(FormMixin, DetailView):
             # Son lien est automatiquement validé si c'est la musique qu'il a créé
             if self.request.user == self.object.createur.user:
                 lien.date_validation = timezone.now()
+            elif self.object.createur.user.email:
+                # Avertissement par mail qu'un lien a été proposé
+                current_site = Site.objects.get_current()
+                send_mail(
+                    'Nouveau lien proposé sur la musique %s' % self.object,
+                    'Le lien "%s" a été proposé pour la musique %s que tu as ajouté. Tu peux valider le lien ici : %s%s'
+                    % (lien.url, self.object, current_site.domain, self.object.get_absolute_url()),
+                    'noreply@benbb96.com',
+                    [self.object.createur.user.email]
+                )
         lien.save()
         messages.success(self.request, 'Le lien a bien été ajouté.')
         return redirect(self.object.get_absolute_url())
