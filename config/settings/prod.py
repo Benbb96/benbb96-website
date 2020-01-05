@@ -4,7 +4,7 @@ SECRET_KEY = get_secret_setting('SECRET_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['benbb96.pythonanywhere.com']
+ALLOWED_HOSTS = ['.benbb96.com']
 
 # DATABASES = {
 #     'default': {
