@@ -1,0 +1,45 @@
+{% extends 'my_spot/base_my_spot.html' %}
+
+{% load custom_tags %}
+
+{% block spot_title %}Carte {% endblock %}
+
+{% block content %}
+    <div id="map" style="height: 500px"></div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        function initMap() {
+            $.get('{% url 'my_spot:map' %}').done(response => {
+                let map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 4,
+                    center: {lat: 45.7580539, lng: 4.7650805}
+                });
+                let infoWindow = new google.maps.InfoWindow({
+                    content: '...'
+                });
+
+                response.spots.forEach(spot => {
+                    let marker = new google.maps.Marker({
+                        position: {
+                            lat: parseFloat(spot.position.lat),
+                            lng: parseFloat(spot.position.lng)
+                        },
+                        map: map,
+                        title: spot.nom,
+                        animation: google.maps.Animation.DROP
+                    });
+
+                    marker.addListener('click', function () {
+                        infoWindow.setContent(spot.content);
+                        infoWindow.open(map, marker);
+                    })
+                })
+            });
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw&callback=initMap">
+    </script>
+{% endblock %}
