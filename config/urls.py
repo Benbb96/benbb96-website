@@ -32,6 +32,7 @@ urlpatterns += i18n_patterns(
     path(_('tracker/'), include('tracker.urls')),
     path(_('versus/'), include('versus.urls')),
     path(_('music/'), include('music.urls')),
+    path(_('my-spot/'), include('my_spot.urls')),
     path(_('admin/'), admin.site.urls),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout')

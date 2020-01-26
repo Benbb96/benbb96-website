@@ -15,6 +15,7 @@
                 <li {% if home %}class="active"{% endif %}><a href="{% url 'base:home' %}">{% trans "Home" %}</a></li>
                 <li {% if about %}class="active"{% endif %}><a href="{% url 'base:about' %}">{% trans "About" %}</a></li>
                 <li {% if avis %}class="active"{% endif %}><a href="{% url 'avis:liste-avis' %}">{% trans "Reviews" %}</a></li>
+                <li {% if spot %}class="active"{% endif %}><a href="{% url 'my_spot:map' %}">{% trans "MySpot" %}</a></li>
                 {% if request.user.is_authenticated %}
                 <li {% if tracker %}class="active"{% endif %}><a href="{% url 'tracker:liste-tracker' %}">{% trans "Tracker" %}</a></li>
                 {% endif %}
