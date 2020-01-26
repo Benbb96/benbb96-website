@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.contrib import admin
-from django.db import models
 from django.utils.html import format_html
 
 from avis.forms import AvisForm, ProduitForm
-from .models import Profil, TypeStructure, Structure, Produit, Avis, CategorieProduit
+from base.admin import PhotoAdminAbtract
+from .models import TypeStructure, Structure, Produit, Avis, CategorieProduit
 
 
 class CategorieProduitInlineTypeStructure(admin.TabularInline):
@@ -119,7 +119,7 @@ class ProduitAdmin(admin.ModelAdmin):
 
 
 @admin.register(Avis)
-class AvisAdmin(admin.ModelAdmin):
+class AvisAdmin(PhotoAdminAbtract):
     list_display = (
         'id', 'produit', 'auteur', 'apercu_avis', 'note',
         'date_creation', 'date_edition', 'prive', 'thumbnail'
@@ -129,7 +129,7 @@ class AvisAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('produit',)
     readonly_fields = ('date_creation', 'date_edition')
-    list_select_related = ('produit__structure',)
+    list_select_related = ('produit__structure__type', 'auteur__user')
     save_on_top = True
 
     form = AvisForm
@@ -141,8 +141,3 @@ class AvisAdmin(admin.ModelAdmin):
     def get_changeform_initial_data(self, request):
         """ Pré-rempli automatiquement avec l'utilisateur connecté """
         return {'auteur': request.user}
-
-    def thumbnail(self, obj):
-        if obj.photo:
-            return format_html('<img src="{}" height="50px" />', obj.get_photo_url())
-        return None

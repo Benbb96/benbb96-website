@@ -1,5 +1,6 @@
 from adminsortable.admin import NonSortableParentAdmin, SortableTabularInline
 from django.contrib import admin
+from django.utils.html import format_html
 
 from base.models import Projet, LienReseauSocial, Profil
 from tracker.models import Tracker
@@ -38,3 +39,10 @@ class LienReseauSocialAdmin(admin.ModelAdmin):
     search_fields = ('reseau_social',)
     list_filter = ('actif',)
     ordering = ('id',)
+
+
+class PhotoAdminAbtract(admin.ModelAdmin):
+    def thumbnail(self, obj):
+        if obj.photo:
+            return format_html('<img src="{}" height="50px" />', obj.get_photo_url)
+        return None
