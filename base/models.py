@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -5,6 +6,7 @@ from django.db.models import Avg
 from django.urls import reverse
 from django.utils import timezone
 from fontawesome.fields import IconField
+from pyrebase import pyrebase
 
 
 class Profil(models.Model):
@@ -103,3 +105,17 @@ class LienReseauSocial(models.Model):
 
     def __str__(self):
         return str(self.reseau_social)
+
+
+class PhotoAbstract(models.Model):
+    photo = models.TextField('url photo')
+
+    class Meta:
+        abstract = True
+
+    @property
+    def get_photo_url(self):
+        """ Récupère l'URL complète de l'image """
+        firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
+        storage = firebase.storage()
+        return storage.child(self.photo).get_url(None)

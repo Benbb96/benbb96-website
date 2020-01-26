@@ -5,7 +5,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 
-from base.models import Profil
+from base.models import Profil, PhotoAbstract
 from geoposition.fields import GeopositionField
 
 
@@ -128,7 +128,7 @@ class Produit(models.Model):
     apercu_description.admin_order_field = 'description'
 
 
-class Avis(models.Model):
+class Avis(PhotoAbstract):
     produit = models.ForeignKey(Produit, on_delete=models.PROTECT)
     auteur = models.ForeignKey(Profil, on_delete=models.PROTECT)
     avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le produit.')
@@ -153,12 +153,6 @@ class Avis(models.Model):
     def apercu_avis(self):
         return apercu(self.avis)
     apercu_avis.short_description = "Aperçu de l'avis"
-
-    def get_photo_url(self):
-        """ Récupère l'URL complète de l'image """
-        firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
-        storage = firebase.storage()
-        return storage.child(self.photo).get_url(None)
 
     def has_been_edited(self):
         """ Compare les dates de création et d'édition pour savoir si l'objet a été édité """
