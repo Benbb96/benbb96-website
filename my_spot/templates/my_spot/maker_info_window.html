@@ -1,0 +1,66 @@
+<div class="text-center">
+    <h2>
+        <a href="{{ spot.get_absolute_url }}">{{ spot }}</a>
+    </h2>
+    <p>
+        {{ spot.description }}
+        <br>
+        Ajouté par <a href="{{ spot.explorateur.get_absolute_url }}">{{ spot.explorateur }}</a>,
+        le {{ spot.date_creation|date:"d/m/y à H:i" }}
+    </p>
+    {% with photos=spot.photos.all %}
+        {% if photos %}
+            <div id="photos-{{ spot.id }}" class="carousel slide" data-ride="carousel" style="width: 100%; margin: auto">
+                <!-- Indicators -->
+                {% if photos|length > 1 %}
+                    <ol class="carousel-indicators">
+                        {% for photo in photos %}
+                            <li data-target="#photos-{{ spot.id }}" data-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active"{% endif %}></li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    {% for photo in photos %}
+                        <div class="item{% if forloop.first %} active{% endif %}">
+                            <a href="{{ spot.get_absolute_url }}">
+                                <img src="{{ photo.get_photo_url }}" alt="Photo du spot {{ spot }} prise par {{ photo.photgraphe }}"{% if photo.description %} title="{{ photo.description }}{% endif %}" style="width: 300px; max-height: 180px; object-fit: contain">
+                            </a>
+{#                            <div class="carousel-caption">#}
+{#                                <p>#}
+{#                                    <a href="{{ photo.photographe.get_absolute_url }}">{{ photo.photographe }}</a> - {{ photo.date_ajout|date:"d/m/y" }}#}
+{#                                </p>#}
+{#                                {% if photo.description %}#}
+{#                                    <p>{{ photo.description }}</p>#}
+{#                                {% endif %}#}
+{#                            </div>#}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if photos|length > 1 %}
+                    <!-- Left and right controls -->
+                    <a class="left carousel-control" href="#photos-{{ spot.id }}" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <span class="sr-only">Précédent</span>
+                    </a>
+                    <a class="right carousel-control" href="#photos-{{ spot.id }}" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                        <span class="sr-only">Suivant</span>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% with tags=spot.tags.all %}
+        {% if tags %}
+            <p>
+                Tags :
+                {% for tag in tags %}
+                    {{ tag }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        {% endif %}
+    {% endwith %}
+</div>

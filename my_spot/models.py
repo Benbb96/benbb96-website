@@ -2,6 +2,7 @@ from colorfield.fields import ColorField
 from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Q
 from fontawesome.fields import IconField
 from geoposition.fields import GeopositionField
 
@@ -22,6 +23,27 @@ class SpotTag(models.Model):
         return self.nom
 
 
+PUBLIC = 1
+PRIVE = 2
+CACHE = 3
+
+
+class SpotManager(models.Manager):
+    def get_queryset(self):
+        return super(SpotManager, self).get_queryset()\
+            .select_related('explorateur__user').prefetch_related('photos', 'notes')\
+            .annotate(moyenne=models.Avg('notes'), note_count=models.Count('notes', distinct=True))
+
+    def visible_for_user(self, user):
+        if not user.is_authenticated:
+            # Seulement les publics pour un utilisateur non connecté
+            return self.get_queryset().filter(visibilite=PUBLIC)
+        # Les publics + ceux qu'il a créé et ceux de ses groupes
+        return self.get_queryset().filter(
+            Q(visibilite=PUBLIC) | Q(explorateur=user.profil) | Q(groupes__in=user.groups.all())
+        )
+
+
 class Spot(models.Model):
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
@@ -35,9 +57,6 @@ class Spot(models.Model):
         null=True,
         blank=True
     )
-    PUBLIC = 1
-    PRIVE = 2
-    CACHE = 3
     VISIBILITE = (
         (PUBLIC, 'Public'),
         (PRIVE, 'Privé'),
@@ -54,6 +73,8 @@ class Spot(models.Model):
     tags = models.ManyToManyField(SpotTag, related_name='spots', blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
+
+    objects = SpotManager()
 
     class Meta:
         ordering = ('-date_creation',)
