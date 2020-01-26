@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'tracker.apps.TrackerConfig',
     'versus.apps.VersusConfig',
     'music.apps.MusicConfig',
+    'my_spot.apps.MySpotConfig',
     'bootstrap3',
     'rest_framework',
     'geoposition',
