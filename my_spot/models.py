@@ -26,6 +26,11 @@ class SpotTag(models.Model):
 PUBLIC = 1
 PRIVE = 2
 CACHE = 3
+VISIBILITE = (
+    (PUBLIC, 'Public'),
+    (PRIVE, 'Privé'),
+    (CACHE, 'Caché'),
+)
 
 
 class SpotManager(models.Manager):
@@ -56,11 +61,6 @@ class Spot(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True
-    )
-    VISIBILITE = (
-        (PUBLIC, 'Public'),
-        (PRIVE, 'Privé'),
-        (CACHE, 'Caché'),
     )
     visibilite = models.PositiveSmallIntegerField(
         'visibilité',

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_filters',
     'colorfield',
     'adminsortable',
+    'django_select2'
 ]
 
 SITE_ID = 1
