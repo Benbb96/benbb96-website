@@ -1,17 +1,32 @@
 {% extends 'my_spot/base_my_spot.html' %}
 
-{% load custom_tags %}
+{% load custom_tags bootstrap3 %}
 
 {% block spot_title %}Carte {% endblock %}
 
+{% block stylesheet %}
+    {{ form.media.css }}
+{% endblock %}
+
 {% block content %}
+    <form class="form-inline text-center">
+        {% bootstrap_form form layout='inline' %}
+        {% buttons %}
+            <button type="submit" class="btn btn-primary" title="Filtrer les spots">
+                OK {% bootstrap_icon "filter" %}
+            </button>
+        {% endbuttons %}
+    </form>
     <div id="map" style="height: 500px"></div>
 {% endblock %}
 
 {% block javascript %}
+    {{ form.media.js }}
     <script type="text/javascript">
-        function initMap() {
-            $.get('{% url 'my_spot:map' %}').done(reponse => {
+        function initMap(visibilite, tags, groupes) {
+            $.get('{% url 'my_spot:map' %}', {
+                visibilite: visibilite, tags: tags, groupes: groupes
+            }).done(reponse => {
                 let map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 4,
                     center: {lat: 45.7580539, lng: 4.7650805}
@@ -50,6 +65,16 @@
                 })
             });
         }
+
+        $(() => {
+            $('form').submit(function(e) {
+                e.preventDefault();
+                const visibilite = $('#id_visibilite input:checked').val();
+                const tags = $('#id_tags').val();
+                const groupes = $('#id_groupes').val();
+                initMap(visibilite, tags, groupes)
+            })
+        })
     </script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw&callback=initMap">

@@ -15,6 +15,7 @@ from base.sitemap import sitemaps
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('api-auth/', include('rest_framework.urls')),
+    path('select2/', include('django_select2.urls')),
     path('sitemap.xml', sitemap, sitemaps, name='django.contrib.sitemaps.views.sitemap'),
     path(
         'robots.txt',
