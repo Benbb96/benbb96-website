@@ -15,6 +15,8 @@ def map(request):
                     'lng': spot.position.longitude
                 },
                 'nom': spot.nom,
+                'visibilite': spot.visibilite,
+                'perso': spot.explorateur == request.user.profil,
                 'content': render_to_string('my_spot/maker_info_window.html', {'spot': spot})
             })
         return JsonResponse({'spots': data})
