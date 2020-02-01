@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -181,10 +181,24 @@ def get_other_stats(request):
     for weekday in weekdays.values():
         days[weekday] = 0
 
+    deltas = []
+    prev = None
     for track in tracks:
         dt = make_naive(track.datetime)
         hours[str(dt.hour)] += 1
         days[weekdays[dt.weekday()]] += 1
+        if prev:
+            # Store the diff between the previous track and this one
+            deltas.append(prev.datetime - track.datetime)
+        prev = track
+
+    delta_stats = None
+    if deltas:
+        delta_stats = {
+            'deltaMin': str(min(deltas)),
+            'deltaAvg': str(sum(deltas, timedelta(0)) / len(deltas)),
+            'deltaMax': str(max(deltas))
+        }
 
     return JsonResponse({
         'trackByHourChart': {
@@ -195,6 +209,7 @@ def get_other_stats(request):
             'labels': list(days.keys()),
             'values': list(days.values())
         },
+        'deltaStats': delta_stats
     })
 
 
