@@ -141,6 +141,19 @@
                                 <button type="button" class="btn btn-default btn-frequency" data-frequency="Y">Année</button>
                             </div>
                         </div>
+                        <h3>Ecarts</h3>
+                        <p>Voici les statistiques des différences de temps entre deux tracks à la suite.</p>
+                        <div class="row">
+                            <div class="col-sm-4 col-xs-12">
+                                Plus petit écart : <strong id="deltaMin">Pas assez de donnée...</strong>
+                            </div>
+                            <div class="col-sm-4 col-xs-12">
+                                Ecart moyen : <strong id="deltaAvg">Pas assez de donnée...</strong>
+                            </div>
+                            <div class="col-sm-4 col-xs-12">
+                                Plus grand écart : <strong id="deltaMax">Pas assez de donnée...</strong>
+                            </div>
+                        </div>
                         <h3>Répartition</h3>
                         <div class="row">
                             <div class="col-sm-6 col-xs-12 text-center">
@@ -403,6 +416,11 @@
                         trackByDayChart.data.labels = response.trackByDayChart.labels;
                         trackByDayChart.data.datasets[0].data = response.trackByDayChart.values;
                         trackByDayChart.update();
+                    }
+                    if (response.deltaStats) {
+                        for (const [key, value] of Object.entries(response.deltaStats)) {
+                            $('#' + key).text(value);
+                        }
                     }
                 })
                 .fail((xhr, textStatus, errorThrown) => {
