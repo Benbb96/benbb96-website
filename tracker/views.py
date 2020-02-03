@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.html import format_html
 from django.utils.timezone import make_aware, make_naive
 from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView, DeleteView
@@ -182,22 +183,41 @@ def get_other_stats(request):
         days[weekday] = 0
 
     deltas = []
-    prev = None
+    prev = minimum = maximum = None
+    min_1 = min_2 = max_1 = max_2 = None
     for track in tracks:
         dt = make_naive(track.datetime)
         hours[str(dt.hour)] += 1
         days[weekdays[dt.weekday()]] += 1
         if prev:
             # Store the diff between the previous track and this one
-            deltas.append(prev.datetime - track.datetime)
+            delta = prev.datetime - track.datetime
+            deltas.append(delta)
+            # Keep min and max with their respective datetime
+            if not minimum or delta < minimum:
+                minimum = delta
+                min_1 = track.datetime
+                min_2 = prev.datetime
+            if not maximum or delta > maximum:
+                maximum = delta
+                max_1 = track.datetime
+                max_2 = prev.datetime
+
         prev = track
 
     delta_stats = None
     if deltas:
+        format = '%d/%m/%y %H:%M'
         delta_stats = {
-            'deltaMin': str(min(deltas)),
+            'deltaMin': format_html(
+                '<b>{}</b> <br><small>Entre le {} et le {}</small>',
+                minimum, min_1.strftime(format), min_2.strftime(format)
+            ),
             'deltaAvg': str(sum(deltas, timedelta(0)) / len(deltas)),
-            'deltaMax': str(max(deltas))
+            'deltaMax': format_html(
+                '<b>{}</b> <br><small>Entre le {} et le {}</small>',
+                maximum, max_1.strftime(format), max_2.strftime(format)
+            )
         }
 
     return JsonResponse({
