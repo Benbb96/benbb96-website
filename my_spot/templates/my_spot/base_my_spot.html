@@ -3,7 +3,7 @@
 {% block title %}{% block spot_title %}Carte{% endblock %} | MySpot{% endblock %}
 
 {% block navbar %}
-{% include 'navbar.html' with spot=True %}
+    {% include 'navbar.html' with spot=True %}
 {% endblock %}
 
 {% block jumbotron_title %}<a href="{% url 'my_spot:map' %}">MySpot</a>{% endblock %}
