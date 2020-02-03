@@ -13,13 +13,7 @@ class SpotPhotoForm(forms.ModelForm):
         widgets = {'photo': FirebaseUploadWidget(folder='spots')}
 
 
-class SpotFilterForm(forms.Form):
-    visibilite = forms.ChoiceField(
-        choices=VISIBILITE + ((0, 'Tous'),),
-        initial=0,
-        label='Visibilité',
-        widget=forms.RadioSelect()
-    )
+class PublicSpotFilterForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(
         queryset=SpotTag.objects.all(),
         widget=ModelSelect2MultipleWidget(
@@ -32,6 +26,19 @@ class SpotFilterForm(forms.Form):
             search_fields=['nom__icontains'],
         ),
         required=False,
+    )
+
+
+class SpotFilterForm(PublicSpotFilterForm):
+    visibilite = forms.ChoiceField(
+        choices=VISIBILITE + ((0, 'Tous'),),
+        initial=0,
+        label='Visibilité',
+        widget=forms.RadioSelect()
+    )
+    perso = forms.BooleanField(
+        label='Seulement les miens',
+        required=False
     )
     groupes = forms.ModelMultipleChoiceField(
         queryset=Group.objects.none(),
@@ -46,9 +53,3 @@ class SpotFilterForm(forms.Form):
         ),
         required=False
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__()
-        groupes = kwargs.get('groupes', None)
-        if groupes:
-            self.fields['groupes'].queryset = groupes
