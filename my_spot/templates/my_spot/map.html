@@ -25,51 +25,51 @@
     <script type="text/javascript">
         function initMap() {
             const visibilite = $('#id_visibilite input:checked').val();
+            const perso = $('#id_perso').is(':checked');
             const tags = $('#id_tags').val();
             const groupes = $('#id_groupes').val();
-            $.get('{% url 'my_spot:map' %}', {
-                visibilite: visibilite, tags: tags, groupes: groupes
-            }).done(reponse => {
-                let map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 4,
-                    center: {lat: 45.7580539, lng: 4.7650805}
-                });
-                let infoWindow = new google.maps.InfoWindow({
-                    content: '...'
-                });
-
-                reponse.spots.forEach(spot => {
-                    let color = "purple";  {# Si c'est violet, c'est qu'il y a une erreur... #}
-                    if (spot.visibilite === 3 || spot.perso) {
-                        color = "blue";
-                    } else if (spot.visibilite === 2) {
-                        color = "green";
-                    } else if (spot.visibilite === 1) {
-                        color = "red";
-                    }
-                    const url = "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
-                    let marker = new google.maps.Marker({
-                        position: {
-                            lat: parseFloat(spot.position.lat),
-                            lng: parseFloat(spot.position.lng)
-                        },
-                        map: map,
-                        title: spot.nom,
-                        animation: google.maps.Animation.DROP,
-                        icon: {
-                            url: url
-                        }
+            $.get('{% url 'my_spot:map' %}', {visibilite, perso, tags, groupes})
+                .done(reponse => {
+                    let map = new google.maps.Map(document.getElementById('map'), {
+                        zoom: 4,
+                        center: {lat: 45.7580539, lng: 4.7650805}
+                    });
+                    let infoWindow = new google.maps.InfoWindow({
+                        content: '...'
                     });
 
-                    marker.addListener('click', function () {
-                        infoWindow.setContent(spot.content);
-                        infoWindow.open(map, marker);
+                    reponse.spots.forEach(spot => {
+                        let color = "purple";  {# Si c'est violet, c'est qu'il y a une erreur... #}
+                        if (spot.visibilite === 3 || spot.perso) {
+                            color = "blue";
+                        } else if (spot.visibilite === 2) {
+                            color = "green";
+                        } else if (spot.visibilite === 1) {
+                            color = "red";
+                        }
+                        const url = "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
+                        let marker = new google.maps.Marker({
+                            position: {
+                                lat: parseFloat(spot.position.lat),
+                                lng: parseFloat(spot.position.lng)
+                            },
+                            map: map,
+                            title: spot.nom,
+                            animation: google.maps.Animation.DROP,
+                            icon: {
+                                url: url
+                            }
+                        });
+
+                        marker.addListener('click', function () {
+                            infoWindow.setContent(spot.content);
+                            infoWindow.open(map, marker);
+                        })
                     })
                 })
-            })
-            .fail((err) => {
-                console.log(err)
-            });
+                .fail((err) => {
+                    console.log(err)
+                });
         }
 
         $(() => {

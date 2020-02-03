@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 
-from my_spot.forms import SpotFilterForm
+from my_spot.forms import SpotFilterForm, PublicSpotFilterForm
 from my_spot.models import Spot, SpotTag
 
 
@@ -14,6 +14,9 @@ def carte(request, tag_slug=None):
         visibilite = request.GET.get('visibilite', None)
         if visibilite and visibilite != '0':
             spots = spots.filter(visibilite=int(visibilite))
+        perso = request.GET.get('perso', 'false')
+        if perso == 'true':
+            spots = spots.filter(explorateur__user=request.user)
         tags = request.GET.getlist('tags[]', None)
         if tags:
             tags = map(int, tags)
@@ -41,10 +44,13 @@ def carte(request, tag_slug=None):
     if tag_slug:
         tag = get_object_or_404(SpotTag, slug=tag_slug)
 
-    form = SpotFilterForm(groupes__user=request.user)
-    if not request.user.is_authenticated:
-        form.fields.pop('visibilite')
-        form.fields.pop('groupes')
+    if request.user.is_authenticated:
+        form = SpotFilterForm()
+        # Filtre les groupes en fonction du user connecté
+        form.fields['groupes'].queryset = Group.objects.filter(user=request.user)
+    else:
+        form = PublicSpotFilterForm()
+
     if tag:
         form.initial = {'tags': [tag.id]}
 
