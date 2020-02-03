@@ -58,7 +58,7 @@
             <p>
                 Tags :
                 {% for tag in tags %}
-                    {{ tag }}{% if not forloop.last %}, {% endif %}
+                    <span class="label label-default">{{ tag }}</span>
                 {% endfor %}
             </p>
         {% endif %}

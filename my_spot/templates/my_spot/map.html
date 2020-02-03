@@ -63,6 +63,9 @@
                         infoWindow.open(map, marker);
                     })
                 })
+            })
+            .fail((err) => {
+                console.log(err)
             });
         }
 
