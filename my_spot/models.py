@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Q
+from django.urls import reverse
 from fontawesome.fields import IconField
 from geoposition.fields import GeopositionField
 
@@ -24,11 +25,11 @@ class SpotTag(models.Model):
 
 
 PUBLIC = 1
-PRIVE = 2
+PARTAGE = 2
 CACHE = 3
 VISIBILITE = (
     (PUBLIC, 'Public'),
-    (PRIVE, 'Privé'),
+    (PARTAGE, 'Partagé'),
     (CACHE, 'Caché'),
 )
 
@@ -81,6 +82,9 @@ class Spot(models.Model):
 
     def __str__(self):
         return self.nom
+
+    def get_absolute_url(self):
+        return reverse('my_spot:spot_detail', kwargs={'spot_slug': self.slug})
 
 
 class SpotPhoto(PhotoAbstract):

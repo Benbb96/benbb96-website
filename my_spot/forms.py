@@ -34,7 +34,7 @@ class SpotFilterForm(forms.Form):
         required=False,
     )
     groupes = forms.ModelMultipleChoiceField(
-        queryset=Group.objects.all(),
+        queryset=Group.objects.none(),
         widget=ModelSelect2MultipleWidget(
             attrs={
                 'style': 'width: 250px',
@@ -49,4 +49,6 @@ class SpotFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__()
-        self.fields['groupes'].queryset = kwargs.get('groupes')
+        groupes = kwargs.get('groupes', None)
+        if groupes:
+            self.fields['groupes'].queryset = groupes

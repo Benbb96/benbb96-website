@@ -1,0 +1,133 @@
+{% extends 'my_spot/base_my_spot.html' %}
+
+{% load my_spot_tags bootstrap3 l10n %}
+
+{% block spot_title %}Spot {{ spot }} {% endblock %}
+
+{% block stylesheet %}
+    {{ form.media.css }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 col-xs-12">
+                <h1>{{ spot }}</h1>
+                <h3>
+                    Ajouté par <a href="{{ spot.explorateur.get_absolute_url }}">{{ spot.explorateur }}</a>,
+                    le {{ spot.date_creation|date:"d F Y à H:i" }}
+                </h3>
+                <p>
+                    Visibilité :
+                    <b>{{ spot.get_visibilite_display }} <i class="fa fa-{{ spot.visibilite|visibilite_icon }}"></i></b>
+                </p>
+                <p>
+                    Description : {{ spot.description|linebreaksbr }}
+                </p>
+                {% with photos=spot.photos.all %}
+                    {% if photos %}
+                        <div id="photos-{{ spot.id }}" class="carousel slide" data-ride="carousel" style="width: 100%; margin: auto">
+                            <!-- Indicators -->
+                            {% if photos|length > 1 %}
+                                <ol class="carousel-indicators">
+                                    {% for photo in photos %}
+                                        <li data-target="#photos-{{ spot.id }}" data-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active"{% endif %}></li>
+                                    {% endfor %}
+                                </ol>
+                            {% endif %}
+
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner">
+                                {% for photo in photos %}
+                                    <div class="item{% if forloop.first %} active{% endif %}">
+                                        <a href="{{ spot.get_absolute_url }}">
+                                            <img src="{{ photo.get_photo_url }}" alt="Photo du spot {{ spot }} prise par {{ photo.photgraphe }}"{% if photo.description %} title="{{ photo.description }}{% endif %}" style="width: 100%; max-height: 300px; object-fit: contain">
+                                        </a>
+                                        <div class="carousel-caption">
+                                            <p>
+                                                <a href="{{ photo.photographe.get_absolute_url }}">{{ photo.photographe }}</a> - {{ photo.date_ajout|date:"d/m/y" }}
+                                            </p>
+                                            {% if photo.description %}
+                                                <p>{{ photo.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            {% if photos|length > 1 %}
+                                <!-- Left and right controls -->
+                                <a class="left carousel-control" href="#photos-{{ spot.id }}" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                    <span class="sr-only">Précédent</span>
+                                </a>
+                                <a class="right carousel-control" href="#photos-{{ spot.id }}" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right"></span>
+                                    <span class="sr-only">Suivant</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% with tags=spot.tags.all %}
+                    {% if tags %}
+                        <p>
+                            Tags :
+                            {% for tag in tags %}
+                                <span class="label label-default">{{ tag }}</span>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div class="col-sm-4 col-xs-12">
+                <div id="map" style="height: 500px"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ form.media.js }}
+    <script type="text/javascript">
+        function initMap(visibilite, tags, groupes) {
+            let map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: {lat: {{ spot.position.latitude|unlocalize }}, lng: {{ spot.position.longitude|unlocalize }}}
+            });
+
+            let color = "purple";  {# Si c'est violet, c'est qu'il y a une erreur... #}
+                    if ({{ spot.visibilite }} === 3 || {% if spot.explorateur == request.user.profil %}true{% else %}false{% endif %}) {
+                color = "blue";
+            } else if ({{ spot.visibilite }} === 2) {
+                color = "green";
+            } else if ({{ spot.visibilite }} === 1) {
+                color = "red";
+            }
+            const url = "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
+            let marker = new google.maps.Marker({
+                position: {
+                    lat: {{ spot.position.latitude|unlocalize }},
+                    lng: {{ spot.position.longitude|unlocalize }}
+                },
+                map: map,
+                title: '{{ spot.nom }}',
+                animation: google.maps.Animation.DROP,
+                icon: {
+                    url: url
+                }
+            });
+
+            let infoWindow = new google.maps.InfoWindow({
+                content: '{{ spot.nom }}'
+            });
+
+            marker.addListener('click', function () {
+                infoWindow.open(map, marker);
+            })
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw&callback=initMap">
+    </script>
+{% endblock %}
