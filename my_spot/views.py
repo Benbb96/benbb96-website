@@ -4,10 +4,10 @@ from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 
 from my_spot.forms import SpotFilterForm
-from my_spot.models import Spot
+from my_spot.models import Spot, SpotTag
 
 
-def carte(request):
+def carte(request, tag_slug=None):
     if request.is_ajax():
         spots = Spot.objects.visible_for_user(request.user)
         # Récupère les paramètres et filtre les spots
@@ -37,10 +37,16 @@ def carte(request):
             })
         return JsonResponse({'spots': data})
 
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(SpotTag, slug=tag_slug)
+
     form = SpotFilterForm(groupes__user=request.user)
     if not request.user.is_authenticated:
         form.fields.pop('visibilite')
         form.fields.pop('groupes')
+    if tag:
+        form.initial = {'tags': [tag.id]}
 
     return render(request, 'my_spot/map.html', {'form': form})
 

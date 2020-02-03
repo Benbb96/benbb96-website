@@ -23,7 +23,10 @@
 {% block javascript %}
     {{ form.media.js }}
     <script type="text/javascript">
-        function initMap(visibilite, tags, groupes) {
+        function initMap() {
+            const visibilite = $('#id_visibilite input:checked').val();
+            const tags = $('#id_tags').val();
+            const groupes = $('#id_groupes').val();
             $.get('{% url 'my_spot:map' %}', {
                 visibilite: visibilite, tags: tags, groupes: groupes
             }).done(reponse => {
@@ -72,10 +75,7 @@
         $(() => {
             $('form').submit(function(e) {
                 e.preventDefault();
-                const visibilite = $('#id_visibilite input:checked').val();
-                const tags = $('#id_tags').val();
-                const groupes = $('#id_groupes').val();
-                initMap(visibilite, tags, groupes)
+                initMap()
             })
         })
     </script>
