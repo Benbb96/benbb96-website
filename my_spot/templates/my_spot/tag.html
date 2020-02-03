@@ -1,0 +1,6 @@
+{% load fontawesome my_spot_tags %}
+
+<a href="{{ tag.get_absolute_url }}" class="label label-default" style="background-color: {{ tag.color }}; color: {{ tag.color|get_contrast_color }}">
+    {% if tag.icone %}{% fontawesome_icon tag.icone %}{% endif %}
+    {{ tag }}
+</a>

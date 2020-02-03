@@ -50,7 +50,7 @@
             <p>
                 Tags :
                 {% for tag in tags %}
-                    <a href="{{ tag.get_absolute_url }}" class="label label-default">{{ tag }}</a>
+                    {% include 'my_spot/tag.html' %}
                 {% endfor %}
             </p>
         {% endif %}
