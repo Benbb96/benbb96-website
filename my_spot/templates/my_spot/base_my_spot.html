@@ -6,7 +6,7 @@
 {% include 'navbar.html' with spot=True %}
 {% endblock %}
 
-{% block jumbotron_title %}MySpot{% endblock %}
+{% block jumbotron_title %}<a href="{% url 'my_spot:map' %}">MySpot</a>{% endblock %}
 {% block jumbotron_description %}
     Une carte avec des spots enregistrés de tous types (belle-vue, pique-nique, nature, point d'eau, posé, etc.)
 {% endblock %}
