@@ -27,14 +27,6 @@
                             <a href="{{ spot.get_absolute_url }}">
                                 <img src="{{ photo.get_photo_url }}" alt="Photo du spot {{ spot }} prise par {{ photo.photgraphe }}"{% if photo.description %} title="{{ photo.description }}{% endif %}" style="width: 300px; max-height: 180px; object-fit: contain">
                             </a>
-{#                            <div class="carousel-caption">#}
-{#                                <p>#}
-{#                                    <a href="{{ photo.photographe.get_absolute_url }}">{{ photo.photographe }}</a> - {{ photo.date_ajout|date:"d/m/y" }}#}
-{#                                </p>#}
-{#                                {% if photo.description %}#}
-{#                                    <p>{{ photo.description }}</p>#}
-{#                                {% endif %}#}
-{#                            </div>#}
                         </div>
                     {% endfor %}
                 </div>
