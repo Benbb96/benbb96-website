@@ -41,7 +41,7 @@ class SpotManager(models.Manager):
     def get_queryset(self):
         return super(SpotManager, self).get_queryset()\
             .select_related('explorateur__user').prefetch_related('photos', 'notes')\
-            .annotate(moyenne=models.Avg('notes'), note_count=models.Count('notes', distinct=True))
+            .annotate(moyenne=models.Avg('notes__note'), note_count=models.Count('notes', distinct=True))
 
     def visible_for_user(self, user):
         if not user.is_authenticated:
@@ -49,8 +49,34 @@ class SpotManager(models.Manager):
             return self.get_queryset().filter(visibilite=PUBLIC)
         # Les publics + ceux qu'il a créé et ceux de ses groupes
         return self.get_queryset().filter(
-            Q(visibilite=PUBLIC) | Q(explorateur=user.profil) | Q(groupes__in=user.groups.all())
+            Q(visibilite=PUBLIC) | Q(explorateur=user.profil) | Q(groupes__profils__user=user)
         )
+
+
+class SpotGroup(models.Model):
+    nom = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, null=True)
+    description = models.TextField(blank=True)
+    date_creation = models.DateTimeField('date de création', auto_now_add=True)
+    profils = models.ManyToManyField(Profil, through='SpotGroupProfil', related_name='spot_groups', blank=True)
+
+    class Meta:
+        ordering = ('nom',)
+
+    def __str__(self):
+        return self.nom
+
+    def get_absolute_url(self):
+        return reverse('my_spot:spot_group_detail', kwargs={'spot_group_slug': self.slug})
+
+
+class SpotGroupProfil(models.Model):
+    spot_group = models.ForeignKey(SpotGroup, on_delete=models.CASCADE)
+    profil = models.ForeignKey(Profil, on_delete=models.CASCADE)
+    date_ajout = models.DateTimeField("date d'ajout au groupe", auto_now_add=True)
+
+    def nb_spot_partages(self):
+        return self.profil.spots.filter(groupes=self.spot_group).count()
 
 
 class Spot(models.Model):
@@ -70,10 +96,10 @@ class Spot(models.Model):
         'visibilité',
         choices=VISIBILITE,
         default=CACHE,
-        help_text="Visbilité du spot : Public = visible par tous ; Privé = visible par les membre du groupe ; "
+        help_text="Visbilité du spot : Public = visible par tous ; Partagé = visible par les membre du groupe ; "
                   "Caché = seul le possésseur peut le voir."
     )
-    groupes = models.ManyToManyField(Group, verbose_name='partagé aux groupes', related_name='spots', blank=True)
+    groupes = models.ManyToManyField(SpotGroup, verbose_name='partagé aux groupes', related_name='spots', blank=True)
     tags = models.ManyToManyField(SpotTag, related_name='spots', blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)

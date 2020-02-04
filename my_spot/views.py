@@ -1,10 +1,33 @@
-from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 
 from my_spot.forms import SpotFilterForm, PublicSpotFilterForm
-from my_spot.models import Spot, SpotTag
+from my_spot.models import Spot, SpotTag, SpotGroup
+
+
+def build_data(spots, user):
+    """
+    Util function to build the data which will be returned in the JsonResponse
+
+    :param spots:
+    :param user:
+    :return:
+    """
+    data = []
+    for spot in spots:
+        data.append({
+            'position': {
+                'lat': spot.position.latitude,
+                'lng': spot.position.longitude
+            },
+            'nom': spot.nom,
+            'visibilite': spot.visibilite,
+            'perso': False if not user.is_authenticated else spot.explorateur == user.profil,
+            'content': render_to_string('my_spot/maker_info_window.html', {'spot': spot})
+        })
+    return data
 
 
 def carte(request, tag_slug=None):
@@ -26,19 +49,7 @@ def carte(request, tag_slug=None):
             groupes = map(int, groupes)
             spots = spots.filter(groupes__in=groupes)
 
-        data = []
-        for spot in spots:
-            data.append({
-                'position': {
-                    'lat': spot.position.latitude,
-                    'lng': spot.position.longitude
-                },
-                'nom': spot.nom,
-                'visibilite': spot.visibilite,
-                'perso': False if not request.user.is_authenticated else spot.explorateur == request.user.profil,
-                'content': render_to_string('my_spot/maker_info_window.html', {'spot': spot})
-            })
-        return JsonResponse({'spots': data})
+        return JsonResponse({'spots': build_data(spots, request.user)})
 
     tag = None
     if tag_slug:
@@ -47,7 +58,7 @@ def carte(request, tag_slug=None):
     if request.user.is_authenticated:
         form = SpotFilterForm()
         # Filtre les groupes en fonction du user connecté
-        form.fields['groupes'].queryset = Group.objects.filter(user=request.user)
+        form.fields['groupes'].queryset = SpotGroup.objects.filter(profils__user=request.user)
     else:
         form = PublicSpotFilterForm()
 
@@ -61,4 +72,20 @@ def spot_detail(request, spot_slug):
     spot = get_object_or_404(Spot.objects.visible_for_user(request.user)
         .select_related('explorateur__user')
         .prefetch_related('photos__photographe__user', 'notes__auteur__user', 'tags', 'groupes'), slug=spot_slug)
-    return render(request, 'my_spot/spot_detail.html', {'spot': spot})
+    return render(request, 'my_spot/spot_detail.html', {
+        'spot': spot,
+        'groupes': spot.groupes.filter(profils__user=request.user)
+    })
+
+
+@login_required
+def spot_group_detail(request, spot_group_slug):
+    spot_group = get_object_or_404(
+        SpotGroup.objects.filter(profils__user=request.user).prefetch_related('profils__user'),
+        slug=spot_group_slug
+    )
+    if request.is_ajax():
+        spots = spot_group.spots.visible_for_user(request.user)
+        return JsonResponse({'spots': build_data(spots, request.user)})
+
+    return render(request, 'my_spot/spot_group_detail.html', {'spot_group': spot_group})
