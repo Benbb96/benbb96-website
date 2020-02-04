@@ -1,0 +1,86 @@
+{% extends 'my_spot/base_my_spot.html' %}
+
+{% block spot_title %}Groupe {{ spot_group }} {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ spot_group }}</h1>
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+                <h3>
+                    Créé le {{ spot_group.date_creation|date:"l j F Y à H:i" }}
+                </h3>
+                <p>
+                    Description : {{ spot_group.description|linebreaksbr }}
+                </p>
+                {% with profils=spot_group.spotgroupprofil_set.all %}
+                    {% if profils %}
+                        <p>Liste des personnes appartenants à ce groupe :</p>
+                        <div class="list-group">
+                            {% for spotgroupprofil in profils %}
+                                <a class="list-group-item" href="{{ spotgroupprofil.profil.get_absolute_url }}">
+                                    {{ spotgroupprofil.profil }}
+                                    <small>depuis le {{ spotgroupprofil.date_ajout }}</small>
+                                    <span class="badge">{{ spotgroupprofil.nb_spot_partages }}</span>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div class="col-sm-6 col-xs-12">
+                {% if spot_group.spots.exists %}
+                    <div id="map" style="height: 500px"></div>
+                {% else %}
+                    <p class="text-center">Aucun spot n'a été partagé à ce groupe.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        function initMap(visibilite, tags, groupes) {
+            $.get('{% url 'my_spot:spot_group_detail' spot_group.slug %}')
+                .done(reponse => {
+                    if (reponse.spots.length > 0) {
+                        let bounds = new google.maps.LatLngBounds();
+                        let map = new google.maps.Map(document.getElementById('map'));
+                        let infoWindow = new google.maps.InfoWindow({
+                            content: '...'
+                        });
+
+                        reponse.spots.forEach(spot => {
+                            let marker = new google.maps.Marker({
+                                position: {
+                                    lat: parseFloat(spot.position.lat),
+                                    lng: parseFloat(spot.position.lng)
+                                },
+                                map: map,
+                                title: spot.nom,
+                                animation: google.maps.Animation.DROP
+                            });
+
+                            // Extend the bounds to include each marker's position
+                            bounds.extend(marker.position);
+
+                            marker.addListener('click', function () {
+                                infoWindow.setContent(spot.content);
+                                infoWindow.open(map, marker);
+                            })
+                        });
+
+                        // Now fit the map to the newly inclusive bounds
+                        map.fitBounds(bounds);
+                    }
+                })
+                .fail((err) => {
+                    console.log(err)
+                });
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9uAZiNr9tAg4Y_Vc3xvlpFsCVBB2goEw&callback=initMap">
+    </script>
+{% endblock %}

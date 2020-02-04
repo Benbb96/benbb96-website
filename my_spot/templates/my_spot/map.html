@@ -30,42 +30,51 @@
             const groupes = $('#id_groupes').val();
             $.get('{% url 'my_spot:map' %}', {visibilite, perso, tags, groupes})
                 .done(reponse => {
-                    let map = new google.maps.Map(document.getElementById('map'), {
-                        zoom: 4,
-                        center: {lat: 45.7580539, lng: 4.7650805}
-                    });
-                    let infoWindow = new google.maps.InfoWindow({
-                        content: '...'
-                    });
-
-                    reponse.spots.forEach(spot => {
-                        let color = "purple";  {# Si c'est violet, c'est qu'il y a une erreur... #}
-                        if (spot.visibilite === 3 || spot.perso) {
-                            color = "blue";
-                        } else if (spot.visibilite === 2) {
-                            color = "green";
-                        } else if (spot.visibilite === 1) {
-                            color = "red";
-                        }
-                        const url = "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
-                        let marker = new google.maps.Marker({
-                            position: {
-                                lat: parseFloat(spot.position.lat),
-                                lng: parseFloat(spot.position.lng)
-                            },
-                            map: map,
-                            title: spot.nom,
-                            animation: google.maps.Animation.DROP,
-                            icon: {
-                                url: url
-                            }
+                    if (reponse.spots.length > 0) {
+                        let bounds = new google.maps.LatLngBounds();
+                        let map = new google.maps.Map(document.getElementById('map'));
+                        let infoWindow = new google.maps.InfoWindow({
+                            content: '...'
                         });
 
-                        marker.addListener('click', function () {
-                            infoWindow.setContent(spot.content);
-                            infoWindow.open(map, marker);
-                        })
-                    })
+                        reponse.spots.forEach(spot => {
+                            let color = "purple";
+                            {# Si c'est violet, c'est qu'il y a une erreur... #}
+                            if (spot.visibilite === 3 || spot.perso) {
+                                color = "blue";
+                            } else if (spot.visibilite === 2) {
+                                color = "green";
+                            } else if (spot.visibilite === 1) {
+                                color = "red";
+                            }
+                            const url = "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
+                            let marker = new google.maps.Marker({
+                                position: {
+                                    lat: parseFloat(spot.position.lat),
+                                    lng: parseFloat(spot.position.lng)
+                                },
+                                map: map,
+                                title: spot.nom,
+                                animation: google.maps.Animation.DROP,
+                                icon: {
+                                    url: url
+                                }
+                            });
+
+                            // Extend the bounds to include each marker's position
+                            bounds.extend(marker.position);
+
+                            marker.addListener('click', function () {
+                                infoWindow.setContent(spot.content);
+                                infoWindow.open(map, marker);
+                            })
+                        });
+
+                        // Now fit the map to the newly inclusive bounds
+                        map.fitBounds(bounds);
+                    } else {
+                        alert('Aucun résultat pour cette recherche...')
+                    }
                 })
                 .fail((err) => {
                     console.log(err)

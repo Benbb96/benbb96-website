@@ -15,7 +15,7 @@
                 <h1>{{ spot }}</h1>
                 <h3>
                     Ajouté par <a href="{{ spot.explorateur.get_absolute_url }}">{{ spot.explorateur }}</a>,
-                    le {{ spot.date_creation|date:"d F Y à H:i" }}
+                    le {{ spot.date_creation|date:"l j F Y à H:i" }}
                 </h3>
                 <p>
                     Visibilité :
@@ -24,6 +24,25 @@
                 <p>
                     Description : {{ spot.description|linebreaksbr }}
                 </p>
+                {% if spot.moyenne %}
+                    <p>
+                        Note moyenne : <b>{{ spot.moyenne|floatformat }}/10</b> (sur {{ spot.note_count }} avis)
+                    </p>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                    {% if groupes and spot.visibilite == 2 %}
+                        <div>
+                            Les groupes auxquels le spot est partagé :
+                            <ul class="list-inline">
+                                {% for groupe in groupes %}
+                                    <li>
+                                        <a href="{{ groupe.get_absolute_url }}">{{ groupe }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endif %}
                 {% with photos=spot.photos.all %}
                     {% if photos %}
                         <div id="photos-{{ spot.id }}" class="carousel slide" data-ride="carousel" style="width: 100%; margin: auto">

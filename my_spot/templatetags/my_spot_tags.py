@@ -5,7 +5,6 @@ register = template.Library()
 
 @register.filter
 def visibilite_icon(value):
-    print(value)
     if value == 3:
         return 'eye-slash'
     if value == 2:
@@ -16,7 +15,7 @@ def visibilite_icon(value):
 @register.filter
 def get_contrast_color(hex_color):
     """
-    Util function to know if it's best to use a white or a black color on the foreground given in paramter
+    Util function to know if it's best to use a white or a black color on the foreground given in parameter
 
     :param str hex_color: the foreground color to analyse
     :return: A black or a white color
@@ -36,7 +35,6 @@ def get_contrast_color(hex_color):
 
     l2 = 0.2126 * pow(r2_black_color / 255, 2.2) + 0.7152 * pow(g2_black_color / 255, 2.2) + 0.0722 * pow(b2_black_color / 255, 2.2)
 
-    contrast_ratio = 0
     if l1 > l2:
         contrast_ratio = int((l1 + 0.05) / (l2 + 0.05))
     else:

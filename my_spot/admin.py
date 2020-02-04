@@ -4,7 +4,7 @@ from django.utils.html import format_html
 
 from base.admin import PhotoAdminAbtract
 from my_spot.forms import SpotPhotoForm
-from my_spot.models import Spot, SpotTag, SpotPhoto, SpotNote
+from my_spot.models import Spot, SpotTag, SpotPhoto, SpotNote, SpotGroup, SpotGroupProfil
 
 
 @admin.register(SpotTag)
@@ -22,7 +22,26 @@ class SpotTagAdmin(admin.ModelAdmin):
     couleur.admin_order_field = 'color'
 
 
-class PhotoInLine(admin.StackedInline):
+class SpotGroupProfilInLine(admin.TabularInline):
+    model = SpotGroupProfil
+
+
+@admin.register(SpotGroup)
+class SpotGroupAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'slug', 'description', 'count', 'date_creation')
+    search_fields = ('nom', 'description', 'profils__user__username')
+    ordering = ('nom',)
+    date_hierarchy = 'date_creation'
+    prepopulated_fields = {'slug': ('nom',), }
+
+    inlines = (SpotGroupProfilInLine,)
+
+    def count(self, obj):
+        return obj.profils.count()
+    count.short_description = 'Nombre de profil'
+
+
+class SpotPhotoInLine(admin.StackedInline):
     model = SpotPhoto
     fields = ('photo', 'photographe', 'description')
     extra = 1
@@ -44,8 +63,9 @@ class SpotAdmin(admin.ModelAdmin):
     ordering = ('-date_modification',)
     date_hierarchy = 'date_creation'
     prepopulated_fields = {'slug': ('nom',), }
+    autocomplete_fields = ('groupes', 'tags')
 
-    inlines = (PhotoInLine,)
+    inlines = (SpotPhotoInLine,)
 
     def position_map(self, instance):
         if instance.position is not None:
