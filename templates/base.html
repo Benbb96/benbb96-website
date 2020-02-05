@@ -1,3 +1,5 @@
+{% load bootstrap3 static fontawesome %}
+
 <!DOCTYPE html>
 {# TODO use {% get_current_language as LANGUAGE_CODE %} ? #}
 <html lang="fr">
@@ -20,16 +22,15 @@
     <!-- Favicon -->
     {% include 'favicon.html' %}
 
-    {# Load the tag library #}
-    {% load bootstrap3 static fontawesome %}
+    {# Load CSS and JavaScript #}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    {% bootstrap_javascript jquery='full' %}
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'avis/css/avis-style.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap-social.css' %}">
     {% fontawesome_stylesheet %}
 
-    {# Load CSS and JavaScript #}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    {% bootstrap_javascript jquery='full' %}
     {% block stylesheet %}{% endblock %}
 </head>
 <body>
