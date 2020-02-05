@@ -114,6 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
@@ -159,8 +160,6 @@ GOOGLE_ANALYTICS_KEY = ''
 GEOPOSITION_GOOGLE_MAPS_API_KEY = get_secret_setting('GEOPOSITION_GOOGLE_MAPS_API_KEY'),
 
 FIREBASE_CONFIG = get_secret_setting('FIREBASE_CONFIG')
-
-LOGIN_URL = '/admin/login/'
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
