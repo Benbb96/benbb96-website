@@ -21,7 +21,9 @@
                                 <a class="list-group-item" href="{{ spotgroupprofil.profil.get_absolute_url }}">
                                     {{ spotgroupprofil.profil }}
                                     <small>depuis le {{ spotgroupprofil.date_ajout }}</small>
-                                    <span class="badge">{{ spotgroupprofil.nb_spot_partages }}</span>
+                                    <span class="badge" title="Nombre de spot partagé avec ce groupe">
+                                        {{ spotgroupprofil.nb_spot_partages }}
+                                    </span>
                                 </a>
                             {% endfor %}
                         </div>
