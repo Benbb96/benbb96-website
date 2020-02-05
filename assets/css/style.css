@@ -45,6 +45,16 @@ footer p a i:hover {
     flex-basis: 13em;
 }
 
+.spot-tag {
+    margin-right: 5px;
+    padding: 4px 7px
+}
+
+.spot-tag:hover {
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
 
 /* Rallye des Colocs */
 #map {

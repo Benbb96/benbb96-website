@@ -89,6 +89,7 @@ class SpotAdmin(admin.ModelAdmin):
 class SpotPhotoAdmin(PhotoAdminAbtract):
     list_display = ('thumbnail', 'spot', 'photographe', 'description', 'date_ajout')
     list_select_related = ('spot', 'photographe')
+    autocomplete_fields = ('spot', 'photographe')
     search_fields = ('spot__nom', 'description')
     date_hierarchy = 'date_ajout'
     ordering = ('-date_ajout',)
@@ -104,6 +105,7 @@ class SpotNoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'spot', 'auteur', 'note', 'justification', 'date_ajout')
     list_filter = ('note',)
     list_select_related = ('spot', 'auteur')
+    autocomplete_fields = ('spot', 'auteur')
     date_hierarchy = 'date_ajout'
     search_fields = ('spot__nom', 'justification')
 
