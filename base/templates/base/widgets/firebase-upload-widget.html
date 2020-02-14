@@ -1,9 +1,9 @@
-<div id="{{ widget.value }}">
-    <input type="text" name="{{ widget.name }}" id="url"{% if widget.value != None %}
+<div>
+    <input type="text" name="{{ widget.name }}" {% if widget.value != None %}
        value="{{ widget.value|stringformat:'s' }}"{% endif %}>
     <input type="file" name="files[]">
-    <button type="button" onclick="uploadImage('{{ widget.value }}', '{{ widget.folder }}')">Upload</button>
+    <button type="button" class="uploadFirebaseImage" data-folder="{{ widget.folder }}">Upload</button>
     <progress value="0" max="100" style="display:none;"></progress>
     <br>
-    <img class="display" data-url="{{ widget.value|stringformat:'s' }}" width="340px"/>
+    <img class="display" data-url="{{ widget.value|stringformat:'s' }}" width="340px" alt="Image chargée par Firebase"/>
 </div>
