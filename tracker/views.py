@@ -165,6 +165,28 @@ def tracker_data(request):
     })
 
 
+def format_timedelta(td):
+    """
+    Formate correctement un écart de temps avec les jours, heures, minutes et secondes
+
+    :param timedelta td: le timedelta à formater
+    :return: la chaîne de caractère formatée
+    :rtype: str
+    """
+    seconds = td.total_seconds()
+    days, seconds = divmod(seconds, 86400)
+    hours, seconds = divmod(seconds, 3600)
+    minutes, seconds = divmod(seconds, 60)
+    if days > 0:
+        return '%d jour%s %dh %dm %ds' % (days, ('s' if days > 1 else ''), hours, minutes, seconds)
+    elif hours > 0:
+        return '%dh %dm %ds' % (hours, minutes, seconds)
+    elif minutes > 0:
+        return '%dm %ds' % (minutes, seconds)
+    else:
+        return '%ds' % seconds
+
+
 def get_other_stats(request):
     if not request.is_ajax():
         return JsonResponse({'error': 'Unauthorized access'}, status=401)
@@ -220,12 +242,12 @@ def get_other_stats(request):
         delta_stats = {
             'deltaMin': format_html(
                 '<b>{}</b> <br><small>Entre le {} et le {}</small>',
-                minimum, min_1.strftime(format), min_2.strftime(format)
+                format_timedelta(minimum), min_1.strftime(format), min_2.strftime(format)
             ),
-            'deltaAvg': str(sum(deltas, timedelta(0)) / len(deltas)),
+            'deltaAvg': format_timedelta(sum(deltas, timedelta(0)) / len(deltas)),
             'deltaMax': format_html(
                 '<b>{}</b> <br><small>Entre le {} et le {}</small>',
-                maximum, max_1.strftime(format), max_2.strftime(format)
+                format_timedelta(maximum), max_1.strftime(format), max_2.strftime(format)
             )
         }
 
