@@ -7,6 +7,7 @@ app_name = 'tracker'
 
 urlpatterns = [
     path('', views.tracker_list, name='liste-tracker'),
+    path('<int:pk>/quick-add', views.tracker_quick_add, name='tracker_quick_add'),
     path('<int:pk>', views.tracker_detail, name='detail-tracker'),
     path('<int:pk>/update', views.TrackerUpdateView.as_view(), name='update-tracker'),
     path('<int:pk>/delete', views.TrackerDeleteView.as_view(), name='delete-tracker'),

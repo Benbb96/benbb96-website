@@ -1,3 +1,43 @@
 .tracker {
     text-align: center;
+    margin: 10px 3px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: all 0.5s;
+}
+
+.tracker:hover {
+    transform: scale(1.08);
+    transition: all 0.2s;
+}
+
+.tracker a {
+    color: inherit;
+}
+
+.addTrackBtn {
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.addTrackBtn a {
+    position: absolute;
+    right: -103px;
+    top: -4px;
+    font-size: 40px;
+    background-color: white;
+    padding: 0 10px;
+    color: black;
+    border-radius: 35px;
+}
+
+.addTrackBtn a:hover {
+    color: rgba(0,0,0,0.7);
+}
+
+.tracker-title {
+    padding: 6px 0;
+    border: solid 1px black;
+    border-radius: 4px;
 }
