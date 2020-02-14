@@ -1,10 +1,11 @@
 {% extends 'tracker/base_tracker.html' %}
 
-{% load fontawesome admin_urls static i18n %}
+{% load custom_tags fontawesome admin_urls static i18n %}
 
 {% block tracker_title %}Tracker {{ tracker.nom }}{% endblock %}
 
 {% block stylesheet %}
+    {{ block.super }}
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 {% endblock %}
 
@@ -31,7 +32,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2 col-xs-12">
             <div class="text-center">
-                <h1 style="background-color: {{ tracker.color }}; padding: 4px 0; border: solid 1px black; border-radius: 4px;">
+                <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|get_contrast_color }}">
                     {{ tracker.nom }} {% fontawesome_icon tracker.icone %}
                     <a class="btn btn-info" href="{% url 'tracker:update-tracker' tracker.id %}">
                         <i class="fa fa-edit"></i>

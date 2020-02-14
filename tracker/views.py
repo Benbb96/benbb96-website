@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -45,6 +46,14 @@ class TrackerUpdateView(UpdateView):
 class TrackerDeleteView(DeleteView):
     model = Tracker
     success_url = reverse_lazy('tracker:liste-tracker')
+
+
+@login_required
+def tracker_quick_add(request, pk):
+    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=pk)
+    Track.objects.create(tracker=tracker)
+    messages.success(request, 'Un track a bien été ajouté sur le tracker %s' % tracker)
+    return redirect('tracker:liste-tracker')
 
 
 @login_required
