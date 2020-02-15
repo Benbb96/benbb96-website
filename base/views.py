@@ -32,9 +32,3 @@ class ProjetListView(ListView):
         elif not self.request.user.is_staff:
             qs = qs.exclude(staff_only=True)
         return qs
-
-
-@csrf_exempt
-def test_notification(request):
-    print(request.POST)
-    return HttpResponse('OK')
