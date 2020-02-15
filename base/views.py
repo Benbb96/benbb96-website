@@ -31,7 +31,7 @@ def change_password(request):
         update_session_auth_hash(request, user)
         messages.success(request, 'Votre mot de passe a bien été mis à jour !')
         return redirect('base:change_password')
-    else:
+    elif request.POST:
         messages.error(request, 'Merci de corriger les erreurs ci-dessous.')
     return render(request, 'base/change_password.html', {
         'form': form
