@@ -13,4 +13,5 @@ urlpatterns = [
     path('rallye-des-colocs', TemplateView.as_view(template_name='base/rallye.html'), name='rallye'),
     path('gallery', TemplateView.as_view(template_name='base/gallery.html'), name='gallery'),
     path('profil/<str:slug>', views.UserDetailView.as_view(), name='profil'),
+    path('change_password/', views.change_password, name='change_password'),
 ]

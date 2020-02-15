@@ -1,6 +1,9 @@
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect, render
 from django.views.generic import ListView, DetailView
 
 from base.models import Projet
@@ -18,6 +21,21 @@ class UserDetailView(DetailView):
             'profil__joueur__partie_set__partiejoueur_set__joueur', 'profil__joueur__partie_set__jeu',
             'profil__musiques_crees__artiste', 'profil__musiques_crees__featuring', 'profil__musiques_crees__remixed_by'
         )
+
+
+@login_required
+def change_password(request):
+    form = PasswordChangeForm(request.user, request.POST or None)
+    if form.is_valid():
+        user = form.save()
+        update_session_auth_hash(request, user)
+        messages.success(request, 'Votre mot de passe a bien été mis à jour !')
+        return redirect('base:change_password')
+    else:
+        messages.error(request, 'Merci de corriger les erreurs ci-dessous.')
+    return render(request, 'base/change_password.html', {
+        'form': form
+    })
 
 
 class ProjetListView(ListView):
