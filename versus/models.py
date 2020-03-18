@@ -41,7 +41,19 @@ class Jeu(models.Model):
         help_text="Une image/photo pour identifier le jeu",
         null=True, blank=True, upload_to="jeux/"
     )
-    classement = models.BooleanField(default=False, help_text="Cocher cette case pour activer le mode Classement.")
+    SCORE = 1
+    SCORE_INVERSE = 2
+    CLASSEMENT = 3
+    TYPES = (
+        (SCORE, 'Score'),
+        (SCORE_INVERSE, 'Score inverse'),
+        (CLASSEMENT, 'Classement'),
+    )
+    type = models.PositiveSmallIntegerField(
+        choices=TYPES,
+        default=SCORE,
+        help_text="Sélectionner le type de jeu qui déterminera la façon de choisir le gagnant."
+    )
 
     class Meta:
         verbose_name_plural = 'jeux'
@@ -66,14 +78,18 @@ class Partie(models.Model):
 
     def get_winners(self):
         """ Retourne le ou les gagnants de cette partie """
-        if self.jeu.classement:
+        if self.jeu.type == self.jeu.CLASSEMENT:
             # On veut la ou les personnes arrivées en première place
             return Joueur.objects.filter(partiejoueur__partie=self, partiejoueur__score_classement=1)
         else:
-            # On cherche d'abord le score maximum
-            maximum = max(partiejoueur.score_classement for partiejoueur in self.partiejoueur_set.all())
+            if self.jeu.type == self.jeu.SCORE:
+                # On cherche le score maximum
+                valeur = max(partiejoueur.score_classement for partiejoueur in self.partiejoueur_set.all())
+            else:
+                # On cherche le score minimum
+                valeur = min(partiejoueur.score_classement for partiejoueur in self.partiejoueur_set.all())
             # Puis on retourne tous les joueurs ayant ce score
-            return Joueur.objects.filter(partiejoueur__partie=self, partiejoueur__score_classement=maximum)
+            return Joueur.objects.filter(partiejoueur__partie=self, partiejoueur__score_classement=valeur)
 
 
 class PartieJoueur(models.Model):
