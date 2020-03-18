@@ -3,37 +3,35 @@
 {% block versus_title %}Joueur {{ joueur.nom }}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-4 col-xs-12">
-            <div class="panel panel-success">
-                <div class="panel-heading text-center">
-                    <h1>{{ joueur.nom }}</h1>
-                    {% if joueur.profil %}
-                        <h4>Profil : <a href="{{ joueur.profil.get_absolute_url }}">{{ joueur.profil }}</a></h4>
-                    {% endif %}
-                </div>
-                <div class="panel-body">
-                    <p>Créé le {{ joueur.date_creation|date }} à {{ joueur.date_creation|time }}</p>
-                    {% if joueur.partiejoueur_set.exists %}
-                        <h4>Statistiques :</h4>
-                        <div class="well">
-                            <p>Nombre de parties jouées : <b>{{ joueur.partiejoueur_set.count }}</b></p>
-                            <p>Nombre de victoire : <b>{{ joueur.nb_victoire }}</b></p>
-                            <p>Ratio : <b>{{ joueur.ratio }}%</b></p>
-                        </div>
-                    {% endif %}
-                </div>
+    <div class="col-sm-4 col-xs-12">
+        <div class="panel panel-success">
+            <div class="panel-heading text-center">
+                <h1>{{ joueur.nom }}</h1>
+                {% if joueur.profil %}
+                    <h4>Profil : <a href="{{ joueur.profil.get_absolute_url }}">{{ joueur.profil }}</a></h4>
+                {% endif %}
+            </div>
+            <div class="panel-body">
+                <p>Créé le {{ joueur.date_creation|date }} à {{ joueur.date_creation|time }}</p>
+                {% if joueur.partiejoueur_set.exists %}
+                    <h4>Statistiques :</h4>
+                    <div class="well">
+                        <p>Nombre de parties jouées : <b>{{ joueur.partiejoueur_set.count }}</b></p>
+                        <p>Nombre de victoire : <b>{{ joueur.nb_victoire }}</b></p>
+                        <p>Ratio : <b>{{ joueur.ratio }}%</b></p>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <div class="col-sm-8 col-xs-12">
-            <h2>Dernières parties jouées</h2>
-            {% for partie in joueur.partie_set.all %}
-                <h3>
-                    <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a> -
-                    <small>{{ partie.date|date:'l j F Y, H:i' }}</small>
-                </h3>
-                {% include 'versus/partie_table.html' %}
-            {% endfor %}
-        </div>
+    </div>
+    <div class="col-sm-8 col-xs-12">
+        <h2>Dernières parties jouées</h2>
+        {% for partie in joueur.partie_set.all %}
+            <h3>
+                <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a> -
+                <small>{{ partie.date|date:'l j F Y, H:i' }}</small>
+            </h3>
+            {% include 'versus/partie_table.html' %}
+        {% endfor %}
     </div>
 {% endblock %}

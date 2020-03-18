@@ -41,10 +41,6 @@ footer p a i:hover {
     align-items: center;
 }
 
-.flex-item {
-    flex-basis: 13em;
-}
-
 .spot-tag {
     margin-right: 5px;
     padding: 4px 7px
