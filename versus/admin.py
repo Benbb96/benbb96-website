@@ -15,9 +15,9 @@ class JoueurAdmin(admin.ModelAdmin):
 
 @admin.register(Jeu)
 class JeuAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'createur', 'date_creation', 'classement')
-    list_filter = ('classement',)
-    search_fields = ('nom', 'createur__user__username',)
+    list_display = ('nom', 'createur', 'date_creation', 'type')
+    list_filter = ('type',)
+    search_fields = ('nom', 'createur__user__username')
     prepopulated_fields = {'slug': ('nom',), }
     ordering = ('nom',)
     date_hierarchy = 'date_creation'
