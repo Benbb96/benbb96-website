@@ -64,6 +64,29 @@ class Jeu(models.Model):
     def get_absolute_url(self):
         return reverse('versus:detail-jeu', kwargs={'slug': self.slug})
 
+    def top_players(self):
+        player_scores = {}
+        for partie in self.parties.all():
+            for joueur in partie.get_winners():
+                if joueur not in player_scores.keys():
+                    player_scores[joueur] = 1
+                else:
+                    player_scores[joueur] += 1
+        # Tri des joueurspar nombre de parties gagnées
+        player_scores = {k: v for k, v in sorted(player_scores.items(), key=lambda item: item[1], reverse=True)}
+
+        top_players = []
+        i = 1
+        last_nb = None
+        for joueur, nb in player_scores.items():
+            # Incrémente la position si le nombre de victoire est plus bas
+            if last_nb and last_nb > nb:
+                i += 1
+            top_players.append((i, joueur, nb))
+            last_nb = nb
+
+        return top_players
+
 
 class Partie(models.Model):
     jeu = models.ForeignKey(Jeu, on_delete=models.CASCADE, related_name='parties')

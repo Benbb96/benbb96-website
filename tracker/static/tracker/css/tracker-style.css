@@ -1,4 +1,5 @@
 .tracker {
+    flex-basis: 12em;
     text-align: center;
     margin: 10px 3px;
     padding: 5px 10px;

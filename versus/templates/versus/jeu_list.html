@@ -3,17 +3,19 @@
 {% block versus_title %}Les jeux{% endblock %}
 
 {% block content %}
-    <div class="flex-container row">
+    <div class="flex-container">
         {% for jeu in object_list %}
-            <div class="col-sm-4 col-xs-12">
+            <div style="flex-basis: 24em">
                 <h2>
                     <a href="{{ jeu.get_absolute_url }}">
                         {{ jeu.nom }}
                     </a>
                 </h2>
-                <a href="{{ jeu.get_absolute_url }}">
-                    <img src="{% if jeu.image %}{{ jeu.image.url }}{% endif %}" class="img-responsive" style="max-height: 250px; margin: auto" alt="Jeu {{ jeu.nom }}">
-                </a>
+                {% if jeu.image %}
+                    <a href="{{ jeu.get_absolute_url }}">
+                        <img src="{{ jeu.image.url }}" class="img-responsive" style="max-height: 250px; margin: auto" alt="Jeu {{ jeu.nom }}">
+                    </a>
+                {% endif %}
             </div>
         {% empty %}
             <div>Pas de jeu enregistré.</div>
