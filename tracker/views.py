@@ -14,10 +14,16 @@ from django.views.generic import UpdateView, DeleteView
 from django_pandas.io import read_frame
 import pandas as pd
 from rest_framework import generics
+from rest_framework.viewsets import ModelViewSet
 
 from tracker.forms import TrackForm, TrackerForm
 from tracker.models import Tracker, Track
-from tracker.serializers import TrackSerializer
+from tracker.serializers import TrackerSerializer, TrackSerializer
+
+
+class TodoView(ModelViewSet):
+    queryset = Tracker.objects.all()
+    serializer_class = TrackerSerializer
 
 
 @login_required
