@@ -12,6 +12,12 @@ INSTALLED_APPS += [
     'debug_toolbar'
 ]
 
+ALLOWED_HOSTS = [
+    '192.168.1.85',  # Needed for Android emulator,
+    'localhost',
+    '127.0.0.1'
+]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

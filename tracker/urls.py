@@ -6,7 +6,7 @@ from . import views
 app_name = 'tracker'
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register('tracker', views.TodoView)
+router.register('tracker', views.TrackerView)
 
 urlpatterns = [
     path('', views.tracker_list, name='liste-tracker'),
