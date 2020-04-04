@@ -8,6 +8,7 @@ from django.urls import path, URLResolver, URLPattern
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 from django.utils.translation import gettext_lazy as _
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from base.sitemap import sitemaps
 
@@ -15,6 +16,8 @@ from base.sitemap import sitemaps
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('api-auth/', include('rest_framework.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('select2/', include('django_select2.urls')),
     path('sitemap.xml', sitemap, sitemaps, name='django.contrib.sitemaps.views.sitemap'),
     path(

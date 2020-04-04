@@ -21,7 +21,7 @@ from tracker.models import Tracker, Track
 from tracker.serializers import TrackerSerializer, TrackSerializer
 
 
-class TodoView(ModelViewSet):
+class TrackerView(ModelViewSet):
     queryset = Tracker.objects.all()
     serializer_class = TrackerSerializer
 

@@ -42,6 +42,7 @@ django-sass-processor==0.7.3
 django-select2==7.2.0
 django-simple-history==2.8.0
 djangorestframework==3.10.3
+djangorestframework-simplejwt==4.4.0
 docutils==0.15.2
 entrypoints==0.3
 factory-boy==2.12.0
