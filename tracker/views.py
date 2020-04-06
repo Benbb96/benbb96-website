@@ -18,12 +18,26 @@ from rest_framework.viewsets import ModelViewSet
 
 from tracker.forms import TrackForm, TrackerForm
 from tracker.models import Tracker, Track
-from tracker.serializers import TrackerSerializer, TrackSerializer
+from tracker.serializers import TrackerSerializer, CustomTrackSerializer, TrackSerializer
 
 
 class TrackerView(ModelViewSet):
     queryset = Tracker.objects.all()
     serializer_class = TrackerSerializer
+
+    def get_queryset(self):
+        return self.request.user.profil.trackers.all()
+
+    def perform_create(self, serializer):
+        serializer.save(createur=self.request.user)
+
+
+class TrackView(ModelViewSet):
+    queryset = Track.objects.all()
+    serializer_class = TrackSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().filter(tracker__createur__user=self.request.user)
 
 
 @login_required
@@ -86,12 +100,12 @@ def tracker_detail(request, pk):
 
 class TrackUpdateView(generics.UpdateAPIView):
     queryset = Track.objects.all()
-    serializer_class = TrackSerializer
+    serializer_class = CustomTrackSerializer
 
 
 class TrackDeleteView(generics.DestroyAPIView):
     queryset = Track.objects.all()
-    serializer_class = TrackSerializer
+    serializer_class = CustomTrackSerializer
 
 
 def get_tracks_from_request(request):

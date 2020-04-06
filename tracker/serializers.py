@@ -12,4 +12,10 @@ class TrackerSerializer(serializers.ModelSerializer):
 class TrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track
+        fields = ('tracker', 'datetime', 'commentaire')
+
+
+class CustomTrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Track
         exclude = ('tracker',)
