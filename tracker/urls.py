@@ -7,6 +7,7 @@ app_name = 'tracker'
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('tracker', views.TrackerView)
+router.register('track', views.TrackView)
 
 urlpatterns = [
     path('', views.tracker_list, name='liste-tracker'),
