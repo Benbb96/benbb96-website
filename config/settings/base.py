@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import timedelta
 
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'my_spot.apps.MySpotConfig',
     'bootstrap3',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'geoposition',
     'fontawesome',
     'django_filters',
@@ -163,8 +165,6 @@ GEOPOSITION_GOOGLE_MAPS_API_KEY = get_secret_setting('GEOPOSITION_GOOGLE_MAPS_AP
 FIREBASE_CONFIG = get_secret_setting('FIREBASE_CONFIG')
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -173,6 +173,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
+}
+
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Allow to stay connected one week on the mobile app
+    'ROTATE_REFRESH_TOKENS': True
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
