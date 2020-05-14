@@ -17,7 +17,7 @@
                 <li {% if avis %}class="active"{% endif %}><a href="{% url 'avis:liste-avis' %}">{% trans "Reviews" %}</a></li>
                 <li {% if spot %}class="active"{% endif %}><a href="{% url 'my_spot:map' %}">{% trans "MySpot" %}</a></li>
                 {% if request.user.is_authenticated %}
-                <li {% if tracker %}class="active"{% endif %}><a href="{% url 'tracker:liste-tracker' %}">{% trans "Tracker" %}</a></li>
+                <li {% if tracker %}class="active"{% endif %}><a href="{% url 'tracker:liste-tracker' %}">{% trans "Trackers" %}</a></li>
                 {% endif %}
 {#                <li {% if gallery %}class="active"{% endif %}><a href="{% url 'gallery' %}">Gallerie</a></li>#}
 {#                <li><a href="#">Contact</a></li>#}
