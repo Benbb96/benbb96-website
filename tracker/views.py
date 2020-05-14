@@ -247,12 +247,12 @@ def get_other_stats(request):
             # Keep min and max with their respective datetime
             if not minimum or delta < minimum:
                 minimum = delta
-                min_1 = track.datetime
-                min_2 = prev.datetime
+                min_1 = timezone.localtime(track.datetime)
+                min_2 = timezone.localtime(prev.datetime)
             if not maximum or delta > maximum:
                 maximum = delta
-                max_1 = track.datetime
-                max_2 = prev.datetime
+                max_1 = timezone.localtime(track.datetime)
+                max_2 = timezone.localtime(prev.datetime)
 
         prev = track
 
