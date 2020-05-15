@@ -6,6 +6,7 @@ class FirebaseUploadWidget(forms.TextInput):
 
     class Media:
         js = (
+            'admin/js/jquery.init.js',  # In order to use django.jquery
             'https://www.gstatic.com/firebasejs/7.8.1/firebase-app.js',
             'https://www.gstatic.com/firebasejs/7.8.1/firebase-storage.js',
             'base/js/firebase-upload.js'

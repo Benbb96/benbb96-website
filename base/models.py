@@ -108,7 +108,7 @@ class LienReseauSocial(models.Model):
 
 
 class PhotoAbstract(models.Model):
-    photo = models.TextField('url photo')
+    photo = models.TextField('url photo', default='placeholder.jpg')
 
     class Meta:
         abstract = True
