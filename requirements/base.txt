@@ -19,7 +19,7 @@ coreschema==0.0.4
 coverage==4.5.4
 decorator==4.4.0
 defusedxml==0.6.0
-Django==2.2.9
+Django==2.2.12
 django-admin-sortable==2.2.3
 django-allauth==0.40.0
 django-appconf==1.0.3
@@ -91,7 +91,7 @@ pandas==0.24.2
 parso==0.5.1
 pexpect==4.7.0
 pickleshare==0.7.5
-Pillow==6.2.0
+Pillow==7.1.2
 pluggy==0.13.0
 prompt-toolkit==2.0.9
 protobuf==3.8.0
