@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'versus.apps.VersusConfig',
     'music.apps.MusicConfig',
     'my_spot.apps.MySpotConfig',
+    'super_moite_moite.apps.SuperMoiteMoiteConfig',
     'bootstrap3',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
