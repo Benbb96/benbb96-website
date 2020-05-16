@@ -46,7 +46,7 @@ def tracker_list(request):
 
     form = TrackerForm(request.POST or None)
     if form.is_valid():
-        if request.user.profil.trackers.filter(nom=form.cleaned_data['nom']).exists():
+        if trackers.filter(nom=form.cleaned_data['nom']).exists():
             form.add_error('nom', 'Vous avez déjà créé un tracker du même nom.')
         else:
             tracker = form.save(commit=False)
@@ -62,10 +62,16 @@ class TrackerUpdateView(UpdateView):
     model = Tracker
     form_class = TrackerForm
 
+    def get_queryset(self):
+        return self.request.user.profil.trackers.all()
+
 
 class TrackerDeleteView(DeleteView):
     model = Tracker
     success_url = reverse_lazy('tracker:liste-tracker')
+
+    def get_queryset(self):
+        return self.request.user.profil.trackers.all()
 
 
 @login_required
