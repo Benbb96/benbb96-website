@@ -12,7 +12,7 @@ from base.models import Profil, PhotoAbstract
 
 class SpotTag(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     icone = IconField('icône', blank=True)
     color = ColorField('couleur', default='#FFFFFF')
@@ -55,7 +55,7 @@ class SpotManager(models.Manager):
 
 class SpotGroup(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     profils = models.ManyToManyField(Profil, through='SpotGroupProfil', related_name='spot_groups', blank=True)
@@ -81,7 +81,7 @@ class SpotGroupProfil(models.Model):
 
 class Spot(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
     position = GeopositionField()
     explorateur = models.ForeignKey(

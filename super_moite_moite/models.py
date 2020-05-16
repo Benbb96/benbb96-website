@@ -2,13 +2,14 @@ from colorfield.fields import ColorField
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
 
 from base.models import Profil, PhotoAbstract
 
 
 class Logement(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     habitants = models.ManyToManyField(Profil, related_name='logements')
 
@@ -17,6 +18,22 @@ class Logement(models.Model):
 
     def __str__(self):
         return self.nom
+
+    def save(self, *args, **kwargs):
+        # Ajout du slug s'il n'a pas été fourni
+        if not self.slug:
+            slug = slugify(self.nom)
+            # Vérification si ce slug existe déjà
+            if Logement.objects.filter(slug=slug).exists():
+                counter = 2
+                slug_proposition = f'{slug}-{counter}'
+                while Logement.objects.filter(slug=slug_proposition).exists():
+                    counter += 1
+                    slug_proposition = f'{slug}-{counter}'
+                slug = slug_proposition
+            # Sauvegarde su slug unique
+            self.slug = slug
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('super-moite-moite:detail-logement', kwargs={'slug': self.slug})

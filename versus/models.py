@@ -7,7 +7,7 @@ from base.models import Profil
 
 class Joueur(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
     profil = models.OneToOneField(Profil, on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
@@ -34,7 +34,7 @@ class Joueur(models.Model):
 
 class Jeu(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
     createur = models.ForeignKey(Profil, on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
     image = models.ImageField(

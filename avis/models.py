@@ -25,7 +25,7 @@ def apercu(text):
 
 class CategorieProduit(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
 
     class Meta:
         verbose_name = 'catégorie de produit'
