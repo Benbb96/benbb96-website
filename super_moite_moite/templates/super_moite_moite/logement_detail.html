@@ -6,5 +6,35 @@
 {% block jumbotron_description %}{% endblock %}
 
 {% block content %}
-     {# TODO with Vue.js #}
+    <div id="app">
+        [[message]]
+
+        <ul>
+            <li v-for="categorie in categories">
+                [[ categorie ]]
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ categories|json_script:'categories' }}
+
+    {% if debug %}
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    {% else %}
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    {% endif %}
+
+    <script>
+        const categories = JSON.parse($('#categories').text())
+        let app = new Vue({
+          delimiters: ['[[', ']]'],
+          el: '#app',
+          data: {
+              message: 'Hello Vue!',
+              categories: categories,
+          }
+        });
+  </script>
 {% endblock %}
