@@ -38,8 +38,16 @@ urlpatterns += i18n_patterns(
     path(_('music/'), include('music.urls')),
     path(_('my-spot/'), include('my_spot.urls')),
     path(_('admin/'), admin.site.urls),
+    # Auth Views
     path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout')
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path(
+        'reset/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(),
+        name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_complete'),
 )
 
 VIEW_NAMES = []  # Maintain a global list
