@@ -8,6 +8,7 @@ from super_moite_moite.models import Logement, Categorie, Tache, PointTache, Tra
 
 class CategorieInlineAdmin(admin.TabularInline):
     model = Categorie
+    show_change_link = True
 
 
 @admin.register(Logement)
