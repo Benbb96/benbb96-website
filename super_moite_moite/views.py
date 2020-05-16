@@ -30,3 +30,8 @@ class LogementDetailView(DetailView):
 
     def get_queryset(self):
         return self.request.user.profil.logements.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = list(self.object.categorie_set.values_list('nom', flat=True))
+        return context
