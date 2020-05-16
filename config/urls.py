@@ -37,6 +37,7 @@ urlpatterns += i18n_patterns(
     path(_('versus/'), include('versus.urls')),
     path(_('music/'), include('music.urls')),
     path(_('my-spot/'), include('my_spot.urls')),
+    path(_('super-moite-moite/'), include('super_moite_moite.urls')),
     path(_('admin/'), admin.site.urls),
     # Auth Views
     path('login/', auth_views.LoginView.as_view(), name='login'),

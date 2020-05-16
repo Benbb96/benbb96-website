@@ -1,5 +1,6 @@
 from colorfield.fields import ColorField
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 from base.models import Profil, PhotoAbstract
@@ -16,6 +17,9 @@ class Logement(models.Model):
 
     def __str__(self):
         return self.nom
+
+    def get_absolute_url(self):
+        return reverse('super-moite-moite:detail-logement', kwargs={'slug': self.slug})
 
     def points_par_profil(self, profil):
         if profil not in self.habitants.all():

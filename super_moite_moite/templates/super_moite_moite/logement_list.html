@@ -1,0 +1,16 @@
+{% extends 'super_moite_moite/base_super_moite_moite.html' %}
+
+{% block super_moite_moite_title %}Logements{% endblock %}
+
+{% block content %}
+     <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <h2>Mes logements</h2>
+            <div class="list-group">
+                {% for logement in logements %}
+                    <a class="list-group-item" href="{{ logement.get_absolute_url }}">{{ logement }}</a>
+                {% endfor %}
+            </div>
+        </div>
+     </div>
+{% endblock %}
