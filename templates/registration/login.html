@@ -4,19 +4,19 @@
 
 {% block title %}Se connecter{% endblock %}
 {% block jumbotron_title %}Connexion{% endblock %}
-{% block jumbotron_description %}{% endblock %}
+{% block jumbotron_description %}Utilise le formulaire ci-dessous pour te connecter sur mon site.{% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-md-6 col-md-offset-3 col-xs-12">
             {% if next %}
                 {% if user.is_authenticated %}
-                <p>
-                    Désolé mais ton compte n'a pas accès à cette page.<br>
-                    Contacte-moi pour en obtenir l'accès !
-                </p>
+                    <p>
+                        Désolé mais ton compte n'a pas accès à cette page.<br>
+                        Contacte-moi pour en obtenir l'accès !
+                    </p>
                 {% else %}
-                <p>Connecte-toi pour accéder à cette page !</p>
+                    <p>Connecte-toi pour accéder à cette page !</p>
                 {% endif %}
             {% endif %}
             <form method="post">
@@ -25,6 +25,8 @@
                 <input type="hidden" name="next" value="{{ next }}">
                 <div class="text-center">
                     {% bootstrap_button "Valider" button_type="submit" button_class="btn-primary" %}
+                    {% url 'password_reset' as url %}
+                    {% bootstrap_button "Mot de passe oublié" button_type="link" button_class="btn-link" href=url %}
                 </div>
             </form>
         </div>
