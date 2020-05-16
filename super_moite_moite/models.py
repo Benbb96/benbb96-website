@@ -40,7 +40,7 @@ class Logement(models.Model):
 
     def points_par_profil(self, profil):
         if profil not in self.habitants.all():
-            raise ValueError("%s n'est pas un habitant du logement")
+            raise ValueError(f"{profil} n'est pas un habitant du logement")
 
         # Calcul de la somme de point pour ce profil sur ce logement
         total = 0

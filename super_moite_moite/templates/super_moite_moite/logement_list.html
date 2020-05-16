@@ -1,6 +1,12 @@
 {% extends 'super_moite_moite/base_super_moite_moite.html' %}
 
+{% load bootstrap3 %}
+
 {% block super_moite_moite_title %}Logements{% endblock %}
+
+{% block stylesheet %}
+    {{ form.media.css }}
+{% endblock %}
 
 {% block content %}
      <div class="row">
@@ -8,9 +14,29 @@
             <h2>Mes logements</h2>
             <div class="list-group">
                 {% for logement in logements %}
-                    <a class="list-group-item" href="{{ logement.get_absolute_url }}">{{ logement }}</a>
+                    {% with habitants=logement.habitants.all %}
+                        <a class="list-group-item" href="{{ logement.get_absolute_url }}"
+                           title="Habitants : {% for habitant in habitants %}{{ habitant }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                            {{ logement }}
+                            <span class="badge">
+                                {{ habitants|length }}
+                            </span>
+                        </a>
+                    {% endwith %}
                 {% endfor %}
             </div>
+            <h2>Nouveau logement :</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <div class="text-center">
+                    {% bootstrap_button "Valider" button_type="submit" button_class="btn-primary" %}
+                </div>
+            </form>
         </div>
      </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ form.media.js }}
 {% endblock %}
