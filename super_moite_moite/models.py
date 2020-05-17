@@ -55,7 +55,7 @@ class Logement(models.Model):
 
 class Categorie(models.Model):
     nom = models.CharField(max_length=100)
-    logement = models.ForeignKey(Logement, on_delete=models.CASCADE)
+    logement = models.ForeignKey(Logement, on_delete=models.CASCADE, related_name='categories')
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     couleur = ColorField(default='#FFFFFF')
 
@@ -69,7 +69,7 @@ class Categorie(models.Model):
 class Tache(PhotoAbstract):
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE)
+    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name='taches')
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
     def __str__(self):
@@ -81,16 +81,16 @@ class Tache(PhotoAbstract):
 
 class PointTache(models.Model):
     point = models.PositiveSmallIntegerField(default=1)
-    tache = models.ForeignKey(Tache, on_delete=models.CASCADE)
-    profil = models.ForeignKey(Profil, on_delete=models.CASCADE)
+    tache = models.ForeignKey(Tache, on_delete=models.CASCADE, related_name='point_profils')
+    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='point_taches')
 
     class Meta:
         unique_together = ('tache', 'profil')
 
 
 class TrackTache(models.Model):
-    profil = models.ForeignKey(Profil, on_delete=models.CASCADE)
-    tache = models.ForeignKey(Tache, on_delete=models.CASCADE)
+    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='tache_tracks')
+    tache = models.ForeignKey(Tache, on_delete=models.CASCADE, related_name='tracks')
     datetime = models.DateTimeField('date et heure', default=timezone.now)
     commentaire = models.CharField(
         max_length=255, help_text='Un texte pour donner une explication sur ce track.', blank=True

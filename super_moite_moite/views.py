@@ -33,5 +33,5 @@ class LogementDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = list(self.object.categorie_set.values_list('nom', flat=True))
+        context['categories'] = list(self.object.categories.values_list('nom', flat=True))
         return context
