@@ -6,8 +6,11 @@ from . import views, api_views
 app_name = 'super-moite-moite'
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register('logements', api_views.LogementView)
-router.register('categories', api_views.CategorieView)
+router.register('logements', api_views.LogementView, basename='logement')
+router.register('categories', api_views.CategorieView, basename='categorie')
+router.register('taches', api_views.TacheView, basename='tache')
+router.register('point-taches', api_views.PointTacheView, basename='point_tache')
+router.register('track-taches', api_views.TrackTacheView, basename='track_tache')
 
 urlpatterns = [
     path('', views.liste_logements, name='liste-logements'),

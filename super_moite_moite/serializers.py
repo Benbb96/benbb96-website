@@ -14,12 +14,10 @@ class ProfilSerializer(serializers.ModelSerializer):
 
 
 class TrackTacheSerializer(serializers.ModelSerializer):
-    profil = ProfilSerializer()
-
     class Meta:
         model = TrackTache
-        fields = ('id', 'datetime', 'commentaire', 'profil')
-        read_only_fields = ('id',)
+        fields = '__all__'
+        read_only_fields = ('id', 'profil')
 
 
 class PointTacheSerializer(serializers.ModelSerializer):

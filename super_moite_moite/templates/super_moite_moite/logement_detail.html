@@ -1,24 +1,74 @@
 {% extends 'super_moite_moite/base_super_moite_moite.html' %}
 
+{% load static %}
+
 {% block super_moite_moite_title %}{{ logement }}{% endblock %}
 
 {% block jumbotron_title %}{{ logement }}{% endblock %}
 {% block jumbotron_description %}{% endblock %}
 
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'super_moite_moite/css/style.css' %}">
+{% endblock %}
+
 {% block content %}
     <div id="app">
-        [[message]]
+        <div class="container">
+            <div class="row">
+                <div v-for="categorie in logement.categories" class="col-md-3 col-sm-4 col-xs-12">
+                    <div class="well" v-bind:style="{backgroundColor: categorie.couleur}">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input v-model="categorie.nom" class="form-control">
+                                <div class="input-group-btn">
+                                    <div class="btn btn-default">
+                                        <i class="fa fa-edit"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-7">
+                                    <input v-model="categorie.couleur" class="form-control">
+                                </div>
+                                <div class="col-xs-5">
+                                    <input v-model="categorie.couleur" class="form-control" type="color">
+                                </div>
+                            </div>
+                        </div>
 
-        <ul>
-            <li v-for="categorie in categories">
-                [[ categorie ]]
-            </li>
-        </ul>
+                        <hr>
+                        <div class="panel panel-default" v-for="tache in categorie.taches">
+                            <div class="panel-heading">
+                                [[ tache.nom ]]
+                            </div>
+                            <div v-if="tache.description !== ''" class="panel-body">
+                                [[ tache.description ]]
+                            </div>
+                            <div class="panel-footer text-center">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary btn-xs">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <input placeholder="Nouvelle tâche" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-4 col-xs-12">
+                    <div class="well">
+                        <input placeholder="Nouvelle catégorie" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
 {% block javascript %}
-    {{ categories|json_script:'categories' }}
+    {{ json|json_script:'logement' }}
 
     {% if debug %}
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -27,14 +77,17 @@
     {% endif %}
 
     <script>
-        const categories = JSON.parse($('#categories').text())
+        const apiUrl = '/fr/super-moite-moite/api/'
+        const logement = JSON.parse($('#logement').text())
         let app = new Vue({
-          delimiters: ['[[', ']]'],
-          el: '#app',
-          data: {
-              message: 'Hello Vue!',
-              categories: categories,
-          }
+            delimiters: ['[[', ']]'],
+            el: '#app',
+            data: {
+              logement: logement,
+            },
+            methods: {
+                
+            }
         });
   </script>
 {% endblock %}
