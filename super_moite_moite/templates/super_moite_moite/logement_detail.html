@@ -5,7 +5,12 @@
 {% block super_moite_moite_title %}{{ logement }}{% endblock %}
 
 {% block jumbotron_title %}{{ logement }}{% endblock %}
-{% block jumbotron_description %}{% endblock %}
+{% block jumbotron_description %}
+    Habitants :
+    {% for habitant in logement.habitants.all %}
+        <a href="{{ habitant.get_absolute_url }}">{{ habitant }}</a>{% if not forloop.last %}{% if logement.habitants.count != 2 %}, {% else %} & {% endif %}{% endif %}
+    {% endfor %}
+{% endblock %}
 
 {% block stylesheet %}
     <link rel="stylesheet" href="{% static 'super_moite_moite/css/style.css' %}">
@@ -16,7 +21,7 @@
         <div class="container">
             <div class="row">
                 <div v-for="categorie in logement.categories" class="col-md-3 col-sm-4 col-xs-12">
-                    <div class="well" v-bind:style="{backgroundColor: categorie.couleur}">
+                    <div class="well" :style="{backgroundColor: categorie.couleur}">
                         <div class="form-group">
                             <div class="input-group">
                                 <input v-model="categorie.nom" class="form-control">
@@ -43,12 +48,18 @@
                             <div class="panel-heading">
                                 [[ tache.nom ]]
                             </div>
-                            <div v-if="tache.description !== ''" class="panel-body">
-                                [[ tache.description ]]
+                            <div class="panel-body">
+                                <div v-if="!tache.get_photo_url.includes('placeholder.jpg')">
+                                    <img :src="tache.get_photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
+                                </div>
+                                <p v-if="tache.description">[[ tache.description ]]</p>
+                                <p>
+                                    Tracks : [[ tache.tracks.length ]]
+                                </p>
                             </div>
                             <div class="panel-footer text-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-primary btn-xs">
+                                    <button v-on:click="addTrack(tache)" type="button" class="btn btn-primary btn-xs">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
@@ -59,7 +70,14 @@
                 </div>
                 <div class="col-md-3 col-sm-4 col-xs-12">
                     <div class="well">
-                        <input placeholder="Nouvelle catégorie" class="form-control">
+                        <div class="input-group">
+                            <input v-model="newCategoryName" v-on:keyup.enter="createCategory" placeholder="Nouvelle catégorie" class="form-control">
+                            <div class="input-group-btn">
+                                <div v-on:click="createCategory" class="btn btn-primary">
+                                    <i class="fa fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -77,16 +95,77 @@
     {% endif %}
 
     <script>
-        const apiUrl = '/fr/super-moite-moite/api/'
+        const apiUrl = '/fr/super-moite-moite/api'
+        const headers = {
+            "Content-type": "application/json; charset=UTF-8",
+            "X-CSRFToken": Cookies.get('csrftoken')
+        }
         const logement = JSON.parse($('#logement').text())
+
+        function status(response) {
+            if (response.status >= 200 && response.status < 300) {
+                return Promise.resolve(response)
+            } else {
+                return Promise.reject(new Error(response.statusText))
+            }
+        }
+
+        function json(response) {
+            return response.json()
+        }
+
+        function catchError(error) {
+            console.log('Request failed', error);
+            alert("Une erreur s'est produite lors de la requête")
+        }
+
         let app = new Vue({
             delimiters: ['[[', ']]'],
             el: '#app',
             data: {
-              logement: logement,
+                logement: logement,
+                newCategoryName: ""
             },
             methods: {
-                
+                createCategory: function () {
+                    const ap = this
+                    if (ap.newCategoryName === '') {
+                        alert('Veuillez saisir un nom pour la nouvelle catégorie.')
+                        return
+                    }
+                    const body = JSON.stringify({
+                        nom: ap.newCategoryName,
+                        logement: ap.logement.id
+                    })
+                    fetch(`${apiUrl}/categories`, {
+                        method: 'post',
+                        headers: headers,
+                        body: body
+                    })
+                        .then(status)
+                        .then(json)
+                        .then(function (data) {
+                            logement.categories.push(data)
+                            ap.newCategoryName = ''
+                        })
+                        .catch(catchError);
+                },
+                addTrack: function (tache) {
+                    const body = JSON.stringify({
+                        tache: tache.id
+                    })
+                    fetch(`${apiUrl}/track-taches`, {
+                        method: 'post',
+                        headers: headers,
+                        body: body
+                    })
+                        .then(status)
+                        .then(json)
+                        .then(function (data) {
+                            tache.tracks.push(data)
+                        })
+                        .catch(catchError);
+                }
             }
         });
   </script>
