@@ -1,11 +1,11 @@
 from rest_framework.viewsets import ModelViewSet
 
-from super_moite_moite.models import Logement, Categorie, Tache
-from super_moite_moite.serializers import LogementSerializer, CategorieSerializer, TacheSerializer
+from super_moite_moite.models import Categorie, Tache, PointTache, TrackTache
+from super_moite_moite.serializers import LogementSerializer, CategorieSerializer, TacheSerializer, \
+    PointTacheSerializer, TrackTacheSerializer
 
 
 class LogementView(ModelViewSet):
-    queryset = Logement.objects.all()
     serializer_class = LogementSerializer
 
     def get_queryset(self):
@@ -13,7 +13,6 @@ class LogementView(ModelViewSet):
 
 
 class CategorieView(ModelViewSet):
-    queryset = Categorie.objects.all()
     serializer_class = CategorieSerializer
 
     def get_queryset(self):
@@ -21,11 +20,24 @@ class CategorieView(ModelViewSet):
 
 
 class TacheView(ModelViewSet):
-    queryset = Tache.objects.all()
     serializer_class = TacheSerializer
 
     def get_queryset(self):
-        return Categorie.objects.filter(categorie__logement__habitants=self.request.user.profil)
+        return Tache.objects.filter(categorie__logement__habitants=self.request.user.profil)
 
 
-# TODO Faire le reste
+class PointTacheView(ModelViewSet):
+    serializer_class = PointTacheSerializer
+
+    def get_queryset(self):
+        return PointTache.objects.filter(tache__categorie__logement__habitants=self.request.user.profil)
+
+
+class TrackTacheView(ModelViewSet):
+    serializer_class = TrackTacheSerializer
+
+    def get_queryset(self):
+        return TrackTache.objects.filter(tache__categorie__logement__habitants=self.request.user.profil)
+
+    def perform_create(self, serializer):
+        serializer.save(profil=self.request.user.profil)
