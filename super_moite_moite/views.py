@@ -4,6 +4,7 @@ from django.views.generic import DetailView
 
 from super_moite_moite.forms import LogementForm
 from super_moite_moite.models import Logement
+from super_moite_moite.serializers import LogementSerializer
 
 
 def liste_logements(request):
@@ -33,5 +34,6 @@ class LogementDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = list(self.object.categories.values_list('nom', flat=True))
+        # Envoi également le JSON du logement avec toutes les infos qui vont être utilisés par Vue
+        context['json'] = LogementSerializer(self.object).data
         return context
