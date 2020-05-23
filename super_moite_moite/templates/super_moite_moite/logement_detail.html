@@ -59,21 +59,30 @@
                             </div>
                             <div class="panel-footer text-center">
                                 <div class="btn-group">
-                                    <button v-on:click="addTrack(tache)" type="button" class="btn btn-primary btn-xs">
+                                    <button v-on:click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <input placeholder="Nouvelle tâche" class="form-control">
+                        <div class="input-group">
+                            <input v-model="nomsNouvelleTache[categorie.id]" v-on:keyup.enter="nouvelleTache(categorie)"
+                                   placeholder="Nouvelle tâche" class="form-control">
+                            <div class="input-group-btn">
+                                <div v-on:click="nouvelleTache(categorie)" class="btn btn-default">
+                                    <i class="fa fa-check"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-4 col-xs-12">
                     <div class="well">
                         <div class="input-group">
-                            <input v-model="newCategoryName" v-on:keyup.enter="createCategory" placeholder="Nouvelle catégorie" class="form-control">
+                            <input v-model="nomNouvelleCategorie" v-on:keyup.enter="nouvelleCategorie"
+                                   placeholder="Nouvelle catégorie" class="form-control">
                             <div class="input-group-btn">
-                                <div v-on:click="createCategory" class="btn btn-primary">
+                                <div v-on:click="nouvelleCategorie" class="btn btn-primary">
                                     <i class="fa fa-plus"></i>
                                 </div>
                             </div>
@@ -124,17 +133,18 @@
             el: '#app',
             data: {
                 logement: logement,
-                newCategoryName: ""
+                nomNouvelleCategorie: "",
+                nomsNouvelleTache: {}
             },
             methods: {
-                createCategory: function () {
+                nouvelleCategorie: function () {
                     const ap = this
-                    if (ap.newCategoryName === '') {
+                    if (ap.nomNouvelleCategorie === '') {
                         alert('Veuillez saisir un nom pour la nouvelle catégorie.')
                         return
                     }
                     const body = JSON.stringify({
-                        nom: ap.newCategoryName,
+                        nom: ap.nomNouvelleCategorie,
                         logement: ap.logement.id
                     })
                     fetch(`${apiUrl}/categories`, {
@@ -144,13 +154,36 @@
                     })
                         .then(status)
                         .then(json)
-                        .then(function (data) {
-                            logement.categories.push(data)
-                            ap.newCategoryName = ''
+                        .then(function (newCategory) {
+                            logement.categories.push(newCategory)
+                            ap.nomNouvelleCategorie = ''
                         })
                         .catch(catchError);
                 },
-                addTrack: function (tache) {
+                nouvelleTache: function (categorie) {
+                    const ap = this
+                    if (ap.nomsNouvelleTache[categorie.id] === '') {
+                        alert('Veuillez saisir un nom pour la nouvelle tâche.')
+                        return
+                    }
+                    const body = JSON.stringify({
+                        nom: ap.nomsNouvelleTache[categorie.id],
+                        categorie: categorie.id
+                    })
+                    fetch(`${apiUrl}/taches`, {
+                        method: 'post',
+                        headers: headers,
+                        body: body
+                    })
+                        .then(status)
+                        .then(json)
+                        .then(function (newTask) {
+                            categorie.taches.push(newTask)
+                            ap.nomsNouvelleTache[categorie.id] = ''
+                        })
+                        .catch(catchError);
+                },
+                ajoutTrack: function (tache) {
                     const body = JSON.stringify({
                         tache: tache.id
                     })
@@ -161,12 +194,12 @@
                     })
                         .then(status)
                         .then(json)
-                        .then(function (data) {
-                            tache.tracks.push(data)
+                        .then(function (newTrack) {
+                            tache.tracks.push(newTrack)
                         })
                         .catch(catchError);
                 }
             }
         });
-  </script>
+    </script>
 {% endblock %}
