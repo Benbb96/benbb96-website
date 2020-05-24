@@ -21,11 +21,9 @@ class TrackTacheSerializer(serializers.ModelSerializer):
 
 
 class PointTacheSerializer(serializers.ModelSerializer):
-    profil = ProfilSerializer()
-
     class Meta:
         model = PointTache
-        fields = ('id', 'profil', 'point')
+        fields = ('id', 'tache', 'profil', 'point')
         read_only_fields = ('id',)
 
 
