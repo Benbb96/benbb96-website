@@ -27,7 +27,8 @@ class LogementForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.profil = kwargs.pop('profil', None)
         super().__init__(*args, **kwargs)
-        self.initial = {'habitants': self.profil}
+        if not self.instance.id:
+            self.initial = {'habitants': self.profil}
 
     def clean_habitants(self):
         habitants = self.cleaned_data['habitants']

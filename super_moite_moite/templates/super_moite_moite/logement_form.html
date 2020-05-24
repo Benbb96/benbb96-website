@@ -1,0 +1,31 @@
+{% extends 'super_moite_moite/base_super_moite_moite.html' %}
+
+{% load bootstrap3 %}
+
+{% block super_moite_moite_title %}Edition {{ logement }}{% endblock %}
+
+{% block jumbotron_title %}Edition du logement {{ logement }}{% endblock %}
+{% block jumbotron_description %}{% endblock %}
+
+{% block stylesheet %}
+    {{ form.media.css }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <div class="text-center">
+                    {% bootstrap_button "Valider" button_type="submit" button_class="btn-primary" %}
+                    {% bootstrap_button "Annuler" button_type="link" button_class="btn-default" href=logement.get_absolute_url %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ form.media.js }}
+{% endblock %}

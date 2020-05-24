@@ -10,6 +10,10 @@
     {% for habitant in logement.habitants.all %}
         <a href="{{ habitant.get_absolute_url }}">{{ habitant }}</a>{% if not forloop.last %}{% if logement.habitants.count != 2 %}, {% else %} & {% endif %}{% endif %}
     {% endfor %}
+    <a href="{% url 'super-moite-moite:edition-logement' logement.slug %}" class="btn btn-default btn-sm"
+       title="Editer les informations du logement">
+        <i class="fa fa-edit"></i>
+    </a>
 {% endblock %}
 
 {% block stylesheet %}

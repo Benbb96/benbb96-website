@@ -15,6 +15,7 @@ router.register('track-taches', api_views.TrackTacheView, basename='track_tache'
 urlpatterns = [
     path('', views.liste_logements, name='liste-logements'),
     path('logement/<slug>', views.LogementDetailView.as_view(), name='detail-logement'),
+    path('logement/<slug>/edit', views.LogementUpdateView.as_view(), name='edition-logement'),
 
     path('api/', include(router.urls))
 ]
