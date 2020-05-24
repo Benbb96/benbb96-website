@@ -188,7 +188,9 @@
                         <button @click="enregistrerModifTache(tacheEditee)" type="button" class="btn btn-success">
                             Enregistrer les modifications
                         </button>
-                        <button type="button" class="btn btn-danger">Supprimer la tâche</button>
+                        <button @click="supprimerTache(tacheEditee)" type="button" class="btn btn-danger">
+                            Supprimer la tâche
+                        </button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
                     </div>
                 </div>
@@ -356,6 +358,22 @@
                     // Ouvre la modale d'édition
                     $('#modalDetailTache').modal()
                 },
+                supprimerTache: function(tache) {
+                    if (confirm('Êtes-vous certain de vouloir supprimer cette tâche ?')) {
+                        fetch(`${apiUrl}/taches/${tache.id}`, {
+                            method: 'delete',
+                            headers: headers,
+                        })
+                            .then(status)
+                            .then(function () {
+                                let categorie = logement.categories.find(categorie => categorie.id === tache.categorie)
+                                // Retire la tâche qui vientr d'être supprimée
+                                categorie.taches = categorie.taches.filter(task => task.id !== tache.id)
+                                $('#modalDetailTache').modal('hide')
+                            })
+                            .catch(catchError);
+                    }
+                },
                 enregistrerModifTache: function (tache) {
                     let logement = this.logement
                     // Enregistre les points par profil
@@ -404,7 +422,7 @@
                             // Met à jour la tâche avec les nouvelles valeurs
                             categorie.taches = categorie.taches.map(tache => tache.id === editTache.id ? editTache : tache)
 
-                            // Ferme ma modal
+                            // Ferme la modal
                             $('#modalDetailTache').modal('hide')
                         })
                         .catch(catchError);
