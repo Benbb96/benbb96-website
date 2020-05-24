@@ -1,6 +1,6 @@
 {% extends 'super_moite_moite/base_super_moite_moite.html' %}
 
-{% load static %}
+{% load static i18n %}
 
 {% block super_moite_moite_title %}{{ logement }}{% endblock %}
 
@@ -46,7 +46,9 @@
                         <hr>
                         <div class="panel panel-default" v-for="tache in categorie.taches">
                             <div class="panel-heading">
-                                [[ tache.nom ]]
+                                <a @click="detailTache(tache)">
+                                    [[ tache.nom ]]
+                                </a>
                             </div>
                             <div class="panel-body">
                                 <div v-if="!tache.get_photo_url.includes('placeholder.jpg')">
@@ -63,17 +65,17 @@
                             </div>
                             <div class="panel-footer text-center">
                                 <div class="btn-group">
-                                    <button v-on:click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
+                                    <button @click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div class="input-group">
-                            <input v-model="nomsNouvelleTache[categorie.id]" v-on:keyup.enter="nouvelleTache(categorie)"
+                            <input v-model="nomsNouvelleTache[categorie.id]" @keyup.enter="nouvelleTache(categorie)"
                                    placeholder="Nouvelle tâche" class="form-control">
                             <div class="input-group-btn">
-                                <div v-on:click="nouvelleTache(categorie)" class="btn btn-default">
+                                <div @click="nouvelleTache(categorie)" class="btn btn-default">
                                     <i class="fa fa-check"></i>
                                 </div>
                             </div>
@@ -83,14 +85,111 @@
                 <div class="col-md-3 col-sm-4 col-xs-12">
                     <div class="well">
                         <div class="input-group">
-                            <input v-model="nomNouvelleCategorie" v-on:keyup.enter="nouvelleCategorie"
+                            <input v-model="nomNouvelleCategorie" @keyup.enter="nouvelleCategorie"
                                    placeholder="Nouvelle catégorie" class="form-control">
                             <div class="input-group-btn">
-                                <div v-on:click="nouvelleCategorie" class="btn btn-primary">
+                                <div @click="nouvelleCategorie" class="btn btn-primary">
                                     <i class="fa fa-plus"></i>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Détail Tâche -->
+        <div id="modalDetailTache" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            [[ tacheEditee.nom ]]
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#detail">Détail</a></li>
+                            <li><a data-toggle="tab" href="#tracks">Tracks</a></li>
+                            <li><a data-toggle="tab" href="#edition">Edition</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div id="detail" class="tab-pane fade in active">
+                                <h4>Informations sur la tâche</h4>
+                                <div class="row">
+                                    <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-12">
+                                        <img :src="tacheEditee.get_photo_url" :alt="'Photo de la tâche ' + tacheEditee.nom" :style="{width: '100%'}">
+                                    </div>
+                                </div>
+                                <p v-if="tacheEditee.description">
+                                    Description : [[ tacheEditee.description ]]
+                                </p>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Habitant</th>
+                                            <th>Point attribué à cette tâche</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="habitant in logement.habitants">
+                                            <td><label :for="habitant.id">[[ habitant.user ]] :</label></td>
+                                            <td>
+                                                <input type="number" min="0" class="form-control" :id="habitant.id"
+                                               :value="pointParDefautProfil(tacheEditee, habitant)"
+                                                @input="changePointParDefautProfil(tacheEditee, habitant, $event.target.value)">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="tracks" class="tab-pane fade">
+                                <h4>Historique des tracks</h4>
+                                <ul>
+                                    <li v-for="track in tacheEditee.tracks">
+                                        [[ track.datetime | moment ]] - [[ logement.habitants.find(habitant => habitant.id === track.profil).user ]]
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="edition" class="tab-pane fade">
+                                <h4>Modification des informations de la tâche</h4>
+                                <div class="form-group">
+                                    <label for="nomInput">
+                                        Nom :
+                                    </label>
+                                    <input v-model="tacheEditee.nom" class="form-control" id="nomInput">
+                                </div>
+                                <div class="form-group">
+                                    <label for="descriptionTextarea">
+                                        Descrption :
+                                    </label>
+                                    <textarea v-model="tacheEditee.description" class="form-control" id="descriptionTextarea" :style="{resize: 'vertical'}"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="imageInput">
+                                        Illustration :
+                                    </label>
+                                    <div>
+                                        <input v-model="tacheEditee.photo" class="form-control" id="imageInput">
+                                        <input type="file" name="files[]" :style="{display: 'inline'}">
+                                        <button @click="uploadFirebaseImage(tacheEditee.id)" type="button" class="btn btn-default">
+                                            Upload
+                                        </button>
+                                        <progress value="0" max="100" :style="{display: tacheEditee.displayProgress}"></progress>
+                                        <br>
+                                        <img class="display" :src="tacheEditee.get_photo_url" width="340px" alt="Image chargée par Firebase"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button @click="enregistrerModifTache(tacheEditee)" type="button" class="btn btn-success">
+                            Enregistrer les modifications
+                        </button>
+                        <button type="button" class="btn btn-danger">Supprimer la tâche</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
                     </div>
                 </div>
             </div>
@@ -107,7 +206,15 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
     {% endif %}
 
+    <!-- Use lodash for the deep copy -->
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <!-- Use moment for the date formating -->
+    <script src="{% static 'js/moment-with-locales.js' %}"></script>
+
     <script>
+        {% get_current_language as LANGUAGE_CODE %}
+        moment.locale('{{ LANGUAGE_CODE }}');
+
         const apiUrl = '/fr/super-moite-moite/api'
         const headers = {
             "Content-type": "application/json; charset=UTF-8",
@@ -138,7 +245,18 @@
             data: {
                 logement: logement,
                 nomNouvelleCategorie: "",
-                nomsNouvelleTache: {}
+                nomsNouvelleTache: {},
+                tacheEditee: {
+                    id: null,
+                    nom: "",
+                    description: "",
+                    categorie: null,
+                    photo: "",
+                    get_photo_url: "",
+                    tracks: [],
+                    point_profils: [],
+                    displayProgress: "none"
+                }
             },
             methods: {
                 nouvelleCategorie: function () {
@@ -211,12 +329,90 @@
                     }
                     return 1
                 },
+                changePointParDefautProfil: function(tache, profil, point) {
+                    let pointProfil = tache.point_profils.find(pointProfil => pointProfil.profil === profil.id)
+                    if (pointProfil !== undefined) {
+                        // Met à jour la valeur de point
+                        pointProfil.point = point
+                    } else {
+                        // Ajoute le point par profil
+                        tache.point_profils.push({
+                            tache: tache.id,
+                            profil: profil.id,
+                            point: point
+                        })
+                    }
+                },
                 pointsTacheProfil: function(tache, profil) {
                     // Récupère le nombre de point par défaut de ce profil pour cette tâche
                     const pointParDefaut = this.pointParDefautProfil(tache, profil)
                     // Parcours les tâches du profil et fait le total de ces points
                     return tache.tracks.filter(pointProfil => pointProfil.profil === profil.id)
                         .reduce(totalPoints => totalPoints + pointParDefaut, 0)
+                },
+                detailTache: function (tache) {
+                    // Effectue une copie profonde de la tâche pour l'éditer sans toucher à l'originale
+                    this.tacheEditee = _.cloneDeep(tache)
+                    // Ouvre la modale d'édition
+                    $('#modalDetailTache').modal()
+                },
+                enregistrerModifTache: function (tache) {
+                    let logement = this.logement
+                    // Enregistre les points par profil
+                    logement.habitants.forEach(function(habitant) {
+                        let pointProfil = tache.point_profils.find(pointProfil => pointProfil.profil === habitant.id)
+                        if (pointProfil !== undefined) {
+                            if (pointProfil.id) {
+                                fetch(`${apiUrl}/point-taches/${pointProfil.id}`, {
+                                    method: 'patch',
+                                    headers: headers,
+                                    body: JSON.stringify({point: pointProfil.point})
+                                })
+                                    .then(status)
+                                    .catch(catchError);
+                            } else {
+                                fetch(`${apiUrl}/point-taches`, {
+                                    method: 'post',
+                                    headers: headers,
+                                    body: JSON.stringify(pointProfil)
+                                })
+                                    .then(status)
+                                    .then(json)
+                                    .then(function (newPointProfil) {
+                                        tache.point_profils.push(newPointProfil)
+                                    })
+                                    .catch(catchError);
+                            }
+                        }
+                    })
+
+                    // Enregistre les modifications des infos de la tâche
+                    fetch(`${apiUrl}/taches/${tache.id}`, {
+                        method: 'put',
+                        headers: headers,
+                        body: JSON.stringify({
+                            categorie: tache.categorie,
+                            nom: tache.nom,
+                            description: tache.description,
+                            photo: tache.photo
+                        })
+                    })
+                        .then(status)
+                        .then(json)
+                        .then(function (editTache) {
+                            let categorie = logement.categories.find(categorie => categorie.id === editTache.categorie)
+                            // Met à jour la tâche avec les nouvelles valeurs
+                            categorie.taches = categorie.taches.map(tache => tache.id === editTache.id ? editTache : tache)
+
+                            // Ferme ma modal
+                            $('#modalDetailTache').modal('hide')
+                        })
+                        .catch(catchError);
+                }
+            },
+            filters: {
+                moment: function (date) {
+                    return moment(date).format('LLL');
                 }
             }
         });

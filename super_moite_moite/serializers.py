@@ -33,7 +33,9 @@ class TacheSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tache
-        fields = ('id', 'nom', 'description', 'categorie', 'order', 'tracks', 'point_profils', 'get_photo_url')
+        fields = (
+            'id', 'nom', 'description', 'categorie', 'order', 'tracks', 'point_profils', 'photo', 'get_photo_url'
+        )
         read_only_fields = ('id',)
 
 
