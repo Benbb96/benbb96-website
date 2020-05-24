@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView
 
 from super_moite_moite.forms import LogementForm
 from super_moite_moite.models import Logement
@@ -37,3 +37,17 @@ class LogementDetailView(DetailView):
         # Envoi également le JSON du logement avec toutes les infos qui vont être utilisés par Vue
         context['json'] = LogementSerializer(self.object).data
         return context
+
+
+class LogementUpdateView(UpdateView):
+    context_object_name = 'logement'
+    model = Logement
+    form_class = LogementForm
+
+    def get_queryset(self):
+        return self.request.user.profil.logements.all()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['profil'] = self.request.user.profil
+        return kwargs
