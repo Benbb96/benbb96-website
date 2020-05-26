@@ -24,77 +24,104 @@
     <div id="app">
         <div class="container">
             <div class="row">
-                <div v-for="categorie in logement.categories" class="col-md-3 col-sm-4 col-xs-12">
-                    <div class="well" :style="{backgroundColor: categorie.couleur}">
-                        <div class="form-group">
+                <div class="col-md-8 col-md-offset-2 col-xs-12">
+                    <ul class="nav nav-pills nav-justified">
+                        <li class="active">
+                            <a data-toggle="pill" href="#home">Tâches</a>
+                        </li>
+                        <li>
+                            <a data-toggle="pill" href="#statistiques">Statistiques</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="tab-content">
+                <div id="home" class="row tab-pane fade in active">
+                    <div v-for="categorie in logement.categories" class="col-md-3 col-sm-4 col-xs-12">
+                        <div class="well" :style="{backgroundColor: categorie.couleur}">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input v-model="categorie.nom" class="form-control">
+                                    <div class="input-group-btn">
+                                        <div class="btn btn-default">
+                                            <i class="fa fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xs-7">
+                                        <input v-model="categorie.couleur" class="form-control">
+                                    </div>
+                                    <div class="col-xs-5">
+                                        <input v-model="categorie.couleur" class="form-control" type="color">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="panel panel-default" v-for="tache in categorie.taches">
+                                <div class="panel-heading">
+                                    <a @click="detailTache(tache)">
+                                        [[ tache.nom ]]
+                                    </a>
+                                </div>
+                                <div class="panel-body">
+                                    <div v-if="!tache.get_photo_url.includes('placeholder.jpg')">
+                                        <img :src="tache.get_photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
+                                    </div>
+                                    <p v-if="tache.description">[[ tache.description ]]</p>
+                                    <p>
+                                        Tracks : [[ tache.tracks.length ]]
+                                    </p>
+                                    <div v-for="habitant in logement.habitants">
+                                        [[ habitant.user ]] ([[ pointParDefautProfil(tache, habitant) ]]) :
+                                        [[ pointsTacheProfil(tache, habitant) ]] point[[ pointsTacheProfil(tache, habitant) > 1 ? 's' : '' ]]
+                                    </div>
+                                </div>
+                                <div class="panel-footer text-center">
+                                    <div class="btn-group">
+                                        <button @click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="input-group">
-                                <input v-model="categorie.nom" class="form-control">
+                                <input v-model="nomsNouvelleTache[categorie.id]" @keyup.enter="nouvelleTache(categorie)"
+                                       placeholder="Nouvelle tâche" class="form-control">
                                 <div class="input-group-btn">
-                                    <div class="btn btn-default">
-                                        <i class="fa fa-edit"></i>
+                                    <div @click="nouvelleTache(categorie)" class="btn btn-default">
+                                        <i class="fa fa-check"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-7">
-                                    <input v-model="categorie.couleur" class="form-control">
-                                </div>
-                                <div class="col-xs-5">
-                                    <input v-model="categorie.couleur" class="form-control" type="color">
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr>
-                        <div class="panel panel-default" v-for="tache in categorie.taches">
-                            <div class="panel-heading">
-                                <a @click="detailTache(tache)">
-                                    [[ tache.nom ]]
-                                </a>
-                            </div>
-                            <div class="panel-body">
-                                <div v-if="!tache.get_photo_url.includes('placeholder.jpg')">
-                                    <img :src="tache.get_photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
-                                </div>
-                                <p v-if="tache.description">[[ tache.description ]]</p>
-                                <p>
-                                    Tracks : [[ tache.tracks.length ]]
-                                </p>
-                                <div v-for="habitant in logement.habitants">
-                                    [[ habitant.user ]] ([[ pointParDefautProfil(tache, habitant) ]]) :
-                                    [[ pointsTacheProfil(tache, habitant) ]] point[[ pointsTacheProfil(tache, habitant) > 1 ? 's' : '' ]]
-                                </div>
-                            </div>
-                            <div class="panel-footer text-center">
-                                <div class="btn-group">
-                                    <button @click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
+                    </div>
+                    <div class="col-md-3 col-sm-4 col-xs-12">
+                        <div class="well">
+                            <div class="input-group">
+                                <input v-model="nomNouvelleCategorie" @keyup.enter="nouvelleCategorie"
+                                       placeholder="Nouvelle catégorie" class="form-control">
+                                <div class="input-group-btn">
+                                    <div @click="nouvelleCategorie" class="btn btn-primary">
                                         <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <input v-model="nomsNouvelleTache[categorie.id]" @keyup.enter="nouvelleTache(categorie)"
-                                   placeholder="Nouvelle tâche" class="form-control">
-                            <div class="input-group-btn">
-                                <div @click="nouvelleTache(categorie)" class="btn btn-default">
-                                    <i class="fa fa-check"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-4 col-xs-12">
-                    <div class="well">
-                        <div class="input-group">
-                            <input v-model="nomNouvelleCategorie" @keyup.enter="nouvelleCategorie"
-                                   placeholder="Nouvelle catégorie" class="form-control">
-                            <div class="input-group-btn">
-                                <div @click="nouvelleCategorie" class="btn btn-primary">
-                                    <i class="fa fa-plus"></i>
-                                </div>
+                <div id="statistiques" class="row tab-pane fade">
+                    <h2>Points par habitants</h2>
+                    <div v-for="habitant in logement.habitants" class="col-md-6 col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                [[ habitant.user ]]
+                            </div>
+                            <div class="panel-body">
+                                Tracks : [[ habitant.tache_tracks.length ]]
                             </div>
                         </div>
                     </div>
@@ -150,11 +177,43 @@
                             </div>
                             <div id="tracks" class="tab-pane fade">
                                 <h4>Historique des tracks</h4>
-                                <ul>
-                                    <li v-for="track in tacheEditee.tracks">
-                                        [[ track.datetime | moment ]] - [[ logement.habitants.find(habitant => habitant.id === track.profil).user ]]
-                                    </li>
-                                </ul>
+                                <div class="form-group">
+                                    <label for="commentaire">Ajout d'un nouveau track :</label>
+                                    <div class="input-group">
+                                        <input @keyup.enter="ajoutTrack(tacheEditee, commentaireTrack)" v-model="commentaireTrack"
+                                               class="form-control" id="commentaire" placeholder="Commentaire facultatif">
+                                        <div class="input-group-btn">
+                                            <button @click="ajoutTrack(tacheEditee, commentaireTrack)" type="button" class="btn btn-primary">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Profil</th>
+                                            <th>Commentaire</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="track in tacheEditee.tracks">
+                                            <td>[[ track.datetime | moment ]]</td>
+                                            <td>[[ logement.habitants.find(habitant => habitant.id === track.profil).user ]]</td>
+                                            <td>[[ track.commentaire ]]</td>
+                                            <td>
+                                                <button type="button" class="btn btn-default">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div id="edition" class="tab-pane fade">
                                 <h4>Modification des informations de la tâche</h4>

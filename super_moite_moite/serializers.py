@@ -4,20 +4,21 @@ from base.models import Profil
 from super_moite_moite.models import Logement, Categorie, Tache, PointTache, TrackTache
 
 
-class ProfilSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model = Profil
-        fields = ('id', 'user', 'avatar', 'get_absolute_url')
-        read_only_fields = fields
-
-
 class TrackTacheSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrackTache
         fields = '__all__'
         read_only_fields = ('id', 'profil')
+
+
+class ProfilSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+    tache_tracks = TrackTacheSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Profil
+        fields = ('id', 'user', 'avatar', 'get_absolute_url', 'tache_tracks')
+        read_only_fields = fields
 
 
 class PointTacheSerializer(serializers.ModelSerializer):
