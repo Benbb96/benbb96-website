@@ -85,6 +85,9 @@
                                         <button @click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
                                             <i class="fa fa-plus"></i>
                                         </button>
+                                        <button @click="detailTache(tache, true)" type="button" class="btn btn-default btn-xs">
+                                            <i class="fa fa-comment"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -180,10 +183,10 @@
                                 <div class="form-group">
                                     <label for="commentaire">Ajout d'un nouveau track :</label>
                                     <div class="input-group">
-                                        <input @keyup.enter="ajoutTrack(tacheEditee, commentaireTrack)" v-model="commentaireTrack"
+                                        <input @keyup.enter="ajoutTrack(tacheEditee)" v-model="commentaireTrack"
                                                class="form-control" id="commentaire" placeholder="Commentaire facultatif">
                                         <div class="input-group-btn">
-                                            <button @click="ajoutTrack(tacheEditee, commentaireTrack)" type="button" class="btn btn-primary">
+                                            <button @click="ajoutTrack(tacheEditee)" type="button" class="btn btn-primary">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
