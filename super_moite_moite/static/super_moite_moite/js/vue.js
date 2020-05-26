@@ -22,6 +22,13 @@ function catchError(error) {
     alert("Une erreur s'est produite lors de la requête")
 }
 
+$(() => {
+    $('#modalDetailTache').on('shown.bs.modal', function (e) {
+        // Focus le cham commentaire après l'ouverture de la modal
+        $('input#commentaire').focus()
+    });
+})
+
 let app = new Vue({
     delimiters: ['[[', ']]'],
     el: '#app',
@@ -94,7 +101,7 @@ let app = new Vue({
             const body = JSON.stringify({
                 tache: tache.id,
                 commentaire: ap.commentaireTrack,
-                datetime
+                datetime: datetime
             })
             fetch(`${apiUrl}/track-taches`, {
                 method: 'post',
@@ -139,11 +146,16 @@ let app = new Vue({
             return tache.tracks.filter(pointProfil => pointProfil.profil === profil.id)
                 .reduce(totalPoints => totalPoints + pointParDefaut, 0)
         },
-        detailTache: function (tache) {
+        detailTache: function (tache, ouvreTracks=false) {
             // Effectue une copie profonde de la tâche pour l'éditer sans toucher à l'originale
             this.tacheEditee = _.cloneDeep(tache)
-            // L'onglet détail doit être affiché en premier par défaut
-            $('a[href=#detail]').trigger('click')
+            if (ouvreTracks) {
+                // Ouvre l'onglet des tracks
+                $('a[href=#tracks]').trigger('click')
+            } else {
+                // L'onglet détail doit être affiché en premier par défaut
+                $('a[href=#detail]').trigger('click')
+            }
             // Ré-initialise le commentaire d'ajout de Track
             this.commentaireTrack = ""
             // Ouvre la modale d'édition
