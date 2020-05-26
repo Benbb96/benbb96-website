@@ -28,6 +28,7 @@ let app = new Vue({
     data: {
         logement: logement,
         nomNouvelleCategorie: "",
+        commentaireTrack: "",
         nomsNouvelleTache: {},
         tacheEditee: {
             id: null,
@@ -88,9 +89,12 @@ let app = new Vue({
                 })
                 .catch(catchError);
         },
-        ajoutTrack: function (tache) {
+        ajoutTrack: function (tache, datetime=undefined) {
+            const ap = this
             const body = JSON.stringify({
-                tache: tache.id
+                tache: tache.id,
+                commentaire: ap.commentaireTrack,
+                datetime
             })
             fetch(`${apiUrl}/track-taches`, {
                 method: 'post',
@@ -100,7 +104,9 @@ let app = new Vue({
                 .then(status)
                 .then(json)
                 .then(function (newTrack) {
-                    tache.tracks.push(newTrack)
+                    tache.tracks.unshift(newTrack)
+                    logement.habitants.find(profil => profil.id === newTrack.profil).tache_tracks.unshift(newTrack)
+                    ap.commentaireTrack = ""
                 })
                 .catch(catchError);
         },
@@ -136,6 +142,10 @@ let app = new Vue({
         detailTache: function (tache) {
             // Effectue une copie profonde de la tâche pour l'éditer sans toucher à l'originale
             this.tacheEditee = _.cloneDeep(tache)
+            // L'onglet détail doit être affiché en premier par défaut
+            $('a[href=#detail]').trigger('click')
+            // Ré-initialise le commentaire d'ajout de Track
+            this.commentaireTrack = ""
             // Ouvre la modale d'édition
             $('#modalDetailTache').modal()
         },
