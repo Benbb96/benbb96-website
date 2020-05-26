@@ -111,7 +111,13 @@ let app = new Vue({
                 .then(status)
                 .then(json)
                 .then(function (newTrack) {
+                    // Ajoute le nouveau track à la tâche
                     tache.tracks.unshift(newTrack)
+                    if (tache.tacheOriginale) {
+                        // A la tache originale dans le cas d'une édition
+                        tache.tacheOriginale.tracks.unshift(newTrack)
+                    }
+                    // Et à la liste des tracks de l'habitant
                     logement.habitants.find(profil => profil.id === newTrack.profil).tache_tracks.unshift(newTrack)
                     ap.commentaireTrack = ""
                 })
@@ -149,6 +155,7 @@ let app = new Vue({
         detailTache: function (tache, ouvreTracks=false) {
             // Effectue une copie profonde de la tâche pour l'éditer sans toucher à l'originale
             this.tacheEditee = _.cloneDeep(tache)
+            this.tacheEditee.tacheOriginale = tache
             if (ouvreTracks) {
                 // Ouvre l'onglet des tracks
                 $('a[href=#tracks]').trigger('click')
