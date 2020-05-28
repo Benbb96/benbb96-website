@@ -1,3 +1,11 @@
 .well {
     border-radius: 10px;
 }
+
+.showOnHover i {
+    opacity: 0;
+}
+
+.showOnHover:hover i {
+    opacity: 1;
+}

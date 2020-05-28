@@ -37,6 +37,11 @@ let app = new Vue({
         nomNouvelleCategorie: "",
         commentaireTrack: "",
         nomsNouvelleTache: {},
+        categorieEnEdition: null,
+        nomCategorieEdition: "",
+        erreursNomCategorieEdition: [],
+        couleurCategorieEdition: "",
+        erreursCouleurCategorieEdition: [],
         tacheEditee: {
             id: null,
             nom: "",
@@ -72,6 +77,52 @@ let app = new Vue({
                     ap.nomNouvelleCategorie = ''
                 })
                 .catch(catchError);
+        },
+        editionCategorie: function(categorie) {
+            this.categorieEnEdition = categorie.id
+            this.nomCategorieEdition = categorie.nom
+            this.couleurCategorieEdition = categorie.couleur
+            this.erreursNomCategorieEdition = []
+            this.erreursCouleurCategorieEdition = []
+        },
+        enregistreEditionCategorie: function(categorie) {
+            const ap = this
+            ap.erreursNomCategorieEdition = []
+            ap.erreursCouleurCategorieEdition = []
+            const body = JSON.stringify({
+                nom: ap.nomCategorieEdition,
+                couleur: ap.couleurCategorieEdition
+            })
+            fetch(`${apiUrl}/categories/${this.categorieEnEdition}`, {
+                method: 'patch',
+                headers: headers,
+                body: body
+            })
+                .then(function status(response) {
+                    if (response.status >= 200 && response.status < 300) {
+                        json(response)
+                            .then(categorieEditee => {
+                                categorie.nom = categorieEditee.nom
+                                categorie.couleur = categorieEditee.couleur
+                                ap.categorieEnEdition = null
+                                ap.nomCategorieEdition = ""
+                                ap.couleurCategorieEdition = ""
+                            })
+                    } else if (response.status === 400) {
+                        console.log('Request failed', response.statusText);
+                        json(response)
+                            .then(error => {
+                                if ('nom' in error) {
+                                    ap.erreursNomCategorieEdition = error.nom
+                                }
+                                if ('couleur' in error) {
+                                    ap.erreursCouleurCategorieEdition = error.couleur
+                                }
+                            })
+                    } else {
+                        catchError(new Error(response.statusText))
+                    }
+                })
         },
         nouvelleTache: function (categorie) {
             const ap = this
