@@ -39,25 +39,40 @@
             <div class="tab-content">
                 <div id="home" class="row tab-pane fade in active">
                     <div v-for="categorie in logement.categories" class="col-md-3 col-sm-4 col-xs-12">
-                        <div class="well" :style="{backgroundColor: categorie.couleur}">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <input v-model="categorie.nom" class="form-control">
-                                    <div class="input-group-btn">
-                                        <div class="btn btn-default">
-                                            <i class="fa fa-edit"></i>
+                        <div class="well" :style="{backgroundColor: categorieEnEdition === categorie.id && couleurCategorieEdition !== ''? couleurCategorieEdition : categorie.couleur}">
+                            <h4 class="text-center showOnHover" @click="editionCategorie(categorie)"
+                                :style="{display: categorieEnEdition === categorie.id ? 'none' : 'block'}"
+                                title="Cliquer pour éditer la catégorie">
+                                [[ categorie.nom ]]
+                                <i class="fa fa-pencil"></i>
+                            </h4>
+                            <div :style="{display: categorieEnEdition === categorie.id ? 'block' : 'none'}">
+                                <div :class="'form-group' + (erreursNomCategorieEdition.length ? ' has-error' : '')">
+                                    <input v-model="nomCategorieEdition" class="form-control">
+                                    <ul v-if="erreursNomCategorieEdition.length" class="errorlist">
+                                        <li v-for="erreur in erreursNomCategorieEdition">[[ erreur ]]</li>
+                                    </ul>
+                                </div>
+                                <div :class="'form-group' + (erreursCouleurCategorieEdition.length ? ' has-error' : '')">
+                                    <div class="row">
+                                        <div class="col-xs-7">
+                                            <input v-model="couleurCategorieEdition" class="form-control">
+                                        </div>
+                                        <div class="col-xs-5">
+                                            <input v-model="couleurCategorieEdition" class="form-control" type="color">
                                         </div>
                                     </div>
+                                    <ul v-if="erreursCouleurCategorieEdition.length" class="errorlist">
+                                        <li v-for="erreur in erreursCouleurCategorieEdition">[[ erreur ]]</li>
+                                    </ul>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xs-7">
-                                        <input v-model="categorie.couleur" class="form-control">
-                                    </div>
-                                    <div class="col-xs-5">
-                                        <input v-model="categorie.couleur" class="form-control" type="color">
-                                    </div>
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-default" @click="enregistreEditionCategorie(categorie)">
+                                        OK <i class="fa fa-save"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-warning" @click="categorieEnEdition = null">
+                                        Annuler
+                                    </button>
                                 </div>
                             </div>
                             <hr>
