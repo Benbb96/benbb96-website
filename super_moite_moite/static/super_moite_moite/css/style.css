@@ -9,3 +9,11 @@
 .showOnHover:hover i {
     opacity: 1;
 }
+
+.progress {
+    height: 30px;
+}
+
+.progress-bar {
+    line-height: 30px;
+}

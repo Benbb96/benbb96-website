@@ -75,6 +75,9 @@
                                     </button>
                                 </div>
                             </div>
+                            <p v-for="habitant in logement.habitants">
+                                [[ habitant.user ]] : [[ pointsCategorieProfil(categorie, habitant) ]] points
+                            </p>
                             <hr>
                             <div class="panel panel-default" v-for="tache in categorie.taches">
                                 <div class="panel-heading">
@@ -91,8 +94,9 @@
                                         Tracks : [[ tache.tracks.length ]]
                                     </p>
                                     <div v-for="habitant in logement.habitants">
-                                        [[ habitant.user ]] ([[ pointParDefautProfil(tache, habitant) ]]) :
-                                        [[ pointsTacheProfil(tache, habitant) ]] point[[ pointsTacheProfil(tache, habitant) > 1 ? 's' : '' ]]
+                                        [[ habitant.user ]] ([[ pointParDefautProfil(tache, habitant) ]]pt[[ pointParDefautProfil(tache, habitant) > 1 ? 's' : '' ]])
+                                        <i class="fa fa-arrow-right" style="font-size: 10px"></i>
+                                        <div class="badge">[[ pointsTacheProfil(tache, habitant) ]]</div>
                                     </div>
                                 </div>
                                 <div class="panel-footer text-center">
@@ -132,14 +136,46 @@
                     </div>
                 </div>
                 <div id="statistiques" class="row tab-pane fade">
-                    <h2>Points par habitants</h2>
-                    <div v-for="habitant in logement.habitants" class="col-md-6 col-xs-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
+                    <div class="col-xs-12">
+                        <h2 class="text-center">Points par habitants</h2>
+                        <div class="progress">
+                            <div v-for="(habitant, index) in logement.habitants" :class="(habitant.id == idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
+                                 role="progressbar" :style="'width:' + pourcentagePointProfil(habitant) + '%'">
+                                [[ habitant.user ]] ([[ pourcentagePointProfil(habitant) | round(2) ]]%)
+                            </div>
+                        </div>
+                    </div>
+                    <div v-for="(habitant, index) in logement.habitants" class="col-md-6 col-xs-12">
+                        <div :class="'panel panel-default panel-' + bootstrapClassColors[index]">
+                            <div class="panel-heading text-center">
                                 [[ habitant.user ]]
                             </div>
                             <div class="panel-body">
-                                Tracks : [[ habitant.tache_tracks.length ]]
+                                <div class="row">
+                                    <div class="col-xs-6 text-center">
+                                        Tracks : <b>[[ habitant.tache_tracks.length ]]</b>
+                                    </div>
+                                    <div class="col-xs-6 text-center">
+                                        Points : <b>[[ pointsProfil(habitant) ]]</b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading text-center">
+                                Total
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-xs-6 text-center">
+                                        Tracks : <b>[[ totalTracks() ]]</b>
+                                    </div>
+                                    <div class="col-xs-6 text-center">
+                                        Points : <b>[[ totalPoints() ]]</b>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -177,17 +213,24 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Habitant</th>
-                                            <th>Point attribué à cette tâche</th>
+                                            <th class="text-right">Habitant</th>
+                                            <th class="text-center">Points attribués</th>
+                                            <th class="text-center">Points gagnés</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="habitant in logement.habitants">
-                                            <td><label :for="habitant.id">[[ habitant.user ]] :</label></td>
-                                            <td>
+                                            <td class="text-right">
+                                                <label :for="habitant.id">[[ habitant.user ]] :</label>
+                                            </td>
+                                            <td class="text-center">
                                                 <input type="number" min="0" class="form-control" :id="habitant.id"
                                                :value="pointParDefautProfil(tacheEditee, habitant)"
                                                 @input="changePointParDefautProfil(tacheEditee, habitant, $event.target.value)">
+                                            </td>
+                                            <td class="text-center">
+                                                {# FIXME bug quand on édite les points par défaut #}
+                                                [[ pointsTacheProfil(tacheEditee, habitant) ]]
                                             </td>
                                         </tr>
                                     </tbody>
@@ -282,6 +325,7 @@
 
 {% block javascript %}
     {{ json|json_script:'logement' }}
+    {{ request.user.profil.id|json_script:'idProfilConnecte' }}
 
     {% if debug %}
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
