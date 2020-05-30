@@ -18,6 +18,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
+AUTH_PASSWORD_VALIDATORS = []
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
