@@ -3,6 +3,7 @@ const headers = {
     "Content-type": "application/json; charset=UTF-8",
     "X-CSRFToken": Cookies.get('csrftoken')
 }
+const idProfilConnecte = JSON.parse($('#idProfilConnecte').text())
 const logement = JSON.parse($('#logement').text())
 
 function status(response) {
@@ -33,6 +34,7 @@ let app = new Vue({
     delimiters: ['[[', ']]'],
     el: '#app',
     data: {
+        idProfilConnecte: idProfilConnecte,
         logement: logement,
         nomNouvelleCategorie: "",
         commentaireTrack: "",
@@ -52,7 +54,10 @@ let app = new Vue({
             tracks: [],
             point_profils: [],
             displayProgress: "none"
-        }
+        },
+        bootstrapClassColors: [
+            'success', 'primary', 'danger', 'warning', 'info'
+        ]
     },
     methods: {
         nouvelleCategorie: function () {
@@ -203,6 +208,34 @@ let app = new Vue({
             return tache.tracks.filter(pointProfil => pointProfil.profil === profil.id)
                 .reduce(totalPoints => totalPoints + pointParDefaut, 0)
         },
+        pointsCategorieProfil: function (categorie, profil) {
+            return categorie.taches.reduce((totalPoints, tache) => totalPoints + this.pointsTacheProfil(tache, profil), 0)
+        },
+        pointsProfil: function (profil) {
+            return this.logement.categories.reduce(
+                (totalPoints, categorie) => totalPoints + this.pointsCategorieProfil(categorie, profil),
+                0
+            )
+        },
+        totalPoints: function() {
+            return this.logement.habitants.reduce(
+                (total, habitant) => total + this.pointsProfil(habitant),
+                0
+            )
+        },
+        pourcentagePointProfil: function(profil) {
+            if (this.totalPoints() === 0) return 0
+            return (this.pointsProfil(profil) / this.totalPoints()) * 100
+        },
+        totalCategorieTracks: (categorie) =>
+            categorie.taches.reduce((total, tache) => total + tache.tracks.length, 0)
+        ,
+        totalTracks: function() {
+            return this.logement.categories.reduce(
+                (total, categorie) => total + this.totalCategorieTracks(categorie),
+                0
+            )
+        },
         detailTache: function (tache, ouvreTracks=false) {
             // Effectue une copie profonde de la tâche pour l'éditer sans toucher à l'originale
             this.tacheEditee = _.cloneDeep(tache)
@@ -292,6 +325,16 @@ let app = new Vue({
     filters: {
         moment: function (date) {
             return moment(date).format('LLL');
+        },
+        round: function (value, decimals) {
+            if (!value) {
+                value = 0;
+            }
+            if (!decimals) {
+                decimals = 0;
+            }
+            value = Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
+            return value;
         }
     }
 });
