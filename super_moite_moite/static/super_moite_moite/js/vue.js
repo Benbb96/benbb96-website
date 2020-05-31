@@ -34,7 +34,7 @@ let app = new Vue({
     delimiters: ['[[', ']]'],
     el: '#app',
     data: {
-        idProfilConnecte: idProfilConnecte,
+        idProfilConnecte: parseInt(idProfilConnecte),
         logement: logement,
         nomNouvelleCategorie: "",
         commentaireTrack: "",
@@ -129,6 +129,11 @@ let app = new Vue({
                     }
                 })
         },
+        allLogementTaches : function() {
+            let taches = []
+            logement.categories.forEach(categorie => taches = taches.concat(categorie.taches))
+            return taches
+        },
         nouvelleTache: function (categorie) {
             const ap = this
             if (ap.nomsNouvelleTache[categorie.id] === '') {
@@ -188,6 +193,7 @@ let app = new Vue({
             return 1
         },
         changePointParDefautProfil: function (tache, profil, point) {
+            point = parseInt(point)
             let pointProfil = tache.point_profils.find(pointProfil => pointProfil.profil === profil.id)
             if (pointProfil !== undefined) {
                 // Met à jour la valeur de point
@@ -235,6 +241,12 @@ let app = new Vue({
                 (total, categorie) => total + this.totalCategorieTracks(categorie),
                 0
             )
+        },
+        totalProfilTracks: function(profil) {
+            const ap = this
+            return profil.tache_tracks.filter(
+                track => ap.allLogementTaches().some(tache => tache.id === track.tache)
+            ).length
         },
         detailTache: function (tache, ouvreTracks=false) {
             // Effectue une copie profonde de la tâche pour l'éditer sans toucher à l'originale
