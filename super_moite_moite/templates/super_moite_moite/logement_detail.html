@@ -48,7 +48,7 @@
                             </h4>
                             <div :style="{display: categorieEnEdition === categorie.id ? 'block' : 'none'}">
                                 <div :class="'form-group' + (erreursNomCategorieEdition.length ? ' has-error' : '')">
-                                    <input v-model="nomCategorieEdition" class="form-control">
+                                    <input v-model="nomCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)" class="form-control">
                                     <ul v-if="erreursNomCategorieEdition.length" class="errorlist">
                                         <li v-for="erreur in erreursNomCategorieEdition">[[ erreur ]]</li>
                                     </ul>
@@ -56,7 +56,7 @@
                                 <div :class="'form-group' + (erreursCouleurCategorieEdition.length ? ' has-error' : '')">
                                     <div class="row">
                                         <div class="col-xs-7">
-                                            <input v-model="couleurCategorieEdition" class="form-control">
+                                            <input v-model="couleurCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)" class="form-control">
                                         </div>
                                         <div class="col-xs-5">
                                             <input v-model="couleurCategorieEdition" class="form-control" type="color">
@@ -276,13 +276,26 @@
                                         <tr v-for="track in tacheEditee.tracks">
                                             <td>[[ track.datetime | moment ]]</td>
                                             <td>[[ logement.habitants.find(habitant => habitant.id === track.profil).user ]]</td>
-                                            <td>[[ track.commentaire ]]</td>
-                                            <td>
-                                                <button type="button" class="btn btn-default">
+                                            <td v-if="trackEnEdition !== track.id">
+                                                [[ track.commentaire ]]
+                                            </td>
+                                            <td v-else>
+                                                <input v-model="commentaireTrackEdition" @keyup.enter="enregistreEditionTrack(track)" class="form-control">
+                                            </td>
+                                            <td v-if="trackEnEdition !== track.id">
+                                                <button @click="editerTrack(track)" type="button" class="btn btn-default">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
                                                 <button @click="supprimerTrack(track)" type="button" class="btn btn-danger">
                                                     <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                            <td v-else>
+                                                <button @click="enregistreEditionTrack(track)" type="button" class="btn btn-success">
+                                                    <i class="fa fa-save"></i>
+                                                </button>
+                                                <button @click="trackEnEdition = null" type="button" class="btn btn-default">
+                                                    <i class="fa fa-times"></i>
                                                 </button>
                                             </td>
                                         </tr>
