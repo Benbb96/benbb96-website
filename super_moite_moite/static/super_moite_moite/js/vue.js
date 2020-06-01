@@ -46,6 +46,8 @@ let app = new Vue({
         erreursNomCategorieEdition: [],
         couleurCategorieEdition: "",
         erreursCouleurCategorieEdition: [],
+        trackEnEdition: null,
+        commentaireTrackEdition: "",
         tacheEditee: {
             id: null,
             nom: "",
@@ -227,6 +229,32 @@ let app = new Vue({
                     // Et à la liste des tracks de l'habitant
                     logement.habitants.find(profil => profil.id === newTrack.profil).tache_tracks.unshift(newTrack)
                     ap.commentaireTrack = ""
+                })
+                .catch(catchError);
+        },
+        editerTrack: function(track) {
+            this.trackEnEdition = track.id
+            this.commentaireTrackEdition = track.commentaire
+        },
+        enregistreEditionTrack: function(track) {
+            const ap = this
+            const body = JSON.stringify({
+                commentaire: ap.commentaireTrackEdition,
+            })
+            fetch(`${apiUrl}/track-taches/${track.id}`, {
+                method: 'patch',
+                headers: headers,
+                body: body
+            })
+                .then(status)
+                .then(json)
+                .then(function (trackEditee) {
+                    // Met à jour le commentaire seulement pour le moment
+                    track.commentaire = trackEditee.commentaire
+                    ap.tacheEditee.tacheOriginale.tracks.find(track => track.id === trackEditee.id).commentaire = trackEditee.commentaire
+                    // Re initialise le track en édition
+                    ap.trackEnEdition = null
+                    ap.commentaireTrackEdition = ""
                 })
                 .catch(catchError);
         },
