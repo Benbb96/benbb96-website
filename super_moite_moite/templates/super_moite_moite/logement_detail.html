@@ -49,12 +49,21 @@
                     <div v-for="categorie in logement.categories" class="col-md-3 col-sm-4 col-xs-12">
                         <div class="well" :style="{backgroundColor: categorieEnEdition === categorie.id && couleurCategorieEdition !== ''? couleurCategorieEdition : categorie.couleur}">
                             <h4 class="text-center showOnHover" @click="editionCategorie(categorie)"
-                                :style="{display: categorieEnEdition === categorie.id ? 'none' : 'block'}"
+                                v-if="categorieEnEdition !== categorie.id"
                                 title="Cliquer pour éditer la catégorie">
                                 [[ categorie.nom ]]
                                 <i class="fa fa-pencil"></i>
                             </h4>
-                            <div :style="{display: categorieEnEdition === categorie.id ? 'block' : 'none'}">
+                            <div class="progress" v-if="categorieEnEdition !== categorie.id">
+                                <div v-for="(habitant, index) in logement.habitants"
+                                     :title="[[ habitant.user ]] + ' : ' + [[ pointsCategorieProfil(categorie, habitant) ]] + ' points'"
+                                     :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
+                                     role="progressbar" :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'"
+                                     data-toggle="tooltip" data-placement="bottom">
+                                    [[ pourcentagePointProfilCategorie(habitant, categorie) | round(0) ]]%
+                                </div>
+                            </div>
+                            <div v-else>
                                 <div :class="'form-group' + (erreursNomCategorieEdition.length ? ' has-error' : '')">
                                     <input v-model="nomCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)" class="form-control">
                                     <ul v-if="erreursNomCategorieEdition.length" class="errorlist">
@@ -84,15 +93,6 @@
                                     <button type="button" class="btn btn-danger" @click="supprimerCategorie(categorie)">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                </div>
-                            </div>
-                            <div class="progress">
-                                <div v-for="(habitant, index) in logement.habitants"
-                                     :title="[[ habitant.user ]] + ' : ' + [[ pointsCategorieProfil(categorie, habitant) ]] + ' points'"
-                                     :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
-                                     role="progressbar" :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'"
-                                     data-toggle="tooltip" data-placement="bottom">
-                                    [[ pourcentagePointProfilCategorie(habitant, categorie) | round(0) ]]%
                                 </div>
                             </div>
                             <hr>
