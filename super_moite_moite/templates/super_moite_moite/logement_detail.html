@@ -86,14 +86,12 @@
                                     </button>
                                 </div>
                             </div>
-                            <p v-for="habitant in logement.habitants">
-                                [[ habitant.user ]] : [[ pointsCategorieProfil(categorie, habitant) ]] points
-                            </p>
                             <div class="progress">
                                 <div v-for="(habitant, index) in logement.habitants"
-                                     :title="[[ habitant.user ]]"
+                                     :title="[[ habitant.user ]] + ' : ' + [[ pointsCategorieProfil(categorie, habitant) ]] + ' points'"
                                      :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
-                                     role="progressbar" :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'">
+                                     role="progressbar" :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'"
+                                     data-toggle="tooltip" data-placement="bottom">
                                     [[ pourcentagePointProfilCategorie(habitant, categorie) | round(0) ]]%
                                 </div>
                             </div>
@@ -109,13 +107,33 @@
                                         <img :src="tache.get_photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
                                     </div>
                                     <p v-if="tache.description">[[ tache.description ]]</p>
-                                    <p>
-                                        Tracks : [[ tache.tracks.length ]]
-                                    </p>
-                                    <div v-for="habitant in logement.habitants">
-                                        [[ habitant.user ]] ([[ pointParDefautProfil(tache, habitant) ]]pt[[ pointParDefautProfil(tache, habitant) > 1 ? 's' : '' ]])
-                                        <i class="fa fa-arrow-right" style="font-size: 10px"></i>
-                                        <div class="badge">[[ pointsTacheProfil(tache, habitant) ]]</div>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-condensed text-center">
+                                            <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Tracks</th>
+                                                <th>Pts défaut</th>
+                                                <th>Points</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-for="habitant in logement.habitants">
+                                                <td>[[ habitant.user ]]</td>
+                                                <td>[[ tache.tracks.filter(track => track.profil === habitant.id).length ]]</td>
+                                                <td>
+                                                    [[ pointParDefautProfil(tache, habitant) ]]
+                                                </td>
+                                                <td>[[ pointsTacheProfil(tache, habitant) ]]</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total</td>
+                                                <td>[[ tache.tracks.length ]]</td>
+                                                <td></td>
+                                                <td>[[ totalPointsTache(tache) ]]</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                                 <div class="panel-footer text-center">
