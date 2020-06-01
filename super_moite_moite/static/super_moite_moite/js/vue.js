@@ -317,8 +317,7 @@ let app = new Vue({
             // Récupère le nombre de point par défaut de ce profil pour cette tâche
             const pointParDefaut = this.pointParDefautProfil(tache, profil)
             // Parcours les tâches du profil et fait le total de ces points
-            return tache.tracks.filter(pointProfil => pointProfil.profil === profil.id)
-                .reduce(totalPoints => totalPoints + pointParDefaut, 0)
+            return tache.tracks.filter(pointProfil => pointProfil.profil === profil.id).length * pointParDefaut
         },
         pointsCategorieProfil: function (categorie, profil) {
             return categorie.taches.reduce((totalPoints, tache) => totalPoints + this.pointsTacheProfil(tache, profil), 0)
