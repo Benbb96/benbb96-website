@@ -30,7 +30,7 @@ $(() => {
     });
 
     // Init the tooltips
-    $('[data-toggle="tooltip"]').tooltip(); 
+    $('[data-toggle="tooltip"]').tooltip();
 })
 
 Vue.component('apexchart', VueApexCharts)
@@ -63,7 +63,7 @@ let app = new Vue({
             displayProgress: "none"
         },
         bootstrapClassColors: [
-            'success', 'primary', 'danger', 'warning', 'info'
+            'success', 'info', 'danger', 'warning', 'primary'
         ]
     },
     computed: {
