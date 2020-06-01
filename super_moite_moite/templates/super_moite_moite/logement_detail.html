@@ -73,11 +73,22 @@
                                     <button type="button" class="btn btn-warning" @click="categorieEnEdition = null">
                                         Annuler
                                     </button>
+                                    <button type="button" class="btn btn-danger" @click="supprimerCategorie(categorie)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
                             <p v-for="habitant in logement.habitants">
                                 [[ habitant.user ]] : [[ pointsCategorieProfil(categorie, habitant) ]] points
                             </p>
+                            <div class="progress">
+                                <div v-for="(habitant, index) in logement.habitants"
+                                     :title="[[ habitant.user ]]"
+                                     :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
+                                     role="progressbar" :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'">
+                                    [[ pourcentagePointProfilCategorie(habitant, categorie) | round(0) ]]%
+                                </div>
+                            </div>
                             <hr>
                             <div class="panel panel-default" v-for="tache in categorie.taches">
                                 <div class="panel-heading">
@@ -137,7 +148,6 @@
                 </div>
                 <div id="statistiques" class="row tab-pane fade">
                     <div class="col-xs-12">
-                        <h2 class="text-center">Points par habitants</h2>
                         <div class="progress">
                             <div v-for="(habitant, index) in logement.habitants" :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
                                  role="progressbar" :style="'width:' + pourcentagePointProfil(habitant) + '%'">
@@ -145,10 +155,10 @@
                             </div>
                         </div>
                     </div>
-                    <div v-for="(habitant, index) in logement.habitants" class="col-md-6 col-xs-12">
+                    <div v-for="(habitant, index) in logement.habitants" class="col-sm-6 col-xs-12">
                         <div :class="'panel panel-default panel-' + bootstrapClassColors[index]">
                             <div class="panel-heading text-center">
-                                [[ habitant.user ]]
+                                <h4>[[ habitant.user ]]</h4>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
@@ -161,16 +171,17 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <apexchart width="500" type="pie" :options="chartOptions" :series="chartSeriesHabitant(habitant)"></apexchart>
+                                        <apexchart :options="chartOptions" :series="chartSeriesHabitant(habitant)"></apexchart>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12">
+                    <div class="clearfix"></div>
+                    <div class="col-sm-8 col-sm-offset-2 col-xs-12">
                         <div class="panel panel-default">
                             <div class="panel-heading text-center">
-                                Total
+                                <h3>Total</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
@@ -183,7 +194,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <apexchart width="500" type="pie" :options="chartOptions" :series="chartSeriesTotal()"></apexchart>
+                                        <apexchart :options="chartOptions" :series="chartSeriesTotal()"></apexchart>
                                     </div>
                                 </div>
                             </div>
@@ -316,6 +327,7 @@
                                     </label>
                                     <textarea v-model="tacheEditee.description" class="form-control" id="descriptionTextarea" :style="{resize: 'vertical'}"></textarea>
                                 </div>
+                                {# TODO Gestion upload Image #}
                                 <div class="form-group">
                                     <label for="imageInput">
                                         Illustration :

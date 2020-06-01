@@ -67,8 +67,7 @@ let app = new Vue({
         chartOptions: function () {
             return  {
                 chart: {
-                    width: 350,
-                    type: 'pie',
+                    type: 'donut',
                 },
                 labels: this.logement.categories.map(categorie => categorie.nom),
                 colors: this.logement.categories.map(categorie => categorie.couleur),
@@ -85,7 +84,7 @@ let app = new Vue({
                     breakpoint: 480,
                     options: {
                         chart: {
-                            width: 200
+                            width: 300
                         },
                         legend: {
                             position: 'bottom'
@@ -176,6 +175,21 @@ let app = new Vue({
                         catchError(new Error(response.statusText))
                     }
                 })
+        },
+        supprimerCategorie: function(categorie) {
+            const ap = this
+            if (confirm(`Êtes-vous certain de vouloir supprimer la catégorie ${categorie.nom} ?`)) {
+                fetch(`${apiUrl}/categories/${categorie.id}`, {
+                    method: 'delete',
+                    headers: headers,
+                })
+                    .then(status)
+                    .then(function () {
+                        // Retire la catégorie qui vient d'être supprimée
+                        ap.logement.categories = ap.logement.categories.filter(cat => cat.id !== categorie.id)
+                    })
+                    .catch(catchError);
+            }
         },
         allLogementTaches : function() {
             let taches = []
@@ -312,6 +326,12 @@ let app = new Vue({
                 0
             )
         },
+        totalPointsCategorie: function(categorie) {
+            return this.logement.habitants.reduce(
+                (total, habitant) => total + this.pointsCategorieProfil(categorie, habitant),
+                0
+            )
+        },
         totalPoints: function() {
             return this.logement.habitants.reduce(
                 (total, habitant) => total + this.pointsProfil(habitant),
@@ -321,6 +341,10 @@ let app = new Vue({
         pourcentagePointProfil: function(profil) {
             if (this.totalPoints() === 0) return 0
             return (this.pointsProfil(profil) / this.totalPoints()) * 100
+        },
+        pourcentagePointProfilCategorie: function(profil, categorie) {
+            if (this.totalPointsCategorie(categorie) === 0) return 0
+            return (this.pointsCategorieProfil(categorie, profil) / this.totalPointsCategorie(categorie)) * 100
         },
         totalCategorieTracks: (categorie) =>
             categorie.taches.reduce((total, tache) => total + tache.tracks.length, 0)
@@ -362,7 +386,7 @@ let app = new Vue({
                     .then(status)
                     .then(function () {
                         let categorie = logement.categories.find(categorie => categorie.id === tache.categorie)
-                        // Retire la tâche qui vientr d'être supprimée
+                        // Retire la tâche qui vient d'être supprimée
                         categorie.taches = categorie.taches.filter(task => task.id !== tache.id)
                         $('#modalDetailTache').modal('hide')
                     })
