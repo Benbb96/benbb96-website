@@ -24,6 +24,14 @@
     <div id="app">
         <div class="container">
             <div class="row">
+                <div class="col-xs-12">
+                    <div class="progress">
+                        <div v-for="(habitant, index) in logement.habitants" :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
+                             role="progressbar" :style="'width:' + pourcentagePointProfil(habitant) + '%'">
+                            [[ habitant.user ]] ([[ pourcentagePointProfil(habitant) | round(2) ]]%)
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-8 col-md-offset-2 col-xs-12">
                     <ul class="nav nav-pills nav-justified">
                         <li class="active">
@@ -147,14 +155,6 @@
                     </div>
                 </div>
                 <div id="statistiques" class="row tab-pane fade">
-                    <div class="col-xs-12">
-                        <div class="progress">
-                            <div v-for="(habitant, index) in logement.habitants" :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
-                                 role="progressbar" :style="'width:' + pourcentagePointProfil(habitant) + '%'">
-                                [[ habitant.user ]] ([[ pourcentagePointProfil(habitant) | round(2) ]]%)
-                            </div>
-                        </div>
-                    </div>
                     <div v-for="(habitant, index) in logement.habitants" class="col-sm-6 col-xs-12">
                         <div :class="'panel panel-default panel-' + bootstrapClassColors[index]">
                             <div class="panel-heading text-center">
