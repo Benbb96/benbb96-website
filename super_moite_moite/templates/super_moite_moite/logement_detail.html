@@ -108,17 +108,17 @@
                                     </div>
                                     <p v-if="tache.description">[[ tache.description ]]</p>
                                     <div class="table-responsive">
-                                        <table class="table table-striped table-condensed text-center">
+                                        <table class="table table-striped table-condensed tableTracks">
                                             <thead>
                                             <tr>
                                                 <th></th>
-                                                <th>Tracks</th>
-                                                <th>Pts défaut</th>
-                                                <th>Points</th>
+                                                <th class="text-center">Tracks</th>
+                                                <th class="text-center">Pts défaut</th>
+                                                <th class="text-center">Points</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr v-for="habitant in logement.habitants">
+                                            <tr v-for="(habitant, index) in logement.habitants" :class="bootstrapClassColors[index]">
                                                 <td>[[ habitant.user ]]</td>
                                                 <td>[[ tache.tracks.filter(track => track.profil === habitant.id).length ]]</td>
                                                 <td>

@@ -21,3 +21,12 @@
 .panel .panel-heading a {
     cursor: pointer;
 }
+
+table.tableTracks thead {
+    font-size: 0.75em;
+}
+
+table.tableTracks tbody {
+    text-align: center;
+    font-size: 0.9em;
+}
