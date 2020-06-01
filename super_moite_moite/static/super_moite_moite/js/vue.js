@@ -149,7 +149,7 @@ let app = new Vue({
                 couleur: ap.couleurCategorieEdition
             })
             fetch(`${apiUrl}/categories/${this.categorieEnEdition}`, {
-                method: 'patch',
+                method: 'PATCH',
                 headers: headers,
                 body: body
             })
@@ -260,7 +260,7 @@ let app = new Vue({
                 commentaire: ap.commentaireTrackEdition,
             })
             fetch(`${apiUrl}/track-taches/${track.id}`, {
-                method: 'patch',
+                method: 'PATCH',
                 headers: headers,
                 body: body
             })
@@ -410,7 +410,7 @@ let app = new Vue({
                 if (pointProfil !== undefined) {
                     if (pointProfil.id) {
                         fetch(`${apiUrl}/point-taches/${pointProfil.id}`, {
-                            method: 'patch',
+                            method: 'PATCH',
                             headers: headers,
                             body: JSON.stringify({point: pointProfil.point})
                         })
