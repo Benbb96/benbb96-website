@@ -30,6 +30,8 @@ $(() => {
     });
 })
 
+Vue.component('apexchart', VueApexCharts)
+
 let app = new Vue({
     delimiters: ['[[', ']]'],
     el: '#app',
@@ -59,7 +61,51 @@ let app = new Vue({
             'success', 'primary', 'danger', 'warning', 'info'
         ]
     },
+    computed: {
+        chartOptions: function () {
+            return  {
+                chart: {
+                    width: 350,
+                    type: 'pie',
+                },
+                labels: this.logement.categories.map(categorie => categorie.nom),
+                colors: this.logement.categories.map(categorie => categorie.couleur),
+                tooltip: {
+                    theme: 'dark',
+                    fillSeriesColor: false,
+                    y: {
+                        formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+                            return value + ' point' + (value > 1 ? 's' : '')
+                        }
+                    }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            }
+        }
+    },
     methods: {
+        chartSeriesHabitant: function(habitant) {
+            const ap = this
+            return ap.logement.categories.map(categorie =>
+                ap.pointsCategorieProfil(categorie, habitant)
+            )
+        },
+        chartSeriesTotal: function() {
+            const ap = this
+            return this.logement.categories.map(categorie =>
+                ap.logement.habitants.reduce((total, profil) => total + ap.pointsCategorieProfil(categorie, profil), 0)
+            )
+        },
         nouvelleCategorie: function () {
             const ap = this
             if (ap.nomNouvelleCategorie === '') {
