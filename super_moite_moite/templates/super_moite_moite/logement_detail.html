@@ -159,6 +159,11 @@
                                         Points : <b>[[ pointsProfil(habitant) ]]</b>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <apexchart width="500" type="pie" :options="chartOptions" :series="chartSeriesHabitant(habitant)"></apexchart>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -174,6 +179,11 @@
                                     </div>
                                     <div class="col-xs-6 text-center">
                                         Points : <b>[[ totalPoints() ]]</b>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <apexchart width="500" type="pie" :options="chartOptions" :series="chartSeriesTotal()"></apexchart>
                                     </div>
                                 </div>
                             </div>
@@ -333,10 +343,13 @@
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
     {% endif %}
 
-    <!-- Use lodash for the deep copy -->
+    <!-- Lodash sert à faire des deep copy d'objets -->
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
-    <!-- Use moment for the date formating -->
+    <!-- Utilise moment pour le formatage des dates -->
     <script src="{% static 'js/moment-with-locales.js' %}"></script>
+    <!-- Librairie pour les graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-apexcharts"></script>
 
     <script>
         {% get_current_language as LANGUAGE_CODE %}
