@@ -200,6 +200,9 @@
                     <div class="modal-header">
                         <h4 class="modal-title">
                             [[ tacheEditee.nom ]]
+                            <div class="pull-right">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
                         </h4>
                     </div>
                     <div class="modal-body">
@@ -278,7 +281,7 @@
                                                 <button type="button" class="btn btn-default">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-danger">
+                                                <button @click="supprimerTrack(track)" type="button" class="btn btn-danger">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </td>
