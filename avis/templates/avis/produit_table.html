@@ -10,7 +10,6 @@
             <th>Date d'ajout</th>
             <th class="text-center">Prix</th>
             <th class="text-center">Nombre d'avis</th>
-            <th class="text-center">Note moyenne</th>
         </tr>
         </thead>
         <tbody>
@@ -21,6 +20,13 @@
                     <a href="{{ produit.get_absolute_url }}">
                         <img src="{{ produit.avis_set.first.get_photo_url }}" height="100px" alt="Photo du produit {{ produit.nom }}">
                     </a>
+                    <div class="progress" style="margin: 5px 10px 0 10px">
+                        <div class="progress-bar progress-bar-{{ produit.moyenne|color }}" role="progressbar"
+                             title="Note moyenne" aria-valuenow="{{ produit.moyenne|multiply_10 }}"
+                             aria-valuemin="0" aria-valuemax="100" style="width:{{ produit.moyenne|multiply_10 }}%">
+                            {{ produit.moyenne|floatformat }}/10
+                        </div>
+                    </div>
                 {% endif %}
             </td>
             <td><a href="{{ produit.get_absolute_url }}">{{ produit.nom }}</a></td>
@@ -34,15 +40,6 @@
             <td>{{ produit.date_creation }}</td>
             <td class="text-center">{{ produit.prix}}€</td>
             <td class="text-center">{{ produit.avis_set.count}}</td>
-            <td class="text-center">
-                {% if produit.moyenne %}
-                <div class="progress">
-                    <div class="progress-bar progress-bar-{{ produit.moyenne|color }}" role="progressbar" aria-valuenow="{{ produit.moyenne|multiply_10 }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ produit.moyenne|multiply_10 }}%">
-                        {{ produit.moyenne|floatformat }}/10
-                    </div>
-                </div>
-                {% endif %}
-            </td>
         </tr>
         {% endfor %}
         </tbody>
