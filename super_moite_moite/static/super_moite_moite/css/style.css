@@ -17,3 +17,7 @@
 .progress-bar {
     line-height: 30px;
 }
+
+.panel .panel-heading a {
+    cursor: pointer;
+}
