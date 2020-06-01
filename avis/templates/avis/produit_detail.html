@@ -20,7 +20,7 @@
             {% if object.prix %}
                 <h3>Prix : <strong>{{ object.prix }}€</strong></h3>
             {% endif %}
-            {% if object.avis_set %}
+            {% if object.avis_set.exists %}
                 <h3>Note moyenne : <strong>{{ object.moyenne|floatformat }}/10</strong></h3>
             {% endif %}
             {% if object.categories.exists %}
@@ -75,6 +75,8 @@
                 </a>
                 {% endif %}
             </div>
+            {% else %}
+                <p>Aucun avis n'a été laissé sur ce produit.</p>
             {% endif %}
         </div>
     </div>
