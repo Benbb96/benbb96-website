@@ -28,6 +28,9 @@ $(() => {
         // Focus le cham commentaire après l'ouverture de la modal
         $('input#commentaire').focus()
     });
+
+    // Init the tooltips
+    $('[data-toggle="tooltip"]').tooltip(); 
 })
 
 Vue.component('apexchart', VueApexCharts)
@@ -323,6 +326,12 @@ let app = new Vue({
         pointsProfil: function (profil) {
             return this.logement.categories.reduce(
                 (totalPoints, categorie) => totalPoints + this.pointsCategorieProfil(categorie, profil),
+                0
+            )
+        },
+        totalPointsTache: function(tache) {
+            return this.logement.habitants.reduce(
+                (total, habitant) => total + this.pointsTacheProfil(tache, habitant),
                 0
             )
         },
