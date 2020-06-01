@@ -230,6 +230,21 @@ let app = new Vue({
                 })
                 .catch(catchError);
         },
+        supprimerTrack: function(track) {
+            const ap = this
+            if (confirm('Êtes-vous certain de vouloir supprimer ce track ?')) {
+                fetch(`${apiUrl}/track-taches/${track.id}`, {
+                    method: 'delete',
+                    headers: headers,
+                })
+                    .then(status)
+                    .then(function () {
+                        ap.tacheEditee.tracks = ap.tacheEditee.tracks.filter(t => track.id !== t.id)
+                        ap.tacheEditee.tacheOriginale.tracks = ap.tacheEditee.tacheOriginale.tracks.filter(t => track.id !== t.id)
+                    })
+                    .catch(catchError);
+            }
+        },
         pointParDefautProfil: function (tache, profil) {
             // Trouve le nombre de point que vaut cette tâche pour ce profil (1 par défaut)
             const pointProfil = tache.point_profils.find(pointProfil => pointProfil.profil === profil.id)
