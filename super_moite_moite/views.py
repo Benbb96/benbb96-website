@@ -1,12 +1,15 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView, UpdateView
+from django.contrib.auth.decorators import login_required
+
 
 from super_moite_moite.forms import LogementForm
 from super_moite_moite.models import Logement
 from super_moite_moite.serializers import LogementSerializer
 
 
+@login_required
 def liste_logements(request):
     form = LogementForm(
         request.POST or None,
