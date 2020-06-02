@@ -30,3 +30,11 @@ table.tableTracks tbody {
     text-align: center;
     font-size: 0.9em;
 }
+
+.stickyToolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 10px 5px 0 5px;
+    background-color: rgba(255, 255, 255, 0.88);
+}
