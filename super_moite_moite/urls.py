@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
+from django.contrib.auth.decorators import login_required
 
 from . import views, api_views
 
@@ -14,8 +15,16 @@ router.register('track-taches', api_views.TrackTacheView, basename='track_tache'
 
 urlpatterns = [
     path('', views.liste_logements, name='liste-logements'),
-    path('logement/<slug>', views.LogementDetailView.as_view(), name='detail-logement'),
-    path('logement/<slug>/edit', views.LogementUpdateView.as_view(), name='edition-logement'),
+    path(
+        'logement/<slug>',
+        login_required()(views.LogementDetailView.as_view()),
+        name='detail-logement'
+    ),
+    path(
+        'logement/<slug>/edit',
+        login_required()(views.LogementUpdateView.as_view()),
+        name='edition-logement'
+    ),
 
     path('api/', include(router.urls))
 ]
