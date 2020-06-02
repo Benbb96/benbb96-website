@@ -39,6 +39,7 @@ let app = new Vue({
     delimiters: ['[[', ']]'],
     el: '#app',
     data: {
+        searchText: "",
         idProfilConnecte: parseInt(idProfilConnecte),
         logement: logement,
         nomNouvelleCategorie: "",
@@ -67,6 +68,16 @@ let app = new Vue({
         ]
     },
     computed: {
+        categoriesFiltrees: function() {
+            const ap = this
+            if (ap.searchText) {
+                return ap.logement.categories.filter(categorie => {
+                    return categorie.nom.toLowerCase().includes(ap.searchText.toLowerCase()) ||
+                        categorie.taches.filter(tache => tache.nom.toLowerCase().includes(ap.searchText.toLowerCase())).length
+                })
+            }
+            return ap.logement.categories
+        },
         chartOptions: function () {
             return  {
                 chart: {
@@ -98,6 +109,15 @@ let app = new Vue({
         }
     },
     methods: {
+        categorieTachesFiltrees: function(categorie) {
+            const ap = this
+            if (ap.searchText) {
+                return categorie.taches.filter(tache => {
+                    return tache.nom.toLowerCase().includes(ap.searchText.toLowerCase())
+                })
+            }
+            return categorie.taches
+        },
         chartSeriesHabitant: function(habitant) {
             const ap = this
             return ap.logement.categories.map(categorie =>

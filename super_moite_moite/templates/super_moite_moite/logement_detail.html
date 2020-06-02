@@ -45,127 +45,141 @@
             </div>
             <hr>
             <div class="tab-content">
-                <div id="home" class="row tab-pane fade in active">
-                    <div v-for="categorie in logement.categories" class="col-md-3 col-sm-4 col-xs-12">
-                        <div class="well" :style="{backgroundColor: categorieEnEdition === categorie.id && couleurCategorieEdition !== ''? couleurCategorieEdition : categorie.couleur}">
-                            <h4 class="text-center showOnHover" @click="editionCategorie(categorie)"
-                                v-if="categorieEnEdition !== categorie.id"
-                                title="Cliquer pour éditer la catégorie">
-                                [[ categorie.nom ]]
-                                <i class="fa fa-pencil"></i>
-                            </h4>
-                            <div class="progress" v-if="categorieEnEdition !== categorie.id">
-                                <div v-for="(habitant, index) in logement.habitants"
-                                     :title="[[ habitant.user ]] + ' : ' + [[ pointsCategorieProfil(categorie, habitant) ]] + ' points'"
-                                     :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
-                                     role="progressbar" :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'"
-                                     data-toggle="tooltip" data-placement="bottom">
-                                    [[ pourcentagePointProfilCategorie(habitant, categorie) | round(0) ]]%
+                <div id="home" class="tab-pane fade in active">
+                    <div class="row stickyToolbar">
+                        <div class="form-group col-md-4 col-sm-6 col-xs-12">
+                            <div class="input-group" title="Effectuer une recherche à travers les noms des catégories et des tâches">
+                                <div class="input-group-addon">
+                                    <label for="searchText">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </label>
                                 </div>
+                                <input v-model="searchText" id="searchText" class="form-control" type="search" placeholder="Rechercher...">
                             </div>
-                            <div v-else>
-                                <div :class="'form-group' + (erreursNomCategorieEdition.length ? ' has-error' : '')">
-                                    <input v-model="nomCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)" class="form-control">
-                                    <ul v-if="erreursNomCategorieEdition.length" class="errorlist">
-                                        <li v-for="erreur in erreursNomCategorieEdition">[[ erreur ]]</li>
-                                    </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div v-for="categorie in categoriesFiltrees" class="col-md-3 col-sm-4 col-xs-12">
+                            <div class="well" :style="{backgroundColor: categorieEnEdition === categorie.id && couleurCategorieEdition !== ''? couleurCategorieEdition : categorie.couleur}">
+                                <h4 class="text-center showOnHover" @click="editionCategorie(categorie)"
+                                    v-if="categorieEnEdition !== categorie.id"
+                                    title="Cliquer pour éditer la catégorie">
+                                    [[ categorie.nom ]]
+                                    <i class="fa fa-pencil"></i>
+                                </h4>
+                                <div class="progress" v-if="categorieEnEdition !== categorie.id">
+                                    <div v-for="(habitant, index) in logement.habitants"
+                                         :title="[[ habitant.user ]] + ' : ' + [[ pointsCategorieProfil(categorie, habitant) ]] + ' points'"
+                                         :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
+                                         role="progressbar" :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'"
+                                         data-toggle="tooltip" data-placement="bottom">
+                                        [[ pourcentagePointProfilCategorie(habitant, categorie) | round(0) ]]%
+                                    </div>
                                 </div>
-                                <div :class="'form-group' + (erreursCouleurCategorieEdition.length ? ' has-error' : '')">
-                                    <div class="row">
-                                        <div class="col-xs-7">
-                                            <input v-model="couleurCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)" class="form-control">
+                                <div v-else>
+                                    <div :class="'form-group' + (erreursNomCategorieEdition.length ? ' has-error' : '')">
+                                        <input v-model="nomCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)" class="form-control">
+                                        <ul v-if="erreursNomCategorieEdition.length" class="errorlist">
+                                            <li v-for="erreur in erreursNomCategorieEdition">[[ erreur ]]</li>
+                                        </ul>
+                                    </div>
+                                    <div :class="'form-group' + (erreursCouleurCategorieEdition.length ? ' has-error' : '')">
+                                        <div class="row">
+                                            <div class="col-xs-7">
+                                                <input v-model="couleurCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)" class="form-control">
+                                            </div>
+                                            <div class="col-xs-5">
+                                                <input v-model="couleurCategorieEdition" class="form-control" type="color">
+                                            </div>
                                         </div>
-                                        <div class="col-xs-5">
-                                            <input v-model="couleurCategorieEdition" class="form-control" type="color">
-                                        </div>
+                                        <ul v-if="erreursCouleurCategorieEdition.length" class="errorlist">
+                                            <li v-for="erreur in erreursCouleurCategorieEdition">[[ erreur ]]</li>
+                                        </ul>
                                     </div>
-                                    <ul v-if="erreursCouleurCategorieEdition.length" class="errorlist">
-                                        <li v-for="erreur in erreursCouleurCategorieEdition">[[ erreur ]]</li>
-                                    </ul>
-                                </div>
-                                <div class="text-center">
-                                    <button type="button" class="btn btn-default" @click="enregistreEditionCategorie(categorie)">
-                                        OK <i class="fa fa-save"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-warning" @click="categorieEnEdition = null">
-                                        Annuler
-                                    </button>
-                                    <button type="button" class="btn btn-danger" @click="supprimerCategorie(categorie)">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="panel panel-default" v-for="tache in categorie.taches">
-                                <div class="panel-heading">
-                                    <a @click="detailTache(tache)">
-                                        [[ tache.nom ]]
-                                    </a>
-                                </div>
-                                <div class="panel-body">
-                                    <div v-if="!tache.get_photo_url.includes('placeholder.jpg')">
-                                        <img :src="tache.get_photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
-                                    </div>
-                                    <p v-if="tache.description">[[ tache.description ]]</p>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-condensed tableTracks">
-                                            <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th class="text-center">Tracks</th>
-                                                <th class="text-center">Pts défaut</th>
-                                                <th class="text-center">Points</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr v-for="(habitant, index) in logement.habitants" :class="bootstrapClassColors[index]">
-                                                <td>[[ habitant.user ]]</td>
-                                                <td>[[ tache.tracks.filter(track => track.profil === habitant.id).length ]]</td>
-                                                <td>
-                                                    [[ pointParDefautProfil(tache, habitant) ]]
-                                                </td>
-                                                <td>[[ pointsTacheProfil(tache, habitant) ]]</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Total</td>
-                                                <td>[[ tache.tracks.length ]]</td>
-                                                <td></td>
-                                                <td>[[ totalPointsTache(tache) ]]</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="panel-footer text-center">
-                                    <div class="btn-group">
-                                        <button @click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
-                                            <i class="fa fa-plus"></i>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-default" @click="enregistreEditionCategorie(categorie)">
+                                            OK <i class="fa fa-save"></i>
                                         </button>
-                                        <button @click="detailTache(tache, true)" type="button" class="btn btn-default btn-xs">
-                                            <i class="fa fa-comment"></i>
+                                        <button type="button" class="btn btn-warning" @click="categorieEnEdition = null">
+                                            Annuler
+                                        </button>
+                                        <button type="button" class="btn btn-danger" @click="supprimerCategorie(categorie)">
+                                            <i class="fa fa-trash"></i>
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="input-group">
-                                <input v-model="nomsNouvelleTache[categorie.id]" @keyup.enter="nouvelleTache(categorie)"
-                                       placeholder="Nouvelle tâche" class="form-control">
-                                <div class="input-group-btn">
-                                    <div @click="nouvelleTache(categorie)" class="btn btn-default">
-                                        <i class="fa fa-check"></i>
+                                <hr>
+                                <div class="panel panel-default" v-for="tache in categorieTachesFiltrees(categorie)">
+                                    <div class="panel-heading">
+                                        <a @click="detailTache(tache)">
+                                            [[ tache.nom ]]
+                                        </a>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div v-if="!tache.get_photo_url.includes('placeholder.jpg')">
+                                            <img :src="tache.get_photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
+                                        </div>
+                                        <p v-if="tache.description">[[ tache.description ]]</p>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-condensed tableTracks">
+                                                <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th class="text-center">Tracks</th>
+                                                    <th class="text-center">Pts défaut</th>
+                                                    <th class="text-center">Points</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr v-for="(habitant, index) in logement.habitants" :class="bootstrapClassColors[index]">
+                                                    <td>[[ habitant.user ]]</td>
+                                                    <td>[[ tache.tracks.filter(track => track.profil === habitant.id).length ]]</td>
+                                                    <td>
+                                                        [[ pointParDefautProfil(tache, habitant) ]]
+                                                    </td>
+                                                    <td>[[ pointsTacheProfil(tache, habitant) ]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total</td>
+                                                    <td>[[ tache.tracks.length ]]</td>
+                                                    <td></td>
+                                                    <td>[[ totalPointsTache(tache) ]]</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer text-center">
+                                        <div class="btn-group">
+                                            <button @click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                            <button @click="detailTache(tache, true)" type="button" class="btn btn-default btn-xs">
+                                                <i class="fa fa-comment"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <input v-model="nomsNouvelleTache[categorie.id]" @keyup.enter="nouvelleTache(categorie)"
+                                           placeholder="Nouvelle tâche" class="form-control">
+                                    <div class="input-group-btn">
+                                        <div @click="nouvelleTache(categorie)" class="btn btn-default">
+                                            <i class="fa fa-check"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-3 col-sm-4 col-xs-12">
-                        <div class="well">
-                            <div class="input-group">
-                                <input v-model="nomNouvelleCategorie" @keyup.enter="nouvelleCategorie"
-                                       placeholder="Nouvelle catégorie" class="form-control">
-                                <div class="input-group-btn">
-                                    <div @click="nouvelleCategorie" class="btn btn-primary">
-                                        <i class="fa fa-plus"></i>
+                        <div class="col-md-3 col-sm-4 col-xs-12">
+                            <div class="well">
+                                <div class="input-group">
+                                    <input v-model="nomNouvelleCategorie" @keyup.enter="nouvelleCategorie"
+                                           placeholder="Nouvelle catégorie" class="form-control">
+                                    <div class="input-group-btn">
+                                        <div @click="nouvelleCategorie" class="btn btn-primary">
+                                            <i class="fa fa-plus"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
