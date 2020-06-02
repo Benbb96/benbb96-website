@@ -11,12 +11,13 @@
         <div class="col-md-6 col-md-offset-3 col-xs-12">
             {% if next %}
                 {% if user.is_authenticated %}
+                    {% bootstrap_alert "Désolé mais ton compte n'a pas accès à cette page.<br>Contacte-moi pour en obtenir l'accès !" %}
                     <p>
                         Désolé mais ton compte n'a pas accès à cette page.<br>
                         Contacte-moi pour en obtenir l'accès !
                     </p>
                 {% else %}
-                    <p>Connecte-toi pour accéder à cette page !</p>
+                    {% bootstrap_alert "Connecte-toi pour accéder à cette page !" alert_type='warning' %}
                 {% endif %}
             {% endif %}
             <form method="post">
