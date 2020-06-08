@@ -50,8 +50,6 @@ let app = new Vue({
         erreursNomCategorieEdition: [],
         couleurCategorieEdition: "",
         erreursCouleurCategorieEdition: [],
-        trackEnEdition: null,
-        commentaireTrackEdition: "",
         tacheEditee: {
             id: null,
             nom: "",
@@ -62,6 +60,12 @@ let app = new Vue({
             tracks: [],
             point_profils: [],
             displayProgress: "none"
+        },
+        trackEditee: {
+            id: null,
+            commentaire: "",
+            datetime: "",
+            profil: null
         },
         bootstrapClassColors: [
             'success', 'info', 'danger', 'warning', 'primary'
@@ -271,14 +275,14 @@ let app = new Vue({
                 .catch(catchError);
         },
         editerTrack: function(track) {
-            this.trackEnEdition = track.id
-            this.commentaireTrackEdition = track.commentaire
+            this.trackEditee.id = track.id
+            this.trackEditee.commentaire = track.commentaire
+            this.trackEditee.profil = track.profil
+            this.trackEditee.datetime = moment(track.datetime).format("YYYY-MM-DDTHH:mm")
         },
         enregistreEditionTrack: function(track) {
             const ap = this
-            const body = JSON.stringify({
-                commentaire: ap.commentaireTrackEdition,
-            })
+            const body = JSON.stringify(ap.trackEditee)
             fetch(`${apiUrl}/track-taches/${track.id}`, {
                 method: 'PATCH',
                 headers: headers,
@@ -287,12 +291,15 @@ let app = new Vue({
                 .then(status)
                 .then(json)
                 .then(function (trackEditee) {
-                    // Met à jour le commentaire seulement pour le moment
-                    track.commentaire = trackEditee.commentaire
-                    ap.tacheEditee.tacheOriginale.tracks.find(track => track.id === trackEditee.id).commentaire = trackEditee.commentaire
-                    // Re initialise le track en édition
-                    ap.trackEnEdition = null
-                    ap.commentaireTrackEdition = ""
+                    // Met à jour le track avec les nouvelles valeurs
+                    ap.tacheEditee.tracks = ap.tacheEditee.tracks.map(track => track.id === trackEditee.id ? trackEditee: track)
+                    // Met à jour aussi le track dans la tâche originale
+                    ap.tacheEditee.tacheOriginale.tracks = ap.tacheEditee.tacheOriginale.tracks.map(track => track.id === trackEditee.id ? trackEditee: track)
+                    // Ré-initialise le track en édition
+                    ap.trackEditee.id = null
+                    ap.trackEditee.commentaire = ""
+                    ap.trackEditee.datetime = ""
+                    ap.trackEditee.profil = null
                 })
                 .catch(catchError);
         },
