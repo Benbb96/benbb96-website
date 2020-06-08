@@ -8,7 +8,7 @@ class TrackTacheSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrackTache
         fields = '__all__'
-        read_only_fields = ('id', 'profil')
+        read_only_fields = ('id',)
 
 
 class ProfilSerializer(serializers.ModelSerializer):
