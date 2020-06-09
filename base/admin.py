@@ -44,5 +44,5 @@ class LienReseauSocialAdmin(admin.ModelAdmin):
 class PhotoAdminAbtract(admin.ModelAdmin):
     def thumbnail(self, obj):
         if obj.photo:
-            return format_html('<img src="{}" height="50px" />', obj.get_photo_url)
+            return format_html('<img src="{}" height="50px" />', obj.photo_url)
         return None

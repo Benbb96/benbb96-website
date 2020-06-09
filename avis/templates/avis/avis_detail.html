@@ -30,7 +30,7 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             {% if object.photo %}
-            <img src="{{ object.get_photo_url }}" width="100%" title="Photo du produit {{ object.produit }}" alt="Photo du produit {{ object.produit }} prise par {{ object.auteur }}" />
+            <img src="{{ object.photo_url }}" width="100%" title="Photo du produit {{ object.produit }}" alt="Photo du produit {{ object.produit }} prise par {{ object.auteur }}" />
             {% endif %}
         </div>
         <div class="col-md-6 col-xs-12 h4">

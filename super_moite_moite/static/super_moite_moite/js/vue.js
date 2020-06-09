@@ -56,7 +56,7 @@ let app = new Vue({
             description: "",
             categorie: null,
             photo: "",
-            get_photo_url: "",
+            photo_url: "",
             tracks: [],
             point_profils: [],
             displayProgress: "none"
@@ -427,6 +427,22 @@ let app = new Vue({
                         $('#modalDetailTache').modal('hide')
                     })
                     .catch(catchError);
+            }
+        },
+        updatePhotoUrl: function(url) {
+            if (url.startsWith('http')) {
+                const ap = this
+                // Essaye de récupérer l'image pour voir si on l'affiche
+                fetch("https://cors-anywhere.herokuapp.com/" + url)
+                    .then(function (response) {
+                        if (response.status === 200) {
+                            ap.tacheEditee.photo_url = url
+                        } else {
+                            alert("Impossible de récupérer l'image via cette URL...")
+                        }
+                    }).catch(function (error) {
+                        alert(error)
+                })
             }
         },
         enregistrerModifTache: function (tache) {

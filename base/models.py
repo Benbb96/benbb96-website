@@ -108,14 +108,22 @@ class LienReseauSocial(models.Model):
 
 
 class PhotoAbstract(models.Model):
-    photo = models.TextField('url photo', default='placeholder.jpg')
+    photo = models.TextField(
+        'url photo',
+        default='placeholder.jpg',
+        help_text="Vous pouvez également renseigner l'URL d'une image sur internet."
+    )
 
     class Meta:
         abstract = True
 
     @property
-    def get_photo_url(self):
+    def photo_url(self):
         """ Récupère l'URL complète de l'image """
+        # Vérifier s'il s'agit d'une URL de photo
+        if self.photo.startswith('http'):
+            return self.photo
+        # Récupération de l'URL grâce à pyrebase
         firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
         storage = firebase.storage()
         return storage.child(self.photo).get_url(None)

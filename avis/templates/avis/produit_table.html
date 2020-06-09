@@ -18,7 +18,7 @@
             <td class="text-center">
                 {% if produit.avis_set.exists %}
                     <a href="{{ produit.get_absolute_url }}">
-                        <img src="{{ produit.avis_set.first.get_photo_url }}" height="100px" alt="Photo du produit {{ produit.nom }}">
+                        <img src="{{ produit.avis_set.first.photo_url }}" height="100px" alt="Photo du produit {{ produit.nom }}">
                     </a>
                     <div class="progress" style="margin: 5px 10px 0 10px">
                         <div class="progress-bar progress-bar-{{ produit.moyenne|color }}" role="progressbar"

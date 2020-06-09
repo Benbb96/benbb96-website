@@ -116,8 +116,8 @@
                                         </a>
                                     </div>
                                     <div class="panel-body">
-                                        <div v-if="!tache.get_photo_url.includes('placeholder.jpg')">
-                                            <img :src="tache.get_photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
+                                        <div v-if="!tache.photo_url.includes('placeholder.jpg')">
+                                            <img :src="tache.photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
                                         </div>
                                         <p v-if="tache.description">[[ tache.description ]]</p>
                                         <div class="table-responsive">
@@ -260,7 +260,7 @@
                                 <h4>Informations sur la tâche</h4>
                                 <div class="row">
                                     <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-12">
-                                        <img :src="tacheEditee.get_photo_url" :alt="'Photo de la tâche ' + tacheEditee.nom" :style="{width: '100%'}">
+                                        <img :src="tacheEditee.photo_url" :alt="'Photo de la tâche ' + tacheEditee.nom" :style="{width: '100%'}">
                                     </div>
                                 </div>
                                 <p v-if="tacheEditee.description">
@@ -379,14 +379,14 @@
                                         Illustration :
                                     </label>
                                     <div>
-                                        <input v-model="tacheEditee.photo" class="form-control" id="imageInput">
+                                        <input v-model="tacheEditee.photo" v-on:input="updatePhotoUrl($event.target.value)" class="form-control" id="imageInput">
                                         <input type="file" name="files[]" :style="{display: 'inline'}">
                                         <button @click="uploadFirebaseImage(tacheEditee.id)" type="button" class="btn btn-default">
                                             Upload
                                         </button>
                                         <progress value="0" max="100" :style="{display: tacheEditee.displayProgress}"></progress>
                                         <br>
-                                        <img class="display" :src="tacheEditee.get_photo_url" width="340px" alt="Image chargée par Firebase"/>
+                                        <img class="display" :src="tacheEditee.photo_url" width="340px" alt="Image chargée par Firebase"/>
                                     </div>
                                 </div>
                             </div>
