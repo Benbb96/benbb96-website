@@ -2,7 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from super_moite_moite.models import Categorie, Tache, PointTache, TrackTache
 from super_moite_moite.serializers import LogementSerializer, CategorieSerializer, TacheSerializer, \
-    PointTacheSerializer, TrackTacheSerializer
+    PointTacheSerializer, TrackTacheSerializer, TrackTacheSerializerSansProfil
 
 
 class LogementView(ModelViewSet):
@@ -38,6 +38,11 @@ class TrackTacheView(ModelViewSet):
 
     def get_queryset(self):
         return TrackTache.objects.filter(tache__categorie__logement__habitants=self.request.user.profil)
+
+    def get_serializer_class(self):
+        if self.action == 'update':
+            return super().get_serializer_class()
+        return TrackTacheSerializerSansProfil
 
     def perform_create(self, serializer):
         serializer.save(profil=self.request.user.profil)

@@ -11,6 +11,11 @@ class TrackTacheSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
+class TrackTacheSerializerSansProfil(TrackTacheSerializer):
+    class Meta(TrackTacheSerializer.Meta):
+        read_only_fields = ('id', 'profil')
+
+
 class ProfilSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
     tache_tracks = TrackTacheSerializer(many=True, read_only=True)
