@@ -306,58 +306,60 @@
                                         </div>
                                     </div>
                                 </div>
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Profil</th>
-                                            <th>Commentaire</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="track in tacheEditee.tracks">
-                                            <td v-if="trackEditee.id !== track.id">
-                                                [[ track.datetime | moment ]]
-                                            </td>
-                                            <td v-else>
-                                                <input v-model="trackEditee.datetime" type="datetime-local" class="form-control">
-                                            </td>
-                                            <td v-if="trackEditee.id !== track.id">
-                                                [[ logement.habitants.find(habitant => habitant.id === track.profil).user ]]
-                                            </td>
-                                            <td v-else>
-                                                <select v-model="trackEditee.profil" class="form-control">
-                                                    <option v-for="habitant in logement.habitants" :value="habitant.id">
-                                                        [[ habitant.user ]]
-                                                    </option>
-                                                </select>
-                                            </td>
-                                            <td v-if="trackEditee.id !== track.id">
-                                                [[ track.commentaire ]]
-                                            </td>
-                                            <td v-else>
-                                                <input v-model="trackEditee.commentaire" @keyup.enter="enregistreEditionTrack(track)" class="form-control">
-                                            </td>
-                                            <td v-if="trackEditee.id !== track.id">
-                                                <button @click="editerTrack(track)" type="button" class="btn btn-default">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button @click="supprimerTrack(track)" type="button" class="btn btn-danger">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </td>
-                                            <td v-else>
-                                                <button @click="enregistreEditionTrack(track)" type="button" class="btn btn-success">
-                                                    <i class="fa fa-save"></i>
-                                                </button>
-                                                <button @click="trackEditee.id = null" type="button" class="btn btn-default">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Profil</th>
+                                                <th>Commentaire</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="track in tacheEditee.tracks">
+                                                <td v-if="trackEditee.id !== track.id">
+                                                    [[ track.datetime | moment ]]
+                                                </td>
+                                                <td v-else>
+                                                    <input v-model="trackEditee.datetime" type="datetime-local" class="form-control">
+                                                </td>
+                                                <td v-if="trackEditee.id !== track.id">
+                                                    [[ logement.habitants.find(habitant => habitant.id === track.profil).user ]]
+                                                </td>
+                                                <td v-else>
+                                                    <select v-model="trackEditee.profil" class="form-control">
+                                                        <option v-for="habitant in logement.habitants" :value="habitant.id">
+                                                            [[ habitant.user ]]
+                                                        </option>
+                                                    </select>
+                                                </td>
+                                                <td v-if="trackEditee.id !== track.id">
+                                                    [[ track.commentaire ]]
+                                                </td>
+                                                <td v-else>
+                                                    <input v-model="trackEditee.commentaire" @keyup.enter="enregistreEditionTrack(track)" class="form-control">
+                                                </td>
+                                                <td v-if="trackEditee.id !== track.id">
+                                                    <button @click="editerTrack(track)" type="button" class="btn btn-default">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button @click="supprimerTrack(track)" type="button" class="btn btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                                <td v-else>
+                                                    <button @click="enregistreEditionTrack(track)" type="button" class="btn btn-success">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
+                                                    <button @click="trackEditee.id = null" type="button" class="btn btn-default">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div id="edition" class="tab-pane fade">
                                 <h4>Modification des informations de la tâche</h4>
