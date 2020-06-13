@@ -38,3 +38,28 @@ table.tableTracks tbody {
     padding: 10px 5px 0 5px;
     background-color: rgba(255, 255, 255, 0.88);
 }
+
+/* Animate Increment */
+.slide-enter {
+  top: 7px;
+  opacity: 0.5;
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: all .45s;
+}
+
+.slide-enter-to {
+  top: 0;
+  opacity: 1;
+}
+
+.slide-leave {
+  top: 0;
+  opacity: 1;
+}
+
+.slide-leave-to {
+  top: -7px;
+  opacity: 0;
+}

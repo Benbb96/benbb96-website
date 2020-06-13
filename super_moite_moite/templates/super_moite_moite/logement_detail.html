@@ -97,14 +97,17 @@
                                         </ul>
                                     </div>
                                     <div class="text-center">
-                                        <button type="button" class="btn btn-default" @click="enregistreEditionCategorie(categorie)">
-                                            OK <i class="fa fa-save"></i>
+                                        <button type="button" class="btn btn-success" @click="enregistreEditionCategorie(categorie)"
+                                                title="Sauvegarder les modifications" data-toggle="tooltip" data-placement="bottom">
+                                            <i class="fa fa-save"></i>
                                         </button>
-                                        <button type="button" class="btn btn-warning" @click="categorieEnEdition = null">
-                                            Annuler
-                                        </button>
-                                        <button type="button" class="btn btn-danger" @click="supprimerCategorie(categorie)">
+                                        <button type="button" class="btn btn-danger" @click="supprimerCategorie(categorie)"
+                                                title="Supprimer la catégorie" data-toggle="tooltip" data-placement="bottom">
                                             <i class="fa fa-trash"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default" @click="categorieEnEdition = null"
+                                                title="Annuler les modifications" data-toggle="tooltip" data-placement="bottom">
+                                            <i class="fa fa-times"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -133,7 +136,17 @@
                                                 <tbody>
                                                 <tr v-for="(habitant, index) in logement.habitants" :class="bootstrapClassColors[index]">
                                                     <td>[[ habitant.user ]]</td>
-                                                    <td>[[ tache.tracks.filter(track => track.profil === habitant.id).length ]]</td>
+                                                    <td>
+                                                        <transition name="slide" mode="out-in">
+                                                            <span v-if="nombreProfilTracks(habitant, tache) % 2 === 0"
+                                                            key="x" style="position:relative;">
+                                                                [[ nombreProfilTracks(habitant, tache) ]]
+                                                            </span>
+                                                            <span v-else key="y" style="position:relative;">
+                                                                [[ nombreProfilTracks(habitant, tache) ]]
+                                                            </span>
+                                                        </transition>
+                                                    </td>
                                                     <td>
                                                         [[ pointParDefautProfil(tache, habitant) ]]
                                                     </td>
@@ -141,7 +154,17 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Total</td>
-                                                    <td>[[ tache.tracks.length ]]</td>
+                                                    <td>
+                                                        <transition name="slide" mode="out-in">
+                                                            <span v-if="tache.tracks.length % 2 === 0"
+                                                            key="x" style="position:relative;">
+                                                                [[ tache.tracks.length ]]
+                                                            </span>
+                                                            <span v-else key="y" style="position:relative;">
+                                                                [[ tache.tracks.length ]]
+                                                            </span>
+                                                        </transition>
+                                                    </td>
                                                     <td></td>
                                                     <td>[[ totalPointsTache(tache) ]]</td>
                                                 </tr>
@@ -150,14 +173,18 @@
                                         </div>
                                     </div>
                                     <div class="panel-footer text-center">
-                                        <div class="btn-group">
-                                            <button @click="ajoutTrack(tache)" type="button" class="btn btn-primary btn-xs">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                            <button @click="detailTache(tache, true)" type="button" class="btn btn-default btn-xs">
-                                                <i class="fa fa-comment"></i>
-                                            </button>
-                                        </div>
+                                        <button @click="detailTache(tache, 'detail')" type="button" class="btn btn-default btn-sm"
+                                                title="Régler les points par défaut de la tâche" data-toggle="tooltip" data-placement="left">
+                                            <i class="fa fa-gear"></i>
+                                        </button>
+                                        <button @click="ajoutTrack(tache)" type="button" class="btn btn-primary" style="border-radius: 50%"
+                                                title="Ajouter un track rapidement" data-toggle="tooltip" data-placement="bottom">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <button @click="detailTache(tache, 'edition')" type="button" class="btn btn-default btn-sm"
+                                                title="Editer les informations de la tâche" data-toggle="tooltip" data-placement="right">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="input-group">
@@ -250,49 +277,18 @@
                     </div>
                     <div class="modal-body">
                         <ul class="nav nav-tabs">
-                            <li class="active"><a data-toggle="tab" href="#detail">Détail</a></li>
-                            <li><a data-toggle="tab" href="#tracks">Tracks</a></li>
+                            <li class="active">
+                                <a data-toggle="tab" href="#tracks">
+                                    Tracks
+                                    <span class="badge">[[ tacheEditee.tracks.length ]]</span>
+                                </a>
+                            </li>
+                            <li><a data-toggle="tab" href="#detail">Détail</a></li>
                             <li><a data-toggle="tab" href="#edition">Edition</a></li>
                         </ul>
 
                         <div class="tab-content">
-                            <div id="detail" class="tab-pane fade in active">
-                                <h4>Informations sur la tâche</h4>
-                                <div class="row">
-                                    <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-12">
-                                        <img :src="tacheEditee.photo_url" :alt="'Photo de la tâche ' + tacheEditee.nom" :style="{width: '100%'}">
-                                    </div>
-                                </div>
-                                <p v-if="tacheEditee.description">
-                                    Description : [[ tacheEditee.description ]]
-                                </p>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-right">Habitant</th>
-                                            <th class="text-center">Points attribués</th>
-                                            <th class="text-center">Points gagnés</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="habitant in logement.habitants">
-                                            <td class="text-right">
-                                                <label :for="habitant.id">[[ habitant.user ]] :</label>
-                                            </td>
-                                            <td class="text-center">
-                                                <input type="number" min="0" class="form-control" :id="habitant.id"
-                                               :value="pointParDefautProfil(tacheEditee, habitant)"
-                                                @input="changePointParDefautProfil(tacheEditee, habitant, $event.target.value)">
-                                            </td>
-                                            <td class="text-center">
-                                                {# FIXME bug quand on édite les points par défaut #}
-                                                [[ pointsTacheProfil(tacheEditee, habitant) ]]
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div id="tracks" class="tab-pane fade">
+                            <div id="tracks" class="tab-pane fade in active">
                                 <h4>Historique des tracks</h4>
                                 <div class="form-group">
                                     <label for="commentaire">Ajout d'un nouveau track :</label>
@@ -361,6 +357,42 @@
                                     </table>
                                 </div>
                             </div>
+                            <div id="detail" class="tab-pane fade">
+                                <h4>Informations sur la tâche</h4>
+                                <div class="row">
+                                    <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-12">
+                                        <img :src="tacheEditee.photo_url" :alt="'Photo de la tâche ' + tacheEditee.nom" :style="{width: '100%'}">
+                                    </div>
+                                </div>
+                                <p v-if="tacheEditee.description">
+                                    Description : [[ tacheEditee.description ]]
+                                </p>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-right">Habitant</th>
+                                            <th class="text-center">Points attribués</th>
+                                            <th class="text-center">Points gagnés</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="habitant in logement.habitants">
+                                            <td class="text-right">
+                                                <label :for="habitant.id">[[ habitant.user ]] :</label>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="number" min="0" class="form-control" :id="habitant.id"
+                                               :value="pointParDefautProfil(tacheEditee, habitant)"
+                                                @input="changePointParDefautProfil(tacheEditee, habitant, $event.target.value)">
+                                            </td>
+                                            <td class="text-center">
+                                                {# FIXME bug quand on édite les points par défaut #}
+                                                [[ pointsTacheProfil(tacheEditee, habitant) ]]
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                             <div id="edition" class="tab-pane fade">
                                 <h4>Modification des informations de la tâche</h4>
                                 <div class="form-group">
@@ -371,7 +403,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="descriptionTextarea">
-                                        Descrption :
+                                        Description :
                                     </label>
                                     <textarea v-model="tacheEditee.description" class="form-control" id="descriptionTextarea" :style="{resize: 'vertical'}"></textarea>
                                 </div>
