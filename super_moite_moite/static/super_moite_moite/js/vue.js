@@ -23,14 +23,17 @@ function catchError(error) {
     alert("Une erreur s'est produite lors de la requête")
 }
 
+function initTooltips() {
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
 $(() => {
     $('#modalDetailTache').on('shown.bs.modal', function (e) {
         // Focus le cham commentaire après l'ouverture de la modal
         $('input#commentaire').focus()
     });
 
-    // Init the tooltips
-    $('[data-toggle="tooltip"]').tooltip();
+    initTooltips()
 })
 
 Vue.component('apexchart', VueApexCharts)
@@ -113,6 +116,9 @@ let app = new Vue({
         }
     },
     methods: {
+        nombreProfilTracks: function (profil, tache) {
+            return tache.tracks.filter(track => track.profil === profil.id).length
+        },
         categorieTachesFiltrees: function(categorie) {
             const ap = this
             if (ap.searchText) {
@@ -163,6 +169,7 @@ let app = new Vue({
             this.couleurCategorieEdition = categorie.couleur
             this.erreursNomCategorieEdition = []
             this.erreursCouleurCategorieEdition = []
+            setTimeout(initTooltips, 10);  // Wait to have the DOM changed by vue
         },
         enregistreEditionCategorie: function(categorie) {
             const ap = this
@@ -397,21 +404,16 @@ let app = new Vue({
                 track => ap.allLogementTaches().some(tache => tache.id === track.tache)
             ).length
         },
-        detailTache: function (tache, ouvreTracks=false) {
+        detailTache: function (tache, tabId='tracks') {
             // Effectue une copie profonde de la tâche pour l'éditer sans toucher à l'originale
             this.tacheEditee = _.cloneDeep(tache)
             this.tacheEditee.tacheOriginale = tache
-            if (ouvreTracks) {
-                // Ouvre l'onglet des tracks
-                $('a[href=#tracks]').trigger('click')
-            } else {
-                // L'onglet détail doit être affiché en premier par défaut
-                $('a[href=#detail]').trigger('click')
-            }
             // Ré-initialise le commentaire d'ajout de Track
             this.commentaireTrack = ""
             // Ouvre la modale d'édition
             $('#modalDetailTache').modal()
+            // Sélectionne l'onglet à ouvrir
+            $('a[href=#' + tabId + ']').trigger('click')
         },
         supprimerTache: function (tache) {
             if (confirm('Êtes-vous certain de vouloir supprimer cette tâche ?')) {
