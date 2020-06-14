@@ -56,7 +56,7 @@ class Logement(models.Model):
 class Categorie(models.Model):
     nom = models.CharField(max_length=100)
     logement = models.ForeignKey(Logement, on_delete=models.CASCADE, related_name='categories')
-    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    order = models.PositiveIntegerField(default=0, db_index=True)
     couleur = ColorField(default='#FFFFFF')
 
     class Meta:
