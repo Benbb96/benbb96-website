@@ -499,6 +499,28 @@ let app = new Vue({
                     $('#modalDetailTache').modal('hide')
                 })
                 .catch(catchError);
+        },
+        dragEnd: function () {
+            const ap = this
+            // Parcourt toutes les catégories et remet à jour leur ordre en fonction du nouveau tri
+            for (let [key, value] of Object.entries(this.$refs.categories)) {
+                key = parseInt(key)
+                const categorieId = parseInt(value.dataset.id);
+                // Effectue la mise à jour seulement si sa position a changée
+                if (ap.logement.categories.find(categorie => categorie.id === categorieId).order !== key) {
+                    fetch(`${apiUrl}/categories/${categorieId}`, {
+                        method: 'PATCH',
+                        headers: headers,
+                        body: JSON.stringify({order: key})
+                    })
+                        .then(status)
+                        .then(json)
+                        .then(function(categorieEditee) {
+                            ap.logement.categories.find(categorie => categorie.id === categorieId).order = categorieEditee.order
+                        })
+                        .catch(catchError)
+                }
+            }
         }
     },
     filters: {
