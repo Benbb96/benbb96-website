@@ -40,7 +40,7 @@ class TrackTacheView(ModelViewSet):
         return TrackTache.objects.filter(tache__categorie__logement__habitants=self.request.user.profil)
 
     def get_serializer_class(self):
-        if self.action == 'update':
+        if self.action == 'update' or self.action == 'partial_update':
             return super().get_serializer_class()
         return TrackTacheSerializerSansProfil
 
