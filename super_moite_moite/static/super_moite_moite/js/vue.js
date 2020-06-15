@@ -500,7 +500,7 @@ let app = new Vue({
                 })
                 .catch(catchError);
         },
-        dragEnd: function () {
+        orderCategories: function () {
             const ap = this
             // Parcourt toutes les catégories et remet à jour leur ordre en fonction du nouveau tri
             for (let [key, value] of Object.entries(this.$refs.categories)) {
@@ -517,6 +517,27 @@ let app = new Vue({
                         .then(json)
                         .then(function(categorieEditee) {
                             ap.logement.categories.find(categorie => categorie.id === categorieId).order = categorieEditee.order
+                        })
+                        .catch(catchError)
+                }
+            }
+        },
+        orderTaches: function (categorie) {
+            // Parcourt toutes les tâches et remet à jour leur ordre en fonction du nouveau tri
+            for (let [key, value] of Object.entries(this.$refs['taches' + categorie.id])) {
+                key = parseInt(key)
+                const tacheId = parseInt(value.dataset.id);
+                // Effectue la mise à jour seulement si sa position a changée
+                if (categorie.taches.find(tache => tache.id === tacheId).order !== key) {
+                    fetch(`${apiUrl}/taches/${tacheId}`, {
+                        method: 'PATCH',
+                        headers: headers,
+                        body: JSON.stringify({order: key})
+                    })
+                        .then(status)
+                        .then(json)
+                        .then(function(tacheEditee) {
+                            categorie.taches.find(tache => tache.id === tacheId).order = tacheEditee.order
                         })
                         .catch(catchError)
                 }

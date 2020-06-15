@@ -70,7 +70,7 @@ class Tache(PhotoAbstract):
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name='taches')
-    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    order = models.PositiveIntegerField(default=0, db_index=True)
 
     def __str__(self):
         return self.nom
