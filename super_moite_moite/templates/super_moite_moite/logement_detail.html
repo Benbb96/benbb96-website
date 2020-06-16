@@ -59,11 +59,11 @@
                         </div>
                     </div>
                     <div class="row">
-                        <draggable v-model="logement.categories" @end="orderCategories">
+                        <draggable v-model="logement.categories" @end="orderCategories" handle=".handleCategorie">
                             <div v-for="categorie in categoriesFiltrees" class="col-md-3 col-sm-4 col-xs-12"
                                  ref="categories" :data-id="categorie.id">
                                 <div class="well" :style="{backgroundColor: categorieEnEdition === categorie.id && couleurCategorieEdition !== ''? couleurCategorieEdition : categorie.couleur}">
-                                    <h4 class="text-center showOnHover" @click="editionCategorie(categorie)"
+                                    <h4 class="text-center showOnHover handleCategorie" @click="editionCategorie(categorie)"
                                         v-if="categorieEnEdition !== categorie.id"
                                         title="Cliquer pour éditer la catégorie">
                                         [[ categorie.nom ]]
@@ -114,11 +114,11 @@
                                         </div>
                                     </div>
                                     <hr>
-                                    <draggable v-model="categorie.taches" @end="orderTaches(categorie)">
+                                    <draggable v-model="categorie.taches" @end="orderTaches(categorie)" handle=".handleTache">
                                         <div class="panel panel-default" v-for="tache in categorieTachesFiltrees(categorie)"
                                              :ref="'taches' + categorie.id" :data-id="tache.id">
                                             <div class="panel-heading">
-                                                <a @click="detailTache(tache)">
+                                                <a @click="detailTache(tache)" class="handleTache">
                                                     [[ tache.nom ]]
                                                 </a>
                                             </div>
