@@ -10,6 +10,9 @@
         My new project to save all my playlists which are on my phone and with a link system to different
         platforms to listening to music
     {% endblocktrans %}
+    <br>
+    <a href="{% url 'music:liste-playlists' %}">Playlists</a> |
+    <a href="{% url 'music:liste-musiques' %}">Musiques</a>
 {% endblock %}
 
 {% block javascript %}
@@ -19,6 +22,7 @@
                 $.post($(this).data('linkUrl'))
                     .done(response => {
                         if (response.success) {
+                            // Met à jour le compteur du lien
                             $('.click_count#' + $(this).data('linkId')).text(response.click_count);
                         }
                     })
