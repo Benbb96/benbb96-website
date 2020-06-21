@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'music.apps.MusicConfig',
     'my_spot.apps.MySpotConfig',
     'super_moite_moite.apps.SuperMoiteMoiteConfig',
+    'kendama.apps.KendamaConfig',
     'bootstrap3',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
