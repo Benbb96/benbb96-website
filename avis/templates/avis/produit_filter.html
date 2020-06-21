@@ -14,7 +14,7 @@
         </form>
     </div>
     <hr/>
-    {% include 'components/pagination.html' with objects=produits %}
+    {% include 'components/pagination.html' %}
     <div class="row">
         <div class="list-group col-md-8 col-md-offset-2">
             {% for produit in produits %}
@@ -30,5 +30,5 @@
             {% endfor %}
         </div>
     </div>
-    {% include 'components/pagination.html' with objects=produits %}
+    {% include 'components/pagination.html' %}
 {% endblock %}

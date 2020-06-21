@@ -156,7 +156,7 @@ class Musique(models.Model):
 
     def artiste_display(self):
         if self.featuring.exists():
-            return '%s & %s' % (self.artiste, ' & '.join(self.featuring.values_list('nom_artiste', flat=True)))
+            return '%s & %s' % (self.artiste, ' & '.join(artiste.nom_artiste for artiste in self.featuring.all()))
         return self.artiste.nom_artiste
     artiste_display.short_description = 'Artistes'
     artiste_display.admin_order_field = 'artiste'
@@ -173,9 +173,7 @@ class Musique(models.Model):
                        kwargs={'slug_artist': self.artiste.slug, 'slug': self.slug, 'pk': self.pk})
 
     def nb_vue(self):
-        # TODO Essayer d'utiliser une aggrégation
         return sum((lien.click_count for lien in self.liens.all()))
-
     nb_vue.short_description = 'Nombre de vue'
 
 

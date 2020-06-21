@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -8,8 +9,29 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
+from music.filters import MusiqueFilter
 from music.models import Playlist, Musique, Lien, Artiste
 from music.templates.music.forms import LienForm
+
+
+def liste_musiques(request):
+    all_musiques = Musique.objects.select_related('artiste', 'remixed_by')\
+        .prefetch_related('featuring', 'liens', 'styles')
+    f = MusiqueFilter(request.GET, queryset=all_musiques)
+    paginator = Paginator(f.qs, 20)
+    page = request.GET.get('page', 1)
+    try:
+        musiques = paginator.page(page)
+    except PageNotAnInteger:
+        musiques = paginator.page(1)
+    except EmptyPage:
+        musiques = paginator.page(paginator.num_pages)
+    return render(request, 'music/music_list.html', {
+        'filter': f,
+        'paginator': paginator,
+        'page_obj': musiques,
+        'is_paginated': musiques.has_other_pages()
+    })
 
 
 class PlaylistListView(ListView):
@@ -73,7 +95,7 @@ def incremente_link_click_count(request, lien_id):
     lien = get_object_or_404(Lien, id=lien_id)
     lien.click_count += 1
     lien.save(update_fields=['click_count'])
-    return JsonResponse({'success': True, 'click_count': lien.click_count})
+    return JsonResponse({'success': True, 'click_count': lien.click_count, 'music_id': lien.musique.id})
 
 
 def valider_lien(request, lien_id):

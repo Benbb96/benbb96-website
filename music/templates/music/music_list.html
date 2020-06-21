@@ -1,0 +1,72 @@
+{% extends 'music/base_music.html' %}
+
+{% load i18n bootstrap3 %}
+
+{% block music_title %}{% trans "Musics" %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-sm-12">
+            <h2>
+                {% trans "All Musics" %}
+                <span class="pull-right">
+                    <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#filter">
+                        Options de filtre <i class="fa fa-filter"></i>
+                    </button>
+                </span>
+            </h2>
+
+            <form method="get" id="filter" class="collapse">
+                {% bootstrap_form filter.form %}
+                {% buttons submit='Filtrer <i class="fa fa-filter"></i>' %}{% endbuttons %}
+            </form>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Artist" %}</th>
+                        <th>{% trans "Title" %}</th>
+                        <th>{% trans "Style" %}</th>
+                        <th class="text-center">{% trans "Date add" %}</th>
+                        <th class="text-center">{% trans "View count" %}</th>
+                        <th class="text-center" style="width: 70px">{% trans "Liens" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for musique in page_obj %}
+                        <tr>
+                        <td>
+                            <a href="{{ musique.artiste.get_absolute_url }}">
+                                <b>{{ musique.artiste_display }}</b>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ musique.get_absolute_url }}">
+                                <b>{{ musique.titre_display }}</b>
+                            </a>
+                        </td>
+                        <td>
+                            {% for style in musique.styles.all %}
+                                {{ style }}{% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td class="text-center">{{ musique.date_creation|date:'DATETIME_FORMAT' }}</td>
+                        <td class="text-center">
+                            <span class="badge">{{ musique.nb_vue }}</span>
+                        </td>
+                        <td class="text-center">
+                            {% if musique.liens %}
+                                {% for lien in musique.liens.all %}
+                                    <i class="fa fa-{{ lien.get_plateforme_display|lower }}"></i>
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% include 'components/pagination.html' %}
+        </div>
+    </div>
+{% endblock %}
