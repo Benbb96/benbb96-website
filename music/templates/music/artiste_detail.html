@@ -53,7 +53,11 @@
                         <h3>{% trans "Styles" %}</h3>
                         <ul>
                             {% for style in artiste.styles.all %}
-                                <li>{{ style.nom }}</li>
+                                <li>
+                                    <a href="{{ style.get_absolute_url }}">
+                                        {{ style.nom }}
+                                    </a>
+                                </li>
                             {% endfor %}
                         </ul>
                     {% endif %}

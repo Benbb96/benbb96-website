@@ -40,12 +40,12 @@
                                     </h4>
                                 </div>
                                 <div id="collapse1" class="panel-collapse collapse">
-                                    {% include 'music/playlist_artist_list.html' %}
+                                    {% include 'music/playlist_artist_list.html' with artistes=playlist.artistes.all %}
                                 </div>
                             </div>
                         </div>
                         {% else %}
-                            {% include 'music/playlist_artist_list.html' %}
+                            {% include 'music/playlist_artist_list.html' with artistes=playlist.artistes.all %}
                         {% endif %}
                     {% endif %}
                 </div>

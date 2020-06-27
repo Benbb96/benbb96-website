@@ -1,0 +1,53 @@
+{% extends 'music/base_music.html' %}
+{% load i18n %}
+
+{% block music_title %}{% trans "Style" %} {{ style.nom }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-8 col-xs-12">
+            <h2>{% trans "Musics" %}</h2>
+            {% include 'music/components/table_musics.html' with musiques=style.musiques.all %}
+        </div>
+        <div class="col-sm-4 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="text-center">{{ style.nom }}</h2>
+                </div>
+                <div class="panel-body">
+                    {% if style.description %}
+                        <h3>{% trans "Description" %}</h3>
+                        <p>{{ style.description|linebreaksbr }}</p>
+                    {% endif %}
+                    {% if style.lien_wiki %}
+                        <h4 class="text-right">
+                            <a href="{{ style.lien_wiki }}" target="_blank">
+                                {% trans "Wiki link" %}
+                                <i class="fa fa-external-link"></i>
+                            </a>
+                        </h4>
+                    {% endif %}
+                    {% if style.artistes %}
+                        <h3>Artistes de ce style</h3>
+                        {% if style.artistes.count > 4 %}
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title text-center">
+                                        <a data-toggle="collapse" href="#collapse1">{% trans "See all..." %}</a>
+                                    </h4>
+                                </div>
+                                <div id="collapse1" class="panel-collapse collapse">
+                                    {% include 'music/playlist_artist_list.html' with artistes=style.artistes.all %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                            {% include 'music/playlist_artist_list.html' with artistes=style.artistes.all %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

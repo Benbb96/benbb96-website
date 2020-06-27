@@ -4,6 +4,10 @@
 
 {% block title %}{% block music_title %}{% endblock %} | {% trans "Music" %}{% endblock %}
 
+{% block navbar %}
+    {% include 'navbar.html' with music=True %}
+{% endblock %}
+
 {% block jumbotron_title %}<a href="{% url 'music:liste-playlists' %}">{% trans "Music" %}</a>{% endblock %}
 {% block jumbotron_description %}
     {% blocktrans %}
@@ -12,7 +16,8 @@
     {% endblocktrans %}
     <br>
     <a href="{% url 'music:liste-playlists' %}">Playlists</a> |
-    <a href="{% url 'music:liste-musiques' %}">Musiques</a>
+    <a href="{% url 'music:liste-musiques' %}">Musiques</a> |
+    <a href="{% url 'music:liste-styles' %}">Styles</a>
 {% endblock %}
 
 {% block javascript %}

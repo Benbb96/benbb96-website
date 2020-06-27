@@ -6,7 +6,7 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-8 col-sm-offset-2 col-xs-12">
-            <h1>
+            <h1 class="text-center">
                 <a href="{{ musique.artiste.get_absolute_url }}" title="{% trans "See artist page" %}">
                     {{ musique.artiste }}
                 </a>
@@ -20,7 +20,7 @@
                     (<a href="{{ musique.remixed_by.get_absolute_url }}">{{ musique.remixed_by }}</a> {% trans "Remix" %})
                 {% endif %}
             </h1>
-            <div>
+            <div class="text-center">
                 {% blocktrans with musique_date=musique.date_creation|date musique_time=musique.date_creation|time musique_createur_url=musique.createur.get_absolute_url musique_createur=musique.createur %}
                     Added on {{ musique_date }} at {{ musique_time }}
                 by <a href="{{ musique_createur_url }}">{{ musique_createur }}</a>.
@@ -29,30 +29,16 @@
             {% if musique.album %}
                 <p>{% trans "Album" %} : {{ musique.album }}</p>
             {% endif %}
-            {% if musiques.styles.exists %}
-                <div class="panel-footer">
-                    <h3>{% trans "Styles" %}</h3>
-                    <ul>
+            {% if musique.styles.exists %}
+                <div class="text-center">
+                    {% trans "Styles" %} :
                         {% for style in musique.styles.all %}
-                            <li>{{ style.nom }}</li>
+                            <a href="{{ style.get_absolute_url }}">{{ style.nom }}</a>{% if not forloop.last %}, {% endif %}
                         {% endfor %}
-                    </ul>
                 </div>
             {% endif %}
-            <p>
-                {% trans "Search on :" %}
-                <a class="btn btn-sm btn-social-icon btn-google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">
-                    <i class="fa fa-google"></i>
-                </a>
-                <a class="btn btn-sm btn-social-icon btn-youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="{% trans "Search on YouTube" %}" target="_blank">
-                    <i class="fa fa-youtube"></i>
-                </a>
-                <a class="btn btn-sm btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
-                    <i class="fa fa-soundcloud"></i>
-                </a>
-            </p>
+            <hr>
             {% if musique.liens.exists %}
-                <hr>
                 {% if musique.liens.valide_seulement.exists %}
                     <div class="col-sm-6 col-xs-12">
                         <h2>{% trans "Links" %}</h2>
@@ -83,6 +69,18 @@
                     </li>
                 </ul>
             </form>
+            <p>
+                {% trans "Search on :" %}
+                <a class="btn btn-sm btn-social-icon btn-google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">
+                    <i class="fa fa-google"></i>
+                </a>
+                <a class="btn btn-sm btn-social-icon btn-youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="{% trans "Search on YouTube" %}" target="_blank">
+                    <i class="fa fa-youtube"></i>
+                </a>
+                <a class="btn btn-sm btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
+                    <i class="fa fa-soundcloud"></i>
+                </a>
+            </p>
             {% if musique.playlists.exists %}
                 <hr>
                 <h3>

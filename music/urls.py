@@ -6,6 +6,8 @@ app_name = 'music'
 
 urlpatterns = [
     path('', views.liste_musiques, name='liste-musiques'),
+    path('styles', views.StyleListView.as_view(), name='liste-styles'),
+    path('styles/<slug:slug>', views.StyleDetailView.as_view(), name='detail-style'),
     path('playlists', views.PlaylistListView.as_view(), name='liste-playlists'),
     path('playlists/<slug:slug>', views.PlaylistDetailView.as_view(), name='detail-playlist'),
     path('artists/<slug:slug>', views.ArtisteDetailView.as_view(), name='detail-artiste'),
