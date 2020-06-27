@@ -86,7 +86,7 @@ class ArtisteAdmin(admin.ModelAdmin):
     ordering = ('-date_modification',)
     prepopulated_fields = {'slug': ('nom_artiste',), }
     readonly_fields = ('soundcloud_followers', )
-    autocomplete_fields = ('styles',)
+    autocomplete_fields = ('styles', 'pays', 'createur')
     save_on_top = True
 
     inlines = [MusiqueInline, MusiqueRemixInline]
