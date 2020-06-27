@@ -1,0 +1,46 @@
+{% extends 'music/base_music.html' %}
+
+{% load i18n bootstrap3 %}
+
+{% block music_title %}{% trans "Labels" %}{% endblock %}
+
+{% block stylesheet %}
+    {{ filter.form.media.css }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <h2>
+                {% trans "Labels" %}
+                <span class="pull-right">
+                    <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#filter">
+                        Options de filtre <i class="fa fa-filter"></i>
+                    </button>
+                </span>
+            </h2>
+             <form method="get" id="filter" class="collapse">
+                {% bootstrap_form filter.form %}
+                {% buttons submit='Filtrer <i class="fa fa-filter"></i>' %}{% endbuttons %}
+            </form>
+            <div class="list-group">
+                {% for label in object_list %}
+                    <a class="list-group-item" href="{{ label.get_absolute_url }}">
+                        <b>{{ label.nom }}</b>
+                        <span class="badge" title="{% trans "Nomber of music from this label" %}">
+                            {{ label.musiques.count }}
+                        </span>
+                    </a>
+                {% empty %}
+                    <div class="list-group-item">
+                        {% blocktrans %}No labels has been created yet...{% endblocktrans %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ filter.form.media.js }}
+{% endblock %}

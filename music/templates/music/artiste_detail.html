@@ -45,7 +45,10 @@
                         <h3>{% trans "Labels" %}</h3>
                         <ul>
                             {% for label in artiste.labels.all %}
-                                <li>{{ label.nom }}</li>
+                                <li>
+                                    <a href="{{ label.get_absolute_url }}">{{ label.nom }}
+                                    </a>
+                                </li>
                             {% endfor %}
                         </ul>
                     {% endif %}

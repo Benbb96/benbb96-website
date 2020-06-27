@@ -122,6 +122,23 @@ class Artiste(models.Model):
         return random.randint(1, 10000)
 
 
+class Label(models.Model):
+    nom = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+    styles = models.ManyToManyField(Style, related_name='labels', blank=True)
+    artistes = models.ManyToManyField(Artiste, related_name='labels', blank=True)
+
+    class Meta:
+        ordering = ('nom',)
+
+    def __str__(self):
+        return self.nom
+
+    def get_absolute_url(self):
+        return reverse('music:detail-label', kwargs={'slug': self.slug})
+
+
 class Musique(models.Model):
     titre = models.CharField(max_length=50)
     slug = models.SlugField()
@@ -145,6 +162,12 @@ class Musique(models.Model):
         null=True, blank=True
     )
     album = models.CharField(max_length=200, blank=True)
+    label = models.ForeignKey(
+        Label,
+        on_delete=models.SET_NULL,
+        related_name='musiques',
+        null=True,
+        blank=True)
     styles = models.ManyToManyField(Style, related_name='musiques', blank=True)
     playlists = models.ManyToManyField(Playlist, related_name='musiques', blank=True, through='MusiquePlaylist')
     createur = models.ForeignKey(
@@ -161,8 +184,9 @@ class Musique(models.Model):
         return '%s - %s' % (self.artiste_display(), self.titre_display())
 
     def artiste_display(self):
-        if self.featuring.exists():
-            return '%s & %s' % (self.artiste, ' & '.join(artiste.nom_artiste for artiste in self.featuring.all()))
+        featuring = self.featuring.all()
+        if featuring:
+            return '%s & %s' % (self.artiste, ' & '.join(artiste.nom_artiste for artiste in featuring))
         return self.artiste.nom_artiste
     artiste_display.short_description = 'Artistes'
     artiste_display.admin_order_field = 'artiste'
@@ -225,17 +249,3 @@ class Lien(models.Model):
 
     def __str__(self):
         return '(%s) %s' % (self.get_plateforme_display(), self.url)
-
-
-class Label(models.Model):
-    nom = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(unique=True)
-    description = models.TextField(blank=True)
-    styles = models.ManyToManyField(Style, related_name='labels', blank=True)
-    artistes = models.ManyToManyField(Artiste, related_name='labels', blank=True)
-
-    class Meta:
-        ordering = ('nom',)
-
-    def __str__(self):
-        return self.nom
