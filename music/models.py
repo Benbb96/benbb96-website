@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
+from simple_history.models import HistoricalRecords
 
 from base.models import Profil
 
@@ -89,6 +90,7 @@ class Artiste(models.Model):
     )
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ('nom_artiste',)
@@ -175,6 +177,7 @@ class Musique(models.Model):
     )
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ('artiste__nom_artiste', 'titre')

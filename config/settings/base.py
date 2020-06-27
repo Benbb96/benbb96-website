@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'django_filters',
     'colorfield',
     'adminsortable',
-    'django_select2'
+    'django_select2',
+    'simple_history'
 ]
 
 SITE_ID = 1
