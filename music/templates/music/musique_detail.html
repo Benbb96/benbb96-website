@@ -6,38 +6,48 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-8 col-sm-offset-2 col-xs-12">
-            <h1 class="text-center">
-                <a href="{{ musique.artiste.get_absolute_url }}" title="{% trans "See artist page" %}">
-                    {{ musique.artiste }}
-                </a>
-                {% if musique.featuring.exists %}
-                    {% for featuring_artist in musique.featuring.all %}
-                        & <a href="{{ featuring_artist.get_absolute_url }}">{{ featuring_artist }}</a>
-                    {% endfor %}
-                {% endif %}
-                - {{ musique.titre }}
-                {% if musique.remixed_by %}
-                    (<a href="{{ musique.remixed_by.get_absolute_url }}">{{ musique.remixed_by }}</a> {% trans "Remix" %})
-                {% endif %}
-            </h1>
-            <div class="text-center">
-                {% blocktrans with musique_date=musique.date_creation|date musique_time=musique.date_creation|time musique_createur_url=musique.createur.get_absolute_url musique_createur=musique.createur %}
-                    Added on {{ musique_date }} at {{ musique_time }}
-                by <a href="{{ musique_createur_url }}">{{ musique_createur }}</a>.
-                {% endblocktrans %}
-            </div>
-            {% if musique.album %}
-                <p>{% trans "Album" %} : {{ musique.album }}</p>
-            {% endif %}
-            {% if musique.styles.exists %}
-                <div class="text-center">
-                    {% trans "Styles" %} :
-                        {% for style in musique.styles.all %}
-                            <a href="{{ style.get_absolute_url }}">{{ style.nom }}</a>{% if not forloop.last %}, {% endif %}
+            <div class="well text-center">
+                <h1>
+                    <a href="{{ musique.artiste.get_absolute_url }}" title="{% trans "See artist page" %}">
+                        {{ musique.artiste }}
+                    </a>
+                    {% if musique.featuring.exists %}
+                        {% for featuring_artist in musique.featuring.all %}
+                            & <a href="{{ featuring_artist.get_absolute_url }}">{{ featuring_artist }}</a>
                         {% endfor %}
+                    {% endif %}
+                    - {{ musique.titre }}
+                    {% if musique.remixed_by %}
+                        (<a href="{{ musique.remixed_by.get_absolute_url }}">{{ musique.remixed_by }}</a> {% trans "Remix" %})
+                    {% endif %}
+                </h1>
+                <div>
+                    {% blocktrans with musique_date=musique.date_creation|date musique_time=musique.date_creation|time musique_createur_url=musique.createur.get_absolute_url musique_createur=musique.createur %}
+                        Added on {{ musique_date }} at {{ musique_time }}
+                    by <a href="{{ musique_createur_url }}">{{ musique_createur }}</a>.
+                    {% endblocktrans %}
                 </div>
-            {% endif %}
-            <hr>
+                {% if musique.album %}
+                    <p>{% trans "Album" %} : {{ musique.album }}</p>
+                {% endif %}
+                {% if musique.styles.exists %}
+                    <ul class="list-inline">
+                        {% trans "Styles" %} :
+                        {% for style in musique.styles.all %}
+                            <li>
+                                <a class="label label-default" href="{{ style.get_absolute_url }}">
+                                    {{ style.nom }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if musique.label %}
+                    <div class="text-center">
+                        Label : <a href="{{ musique.label.get_absolute_url }}">{{ musique.label }}</a>
+                    </div>
+                {% endif %}
+            </div>
             {% if musique.liens.exists %}
                 {% if musique.liens.valide_seulement.exists %}
                     <div class="col-sm-6 col-xs-12">

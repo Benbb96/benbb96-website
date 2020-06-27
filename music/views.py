@@ -10,8 +10,8 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 from django_filters.views import FilterView
 
-from music.filters import MusiqueFilter, StyleFilter
-from music.models import Playlist, Musique, Lien, Artiste, Style
+from music.filters import MusiqueFilter, StyleFilter, LabelFilter
+from music.models import Playlist, Musique, Lien, Artiste, Style, Label
 from music.templates.music.forms import LienForm
 
 
@@ -46,6 +46,21 @@ class StyleDetailView(DetailView):
     def get_queryset(self):
         return Style.objects.prefetch_related(
             'musiques__artiste', 'musiques__liens', 'musiques__styles', 'musiques__remixed_by', 'musiques__featuring'
+        )
+
+
+class LabelListView(FilterView):
+    filterset_class = LabelFilter
+
+
+class LabelDetailView(DetailView):
+    model = Label
+    slug_field = 'slug'
+
+    def get_queryset(self):
+        return Label.objects.prefetch_related(
+            'artistes', 'styles', 'musiques__artiste', 'musiques__liens',
+            'musiques__styles', 'musiques__remixed_by', 'musiques__featuring'
         )
 
 

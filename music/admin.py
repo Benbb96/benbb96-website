@@ -106,10 +106,10 @@ class PlaylistInline(admin.TabularInline):
 
 @admin.register(Musique)
 class MusiqueAdmin(admin.ModelAdmin):
-    list_display = ('artiste_display', 'titre_display', 'album', 'createur',
+    list_display = ('artiste_display', 'titre_display', 'album', 'label', 'createur',
                     'date_creation', 'date_modification', 'nb_vue')
     list_display_links = ('titre_display',)
-    list_filter = ('styles', 'createur', 'remixed_by')
+    list_filter = ('styles', 'remixed_by')
     search_fields = (
         'titre', 'artiste__nom_artiste', 'remixed_by__nom_artiste', 'featuring__nom_artiste',
         'album', 'styles__nom', 'musiqueplaylist__playlist__nom'
@@ -117,9 +117,10 @@ class MusiqueAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_creation'
     ordering = ('-date_modification',)
     prepopulated_fields = {'slug': ('titre',), }
-    autocomplete_fields = ('artiste', 'featuring', 'remixed_by', 'styles')
-    list_select_related = ('artiste', 'remixed_by', 'createur')
+    autocomplete_fields = ('artiste', 'featuring', 'remixed_by', 'styles', 'label')
+    list_select_related = ('artiste', 'remixed_by', 'createur__user', 'label')
     save_on_top = True
+    list_per_page = 20
 
     inlines = [PlaylistInline, LienInline]
 

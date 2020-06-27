@@ -30,7 +30,7 @@
                     </td>
                     <td>
                         {% for style in musique.styles.all %}
-                            {{ style }}{% if not forloop.last %},{% endif %}
+                            <a class="label label-default" href="{{ style.get_absolute_url }}">{{ style }}</a>
                         {% endfor %}
                     </td>
                     <td class="text-center">{{ musique.date_creation|date:'DATETIME_FORMAT' }}</td>
