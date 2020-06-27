@@ -40,7 +40,7 @@ django-pandas==0.6.1
 django-redis==4.10.0
 django-sass-processor==0.7.3
 django-select2==7.4.2
-django-simple-history==2.8.0
+-e git+https://github.com/Benbb96/django-simple-history@patch-1#egg=django_simple_history
 djangorestframework==3.10.3
 djangorestframework-simplejwt==4.4.0
 docutils==0.15.2

@@ -1,6 +1,7 @@
 from adminsortable.admin import SortableTabularInline, NonSortableParentAdmin
 from django.contrib import admin
 from django.db.models import Count
+from simple_history.admin import SimpleHistoryAdmin
 
 from music.models import Pays, Artiste, Style, Label, Playlist, Musique, MusiquePlaylist, Lien
 
@@ -76,7 +77,7 @@ class MusiqueRemixInline(admin.StackedInline):
 
 
 @admin.register(Artiste)
-class ArtisteAdmin(admin.ModelAdmin):
+class ArtisteAdmin(SimpleHistoryAdmin):
     list_display = ('nom_artiste', 'nom', 'prenom', 'ville', 'pays', 'date_creation', 'date_modification')
     list_filter = ('styles', 'labels', 'createur')
     search_fields = (
@@ -105,7 +106,7 @@ class PlaylistInline(admin.TabularInline):
 
 
 @admin.register(Musique)
-class MusiqueAdmin(admin.ModelAdmin):
+class MusiqueAdmin(SimpleHistoryAdmin):
     list_display = ('artiste_display', 'titre_display', 'album', 'label', 'createur',
                     'date_creation', 'date_modification', 'nb_vue')
     list_display_links = ('titre_display',)
