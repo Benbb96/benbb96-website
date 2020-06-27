@@ -23,6 +23,9 @@ class Pays(models.Model):
 
 class Style(models.Model):
     nom = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+    lien_wiki = models.URLField(blank=True)
 
     class Meta:
         ordering = ('nom',)
@@ -30,10 +33,13 @@ class Style(models.Model):
     def __str__(self):
         return self.nom
 
+    def get_absolute_url(self):
+        return reverse('music:detail-style', kwargs={'slug': self.slug})
+
 
 class Playlist(models.Model):
     nom = models.CharField(max_length=200)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
     createur = models.ForeignKey(Profil, related_name='playlists_crees', on_delete=models.CASCADE)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)

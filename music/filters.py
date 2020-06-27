@@ -1,6 +1,6 @@
 import django_filters
 
-from music.models import Musique
+from music.models import Musique, Style
 
 
 class MusiqueFilter(django_filters.FilterSet):
@@ -17,4 +17,12 @@ class MusiqueFilter(django_filters.FilterSet):
 
     def search_has_link(self, queryset, name, value):
         return queryset.filter(liens__isnull=not value)
+
+
+class StyleFilter(django_filters.FilterSet):
+    nom = django_filters.CharFilter(lookup_expr='icontains', label='Nom')
+
+    class Meta:
+        model = Style
+        fields = ('nom',)
 

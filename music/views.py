@@ -8,9 +8,10 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
+from django_filters.views import FilterView
 
-from music.filters import MusiqueFilter
-from music.models import Playlist, Musique, Lien, Artiste
+from music.filters import MusiqueFilter, StyleFilter
+from music.models import Playlist, Musique, Lien, Artiste, Style
 from music.templates.music.forms import LienForm
 
 
@@ -34,6 +35,20 @@ def liste_musiques(request):
     })
 
 
+class StyleListView(FilterView):
+    filterset_class = StyleFilter
+
+
+class StyleDetailView(DetailView):
+    model = Style
+    slug_field = 'slug'
+
+    def get_queryset(self):
+        return Style.objects.prefetch_related(
+            'musiques__artiste', 'musiques__liens', 'musiques__styles', 'musiques__remixed_by', 'musiques__featuring'
+        )
+
+
 class PlaylistListView(ListView):
     model = Playlist
 
@@ -41,6 +56,12 @@ class PlaylistListView(ListView):
 class PlaylistDetailView(DetailView):
     model = Playlist
     slug_field = 'slug'
+
+    def get_queryset(self):
+        return Playlist.objects.select_related('createur__user').prefetch_related(
+            'musiqueplaylist_set__musique__styles', 'musiqueplaylist_set__musique__artiste',
+            'musiqueplaylist_set__musique__remixed_by', 'musiqueplaylist_set__musique__featuring'
+        )
 
 
 class MusiqueDetailView(FormMixin, DetailView):

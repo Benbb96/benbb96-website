@@ -1,0 +1,42 @@
+{% extends 'music/base_music.html' %}
+
+{% load i18n bootstrap3 %}
+
+{% block music_title %}{% trans "Styles" %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <div class="row">
+                <div class="col-sm-7 col-xs-12">
+                    <h2>{% trans "Styles" %}</h2>
+                </div>
+                <div class="col-sm-5 col-xs-12">
+                    <form method="get">
+                        <div class="input-group">
+                            {% bootstrap_field filter.form.nom show_label=False placeholder="Rechercher un style" %}
+                            <div class="input-group-btn">
+                                {% buttons submit='Filtrer <i class="fa fa-filter"></i>' %}{% endbuttons %}
+                            </div>
+                        </div>
+                        {{ filter.form.nom.errors }}
+                    </form>
+                </div>
+            </div>
+            <div class="list-group">
+                {% for style in object_list %}
+                    <a class="list-group-item" href="{{ style.get_absolute_url }}">
+                        <b>{{ style.nom }}</b>
+                        <span class="badge" title="{% trans "Nomber of music from this style" %}">
+                            {{ style.musiques.count }}
+                        </span>
+                    </a>
+                {% empty %}
+                    <div class="list-group-item">
+                        {% blocktrans %}No styles has been created yet...{% endblocktrans %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
