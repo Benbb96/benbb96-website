@@ -12,7 +12,7 @@
 {% block content %}
     <div class="flex-container">
         {% for tracker in trackers %}
-            <div class="tracker" style="background-color: {{ tracker.color }}; color: {{ tracker.color|get_contrast_color }}">
+            <div class="tracker" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
                 <span class="addTrackBtn">
                     <a href="{% url 'tracker:tracker_quick_add' tracker.id %}" title="Ajouter un nouveau track rapidement">
                         <i class="fa fa-plus-circle"></i>

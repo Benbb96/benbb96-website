@@ -56,7 +56,7 @@ def param_replace(context, **kwargs):
 
 
 @register.filter
-def get_contrast_color(hex_color):
+def contrast_color(hex_color):
     """
     Util function to know if it's best to use a white or a black color on the foreground given in parameter
 
