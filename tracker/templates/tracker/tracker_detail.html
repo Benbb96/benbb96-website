@@ -32,7 +32,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2 col-xs-12">
             <div class="text-center">
-                <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|get_contrast_color }}">
+                <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
                     {{ tracker.nom }} {% fontawesome_icon tracker.icone %}
                     <a class="btn btn-info" href="{% url 'tracker:update-tracker' tracker.id %}">
                         <i class="fa fa-edit"></i>
