@@ -26,6 +26,8 @@
                 <input type="hidden" name="next" value="{{ next }}">
                 <div class="text-center">
                     {% bootstrap_button "Valider" button_type="submit" button_class="btn-primary" %}
+                    {% url 'base:signup' as url %}
+                    {% bootstrap_button "Se créer un compte" button_type="link" button_class="btn-default" href=url %}
                     {% url 'password_reset' as url %}
                     {% bootstrap_button "Mot de passe oublié" button_type="link" button_class="btn-link" href=url %}
                 </div>

@@ -1,12 +1,33 @@
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.core.mail import mail_admins
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, DetailView
 
+from base.forms import SignUpForm
 from base.models import Projet
+
+
+def signup(request):
+    form = SignUpForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        username = form.cleaned_data.get('username')
+        raw_password = form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=raw_password)
+        login(request, user)
+        messages.success(request, 'Votre compte a bien été créé !')
+        user.refresh_from_db()
+        mail_admins(
+            'Nouveau compte créé !',
+            '<a href="https://www.benbb96.com/%s">%s</a> vient de se créer un compte sur mon site :)' %
+            (user.profil.get_absolute_url(), username)
+        )
+        return redirect('base:home')
+    return render(request, 'registration/signup.html', {'form': form})
 
 
 class UserDetailView(DetailView):
