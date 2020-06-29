@@ -19,9 +19,10 @@ coreschema==0.0.4
 coverage==4.5.4
 decorator==4.4.0
 defusedxml==0.6.0
-Django==2.2.12
+Django==2.2.13
 django-admin-sortable==2.2.3
-django-allauth==0.40.0
+django-allauth==0.42.0
+django-anymail[mailgun]==7.1.0
 django-appconf==1.0.3
 django-avatar==5.0.0
 django-bootstrap3==12.0.3
@@ -34,7 +35,6 @@ django-extensions==2.2.1
 django-filter==2.1.0
 django-fontawesome==1.0
 django-geoposition-2==0.3.10
-django-mailgun==0.9.1
 django-model-utils==3.2.0
 django-pandas==0.6.1
 django-redis==4.10.0
@@ -121,7 +121,7 @@ pytz==2019.2
 PyYAML==5.1
 rcssmin==1.0.6
 redis==3.3.8
-requests==2.22.0
+requests==2.24.0
 requests-oauthlib==1.2.0
 requests-toolbelt==0.9.1
 rjsmin==1.1.0

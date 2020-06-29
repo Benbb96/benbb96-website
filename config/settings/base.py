@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'colorfield',
     'adminsortable',
     'django_select2',
-    'simple_history'
+    'simple_history',
+    'anymail'
 ]
 
 SITE_ID = 1
