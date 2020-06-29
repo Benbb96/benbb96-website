@@ -1,0 +1,19 @@
+{% extends 'base/profil/base_profil.html' %}
+
+{% block info_active %} class="active"{% endblock %}
+
+{% block profil_content %}
+    <h1>Informations</h1>
+    <ul>
+        <li>Date d'inscription : {{ user.date_joined }}</li>
+        <li>Dernière connexion : {{ user.last_login }}</li>
+    </ul>
+    <h2>Statistiques</h2>
+    <ul>
+        <li>Avis créés : {{ user.profil.avis_set.count }}</li>
+        <li>Jeux créés : {{ user.profil.jeu_set.count }}</li>
+        <li>Playlists créées : {{ user.profil.playlists_crees.count }}</li>
+        <li>Tracks : {{ user.profil.tache_tracks.count }}</li>
+        <li>...</li>
+    </ul>
+{% endblock %}
