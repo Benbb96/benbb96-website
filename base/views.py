@@ -24,7 +24,7 @@ def signup(request):
         user.refresh_from_db()
         mail_admins(
             'Nouveau compte créé !',
-            '{} vient de se créer un compte sur mon site :)%0A%0Ahttps://www.benbb96.com/{}'.format(
+            '{} vient de se créer un compte sur mon site : https://www.benbb96.com/{}'.format(
                 username, user.profil.get_absolute_url()
             ),
         )
