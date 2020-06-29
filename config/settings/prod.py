@@ -37,7 +37,7 @@ CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
 
-EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
+EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
 ANYMAIL = {
     "MAILGUN_API_KEY": get_secret_setting('ACCESS-KEY'),
     "MAILGUN_SENDER_DOMAIN": get_secret_setting('SERVER-NAME'),
