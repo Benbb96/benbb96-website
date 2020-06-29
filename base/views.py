@@ -5,6 +5,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.mail import mail_admins
 from django.shortcuts import redirect, render
+from django.utils.safestring import mark_safe
 from django.views.generic import ListView, DetailView
 
 from base.forms import SignUpForm
@@ -23,8 +24,10 @@ def signup(request):
         user.refresh_from_db()
         mail_admins(
             'Nouveau compte créé !',
-            '<a href="https://www.benbb96.com/%s">%s</a> vient de se créer un compte sur mon site :)' %
-            (user.profil.get_absolute_url(), username)
+            mark_safe(
+                '<a href="https://www.benbb96.com/%s">%s</a> vient de se créer un compte sur mon site :)' %
+                (user.profil.get_absolute_url(), username)
+            )
         )
         return redirect('base:home')
     return render(request, 'registration/signup.html', {'form': form})
@@ -42,8 +45,6 @@ class UserDetailView(DetailView):
             'profil__joueur__partie_set__partiejoueur_set__joueur', 'profil__joueur__partie_set__jeu',
             'profil__musiques_crees__artiste', 'profil__musiques_crees__featuring', 'profil__musiques_crees__remixed_by'
         )
-
-
 
 
 @login_required
