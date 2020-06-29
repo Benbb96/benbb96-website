@@ -24,10 +24,9 @@ def signup(request):
         user.refresh_from_db()
         mail_admins(
             'Nouveau compte créé !',
-            mark_safe(
-                '<a href="https://www.benbb96.com/%s">%s</a> vient de se créer un compte sur mon site :)' %
-                (user.profil.get_absolute_url(), username)
-            )
+            '{} vient de se créer un compte sur mon site :)%0A%0Ahttps://www.benbb96.com/{}'.format(
+                username, user.profil.get_absolute_url()
+            ),
         )
         return redirect('base:home')
     return render(request, 'registration/signup.html', {'form': form})
