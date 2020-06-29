@@ -38,5 +38,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
 
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = get_secret_setting('ACCESS-KEY')
-MAILGUN_SERVER_NAME = get_secret_setting('SERVER-NAME')
+ANYMAIL = {
+    "MAILGUN_API_KEY": get_secret_setting('ACCESS-KEY'),
+    "MAILGUN_SENDER_DOMAIN": get_secret_setting('SERVER-NAME'),
+}
