@@ -1,0 +1,18 @@
+{% extends 'base/profil/base_profil.html' %}
+
+{% block profil_title %}Avis{% endblock %}
+
+{% block versus_active %} class="active"{% endblock %}
+
+{% block profil_content %}
+    <h1>Dernières parties</h1>
+    {% for partie in user.profil.joueur.partie_set.all|slice:"6" %}
+        <h3>
+            <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a> -
+            <small>{{ partie.date|date:'l j F Y, H:i' }}</small>
+        </h3>
+        {% include 'versus/partie_table.html' %}
+    {% empty %}
+        <div>{{ user }} n'a fait aucune parties.</div>
+    {% endfor %}
+{% endblock %}

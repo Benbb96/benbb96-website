@@ -1,0 +1,39 @@
+{% extends 'base/profil/base_profil.html' %}
+
+{% block profil_title %}Avis{% endblock %}
+
+{% block music_active %} class="active"{% endblock %}
+
+{% block profil_content %}
+    <h1>Dernières musiques</h1>
+    <div class="row">
+        <div class="col-sm-6 col-xs-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h2>Ses playlists</h2>
+                </div>
+                <div class="panel-body">
+                    {% include 'music/list_group_playlist.html' with playlists=user.profil.playlists_crees.all %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h2>Les musiques ajoutées</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="list-group">
+                        {% for musique in user.profil.musiques_crees.all|slice:"10" %}
+                            <a class="list-group-item col-sm-6 col-xs-12" href="{{ musique.get_absolute_url }}">
+                                {{ musique }}
+                            </a>
+                        {% empty %}
+                            <div class="list-group-item">Aucune musique créée par {{ user }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
