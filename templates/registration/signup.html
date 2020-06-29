@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% load bootstrap3 %}
+
+{% block title %}S'inscrire{% endblock %}
+{% block jumbotron_title %}Création de compte{% endblock %}
+{% block jumbotron_description %}
+    Utilise le formulaire ci-dessous pour te créer un compte sur mon site.<br>
+    Les mots de passe sont bien cryptés dans la base, ne t'inquiète pas &#128521;
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-xs-12">
+            {% if next %}
+                {% if form.errors %}
+                    {% bootstrap_alert "Il y a des erreurs dans le formulaire d'inscription." alert_type='danger' %}
+                    {{ form.non_field_errors }}
+                {% endif %}
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <div class="text-center">
+                    {% bootstrap_button "S'inscrire" button_type="submit" button_class="btn-primary" %}
+                    {% url 'login' as url %}
+                    {% bootstrap_button "Se connecter" button_type="link" button_class="btn-link" href=url %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
