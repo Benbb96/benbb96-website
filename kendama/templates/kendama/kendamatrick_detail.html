@@ -3,15 +3,17 @@
 {% load kendama_tags %}
 
 {% block title %}Trick {{ kendamatrick.name }}{% endblock %}
-{% block h1_title %}Trick : {{ kendamatrick.name }}{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:tricks' %}">Tricks</a> > {{ kendamatrick.name }}
+{% endblock %}
 
 {% block content %}
     <article class="article">
-        <h1 class="article-title text-right">
+        <h3 class="article-title text-right">
             <a href="{% url 'kendama:tricks' %}?difficulty={{ kendamatrick.difficulty }}">
                 {{ kendamatrick.get_difficulty_display }}
             </a>
-        </h1>
+        </h3>
         <p class="article-meta">
             Créé par <a href="{{ kendamatrick.creator.get_absolute_url }}">{{ kendamatrick.creator }}</a>
             le <code title="{{ kendamatrick.created_at|date:'r' }}">{{ kendamatrick.created_at }}</code>

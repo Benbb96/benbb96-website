@@ -1,8 +1,8 @@
 {% extends 'kendama/base.html' %}
 
 {% block title %}Combos{% endblock %}
-{% block h1_title %}
-    Combos
+{% block h2_title %}
+    <a href="{% url 'kendama:combos' %}">Combos</a>
     <span class="badge">{{ combos.count }}</span>
 {% endblock %}
 
