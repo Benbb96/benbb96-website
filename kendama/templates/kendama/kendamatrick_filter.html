@@ -1,0 +1,13 @@
+{% extends 'kendama/base.html' %}
+
+{% block h1_title %}Tricks{% endblock %}
+
+{% block content %}
+    {% include 'kendama/components/base_kendama_filter.html' %}
+
+    <ul>
+    {% for trick in tricks %}
+        <li>{{ trick }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
