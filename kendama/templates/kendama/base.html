@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% if debug %}
+        <link rel="stylesheet" href="{% static 'kendama/css/paper.css' %}">
+    {% else %}
+        <link rel="stylesheet" href="{% static 'kendama/css/paper.min.css' %}">
+    {% endif %}
+    <title>{% block title %}Kendama{% endblock %} | Benbb96</title>
+</head>
+<body>
+<div class="paper container">
+    <nav class="border fixed split-nav">
+        <div class="nav-brand">
+            <h3><a href="{% url 'base:home' %}">Benbb96</a></h3>
+        </div>
+        <div class="collapsible">
+            <input id="collapsible1" type="checkbox" name="collapsible1">
+            <button>
+                <label for="collapsible1">
+                    <div class="bar1"></div>
+                    <div class="bar2"></div>
+                    <div class="bar3"></div>
+                </label>
+            </button>
+            <div class="collapsible-body">
+                <ul class="inline">
+                    <li><a href="#">Tricks</a></li>
+                    <li><a href="#">Combos</a></li>
+                    <li><a href="#">Kendamas</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <h1>{% block h1_title %}Kendama Tricks{% endblock %}</h1>
+    {% block content %}
+        <p>Bienvenue sur la partie Kendama de mon site !</p>
+    {% endblock %}
+</div>
+</body>
+</html>
