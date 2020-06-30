@@ -38,6 +38,17 @@
         </div>
     </nav>
     <h1>{% block h1_title %}Kendama Tricks{% endblock %}</h1>
+    {% if messages %}
+        <div class="row flex-spaces">
+            {% for message in messages %}
+                <input class="alert-state" id="alert-{{ forloop.counter }}" type="checkbox">
+                <div class="alert alert-{{ message.level|color_class }} dismissible">
+                    {{ message }}
+                    <label class="btn-close" for="alert-{{ forloop.counter }}">X</label>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     {% block content %}
         <p>Bienvenue sur la partie Kendama de mon site !</p>
     {% endblock %}
