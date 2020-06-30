@@ -1,0 +1,8 @@
+{% extends 'kendama/base.html' %}
+
+{% block title %}Trick {{ object.name }}{% endblock %}
+{% block h1_title %}Trick : {{ object.name }}{% endblock %}
+
+{% block content %}
+    <p>{{ object.description }}</p>
+{% endblock %}

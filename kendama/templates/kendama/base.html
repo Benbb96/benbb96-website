@@ -11,7 +11,7 @@
     {% else %}
         <link rel="stylesheet" href="{% static 'kendama/css/paper.min.css' %}">
     {% endif %}
-    <title>{% block title %}Kendama{% endblock %} | Benbb96</title>
+    <title>{% block title %}Kendama{% endblock %} | Kendama | Benbb96</title>
 </head>
 <body>
 <div class="paper container">
@@ -37,7 +37,7 @@
             </div>
         </div>
     </nav>
-    <h1>{% block h1_title %}Kendama Tricks{% endblock %}</h1>
+    <h1 style="margin-bottom: 20px">{% block h1_title %}Kendama Tricks{% endblock %}</h1>
     {% if messages %}
         <div class="row flex-spaces">
             {% for message in messages %}

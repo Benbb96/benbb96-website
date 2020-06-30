@@ -1,5 +1,6 @@
 {% extends 'kendama/base.html' %}
 
+{% block title %}Tricks{% endblock %}
 {% block h1_title %}Tricks{% endblock %}
 
 {% block content %}
@@ -7,7 +8,7 @@
 
     <ul>
     {% for trick in tricks %}
-        <li>{{ trick }}</li>
+        <li><a href="{{ trick.get_absolute_url }}">{{ trick }}</a></li>
     {% endfor %}
     </ul>
 {% endblock %}
