@@ -74,7 +74,6 @@ class BasePlayerFrequency(models.Model):
         default=IMPOSSIBLE
     )
     created_at = models.DateTimeField('date création', auto_now_add=True)
-    history = HistoricalRecords()
 
     # TODO proof_video
 
@@ -84,6 +83,7 @@ class BasePlayerFrequency(models.Model):
 
 class TrickPlayer(BasePlayerFrequency):
     trick = models.ForeignKey(KendamaTrick, on_delete=models.PROTECT, related_name='trick_player')
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'trick de joueur'
@@ -109,6 +109,7 @@ class ComboTrick(models.Model):
 
 class ComboPlayer(BasePlayerFrequency):
     combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='combo_players')
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'combo de joueur'
