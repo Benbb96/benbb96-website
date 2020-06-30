@@ -1,4 +1,4 @@
-{% load static %}
+{% load static kendama_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,8 +30,8 @@
             </button>
             <div class="collapsible-body">
                 <ul class="inline">
-                    <li><a href="#">Tricks</a></li>
-                    <li><a href="#">Combos</a></li>
+                    <li><a href="{% url 'kendama:tricks' %}">Tricks</a></li>
+                    <li><a href="{% url 'kendama:combos' %}">Combos</a></li>
                     <li><a href="#">Kendamas</a></li>
                 </ul>
             </div>

@@ -6,5 +6,7 @@ from . import views
 app_name = 'kendama'
 
 urlpatterns = [
-    path('test', TemplateView.as_view(template_name='kendama/base.html'), name='test-page'),
+    path('tricks/', views.KendamaTrickList.as_view(), name='tricks'),
+    path('combos/', views.ComboList.as_view(), name='combos'),
+    path('test/', TemplateView.as_view(template_name='kendama/base.html'), name='test-page'),
 ]
