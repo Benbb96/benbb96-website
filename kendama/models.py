@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from simple_history.models import HistoricalRecords
 
 from base.models import Profil, PhotoAbstract
@@ -46,6 +47,9 @@ class KendamaTrick(BaseKendamaModel):
         verbose_name = 'trick de Kendama'
         verbose_name_plural = 'tricks de Kendama'
         ordering = ('-created_at',)
+
+    def get_absolute_url(self):
+        return reverse('kendama:detail-trick', args=[self.slug])
 
 
 class BasePlayerFrequency(models.Model):
@@ -99,6 +103,9 @@ class Combo(BaseKendamaModel):
 
     class Meta:
         ordering = ('-created_at',)
+
+    def get_absolute_url(self):
+        return reverse('kendama:detail-combo', args=[self.slug])
 
 
 class ComboTrick(models.Model):
