@@ -1,7 +1,10 @@
 {% extends 'kendama/base.html' %}
 
 {% block title %}Combos{% endblock %}
-{% block h1_title %}Combos{% endblock %}
+{% block h1_title %}
+    Combos
+    <span class="badge">{{ combos.count }}</span>
+{% endblock %}
 
 {% block content %}
     {% include 'kendama/components/base_kendama_filter.html' %}

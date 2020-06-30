@@ -16,3 +16,8 @@ def color_class(level):
         return 'warning'
     if level == DEFAULT_LEVELS['ERROR']:
         return 'danger'
+
+
+@register.filter
+def youtube_id(link):
+    return link.split('/')[-1].split('=')[-1]
