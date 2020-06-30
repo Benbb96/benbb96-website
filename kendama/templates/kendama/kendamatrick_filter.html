@@ -1,7 +1,10 @@
 {% extends 'kendama/base.html' %}
 
 {% block title %}Tricks{% endblock %}
-{% block h1_title %}Tricks{% endblock %}
+{% block h1_title %}
+    Tricks
+    <span class="badge">{{ tricks.count }}</span>
+{% endblock %}
 
 {% block content %}
     {% include 'kendama/components/base_kendama_filter.html' %}

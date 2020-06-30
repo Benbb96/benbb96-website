@@ -1,8 +1,51 @@
 {% extends 'kendama/base.html' %}
 
-{% block title %}Trick {{ object.name }}{% endblock %}
-{% block h1_title %}Trick : {{ object.name }}{% endblock %}
+{% load kendama_tags %}
+
+{% block title %}Trick {{ kendamatrick.name }}{% endblock %}
+{% block h1_title %}Trick : {{ kendamatrick.name }}{% endblock %}
 
 {% block content %}
-    <p>{{ object.description }}</p>
+    <article class="article">
+        <h1 class="article-title text-right">
+            <a href="{% url 'kendama:tricks' %}?difficulty={{ kendamatrick.difficulty }}">
+                {{ kendamatrick.get_difficulty_display }}
+            </a>
+        </h1>
+        <p class="article-meta">
+            Créé par <a href="{{ kendamatrick.creator.get_absolute_url }}">{{ kendamatrick.creator }}</a>
+            le <code title="{{ kendamatrick.created_at|date:'r' }}">{{ kendamatrick.created_at }}</code>
+            {% if kendamatrick.updated_at %}
+                et mis à jour le <code title="{{ kendamatrick.updated_at|date:'r' }}">{{ kendamatrick.updated_at }}</code>
+            {% endif %}
+        </p>
+        {% if kendamatrick.description %}
+            <p class="text-lead">{{ kendamatrick.description }}</p>
+        {% endif %}
+
+        {% if 'youtube' in kendamatrick.tutorial_video_link %}
+            <div class="video-responsive">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ kendamatrick.tutorial_video_link|youtube_id }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        {% endif %}
+        <div class="row flex-spaces">
+            {% if kendamatrick.tutorial_video_link %}
+                <div class="col col-sm-6 col-xs-12 text-center">
+                    <a class="paper-btn" href="{{ kendamatrick.tutorial_video_link }}" target="_blank">
+                        Vidéo Tutoriel
+                    </a>
+                </div>
+            {% endif %}
+            {% if kendamatrick.creator.user == request.user %}
+                <div class="col col-sm-6 col-xs-12 text-center">
+                    <a class="paper-btn btn-secondary" href="#">
+                        Modifier
+                    </a>
+                    <a class="paper-btn btn-danger" href="#">
+                        Supprimer
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </article>
 {% endblock %}
