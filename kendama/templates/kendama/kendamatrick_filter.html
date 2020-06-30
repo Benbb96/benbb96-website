@@ -1,8 +1,8 @@
 {% extends 'kendama/base.html' %}
 
 {% block title %}Tricks{% endblock %}
-{% block h1_title %}
-    Tricks
+{% block h2_title %}
+    <a href="{% url 'kendama:tricks' %}">Tricks</a>
     <span class="badge">{{ tricks.count }}</span>
 {% endblock %}
 

@@ -3,15 +3,17 @@
 {% load kendama_tags %}
 
 {% block title %}Combo {{ combo.name }}{% endblock %}
-{% block h1_title %}Combo : {{ combo.name }}{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:combos' %}">Combos</a> > {{ combo.name }}
+{% endblock %}
 
 {% block content %}
     <article class="article">
-        <h1 class="article-title text-right">
+        <h3 class="article-title text-right">
             <a href="{% url 'kendama:combos' %}?difficulty={{ combo.difficulty }}">
                 {{ combo.get_difficulty_display }}
             </a>
-        </h1>
+        </h3>
         <p class="article-meta">
             Créé par <a href="{{ combo.creator.get_absolute_url }}">{{ combo.creator }}</a>
             le <code title="{{ combo.created_at|date:'r' }}">{{ combo.created_at }}</code>
