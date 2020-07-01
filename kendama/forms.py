@@ -1,7 +1,7 @@
 from django import forms
 
 from base.widgets import FirebaseUploadWidget
-from kendama.models import Kendama, TrickPlayer
+from kendama.models import Kendama, TrickPlayer, ComboPlayer
 
 
 class KendamaForm(forms.ModelForm):
@@ -18,4 +18,14 @@ class TrickPlayerForm(forms.ModelForm):
 
     class Meta:
         model = TrickPlayer
+        fields = ('frequency',)
+
+
+class ComboPlayerForm(forms.ModelForm):
+    frequency = forms.ChoiceField(
+        choices=tuple([('', '------')] + list(ComboPlayer.FREQUENCY))
+    )
+
+    class Meta:
+        model = ComboPlayer
         fields = ('frequency',)

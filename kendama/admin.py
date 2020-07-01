@@ -32,9 +32,13 @@ class ComboTrickInline(admin.TabularInline):
     show_change_link = True
 
 
+class ComboPlayerInline(admin.TabularInline):
+    model = ComboPlayer
+
+
 @admin.register(Combo)
 class ComboAdmin(BaseKendamaAdmin):
-    inlines = (ComboTrickInline,)
+    inlines = (ComboTrickInline, ComboPlayerInline)
 
 
 @admin.register(ComboTrick)

@@ -1,0 +1,30 @@
+{% if request.user.is_authenticated or player_frequencies %}
+    <h5 class="margin-bottom-small">Fréquence de réussites des joueurs :</h5>
+    <table class="table-alternating">
+        <thead>
+            <tr>
+                <th>Profil</th>
+                <th>Fréquence de réussite</th>
+                <th>Date de mise à jour</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if request.user.is_authenticated %}
+                <tr>
+                    <td><a href="{{ request.user.profil.get_absolute_url }}">{{ request.user }}</a></td>
+                    <td>{{ form.frequency }}</td>
+                    <td>{{ authenticated_user_frequency.history.first.history_date }}</td>
+                </tr>
+            {% endif %}
+            {% for player_frequency in player_frequencies %}
+                {% if player_frequency.player.user != request.user %}
+                    <tr>
+                        <td><a href="{{ player_frequency.player.get_absolute_url }}">{{ player_frequency.player }}</a></td>
+                        <td>{{ player_frequency.get_frequency_display }}</td>
+                        <td>{{ player_frequency.history.first.history_date }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
