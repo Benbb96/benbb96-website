@@ -25,7 +25,7 @@
             <p class="text-lead">{{ kendamatrick.description }}</p>
         {% endif %}
 
-        {% if request.user.is_autenticated or kendamatrick.trick_players.all %}
+        {% if request.user.is_authenticated or kendamatrick.trick_players.all %}
             <h5 class="margin-bottom-small">Fréquence de réussites des joueurs :</h5>
             <table class="table-alternating">
                 <thead>
@@ -81,4 +81,26 @@
             {% endif %}
         </div>
     </article>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        document.getElementById('id_frequency').addEventListener('change', function (event) {
+            const frequency = event.target.value
+            if (frequency === '' || frequency === undefined) {
+                alert('Veuillez choisir une option !')
+                return
+            }
+            fetch('{% url 'kendama:update_trick_player_frequency' kendamatrick.id %}', {
+                method: 'post',
+                headers: headers,
+                body: JSON.stringify({frequency})
+            }).then(status)
+            .then(json)
+            .then(function (response) {
+                alert(response.message)
+            })
+            .catch(catchError);
+        })
+    </script>
 {% endblock %}
