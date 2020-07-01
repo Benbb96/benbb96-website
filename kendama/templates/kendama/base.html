@@ -34,6 +34,25 @@
                     <li><a href="{% url 'kendama:tricks' %}">Tricks</a></li>
                     <li><a href="{% url 'kendama:combos' %}">Combos</a></li>
                     <li><a href="#">Kendamas</a></li>
+                    <li></li>
+                    {% if request.user.is_authenticated %}
+                        <li>
+                            <a href="{{ request.user.profil.get_absolute_url }}">
+                                {{ request.user }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'logout' %}">
+                                Déconnexion
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{% url 'login' %}?next={{ request.path }}">
+                                Se connecter
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
