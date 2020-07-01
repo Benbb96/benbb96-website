@@ -42,6 +42,13 @@ class BaseKendamaModel(models.Model):
 
 class KendamaTrick(BaseKendamaModel):
     # TODO photo
+    players = models.ManyToManyField(
+        Profil,
+        verbose_name='joueurs',
+        related_name='tricks',
+        through='TrickPlayer',
+        blank=True
+    )
 
     class Meta:
         verbose_name = 'trick de Kendama'
@@ -86,7 +93,7 @@ class BasePlayerFrequency(models.Model):
 
 
 class TrickPlayer(BasePlayerFrequency):
-    trick = models.ForeignKey(KendamaTrick, on_delete=models.PROTECT, related_name='trick_player')
+    trick = models.ForeignKey(KendamaTrick, on_delete=models.PROTECT, related_name='trick_players')
     history = HistoricalRecords()
 
     class Meta:
@@ -100,6 +107,13 @@ class TrickPlayer(BasePlayerFrequency):
 
 class Combo(BaseKendamaModel):
     tricks = models.ManyToManyField(KendamaTrick, related_name='combos', through='ComboTrick')
+    players = models.ManyToManyField(
+        Profil,
+        verbose_name='joueurs',
+        related_name='combos',
+        through='ComboPlayer',
+        blank=True
+    )
 
     class Meta:
         ordering = ('-created_at',)
