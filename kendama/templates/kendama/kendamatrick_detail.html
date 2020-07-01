@@ -25,6 +25,37 @@
             <p class="text-lead">{{ kendamatrick.description }}</p>
         {% endif %}
 
+        {% if request.user.is_autenticated or kendamatrick.trick_players.all %}
+            <h5 class="margin-bottom-small">Fréquence de réussites des joueurs :</h5>
+            <table class="table-alternating">
+                <thead>
+                    <tr>
+                        <th>Profil</th>
+                        <th>Fréquence de réussite</th>
+                        <th>Date de mise à jour</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if request.user.is_authenticated %}
+                        <tr>
+                            <td><a href="{{ request.user.profil.get_absolute_url }}">{{ request.user }}</a></td>
+                            <td>{{ trick_player_form.frequency }}</td>
+                            <td>{{ authenticated_trick_player.history.first.history_date }}</td>
+                        </tr>
+                    {% endif %}
+                    {% for trick_player in kendamatrick.trick_players.all %}
+                        {% if trick_player.player.user != request.user %}
+                            <tr>
+                                <td><a href="{{ trick_player.player.get_absolute_url }}">{{ trick_player.player }}</a></td>
+                                <td>{{ trick_player.get_frequency_display }}</td>
+                                <td>{{ trick_player.history.first.history_date }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
         {% if 'youtube' in kendamatrick.tutorial_video_link %}
             <div class="video-responsive">
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ kendamatrick.tutorial_video_link|youtube_id }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

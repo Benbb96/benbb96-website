@@ -18,9 +18,13 @@ class BaseKendamaAdmin(admin.ModelAdmin):
         return {'creator': request.user.profil}
 
 
+class TrickPlayerInline(admin.TabularInline):
+    model = TrickPlayer
+
+
 @admin.register(KendamaTrick)
 class KendamaTrickAdmin(BaseKendamaAdmin):
-    pass
+    inlines = (TrickPlayerInline,)
 
 
 class ComboTrickInline(admin.TabularInline):
