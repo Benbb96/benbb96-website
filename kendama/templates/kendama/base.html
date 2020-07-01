@@ -74,6 +74,32 @@
     {% block content %}
         <p>Bienvenue sur la partie Kendama de mon site !</p>
     {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script>
+        const headers = {
+            "Content-type": "application/json; charset=UTF-8",
+            "X-CSRFToken": Cookies.get('csrftoken')
+        }
+
+        function status(response) {
+            if (response.status >= 200 && response.status < 300) {
+                return Promise.resolve(response)
+            } else {
+                return Promise.reject(new Error(response.statusText))
+            }
+        }
+
+        function json(response) {
+            return response.json()
+        }
+
+        function catchError(error) {
+            console.log('Request failed', error);
+            alert("Une erreur s'est produite lors de la requête")
+        }
+    </script>
+    {% block javascript %}{% endblock %}
 </div>
 </body>
 </html>
