@@ -10,8 +10,12 @@
     {% include 'kendama/components/base_kendama_filter.html' %}
 
     <ul>
-    {% for trick in tricks %}
-        <li><a href="{{ trick.get_absolute_url }}">{{ trick }}</a></li>
-    {% endfor %}
+        {% for trick in tricks %}
+            <li><a href="{{ trick.get_absolute_url }}">{{ trick }}</a></li>
+        {% endfor %}
     </ul>
+
+    <div class="text-center">
+        <a href="{% url 'kendama:create-trick' %}" class="paper-btn">Ajouter un nouveau point</a>
+    </div>
 {% endblock %}
