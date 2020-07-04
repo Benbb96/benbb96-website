@@ -1,3 +1,4 @@
+from autoslug import AutoSlugField
 from django.db import models
 from django.urls import reverse
 from simple_history.models import HistoricalRecords
@@ -6,8 +7,8 @@ from base.models import Profil, PhotoAbstract
 
 
 class BaseKendamaModel(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, max_length=100)
+    name = models.CharField('nom', max_length=100)
+    slug = AutoSlugField(unique=True, populate_from='name')
     description = models.TextField(blank=True)
     creator = models.ForeignKey(
         Profil,
@@ -149,7 +150,7 @@ class Kendama(PhotoAbstract):
         related_name='kendamas'
     )
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = AutoSlugField(unique=True, populate_from='name')
     created_at = models.DateTimeField('date de création', auto_now_add=True)
 
     class Meta:

@@ -8,6 +8,8 @@ app_name = 'kendama'
 urlpatterns = [
     path('tricks/', views.KendamaTrickList.as_view(), name='tricks'),
     path('tricks/<slug:slug>/', views.KendamaTrickDetail.as_view(), name='detail-trick'),
+    path('tricks/create', views.KendamaTrickCreate.as_view(), name='create-trick'),
+    path('tricks/<slug:slug>/update', views.KendamaTrickUpdate.as_view(), name='update-trick'),
     path(
         'tricks/<int:trick_id>/update-frequency',
         views.update_trick_player_frequency,

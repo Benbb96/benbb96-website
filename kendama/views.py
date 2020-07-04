@@ -1,20 +1,27 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView, CreateView
 from django_filters.views import FilterView
 
 from kendama.filters import KendamaTrickFliter, ComboFliter
-from kendama.forms import TrickPlayerForm, ComboPlayerForm
+from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm
 from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer
 
 
 class KendamaTrickList(FilterView):
     filterset_class = KendamaTrickFliter
     context_object_name = 'tricks'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context['form'] = KendamaTrickForm()
+        return context
 
 
 class KendamaTrickDetail(DetailView):
@@ -30,6 +37,24 @@ class KendamaTrickDetail(DetailView):
             context['authenticated_user_frequency'] = authenticated_trick_player
             context['form'] = TrickPlayerForm(instance=authenticated_trick_player)
         return context
+
+
+class KendamaTrickCreate(SuccessMessageMixin, CreateView):
+    model = KendamaTrick
+    form_class = KendamaTrickForm
+    success_message = 'Le trick %(name)s a bien été créé.'
+
+    def form_valid(self, form):
+        kendama_trick = form.save(commit=False)
+        kendama_trick.creator = self.request.user.profil
+        kendama_trick.save()
+        return redirect(kendama_trick)
+
+
+class KendamaTrickUpdate(SuccessMessageMixin, UpdateView):
+    model = KendamaTrick
+    form_class = KendamaTrickForm
+    success_message = 'Le trick %(name)s a bien été mis à jour.'
 
 
 @login_required
