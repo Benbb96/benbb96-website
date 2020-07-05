@@ -27,10 +27,10 @@
 
         <p>Liste des tricks du combo :</p>
         <ol>
-            {% for trick in combo.tricks.all %}
+            {% for combo_trick in combo.combo_tricks.all %}
                 <li>
-                    <a href="{{ trick.get_absolute_url }}">
-                        {{ trick }}
+                    <a href="{{ combo_trick.trick.get_absolute_url }}">
+                        {{ combo_trick.trick }}
                     </a>
                 </li>
             {% endfor %}
