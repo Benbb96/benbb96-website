@@ -12,6 +12,40 @@
     <form method="post">
         {% csrf_token %}
         {% bootstrap_form form %}
+        <p>Les tricks du combo :</p>
+        {{ combo_trick_formset.management_form }}
+        {% for error in combo_trick_formset.non_form_errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+        <table>
+            <thead>
+            <tr>
+                <th>Trick</th>
+                <th>Ordre</th>
+                <th>Supprimer du combo ?</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for form in combo_trick_formset %}
+                <tr>
+                    {{ form.id }}
+                    <td>
+                        {{ form.trick }}
+                        {{ form.trick.errors }}
+                    </td>
+                    <td>
+                        {{ form.order }}
+                        {{ form.order.errors }}
+                    </td>
+                    <td class="form-group">
+                        <label class="paper-check">
+                            {{ form.DELETE }}<span></span>
+                        </label>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
         <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
         <a class="paper-btn btn-primary" href="{% if combo %}{{ combo.get_absolute_url }}{% else %}{% url 'kendama:combos' %}{% endif %}">
             Annuler
