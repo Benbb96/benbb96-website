@@ -6,13 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Kendama{% endblock %} | Kendama | Benbb96</title>
     {% if debug %}
         <link rel="stylesheet" href="{% static 'kendama/css/paper.css' %}">
     {% else %}
         <link rel="stylesheet" href="{% static 'kendama/css/paper.min.css' %}">
     {% endif %}
+    {% block stylesheet %}{% endblock %}
     <link rel="stylesheet" href="{% static 'kendama/css/style.css' %}">
-    <title>{% block title %}Kendama{% endblock %} | Kendama | Benbb96</title>
     {% include 'favicon.html' %}
 </head>
 <body>
