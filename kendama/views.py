@@ -1,10 +1,12 @@
 import json
+from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.defaultfilters import date
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
@@ -82,7 +84,10 @@ def update_trick_player_frequency(request, trick_id):
     if not created:
         trick_player.frequency = frequency
         trick_player.save()
-    return JsonResponse({'message': 'La fréquence a bien été mise à jour !'})
+    return JsonResponse({
+        'message': 'La fréquence a bien été mise à jour !',
+        'date': date(datetime.now(), 'DATETIME_FORMAT')
+    })
 
 
 class ComboList(FilterView):
@@ -134,4 +139,7 @@ def update_combo_player_frequency(request, combo_id):
     if not created:
         combo_player.frequency = frequency
         combo_player.save()
-    return JsonResponse({'message': 'La fréquence a bien été mise à jour !'})
+    return JsonResponse({
+        'message': 'La fréquence a bien été mise à jour !',
+        'date': date(datetime.now(), 'DATETIME_FORMAT')
+    })
