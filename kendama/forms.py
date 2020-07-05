@@ -1,7 +1,7 @@
 from django import forms
 
 from base.widgets import FirebaseUploadWidget
-from kendama.models import Kendama, TrickPlayer, ComboPlayer, KendamaTrick
+from kendama.models import Kendama, TrickPlayer, ComboPlayer, KendamaTrick, Combo
 
 
 class KendamaForm(forms.ModelForm):
@@ -17,6 +17,15 @@ class KendamaTrickForm(forms.ModelForm):
         exclude = ('slug', 'creator', 'players')
         widgets = {
             'tutorial_video_link': forms.TextInput(attrs={'class': 'input-block'})
+        }
+
+
+class ComboForm(forms.ModelForm):
+    class Meta:
+        model = Combo
+        exclude = ('slug', 'creator', 'players', 'tricks')
+        widgets = {
+            'tutorial_video_link': forms.TextInput(attrs={'class': 'input-block'}),
         }
 
 

@@ -11,7 +11,7 @@ from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 
 from kendama.filters import KendamaTrickFliter, ComboFliter
-from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm
+from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm
 from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer
 
 
@@ -103,6 +103,12 @@ class ComboDetail(DetailView):
             context['authenticated_user_frequency'] = authenticated_combo_player
             context['form'] = ComboPlayerForm(instance=authenticated_combo_player)
         return context
+
+
+class ComboUpdate(SuccessMessageMixin, UpdateView):
+    model = Combo
+    form_class = ComboForm
+    success_message = 'Le combo %(name)s a bien été mis à jour.'
 
 
 class ComboDelete(DeleteView):
