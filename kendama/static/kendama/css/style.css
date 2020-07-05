@@ -21,6 +21,10 @@
     position: absolute;
 }
 
+.errorlist {
+    color: #a7342d;
+}
+
 .help-block {
     color: #a7342d;
 }
