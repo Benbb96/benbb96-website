@@ -53,7 +53,7 @@
             {% endif %}
             {% if combo.creator.user == request.user %}
                 <div class="col col-sm-6 col-xs-12 text-center">
-                    <a class="paper-btn btn-secondary" href="#">
+                    <a class="paper-btn btn-secondary" href="{% url 'kendama:update-combo' combo.slug %}">
                         Modifier
                     </a>
                     <a class="paper-btn btn-danger" href="{% url 'kendama:delete-combo' combo.slug %}">
