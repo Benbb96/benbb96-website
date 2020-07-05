@@ -1,11 +1,13 @@
 import json
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
-from django.views.generic import DetailView, UpdateView, CreateView
+from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 
 from kendama.filters import KendamaTrickFliter, ComboFliter
@@ -55,6 +57,15 @@ class KendamaTrickUpdate(SuccessMessageMixin, UpdateView):
     model = KendamaTrick
     form_class = KendamaTrickForm
     success_message = 'Le trick %(name)s a bien été mis à jour.'
+
+
+class KendamaTrickDelete(DeleteView):
+    model = KendamaTrick
+    success_url = reverse_lazy('kendama:tricks')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Le trick %s a bien été supprimé.' % self.get_object())
+        return super().delete(request, *args, **kwargs)
 
 
 @login_required
