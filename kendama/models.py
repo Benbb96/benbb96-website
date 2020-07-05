@@ -128,6 +128,10 @@ class ComboTrick(models.Model):
     trick = models.ForeignKey(KendamaTrick, on_delete=models.PROTECT, related_name='combo_tricks')
     order = models.PositiveSmallIntegerField('ordre', default=0, db_index=True)
 
+    class Meta:
+        ordering = ('combo', 'order')
+        unique_together = ('combo', 'trick', 'order')
+
 
 class ComboPlayer(BasePlayerFrequency):
     combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='combo_players')

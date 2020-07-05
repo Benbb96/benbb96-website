@@ -3,7 +3,9 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.forms import inlineformset_factory
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.defaultfilters import date
@@ -14,7 +16,7 @@ from django_filters.views import FilterView
 
 from kendama.filters import KendamaTrickFliter, ComboFliter
 from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm
-from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer
+from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick
 
 
 class KendamaTrickList(FilterView):
@@ -43,7 +45,7 @@ class KendamaTrickDetail(DetailView):
         return context
 
 
-class KendamaTrickCreate(SuccessMessageMixin, CreateView):
+class KendamaTrickCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = KendamaTrick
     form_class = KendamaTrickForm
     success_message = 'Le trick %(name)s a bien été créé.'
@@ -55,13 +57,13 @@ class KendamaTrickCreate(SuccessMessageMixin, CreateView):
         return redirect(kendama_trick)
 
 
-class KendamaTrickUpdate(SuccessMessageMixin, UpdateView):
+class KendamaTrickUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = KendamaTrick
     form_class = KendamaTrickForm
     success_message = 'Le trick %(name)s a bien été mis à jour.'
 
 
-class KendamaTrickDelete(DeleteView):
+class KendamaTrickDelete(LoginRequiredMixin, DeleteView):
     model = KendamaTrick
     success_url = reverse_lazy('kendama:tricks')
 
@@ -110,13 +112,30 @@ class ComboDetail(DetailView):
         return context
 
 
-class ComboUpdate(SuccessMessageMixin, UpdateView):
+ComboTrickFormSet = inlineformset_factory(Combo, ComboTrick, fields=('trick', 'order'))
+
+
+class ComboUpdate(LoginRequiredMixin, UpdateView):
     model = Combo
     form_class = ComboForm
-    success_message = 'Le combo %(name)s a bien été mis à jour.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['combo_trick_formset'] = ComboTrickFormSet(self.request.POST or None, instance=self.get_object())
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        combo_trick_formset = context['combo_trick_formset']
+        if combo_trick_formset.is_valid():
+            self.object = form.save()
+            combo_trick_formset.save()
+            messages.success(self.request, 'Le combo %s a bien été mis à jour.' % self.object)
+            return redirect(self.object)
+        return self.render_to_response(self.get_context_data(form=form))
 
 
-class ComboDelete(DeleteView):
+class ComboDelete(LoginRequiredMixin, DeleteView):
     model = Combo
     success_url = reverse_lazy('kendama:combos')
 
