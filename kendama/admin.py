@@ -10,7 +10,6 @@ class BaseKendamaAdmin(admin.ModelAdmin):
     list_filter = ('difficulty',)
     search_fields = ('name', 'creator__username')
     date_hierarchy = 'created_at'
-    prepopulated_fields = {'slug': ('name',), }
     autocomplete_fields = ('creator',)
     list_select_related = ('creator',)
 
@@ -75,7 +74,6 @@ class ComboPlayerAdmin(BasePlayerFrequencyAdmin):
 class KendamaAdmin(PhotoAdminAbtract):
     list_display = ('thumbnail', 'name', 'owner', 'created_at')
     search_fields = ('name', 'owner__username')
-    prepopulated_fields = {'slug': ('name',), }
     list_select_related = ('owner',)
 
     form = KendamaForm
