@@ -105,6 +105,15 @@ class ComboDetail(DetailView):
         return context
 
 
+class ComboDelete(DeleteView):
+    model = Combo
+    success_url = reverse_lazy('kendama:combos')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Le combo %s a bien été supprimé.' % self.get_object())
+        return super().delete(request, *args, **kwargs)
+
+
 @login_required
 @require_POST
 def update_combo_player_frequency(request, combo_id):
