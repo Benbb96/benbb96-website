@@ -121,6 +121,30 @@ class ComboDetail(DetailView):
 ComboTrickFormSet = inlineformset_factory(Combo, ComboTrick, fields=('trick', 'order'))
 
 
+class ComboCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Combo
+    form_class = ComboForm
+    success_message = 'Le combo %(name)s a bien été créé.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['combo_trick_formset'] = ComboTrickFormSet(self.request.POST or None)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        combo_trick_formset = context['combo_trick_formset']
+        if combo_trick_formset.is_valid():
+            combo = form.save(commit=False)
+            combo.creator = self.request.user.profil
+            combo.save()
+            combo_trick_formset.instance = combo
+            combo_trick_formset.save()
+            messages.success(self.request, 'Le combo %s a bien été créé.' % combo)
+            return redirect(combo)
+        return self.render_to_response(self.get_context_data(form=form))
+
+
 class ComboUpdate(LoginRequiredMixin, UpdateView):
     model = Combo
     form_class = ComboForm
@@ -137,10 +161,10 @@ class ComboUpdate(LoginRequiredMixin, UpdateView):
         context = self.get_context_data()
         combo_trick_formset = context['combo_trick_formset']
         if combo_trick_formset.is_valid():
-            self.object = form.save()
+            combo = form.save()
             combo_trick_formset.save()
-            messages.success(self.request, 'Le combo %s a bien été mis à jour.' % self.object)
-            return redirect(self.object)
+            messages.success(self.request, 'Le combo %s a bien été mis à jour.' % combo)
+            return redirect(combo)
         return self.render_to_response(self.get_context_data(form=form))
 
 

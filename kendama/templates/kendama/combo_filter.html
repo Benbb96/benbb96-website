@@ -14,4 +14,10 @@
         <li><a href="{{ combo.get_absolute_url }}">{{ combo }}</a></li>
     {% endfor %}
     </ul>
+
+    {% if request.user.is_authenticated %}
+        <div class="text-center">
+            <a href="{% url 'kendama:create-combo' %}" class="paper-btn">Ajouter un nouveau combo</a>
+        </div>
+    {% endif %}
 {% endblock %}
