@@ -1,0 +1,20 @@
+{% extends 'kendama/base.html' %}
+
+{% load bootstrap3 %}
+
+{% block title %}{% if kendamatrick %}Combo {{ combo.name }}{% else %}Création Combo{% endif %}{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:combos' %}">Combos</a> >
+    {% if combo %}{{ combo }}{% else %}Nouveau{% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
+        <a class="paper-btn btn-primary" href="{% if combo %}{{ combo.get_absolute_url }}{% else %}{% url 'kendama:combos' %}{% endif %}">
+            Annuler
+        </a>
+    </form>
+{% endblock %}

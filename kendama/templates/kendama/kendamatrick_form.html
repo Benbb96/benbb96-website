@@ -5,7 +5,7 @@
 {% block title %}{% if kendamatrick %}Trick {{ kendamatrick.name }}{% else %}Création Trick{% endif %}{% endblock %}
 {% block h2_title %}
     <a href="{% url 'kendama:tricks' %}">Tricks</a> >
-    {% if kendamatrick %}{{ kendamatrick.name }}{% else %}Nouveau{% endif %}
+    {% if kendamatrick %}{{ kendamatrick }}{% else %}Nouveau{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -13,6 +13,8 @@
         {% csrf_token %}
         {% bootstrap_form form %}
         <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
-        <a class="paper-btn btn-primary" href="{% if kendamatrick %}{{ kendamatrick.get_absolute_url }}{% else %}{% url 'kendama:tricks' %}{% endif %}">Annuler</a>
+        <a class="paper-btn btn-primary" href="{% if kendamatrick %}{{ kendamatrick.get_absolute_url }}{% else %}{% url 'kendama:tricks' %}{% endif %}">
+            Annuler
+        </a>
     </form>
 {% endblock %}
