@@ -69,6 +69,7 @@
             }).then(status)
             .then(json)
             .then(function (response) {
+                document.getElementById('lastUpdate').innerText = response.date
                 alert(response.message)
             })
             .catch(catchError);

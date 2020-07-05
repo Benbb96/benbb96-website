@@ -13,7 +13,7 @@
                 <tr>
                     <td><a href="{{ request.user.profil.get_absolute_url }}">{{ request.user }}</a></td>
                     <td>{{ form.frequency }}</td>
-                    <td>{{ authenticated_user_frequency.history.first.history_date }}</td>
+                    <td id="lastUpdate">{{ authenticated_user_frequency.history.first.history_date }}</td>
                 </tr>
             {% endif %}
             {% for player_frequency in player_frequencies %}
