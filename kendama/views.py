@@ -62,10 +62,16 @@ class KendamaTrickUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     form_class = KendamaTrickForm
     success_message = 'Le trick %(name)s a bien été mis à jour.'
 
+    def get_queryset(self):
+        return super().get_queryset().filter(creator=self.request.user.profil)
+
 
 class KendamaTrickDelete(LoginRequiredMixin, DeleteView):
     model = KendamaTrick
     success_url = reverse_lazy('kendama:tricks')
+
+    def get_queryset(self):
+        return super().get_queryset().filter(creator=self.request.user.profil)
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Le trick %s a bien été supprimé.' % self.get_object())
@@ -119,6 +125,9 @@ class ComboUpdate(LoginRequiredMixin, UpdateView):
     model = Combo
     form_class = ComboForm
 
+    def get_queryset(self):
+        return super().get_queryset().filter(creator=self.request.user.profil)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['combo_trick_formset'] = ComboTrickFormSet(self.request.POST or None, instance=self.get_object())
@@ -138,6 +147,9 @@ class ComboUpdate(LoginRequiredMixin, UpdateView):
 class ComboDelete(LoginRequiredMixin, DeleteView):
     model = Combo
     success_url = reverse_lazy('kendama:combos')
+
+    def get_queryset(self):
+        return super().get_queryset().filter(creator=self.request.user.profil)
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Le combo %s a bien été supprimé.' % self.get_object())
