@@ -100,6 +100,15 @@
             console.log('Request failed', error);
             alert("Une erreur s'est produite lors de la requête")
         }
+
+        function updateFrequency(response) {
+            // Update lastUpdate date
+            document.getElementById('lastUpdate').innerText = response.date
+            // Update display response message
+            document.getElementById('modalText').innerText = response.message
+            // Close modal
+            document.getElementById('frequencyUpdatedModal').checked = true
+        }
     </script>
     {% block javascript %}{% endblock %}
 </div>
