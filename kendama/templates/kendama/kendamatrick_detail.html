@@ -32,6 +32,18 @@
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ kendamatrick.tutorial_video_link|youtube_id }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         {% endif %}
+
+        {% if kendamatrick.combos.all %}
+            <h5>Ce trick apparait dans les combos suivants :</h5>
+            <ul>
+                {% for combo in kendamatrick.combos.all %}
+                    <li>
+                        <a href="{{ combo.get_absolute_url }}">{{ combo }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif%}
+
         <div class="row flex-spaces">
             {% if kendamatrick.tutorial_video_link %}
                 <div class="col col-sm-6 col-xs-12 text-center">
