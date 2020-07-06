@@ -64,6 +64,8 @@
             {% endif %}
         </div>
     </article>
+
+    {% include 'kendama/components/frequency_updated_modal.html' %}
 {% endblock %}
 
 {% block javascript %}
@@ -80,10 +82,7 @@
                 body: JSON.stringify({frequency})
             }).then(status)
             .then(json)
-            .then(function (response) {
-                document.getElementById('lastUpdate').innerText = response.date
-                alert(response.message)
-            })
+            .then(updateFrequency)
             .catch(catchError);
         })
     </script>
