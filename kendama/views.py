@@ -78,26 +78,6 @@ class KendamaTrickDelete(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@login_required
-@require_POST
-def update_trick_player_frequency(request, trick_id):
-    trick = get_object_or_404(KendamaTrick, id=trick_id)
-    json_data = json.loads(request.body)
-    frequency = json_data.get('frequency')
-    if not frequency:
-        return JsonResponse({'message': 'Veuillez renseigner la fréquence'}, status=422)
-    trick_player, created = request.user.profil.trickplayer_set.get_or_create(
-        trick=trick, defaults={'frequency': frequency}
-    )
-    if not created:
-        trick_player.frequency = frequency
-        trick_player.save()
-    return JsonResponse({
-        'message': 'La fréquence a bien été mise à jour !',
-        'date': date(datetime.now(), 'DATETIME_FORMAT')
-    })
-
-
 class ComboList(FilterView):
     filterset_class = ComboFliter
     context_object_name = 'combos'
@@ -189,20 +169,35 @@ class ComboDelete(LoginRequiredMixin, DeleteView):
 
 @login_required
 @require_POST
-def update_combo_player_frequency(request, combo_id):
-    combo = get_object_or_404(Combo, id=combo_id)
+def update_player_frequency(request, cls, obj_id):
+    if cls == 'tricks':
+        klass = KendamaTrick
+    elif cls == 'combos':
+        klass = Combo
+    else:
+        raise ValueError('cls est incorrect : %s' % cls)
+    obj = get_object_or_404(klass, id=obj_id)
+
     json_data = json.loads(request.body)
     frequency = json_data.get('frequency')
     if not frequency:
         return JsonResponse({'message': 'Veuillez renseigner la fréquence'}, status=422)
-    combo_player, created = request.user.profil.comboplayer_set.get_or_create(
-        combo=combo, defaults={'frequency': frequency}
-    )
+
+    params = {'defaults': {'frequency': frequency}}
+    if cls == 'tricks':
+        player_set = request.user.profil.trickplayer_set
+        params['trick'] = obj
+    else:
+        player_set = request.user.profil.comboplayer_set
+        params['combo'] = obj
+
+    obj_player, created = player_set.get_or_create(**params)
     if not created:
-        combo_player.frequency = frequency
-        combo_player.save()
+        obj.frequency = frequency
+        obj.save()
+
     return JsonResponse({
-        'message': 'La fréquence a bien été mise à jour !',
+        'message': 'La fréquence a bien été mise à jour.',
         'date': date(datetime.now(), 'DATETIME_FORMAT')
     })
 
