@@ -9,11 +9,22 @@
 {% block content %}
     {% include 'kendama/components/base_kendama_filter.html' %}
 
-    <ul>
+    <div class="row flex-spaces">
         {% for trick in tricks %}
-            <li><a href="{{ trick.get_absolute_url }}">{{ trick }}</a></li>
+            <div class="card md-3 sm-5 margin-small">
+                <div class="card-body">
+                    <h4 class="card-title">{{ trick.name }}</h4>
+                    <h6 class="card-subtitle">Créé par {{ trick.creator }}</h6>
+                    {% if trick.description %}
+                        <p class="card-text">{{ trick.description }}</p>
+                    {% endif %}
+                    <div class="text-right">
+                        <a class="paper-btn btn-small" href="{{ trick.get_absolute_url }}">Détail</a>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 
     {% if request.user.is_authenticated %}
         <div class="text-center">

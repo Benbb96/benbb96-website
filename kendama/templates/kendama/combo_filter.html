@@ -9,11 +9,22 @@
 {% block content %}
     {% include 'kendama/components/base_kendama_filter.html' %}
 
-    <ul>
-    {% for combo in combos %}
-        <li><a href="{{ combo.get_absolute_url }}">{{ combo }}</a></li>
-    {% endfor %}
-    </ul>
+    <div class="row flex-spaces">
+        {% for combo in combos %}
+            <div class="card md-3 sm-5 margin-small">
+                <div class="card-body">
+                    <h4 class="card-title">{{ combo.name }}</h4>
+                    <h6 class="card-subtitle">Créé par {{ combo.creator }}</h6>
+                    {% if combo.description %}
+                        <p class="card-text">{{ combo.description }}</p>
+                    {% endif %}
+                    <div class="text-right">
+                        <a class="paper-btn btn-small" href="{{ combo.get_absolute_url }}">Détail</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
     {% if request.user.is_authenticated %}
         <div class="text-center">
