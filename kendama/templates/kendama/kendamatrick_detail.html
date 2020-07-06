@@ -76,7 +76,7 @@
                 alert('Veuillez choisir une option !')
                 return
             }
-            fetch('{% url 'kendama:update_trick_player_frequency' kendamatrick.id %}', {
+            fetch('{% url 'kendama:update_player_frequency' "tricks" kendamatrick.id %}', {
                 method: 'post',
                 headers: headers,
                 body: JSON.stringify({frequency})
