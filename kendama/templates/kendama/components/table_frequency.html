@@ -22,9 +22,12 @@
                         <td><a href="{{ player_frequency.player.get_absolute_url }}">{{ player_frequency.player }}</a></td>
                         <td>{{ player_frequency.get_frequency_display }}</td>
                         <td>{{ player_frequency.history.first.history_date }}</td>
+                        {# TODO Lien vers l'historique d'évolution de la fréquence #}
                     </tr>
                 {% endif %}
             {% endfor %}
         </tbody>
     </table>
+
+    {# TODO Montrer la répartition en camembert des fréquences #}
 {% endif %}
