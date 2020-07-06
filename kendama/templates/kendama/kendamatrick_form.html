@@ -12,9 +12,15 @@
     <form method="post">
         {% csrf_token %}
         {% bootstrap_form form %}
-        <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
-        <a class="paper-btn btn-primary" href="{% if kendamatrick %}{{ kendamatrick.get_absolute_url }}{% else %}{% url 'kendama:tricks' %}{% endif %}">
-            Annuler
-        </a>
+        <div class="row flex-edges">
+            <div class="col-6">
+                <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
+            </div>
+            <div class="col-6 text-right">
+                <a class="paper-btn btn-primary" href="{% if kendamatrick %}{{ kendamatrick.get_absolute_url }}{% else %}{% url 'kendama:tricks' %}{% endif %}">
+                    Annuler
+                </a>
+            </div>
+        </div>
     </form>
 {% endblock %}

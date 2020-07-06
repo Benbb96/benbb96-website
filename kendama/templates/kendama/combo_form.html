@@ -12,22 +12,16 @@
     <form method="post">
         {% csrf_token %}
         {% bootstrap_form form %}
-        <div class="row">
-            <div class="col col-6">
-                Les tricks du combo :
-            </div>
-            <div class="col col-6 text-right">
-                <label class="paper-btn" for="trickFormModal">Créer un Trick</label>
-            </div>
-        </div>
+        <h4>Les tricks du combo :</h4>
         {{ combo_trick_formset.management_form }}
         {% for error in combo_trick_formset.non_form_errors %}
             <div class="text-danger">{{ error }}</div>
         {% endfor %}
-        <table>
+        <table class="margin-bottom">
             <thead>
             <tr>
                 <th>Trick</th>
+                <th></th>
                 <th>Ordre</th>
                 <th>Supprimer du combo ?</th>
             </tr>
@@ -39,6 +33,12 @@
                     <td>
                         {{ form.trick }}
                         {{ form.trick.errors }}
+                    </td>
+                    <td>
+                        <label class="paper-btn btn-small" for="trickFormModal" title="Créer un nouveau trick"
+                               data-trick-id="{{ form.trick.id_for_label }}">
+                            +
+                        </label>
                     </td>
                     <td>
                         {{ form.order }}
@@ -53,10 +53,16 @@
             {% endfor %}
             </tbody>
         </table>
-        <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
-        <a class="paper-btn btn-primary" href="{% if combo %}{{ combo.get_absolute_url }}{% else %}{% url 'kendama:combos' %}{% endif %}">
-            Annuler
-        </a>
+        <div class="row flex-edges">
+            <div class="col-6">
+                <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
+            </div>
+            <div class="col-6 text-right">
+                <a class="paper-btn btn-primary" href="{% if combo %}{{ combo.get_absolute_url }}{% else %}{% url 'kendama:combos' %}{% endif %}">
+                    Annuler
+                </a>
+            </div>
+        </div>
     </form>
 
     {# Trick Creation Modal Form #}
@@ -84,6 +90,7 @@
 
 {% block javascript %}
     <script>
+        let selectIdToUpdate;
         const form = document.getElementById('trickForm')
         form.addEventListener('submit', (e) => {
             e.preventDefault()
@@ -99,9 +106,14 @@
                 if (response.success) {
                     // Close modal
                     document.getElementById('trickFormModal').checked = false
+                    // Add new option in each select
                     document.querySelectorAll('select.trickSelect').forEach(select => {
                         let option = document.createElement('option')
                         option.value = response.id
+                        // Select option if it is the row where we clicked
+                        if (select.id === selectIdToUpdate) {
+                            option.selected = true
+                        }
                         option.appendChild(document.createTextNode(response.name))
                         select.appendChild(option)
                     })
@@ -121,6 +133,12 @@
                 }
             })
             .catch(catchError);
+        })
+
+        document.querySelectorAll('label[for=trickFormModal]').forEach(label => {
+            label.addEventListener('click', function() {
+                selectIdToUpdate = this.dataset.trickId
+            })
         })
     </script>
 {% endblock %}
