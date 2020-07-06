@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, Select
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.defaultfilters import date
@@ -118,7 +118,12 @@ class ComboDetail(DetailView):
         return context
 
 
-ComboTrickFormSet = inlineformset_factory(Combo, ComboTrick, fields=('trick', 'order'))
+ComboTrickFormSet = inlineformset_factory(
+    Combo,
+    ComboTrick,
+    fields=('trick', 'order'),
+    widgets={'trick': Select(attrs={'class': 'trickSelect'})}
+)
 
 
 class ComboCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -129,6 +134,7 @@ class ComboCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['combo_trick_formset'] = ComboTrickFormSet(self.request.POST or None)
+        context['trick_form'] = KendamaTrickForm(self.request.POST or None, prefix='trick')
         return context
 
     def form_valid(self, form):
@@ -155,6 +161,7 @@ class ComboUpdate(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['combo_trick_formset'] = ComboTrickFormSet(self.request.POST or None, instance=self.get_object())
+        context['trick_form'] = KendamaTrickForm(self.request.POST or None, prefix='trick')
         return context
 
     def form_valid(self, form):
@@ -198,3 +205,15 @@ def update_combo_player_frequency(request, combo_id):
         'message': 'La fréquence a bien été mise à jour !',
         'date': date(datetime.now(), 'DATETIME_FORMAT')
     })
+
+
+@require_POST
+@login_required
+def create_trick_from_modal(request):
+    form = KendamaTrickForm(request.POST, prefix='trick')
+    if form.is_valid():
+        trick = form.save(commit=False)
+        trick.creator = request.user.profil
+        trick.save()
+        return JsonResponse({'success': True, 'id': trick.id, 'name': trick.name})
+    return JsonResponse({'success': False, 'message': 'Il y a des erreurs dans le formulaire', 'errors': form.errors})

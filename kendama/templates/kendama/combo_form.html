@@ -12,7 +12,14 @@
     <form method="post">
         {% csrf_token %}
         {% bootstrap_form form %}
-        <p>Les tricks du combo :</p>
+        <div class="row">
+            <div class="col col-6">
+                Les tricks du combo :
+            </div>
+            <div class="col col-6 text-right">
+                <label class="paper-btn" for="trickFormModal">Créer un Trick</label>
+            </div>
+        </div>
         {{ combo_trick_formset.management_form }}
         {% for error in combo_trick_formset.non_form_errors %}
             <div class="text-danger">{{ error }}</div>
@@ -51,4 +58,69 @@
             Annuler
         </a>
     </form>
+
+    {# Trick Creation Modal Form #}
+    <input class="modal-state" id="trickFormModal" type="checkbox">
+    <div class="modal">
+        <label class="modal-bg" for="trickFormModal"></label>
+        <div class="modal-body">
+            <label class="btn-close" for="trickFormModal">X</label>
+            <h5 class="modal-subtitle">Création d'un nouveau trick</h5>
+            <form id="trickForm">
+                {% csrf_token %}
+                {{ trick_form.as_p }}
+                <div class="row flex-edges">
+                    <div class="col-6">
+                        <button type="submit" class="btn-secondary">Créer</button>
+                    </div>
+                    <div class="col-6 text-right">
+                        <label for="trickFormModal" class="paper-btn">Annuler</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        const form = document.getElementById('trickForm')
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+            // Clean errors first
+            document.querySelectorAll('ul.errorlist').forEach(el => {el.remove()})
+            const formData = new FormData(form)
+            fetch('{% url 'kendama:create-trick-from-modal' %}', {
+                method: 'post',
+                body: formData
+            }).then(status)
+            .then(json)
+            .then(function (response) {
+                if (response.success) {
+                    // Close modal
+                    document.getElementById('trickFormModal').checked = false
+                    document.querySelectorAll('select.trickSelect').forEach(select => {
+                        let option = document.createElement('option')
+                        option.value = response.id
+                        option.appendChild(document.createTextNode(response.name))
+                        select.appendChild(option)
+                    })
+                } else {
+                    alert(response.message)
+                    for (const [key, errors] of Object.entries(response.errors)) {
+                        // Display errors
+                        let errorList = document.createElement("ul");
+                        errorList.className = 'errorlist'
+                        errors.forEach((error) => {
+                            const errorItem = document.createElement('li')
+                            errorItem.appendChild(document.createTextNode(error))
+                            errorList.appendChild(errorItem)
+                        })
+                        document.getElementById('id_trick-' + key).parentElement.appendChild(errorList)
+                    }
+                }
+            })
+            .catch(catchError);
+        })
+    </script>
 {% endblock %}
