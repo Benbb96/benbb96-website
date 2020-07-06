@@ -40,6 +40,7 @@
                     {% if request.user.is_authenticated %}
                         <li>
                             <a href="{{ request.user.profil.get_absolute_url }}">
+                                {# TODO Faire une page spécial pour le user sur Kendama #}
                                 {{ request.user }}
                             </a>
                         </li>
