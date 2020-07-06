@@ -16,6 +16,7 @@ class KendamaTrickForm(forms.ModelForm):
         model = KendamaTrick
         exclude = ('slug', 'creator', 'players')
         widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
             'tutorial_video_link': forms.TextInput(attrs={'class': 'input-block'})
         }
 

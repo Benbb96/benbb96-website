@@ -26,6 +26,7 @@ urlpatterns = [
         views.update_combo_player_frequency,
         name='update_combo_player_frequency'
     ),
+    path('combos/create-trick', views.create_trick_from_modal, name='create-trick-from-modal'),
 
     path('test/', TemplateView.as_view(template_name='kendama/base.html'), name='test-page'),
 ]
