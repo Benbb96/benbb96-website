@@ -1,0 +1,20 @@
+{{ form.id }}
+<td>
+    {{ form.trick }}
+    {{ form.trick.errors }}
+</td>
+<td>
+    <label class="paper-btn btn-small" for="trickFormModal" title="Créer un nouveau trick"
+           onclick="selectIdToUpdate = '{{ form.trick.id_for_label }}'">
+        +
+    </label>
+</td>
+<td>
+    {{ form.order }}
+    {{ form.order.errors }}
+</td>
+<td class="form-group">
+    <label class="paper-check">
+        {{ form.DELETE }}<span></span>
+    </label>
+</td>

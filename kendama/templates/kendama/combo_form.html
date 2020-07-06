@@ -26,33 +26,21 @@
                 <th>Supprimer du combo ?</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="tricksForm">
+            {# Empty form example in order to copy it when adding more rows #}
+            <tr id="emptyform_wrapper" style="display: none">
+                {% include 'kendama/components/combo_trick_form_row.html' with form=combo_trick_formset.empty_form %}
+            </tr>
             {% for form in combo_trick_formset %}
                 <tr>
-                    {{ form.id }}
-                    <td>
-                        {{ form.trick }}
-                        {{ form.trick.errors }}
-                    </td>
-                    <td>
-                        <label class="paper-btn btn-small" for="trickFormModal" title="Créer un nouveau trick"
-                               data-trick-id="{{ form.trick.id_for_label }}">
-                            +
-                        </label>
-                    </td>
-                    <td>
-                        {{ form.order }}
-                        {{ form.order.errors }}
-                    </td>
-                    <td class="form-group">
-                        <label class="paper-check">
-                            {{ form.DELETE }}<span></span>
-                        </label>
-                    </td>
+                    {% include 'kendama/components/combo_trick_form_row.html' %}
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        <p>
+            <button type="button" class="btn-small" id="addMore">Ajouter plus de ligne</button>
+        </p>
         <div class="row flex-edges">
             <div class="col-6">
                 <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
@@ -135,10 +123,16 @@
             .catch(catchError);
         })
 
-        document.querySelectorAll('label[for=trickFormModal]').forEach(label => {
-            label.addEventListener('click', function() {
-                selectIdToUpdate = this.dataset.trickId
-            })
-        })
+        // Add more row for combo tricks
+        document.getElementById('addMore').addEventListener('click', function () {
+            let total_form = document.getElementById('id_combo_tricks-TOTAL_FORMS');
+            let form_idx = total_form.value;
+            const new_row = document.createElement('tr')
+            // Get empty form wrapper and replace the prefix with future form id
+            new_row.innerHTML = document.getElementById('emptyform_wrapper').innerHTML.replace(/__prefix__/g, form_idx)
+            // Then append it at the end of the table
+            document.getElementById('tricksForm').appendChild(new_row);
+            total_form.value = parseInt(form_idx) + 1;
+        });
     </script>
 {% endblock %}
