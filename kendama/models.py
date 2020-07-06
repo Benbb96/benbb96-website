@@ -54,7 +54,7 @@ class KendamaTrick(BaseKendamaModel):
     class Meta:
         verbose_name = 'trick de Kendama'
         verbose_name_plural = 'tricks de Kendama'
-        ordering = ('-created_at',)
+        ordering = ('name',)
 
     def get_absolute_url(self):
         return reverse('kendama:detail-trick', args=[self.slug])
@@ -117,7 +117,7 @@ class Combo(BaseKendamaModel):
     )
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ('name',)
 
     def get_absolute_url(self):
         return reverse('kendama:detail-combo', args=[self.slug])
