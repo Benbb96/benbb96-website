@@ -17,7 +17,7 @@ class KendamaTrickForm(forms.ModelForm):
         exclude = ('slug', 'creator', 'players')
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'tutorial_video_link': forms.TextInput(attrs={'class': 'input-block'})
+            'tutorial_video_link': forms.URLInput(attrs={'class': 'input-block'})
         }
 
 
@@ -26,7 +26,7 @@ class ComboForm(forms.ModelForm):
         model = Combo
         exclude = ('slug', 'creator', 'players', 'tricks')
         widgets = {
-            'tutorial_video_link': forms.TextInput(attrs={'class': 'input-block'}),
+            'tutorial_video_link': forms.URLInput(attrs={'class': 'input-block'}),
         }
 
 
