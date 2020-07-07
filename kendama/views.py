@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.forms import inlineformset_factory, Select
+from django.forms import inlineformset_factory, Select, NumberInput
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.defaultfilters import date
@@ -102,7 +102,10 @@ ComboTrickFormSet = inlineformset_factory(
     Combo,
     ComboTrick,
     fields=('trick', 'order'),
-    widgets={'trick': Select(attrs={'class': 'trickSelect'})}
+    widgets={
+        'trick': Select(attrs={'class': 'trickSelect'}),
+        'order': NumberInput(attrs={'style': 'width: 80px'}),
+    }
 )
 
 
