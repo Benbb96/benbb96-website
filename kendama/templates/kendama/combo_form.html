@@ -2,7 +2,7 @@
 
 {% load bootstrap3 %}
 
-{% block title %}{% if kendamatrick %}Combo {{ combo.name }}{% else %}Création Combo{% endif %}{% endblock %}
+{% block title %}{% if combo %}Combo {{ combo.name }}{% else %}Création Combo{% endif %}{% endblock %}
 {% block h2_title %}
     <a href="{% url 'kendama:combos' %}">Combos</a> >
     {% if combo %}{{ combo }}{% else %}Nouveau{% endif %}

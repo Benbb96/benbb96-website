@@ -1,0 +1,70 @@
+{% extends 'kendama/base.html' %}
+
+{% load bootstrap3 %}
+
+{% block title %}{% if ladder %}Ladder {{ ladder.name }}{% else %}Création Ladder{% endif %}{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:ladders' %}">Ladders</a> >
+    {% if ladder %}{{ ladder }}{% else %}Nouveau{% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <h4>Les combos du ladder :</h4>
+        {{ ladder_combo_formset.management_form }}
+        {% for error in ladder_combo_formset.non_form_errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+        <table class="margin-bottom">
+            <thead>
+            <tr>
+                <th>Combo</th>
+                <th>Ordre</th>
+                <th>Supprimer du ladder ?</th>
+            </tr>
+            </thead>
+            <tbody id="combosForm">
+            {# Empty form example in order to copy it when adding more rows #}
+            <tr id="emptyform_wrapper" style="display: none">
+                {% include 'kendama/components/ladder_combo_form_row.html' with form=ladder_combo_formset.empty_form %}
+            </tr>
+            {% for form in ladder_combo_formset %}
+                <tr>
+                    {% include 'kendama/components/ladder_combo_form_row.html' %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p>
+            <button type="button" class="btn-small" id="addMore">Ajouter plus de ligne</button>
+        </p>
+        <div class="row flex-edges">
+            <div class="col-6">
+                <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
+            </div>
+            <div class="col-6 text-right">
+                <a class="paper-btn btn-primary" href="{% if ladder %}{{ ladder.get_absolute_url }}{% else %}{% url 'kendama:ladders' %}{% endif %}">
+                    Annuler
+                </a>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        // Add more row for ladder combos
+        document.getElementById('addMore').addEventListener('click', function () {
+            let total_form = document.getElementById('id_ladder_combos-TOTAL_FORMS');
+            let form_idx = total_form.value;
+            const new_row = document.createElement('tr')
+            // Get empty form wrapper and replace the prefix with future form id
+            new_row.innerHTML = document.getElementById('emptyform_wrapper').innerHTML.replace(/__prefix__/g, form_idx)
+            // Then append it at the end of the table
+            document.getElementById('combosForm').appendChild(new_row);
+            total_form.value = parseInt(form_idx) + 1;
+        });
+    </script>
+{% endblock %}

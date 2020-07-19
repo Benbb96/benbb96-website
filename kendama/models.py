@@ -180,8 +180,8 @@ class Ladder(BaseModel):
 
 
 class LadderCombo(models.Model):
-    ladder = models.ForeignKey(Ladder, on_delete=models.PROTECT, related_name='ladder_combos')
-    combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='ladder_combos')
+    ladder = models.ForeignKey(Ladder, on_delete=models.CASCADE, related_name='ladder_combos')
+    combo = models.ForeignKey(Combo, on_delete=models.PROTECT, related_name='ladder_combos')
     order = models.PositiveSmallIntegerField('ordre', default=0, db_index=True)
 
     class Meta:
