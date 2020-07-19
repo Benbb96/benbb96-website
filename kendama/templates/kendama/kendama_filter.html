@@ -9,14 +9,14 @@
 {% block content %}
     <form method="get">
         <div class="row">
-            <div class="col col-4">
+            <div class="col sm-4 xs-12">
                 <div class="form-group">
                     {{ filter.form.text.label_tag }}
                     {{ filter.form.text }}
                     {{ filter.form.text.errors }}
                 </div>
             </div>
-            <div class="col col-6">
+            <div class="col sm-6 xs-9">
                 <div class="form-group">
                     <label for="{{ filter.form.created_at__gte.id_for_label }}">Date de création comprise entre :</label>
                     <div class="row">
@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col col-2">
+            <div class="col sm-2 xs-3 text-center">
                 <br>
                 <button type="submit">OK</button>
             </div>
