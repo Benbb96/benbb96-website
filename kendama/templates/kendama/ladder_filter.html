@@ -1,0 +1,37 @@
+{% extends 'kendama/base.html' %}
+
+{% block title %}Ladders{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:ladders' %}">Ladders</a>
+    <span class="badge">{{ ladders.count }}</span>
+{% endblock %}
+
+{% block content %}
+    {% include 'kendama/components/base_kendama_filter.html' %}
+
+    {% if request.user.is_authenticated %}
+        <div class="text-center">
+            <a href="{% url 'kendama:create-combo' %}" class="paper-btn">Ajouter un nouveau ladder</a>
+        </div>
+    {% endif %}
+
+    <div class="row flex-spaces">
+        {% for ladder in ladders %}
+            <div class="card md-3 sm-5 margin-small">
+                <div class="card-body">
+                    <h4 class="card-title">{{ ladder.name }}</h4>
+                    <h6 class="card-subtitle">Créé par {{ ladder.creator }}</h6>
+                    {% if ladder.description %}
+                        <p class="card-text">{{ ladder.description }}</p>
+                    {% endif %}
+                    <div class="text-right">
+                        {% if request.user.profil == ladder.creator %}
+                            <a class="paper-btn btn-small" href="{% url 'kendama:update-combo' ladder.slug %}">Modifier</a>
+                        {% endif %}
+                        <a class="paper-btn btn-small" href="{{ ladder.get_absolute_url }}">Détail</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
