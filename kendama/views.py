@@ -4,9 +4,10 @@ from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory, Select, NumberInput
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.defaultfilters import date
 from django.urls import reverse_lazy
@@ -199,6 +200,35 @@ def update_player_frequency(request, cls, obj_id):
         'message': 'La fréquence a bien été mise à jour.',
         'date': date(datetime.now(), 'DATETIME_FORMAT')
     })
+
+
+def frequency_history(request, cls, obj_id):
+    user_id = request.GET.get('userId')
+    if not user_id:
+        return HttpResponseNotFound
+    user = get_object_or_404(User, id=user_id)
+    if cls == 'tricks':
+        klass = KendamaTrick
+    elif cls == 'combos':
+        klass = Combo
+    else:
+        raise ValueError('cls est incorrect : %s' % cls)
+    obj = get_object_or_404(klass, id=obj_id)
+
+    params = {}
+    if cls == 'tricks':
+        player_set = user.profil.trickplayer_set
+        params['trick'] = obj
+    else:
+        player_set = user.profil.comboplayer_set
+        params['combo'] = obj
+
+    try:
+        obj_player = player_set.get(**params)
+    except (TrickPlayer.DoesNotExist, ComboPlayer.DoesNotExist):
+        obj_player = None
+
+    return render(request, 'kendama/components/frequency_history.html', {'obj': obj_player})
 
 
 @require_POST

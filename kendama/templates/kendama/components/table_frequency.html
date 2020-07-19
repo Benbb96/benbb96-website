@@ -13,7 +13,12 @@
                 <tr>
                     <td><a href="{{ request.user.profil.get_absolute_url }}">{{ request.user }}</a></td>
                     <td>{{ form.frequency }}</td>
-                    <td id="lastUpdate">{{ authenticated_user_frequency.history.first.history_date }}</td>
+                    <td>
+                        <span id="lastUpdate">
+                            {{ authenticated_user_frequency.history.first.history_date }}
+                        </span>
+                        {% include 'kendama/components/frequency_history_button.html' with user=request.user %}
+                    </td>
                 </tr>
             {% endif %}
             {% for player_frequency in player_frequencies %}
@@ -21,8 +26,10 @@
                     <tr>
                         <td><a href="{{ player_frequency.player.get_absolute_url }}">{{ player_frequency.player }}</a></td>
                         <td>{{ player_frequency.get_frequency_display }}</td>
-                        <td>{{ player_frequency.history.first.history_date }}</td>
-                        {# TODO Lien vers l'historique d'évolution de la fréquence #}
+                        <td>
+                            {{ player_frequency.history.first.history_date }}
+                            {% include 'kendama/components/frequency_history_button.html' with user=player_frequency.player %}
+                        </td>
                     </tr>
                 {% endif %}
             {% endfor %}

@@ -19,12 +19,19 @@ urlpatterns = [
     path('combos/create', views.ComboCreate.as_view(), name='create-combo'),
     path('combos/<slug:slug>/update', views.ComboUpdate.as_view(), name='update-combo'),
     path('combos/<slug:slug>/delete', views.ComboDelete.as_view(), name='delete-combo'),
+    path('combos/create-trick', views.create_trick_from_modal, name='create-trick-from-modal'),
+
+    # Common
     path(
         '<str:cls>/<int:obj_id>/update-frequency',
         views.update_player_frequency,
         name='update_player_frequency'
     ),
-    path('combos/create-trick', views.create_trick_from_modal, name='create-trick-from-modal'),
+    path(
+        '<str:cls>/<int:obj_id>/frequency-history',
+        views.frequency_history,
+        name='frequency_history'
+    ),
 
     # Ladders
     path('ladders/', views.LadderList.as_view(), name='ladders'),
