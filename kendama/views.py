@@ -216,6 +216,10 @@ class KendamaList(FilterView):
     context_object_name = 'kendamas'
 
 
+class KendamaDetail(DetailView):
+    model = Kendama
+
+
 class KendamaCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Kendama
     form_class = KendamaForm
