@@ -192,8 +192,8 @@ def update_player_frequency(request, cls, obj_id):
 
     obj_player, created = player_set.get_or_create(**params)
     if not created:
-        obj.frequency = frequency
-        obj.save()
+        obj_player.frequency = frequency
+        obj_player.save()
 
     return JsonResponse({
         'message': 'La fréquence a bien été mise à jour.',
