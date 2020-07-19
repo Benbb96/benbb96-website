@@ -1,0 +1,36 @@
+{% extends 'kendama/base.html' %}
+
+{% load kendama_tags %}
+
+{% block title %}Kendama {{ kendama.name }}{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:tricks' %}">Tricks</a> > {{ kendama.name }}
+{% endblock %}
+
+{% block content %}
+    <article class="article">
+        <h3 class="article-title text-right">
+            Ajouté par <a href="{% url 'kendama:kendamas' %}?text={{ kendama.owner.user.username }}" title="Voir ses autres kendamas">
+                {{ kendama.owner }}
+            </a>
+        </h3>
+        <p class="article-meta">
+            Créé le <code title="{{ kendama.created_at|date:'r' }}">{{ kendama.created_at }}</code>
+        </p>
+
+        <img src="{{ kendama.photo_url }}" alt="Photo du kendama {{ kendama }}">
+
+        <div class="row flex-spaces">
+            {% if kendama.creator.user == request.user %}
+                <div class="col col-sm-6 col-xs-12 text-center">
+                    <a class="paper-btn btn-secondary" href="{% url 'kendama:update-trick' kendama.slug %}">
+                        Modifier
+                    </a>
+                    <a class="paper-btn btn-danger" href="{% url 'kendama:delete-trick' kendama.slug %}">
+                        Supprimer
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </article>
+{% endblock %}
