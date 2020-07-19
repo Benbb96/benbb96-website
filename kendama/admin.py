@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from base.admin import PhotoAdminAbtract
 from kendama.forms import KendamaForm
-from kendama.models import KendamaTrick, TrickPlayer, Combo, ComboPlayer, Kendama, ComboTrick
+from kendama.models import KendamaTrick, TrickPlayer, Combo, ComboPlayer, Kendama, ComboTrick, Ladder, LadderCombo
 
 
 class BaseKendamaAdmin(admin.ModelAdmin):
@@ -80,4 +80,14 @@ class KendamaAdmin(PhotoAdminAbtract):
 
     def get_changeform_initial_data(self, request):
         return {'owner': request.user.profil}
+
+
+class LadderComboInline(admin.TabularInline):
+    model = LadderCombo
+    show_change_link = True
+
+
+@admin.register(Ladder)
+class LadderAdmin(BaseKendamaAdmin):
+    inlines = (LadderComboInline,)
 

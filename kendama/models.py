@@ -6,7 +6,7 @@ from simple_history.models import HistoricalRecords
 from base.models import Profil, PhotoAbstract
 
 
-class BaseKendamaModel(models.Model):
+class BaseModel(models.Model):
     name = models.CharField('nom', max_length=100)
     slug = AutoSlugField(unique=True, populate_from='name')
     description = models.TextField(blank=True)
@@ -41,7 +41,7 @@ class BaseKendamaModel(models.Model):
         return self.name
 
 
-class KendamaTrick(BaseKendamaModel):
+class KendamaTrick(BaseModel):
     # TODO photo
     players = models.ManyToManyField(
         Profil,
@@ -106,7 +106,7 @@ class TrickPlayer(BasePlayerFrequency):
         return f'{self.player} - {self.trick} : {self.get_frequency_display()}'
 
 
-class Combo(BaseKendamaModel):
+class Combo(BaseModel):
     tricks = models.ManyToManyField(KendamaTrick, related_name='combos', through='ComboTrick')
     players = models.ManyToManyField(
         Profil,
@@ -165,3 +165,22 @@ class Kendama(PhotoAbstract):
 
     def get_absolute_url(self):
         return reverse('kendama:detail-kendama', args=[self.slug])
+
+
+class Ladder(BaseModel):
+    combos = models.ManyToManyField(Combo, related_name='ladders', through='LadderCombo')
+
+    class Meta:
+        verbose_name = 'ladder'
+        verbose_name_plural = 'ladders'
+        ordering = ('name',)
+
+
+class LadderCombo(models.Model):
+    ladder = models.ForeignKey(Ladder, on_delete=models.PROTECT, related_name='ladder_combos')
+    combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='ladder_combos')
+    order = models.PositiveSmallIntegerField('ordre', default=0, db_index=True)
+
+    class Meta:
+        ordering = ('ladder', 'order')
+        unique_together = ('ladder', 'combo', 'order')
