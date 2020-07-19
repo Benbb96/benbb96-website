@@ -26,6 +26,8 @@ urlpatterns = [
     path('', views.KendamaList.as_view(), name='kendamas'),
     path('<slug:slug>/', views.KendamaDetail.as_view(), name='detail-kendama'),
     path('create', views.KendamaCreate.as_view(), name='create-kendama'),
+    path('<slug:slug>/update', views.KendamaUpdate.as_view(), name='update-kendama'),
+    path('<slug:slug>/delete', views.KendamaDelete.as_view(), name='delete-kendama'),
 
     path('test/', TemplateView.as_view(template_name='kendama/base.html'), name='test-page'),
 ]
