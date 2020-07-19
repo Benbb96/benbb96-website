@@ -98,6 +98,10 @@
             return response.json()
         }
 
+        function text(response) {
+            return response.text()
+        }
+
         function catchError(error) {
             console.log('Request failed', error);
             alert("Une erreur s'est produite lors de la requête")
@@ -108,8 +112,16 @@
             document.getElementById('lastUpdate').innerText = response.date
             // Update display response message
             document.getElementById('modalText').innerText = response.message
-            // Close modal
+            // Open modal
             document.getElementById('frequencyUpdatedModal').checked = true
+        }
+
+        function frequencyHistory(response) {
+            console.log(response)
+            // Set the frequency history table inside the modal
+            document.getElementById('frequencyHistoryTable').innerHTML = response
+            // Open modal
+            document.getElementById('frequencyHistoryModal').checked = true
         }
     </script>
     {% block javascript %}{% endblock %}

@@ -66,6 +66,7 @@
     </article>
 
     {% include 'kendama/components/frequency_updated_modal.html' %}
+    {% include 'kendama/components/frequency_history_modal.html' %}
 {% endblock %}
 
 {% block javascript %}
@@ -84,6 +85,17 @@
             .then(json)
             .then(updateFrequency)
             .catch(catchError);
+        })
+
+        document.querySelectorAll('.openFrequencyHistoryModal').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.getElementById('user').innerText = btn.dataset.user
+                fetch('{% url 'kendama:frequency_history' "tricks" kendamatrick.id %}?userId=' + btn.dataset.userId)
+                    .then(status)
+                    .then(text)
+                    .then(frequencyHistory)
+                    .catch(catchError);
+            })
         })
     </script>
 {% endblock %}

@@ -1,0 +1,20 @@
+{% if obj %}
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Fréquence de réussite</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for history in obj.history.all %}
+            <tr>
+            <td>{{ history.history_date }}</td>
+            <td>{{ history.get_frequency_display }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Aucune modification de la fréquence de réussite n'a été faite pour le moment.</p>
+{% endif %}
