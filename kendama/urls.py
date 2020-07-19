@@ -28,6 +28,7 @@ urlpatterns = [
 
     # Ladders
     path('ladders/', views.LadderList.as_view(), name='ladders'),
+    path('ladders/<slug:slug>/', views.LadderDetail.as_view(), name='detail-ladder'),
 
     # Kendamas
     path('', views.KendamaList.as_view(), name='kendamas'),
