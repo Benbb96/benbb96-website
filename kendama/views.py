@@ -235,3 +235,29 @@ class KendamaCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form = super().get_form(form_class)
         form.fields.pop('owner')
         return form
+
+
+class KendamaUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Kendama
+    form_class = KendamaForm
+    success_message = 'Le kendama %(name)s a bien été mis à jour.'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(owner=self.request.user.profil)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields.pop('owner')
+        return form
+
+
+class KendamaDelete(LoginRequiredMixin, DeleteView):
+    model = Kendama
+    success_url = reverse_lazy('kendama:kendamas')
+
+    def get_queryset(self):
+        return super().get_queryset().filter(owner=self.request.user.profil)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Le kendama %s a bien été supprimé.' % self.get_object())
+        return super().delete(request, *args, **kwargs)

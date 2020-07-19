@@ -52,7 +52,7 @@
                     <h6 class="card-subtitle">Créé par {{ kendama.owner }} le {{ kendama.created_at|date }}</h6>
                     <div class="text-right">
                         {% if request.user.profil == kendama.owner %}
-                            <a class="paper-btn btn-small" href="{# TODO #}">Modifier</a>
+                            <a class="paper-btn btn-small" href="{% url 'kendama:update-kendama' kendama.slug %}">Modifier</a>
                         {% endif %}
                         <a class="paper-btn btn-small" href="{{ kendama.get_absolute_url }}">Détail</a>
                     </div>
