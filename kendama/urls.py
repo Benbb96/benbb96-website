@@ -24,6 +24,7 @@ urlpatterns = [
     path('combos/create-trick', views.create_trick_from_modal, name='create-trick-from-modal'),
 
     path('', views.KendamaList.as_view(), name='kendamas'),
+    path('create', views.KendamaCreate.as_view(), name='create-kendama'),
 
     path('test/', TemplateView.as_view(template_name='kendama/base.html'), name='test-page'),
 ]

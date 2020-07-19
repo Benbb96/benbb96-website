@@ -9,20 +9,26 @@
 {% block content %}
     <form method="get">
         <div class="row">
-            <div class="col col-5">
+            <div class="col col-4">
                 <div class="form-group">
                     {{ filter.form.text.label_tag }}
                     {{ filter.form.text }}
                     {{ filter.form.text.errors }}
                 </div>
             </div>
-            <div class="col col-5">
+            <div class="col col-6">
                 <div class="form-group">
-                    <label>Date de création comprise entre :</label>
-                    {{ filter.form.created_at__gte }}
-                    {{ filter.form.created_at__gte.errors }}
-                    {{ filter.form.created_at__lt }}
-                    {{ filter.form.created_at__lt.errors }}
+                    <label for="{{ filter.form.created_at__gte.id_for_label }}">Date de création comprise entre :</label>
+                    <div class="row">
+                        <div class="md-6 xs-12">
+                            {{ filter.form.created_at__gte }}
+                            {{ filter.form.created_at__gte.errors }}
+                        </div>
+                        <div class="md-6 xs-12">
+                            {{ filter.form.created_at__lt }}
+                            {{ filter.form.created_at__lt.errors }}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col col-2">
@@ -34,20 +40,26 @@
 
     {% if request.user.is_authenticated %}
         <div class="text-center">
-            <a href="{% url 'kendama:create-trick' %}" class="paper-btn">Ajouter mon kendama</a>
+            <a href="{% url 'kendama:create-kendama' %}" class="paper-btn">Ajouter mon kendama</a>
         </div>
     {% endif %}
 
     <div class="row flex-spaces">
         {% for kendama in kendamas %}
-            <div class="card md-5 sm-12 margin-small">
+            <div class="card sm-5 xs-12 margin-small">
                 <div class="card-body">
                     <h4 class="card-title">{{ kendama.name }}</h4>
                     <h6 class="card-subtitle">Créé par {{ kendama.owner }} le {{ kendama.created_at|date }}</h6>
                     <div class="text-right">
+                        {% if request.user.profil == kendama.owner %}
+                            <a class="paper-btn btn-small" href="{# TODO #}">Modifier</a>
+                        {% endif %}
                         <a class="paper-btn btn-small" href="{{ kendama.get_absolute_url }}">Détail</a>
                     </div>
                 </div>
+                <a href="{{ kendama.get_absolute_url }}">
+                    <img class="image-bottom" src="{{ kendama.photo_url }}" alt="Photo du kendama {{ kendama }}">
+                </a>
             </div>
         {% endfor %}
     </div>
