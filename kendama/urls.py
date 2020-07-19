@@ -6,11 +6,14 @@ from . import views
 app_name = 'kendama'
 
 urlpatterns = [
+    # Tricks
     path('tricks/', views.KendamaTrickList.as_view(), name='tricks'),
     path('tricks/<slug:slug>/', views.KendamaTrickDetail.as_view(), name='detail-trick'),
     path('tricks/create', views.KendamaTrickCreate.as_view(), name='create-trick'),
     path('tricks/<slug:slug>/update', views.KendamaTrickUpdate.as_view(), name='update-trick'),
     path('tricks/<slug:slug>/delete', views.KendamaTrickDelete.as_view(), name='delete-trick'),
+
+    # Combos
     path('combos/', views.ComboList.as_view(), name='combos'),
     path('combos/<slug:slug>/', views.ComboDetail.as_view(), name='detail-combo'),
     path('combos/create', views.ComboCreate.as_view(), name='create-combo'),
@@ -23,6 +26,10 @@ urlpatterns = [
     ),
     path('combos/create-trick', views.create_trick_from_modal, name='create-trick-from-modal'),
 
+    # Ladders
+    path('ladders/', views.LadderList.as_view(), name='ladders'),
+
+    # Kendamas
     path('', views.KendamaList.as_view(), name='kendamas'),
     path('<slug:slug>/', views.KendamaDetail.as_view(), name='detail-kendama'),
     path('create', views.KendamaCreate.as_view(), name='create-kendama'),

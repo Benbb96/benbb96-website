@@ -2,7 +2,7 @@ import django_filters
 from django import forms
 from django.db.models import Q
 
-from kendama.models import KendamaTrick, Combo, Kendama
+from kendama.models import KendamaTrick, Combo, Kendama, Ladder
 
 
 class BaseKendamaFilter(django_filters.FilterSet):
@@ -28,15 +28,21 @@ class BaseKendamaFilter(django_filters.FilterSet):
         )
 
 
-class KendamaTrickFliter(BaseKendamaFilter):
+class KendamaTrickFilter(BaseKendamaFilter):
     class Meta:
         model = KendamaTrick
         fields = ('text', 'difficulty')
 
 
-class ComboFliter(BaseKendamaFilter):
+class ComboFilter(BaseKendamaFilter):
     class Meta:
         model = Combo
+        fields = ('text', 'difficulty')
+
+
+class LadderFilter(BaseKendamaFilter):
+    class Meta:
+        model = Ladder
         fields = ('text', 'difficulty')
 
 

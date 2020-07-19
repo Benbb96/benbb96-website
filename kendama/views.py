@@ -14,13 +14,13 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 
-from kendama.filters import KendamaTrickFliter, ComboFliter, KendamaFliter
+from kendama.filters import KendamaTrickFilter, ComboFilter, KendamaFliter, LadderFilter
 from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm, KendamaForm
 from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama
 
 
 class KendamaTrickList(FilterView):
-    filterset_class = KendamaTrickFliter
+    filterset_class = KendamaTrickFilter
     context_object_name = 'tricks'
 
 
@@ -73,7 +73,7 @@ class KendamaTrickDelete(LoginRequiredMixin, DeleteView):
 
 
 class ComboList(FilterView):
-    filterset_class = ComboFliter
+    filterset_class = ComboFilter
     context_object_name = 'combos'
 
 
@@ -261,3 +261,8 @@ class KendamaDelete(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Le kendama %s a bien été supprimé.' % self.get_object())
         return super().delete(request, *args, **kwargs)
+
+
+class LadderList(FilterView):
+    filterset_class = LadderFilter
+    context_object_name = 'ladders'
