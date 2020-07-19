@@ -175,6 +175,9 @@ class Ladder(BaseModel):
         verbose_name_plural = 'ladders'
         ordering = ('name',)
 
+    def get_absolute_url(self):
+        return reverse('kendama:detail-ladder', args=[self.slug])
+
 
 class LadderCombo(models.Model):
     ladder = models.ForeignKey(Ladder, on_delete=models.PROTECT, related_name='ladder_combos')

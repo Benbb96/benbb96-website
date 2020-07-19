@@ -1,0 +1,65 @@
+{% extends 'kendama/base.html' %}
+
+{% load kendama_tags %}
+
+{% block title %}Ladder {{ ladder.name }}{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:ladders' %}">Ladders</a> > {{ ladder.name }}
+{% endblock %}
+
+{% block content %}
+    <article class="article">
+        <h3 class="article-title text-right">
+            <a href="{% url 'kendama:ladders' %}?difficulty={{ ladder.difficulty }}">
+                {{ ladder.get_difficulty_display }}
+            </a>
+        </h3>
+        <p class="article-meta">
+            Créé par <a href="{{ ladder.creator.get_absolute_url }}">{{ ladder.creator }}</a>
+            le <code title="{{ ladder.created_at|date:'r' }}">{{ ladder.created_at }}</code>
+            {% if ladder.updated_at %}
+                et mis à jour le <code title="{{ ladder.updated_at|date:'r' }}">{{ ladder.updated_at }}</code>
+            {% endif %}
+        </p>
+        {% if ladder.description %}
+            <p class="text-lead">{{ ladder.description }}</p>
+        {% endif %}
+
+        <p>Liste des combos du ladder :</p>
+        <ol>
+            {% for ladder_combo in ladder.ladder_combos.all %}
+                <li>
+                    <a href="{{ ladder_combo.combo.get_absolute_url }}">
+                        {{ ladder_combo.combo }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ol>
+
+        {% if 'youtube' in ladder.tutorial_video_link %}
+            <div class="video-responsive">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ ladder.tutorial_video_link|youtube_id }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        {% endif %}
+
+        <div class="row flex-spaces">
+            {% if ladder.tutorial_video_link %}
+                <div class="col col-sm-6 col-xs-12 text-center">
+                    <a class="paper-btn" href="{{ ladder.tutorial_video_link }}" target="_blank">
+                        Vidéo Tutoriel
+                    </a>
+                </div>
+            {% endif %}
+            {% if ladder.creator.user == request.user %}
+                <div class="col col-sm-6 col-xs-12 text-center">
+                    <a class="paper-btn btn-secondary" href="{% url 'kendama:update-trick' ladder.slug %}">
+                        Modifier
+                    </a>
+                    <a class="paper-btn btn-danger" href="{% url 'kendama:delete-trick' ladder.slug %}">
+                        Supprimer
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </article>
+{% endblock %}

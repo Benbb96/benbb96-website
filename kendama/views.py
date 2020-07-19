@@ -16,7 +16,7 @@ from django_filters.views import FilterView
 
 from kendama.filters import KendamaTrickFilter, ComboFilter, KendamaFliter, LadderFilter
 from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm, KendamaForm
-from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama
+from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama, Ladder
 
 
 class KendamaTrickList(FilterView):
@@ -266,3 +266,7 @@ class KendamaDelete(LoginRequiredMixin, DeleteView):
 class LadderList(FilterView):
     filterset_class = LadderFilter
     context_object_name = 'ladders'
+
+
+class LadderDetail(DetailView):
+    model = Ladder
