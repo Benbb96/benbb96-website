@@ -15,8 +15,8 @@ from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 
 from kendama.filters import KendamaTrickFliter, ComboFliter, KendamaFliter
-from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm
-from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick
+from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm, KendamaForm
+from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama
 
 
 class KendamaTrickList(FilterView):
@@ -214,3 +214,20 @@ def create_trick_from_modal(request):
 class KendamaList(FilterView):
     filterset_class = KendamaFliter
     context_object_name = 'kendamas'
+
+
+class KendamaCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Kendama
+    form_class = KendamaForm
+    success_message = 'Le kendama %(name)s a bien été créé.'
+
+    def form_valid(self, form):
+        kendama = form.save(commit=False)
+        kendama.owner = self.request.user.profil
+        kendama.save()
+        return redirect('kendama:kendamas')  # TODO redirect to kendama
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields.pop('owner')
+        return form

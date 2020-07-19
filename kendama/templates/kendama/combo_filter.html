@@ -25,6 +25,9 @@
                         <p class="card-text">{{ combo.description }}</p>
                     {% endif %}
                     <div class="text-right">
+                        {% if request.user.profil == combo.creator %}
+                            <a class="paper-btn btn-small" href="{% url 'kendama:update-combo' combo.slug %}">Modifier</a>
+                        {% endif %}
                         <a class="paper-btn btn-small" href="{{ combo.get_absolute_url }}">Détail</a>
                     </div>
                 </div>

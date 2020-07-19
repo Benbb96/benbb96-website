@@ -52,28 +52,26 @@ function uploadImage() {
     });
 }
 
-(function($) {
-    $(document).ready(function () {
-        // Load all images from Firebase
-        let images = document.getElementsByClassName('display');
-        for (let i = 0; i < images.length; i++) {
-            let image = images[i];
-            if (image.dataset.url !== 'None') {
-                let imagesRef = storage.ref(image.dataset.url);
-                imagesRef.getDownloadURL().then(function (url) {
-                    image.src = url;
-                }).catch(function (error) {
-                    alert('Erreur :' + error.message);
-                });
-            } else {
-                image.style.display = 'none';
-            }
+document.addEventListener("DOMContentLoaded", function(event) {
+    // Load all images from Firebase
+    let images = document.getElementsByClassName('display');
+    for (let i = 0; i < images.length; i++) {
+        let image = images[i];
+        if (image.dataset.url !== 'None') {
+            let imagesRef = storage.ref(image.dataset.url);
+            imagesRef.getDownloadURL().then(function (url) {
+                image.src = url;
+            }).catch(function (error) {
+                alert('Erreur :' + error.message);
+            });
+        } else {
+            image.style.display = 'none';
         }
+    }
 
-        // Init upload image buttons
-        buttons = document.getElementsByClassName('uploadFirebaseImage');
-        Array.from(buttons).forEach(function (element) {
-            element.addEventListener('click', uploadImage);
-        });
+    // Init upload image buttons
+    buttons = document.getElementsByClassName('uploadFirebaseImage');
+    Array.from(buttons).forEach(function (element) {
+        element.addEventListener('click', uploadImage);
     });
-}(django.jQuery))
+});

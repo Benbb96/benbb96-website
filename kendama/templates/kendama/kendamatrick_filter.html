@@ -25,6 +25,9 @@
                         <p class="card-text">{{ trick.description }}</p>
                     {% endif %}
                     <div class="text-right">
+                        {% if request.user.profil == trick.creator %}
+                            <a class="paper-btn btn-small" href="{% url 'kendama:update-trick' trick.slug %}">Modifier</a>
+                        {% endif %}
                         <a class="paper-btn btn-small" href="{{ trick.get_absolute_url }}">Détail</a>
                     </div>
                 </div>

@@ -1,0 +1,30 @@
+{% extends 'kendama/base.html' %}
+
+{% load bootstrap3 %}
+
+{% block title %}{% if kendama %}Kendama {{ kendama.name }}{% else %}Création Kendama{% endif %}{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:kendamas' %}">Kendamas</a> >
+    {% if kendama %}{{ kendama }}{% else %}Nouveau{% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <div class="row flex-edges">
+            <div class="col-6">
+                <input type="submit" class="paper-btn btn-secondary" value="Enregistrer">
+            </div>
+            <div class="col-6 text-right">
+                <a class="paper-btn btn-primary" href="{% if kendama %}{{ kendama.get_absolute_url }}{% else %}{% url 'kendama:kendamas' %}{% endif %}">
+                    Annuler
+                </a>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block javascript %}
+    {{ form.media.js }}
+{% endblock %}
