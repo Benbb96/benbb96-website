@@ -52,10 +52,10 @@
             {% endif %}
             {% if ladder.creator.user == request.user %}
                 <div class="col col-sm-6 col-xs-12 text-center">
-                    <a class="paper-btn btn-secondary" href="{% url 'kendama:update-trick' ladder.slug %}">
+                    <a class="paper-btn btn-secondary" href="{% url 'kendama:update-ladder' ladder.slug %}">
                         Modifier
                     </a>
-                    <a class="paper-btn btn-danger" href="{% url 'kendama:delete-trick' ladder.slug %}">
+                    <a class="paper-btn btn-danger" href="{% url 'kendama:delete-ladder' ladder.slug %}">
                         Supprimer
                     </a>
                 </div>

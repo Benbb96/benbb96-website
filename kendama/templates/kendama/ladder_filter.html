@@ -11,7 +11,7 @@
 
     {% if request.user.is_authenticated %}
         <div class="text-center">
-            <a href="{% url 'kendama:create-combo' %}" class="paper-btn">Ajouter un nouveau ladder</a>
+            <a href="{% url 'kendama:create-ladder' %}" class="paper-btn">Ajouter un nouveau ladder</a>
         </div>
     {% endif %}
 
@@ -26,7 +26,7 @@
                     {% endif %}
                     <div class="text-right">
                         {% if request.user.profil == ladder.creator %}
-                            <a class="paper-btn btn-small" href="{% url 'kendama:update-combo' ladder.slug %}">Modifier</a>
+                            <a class="paper-btn btn-small" href="{% url 'kendama:update-ladder' ladder.slug %}">Modifier</a>
                         {% endif %}
                         <a class="paper-btn btn-small" href="{{ ladder.get_absolute_url }}">Détail</a>
                     </div>

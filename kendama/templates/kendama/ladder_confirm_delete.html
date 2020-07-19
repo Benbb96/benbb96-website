@@ -1,0 +1,15 @@
+{% extends 'kendama/base.html' %}
+
+{% block title %}Suppression Ladder{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:ladders' %}">Ladders</a> > {{ ladder }}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <h4>Êtes-vous sûr de vouloir supprimer le ladder "{{ ladder }}"?</h4>
+        <input type="submit" class="paper-btn btn-danger" value="Oui, je suis sûr">
+        <a href="{{ ladder.get_absolute_url }}" class="paper-btn btn-primary">Annuler</a>
+    </form>
+{% endblock %}

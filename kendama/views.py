@@ -15,8 +15,8 @@ from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 
 from kendama.filters import KendamaTrickFilter, ComboFilter, KendamaFliter, LadderFilter
-from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm, KendamaForm
-from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama, Ladder
+from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm, KendamaForm, LadderForm
+from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama, Ladder, LadderCombo
 
 
 class KendamaTrickList(FilterView):
@@ -99,7 +99,9 @@ ComboTrickFormSet = inlineformset_factory(
     widgets={
         'trick': Select(attrs={'class': 'trickSelect'}),
         'order': NumberInput(attrs={'style': 'width: 80px'}),
-    }
+    },
+    min_num=1,
+    validate_min=True
 )
 
 
@@ -270,3 +272,74 @@ class LadderList(FilterView):
 
 class LadderDetail(DetailView):
     model = Ladder
+
+
+LadderComboFormSet = inlineformset_factory(
+    Ladder,
+    LadderCombo,
+    fields=('combo', 'order'),
+    widgets={
+        'order': NumberInput(attrs={'style': 'width: 80px'}),
+    },
+    min_num=1,
+    validate_min=True
+)
+
+
+class LadderCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Ladder
+    form_class = LadderForm
+    success_message = 'Le ladder %(name)s a bien été créé.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ladder_combo_formset'] = LadderComboFormSet(self.request.POST or None)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        ladder_combo_formset = context['ladder_combo_formset']
+        if ladder_combo_formset.is_valid():
+            ladder = form.save(commit=False)
+            ladder.creator = self.request.user.profil
+            ladder.save()
+            ladder_combo_formset.instance = ladder
+            ladder_combo_formset.save()
+            messages.success(self.request, 'Le ladder %s a bien été créé.' % ladder)
+            return redirect(ladder)
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class LadderUpdate(LoginRequiredMixin, UpdateView):
+    model = Ladder
+    form_class = LadderForm
+
+    def get_queryset(self):
+        return super().get_queryset().filter(creator=self.request.user.profil)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ladder_combo_formset'] = LadderComboFormSet(self.request.POST or None, instance=self.get_object())
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        ladder_combo_formset = context['ladder_combo_formset']
+        if ladder_combo_formset.is_valid():
+            ladder = form.save()
+            ladder_combo_formset.save()
+            messages.success(self.request, 'Le ladder %s a bien été mis à jour.' % ladder)
+            return redirect(ladder)
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class LadderDelete(LoginRequiredMixin, DeleteView):
+    model = Ladder
+    success_url = reverse_lazy('kendama:ladders')
+
+    def get_queryset(self):
+        return super().get_queryset().filter(creator=self.request.user.profil)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Le ladder %s a bien été supprimé.' % self.get_object())
+        return super().delete(request, *args, **kwargs)
