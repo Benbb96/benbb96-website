@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 
-from kendama.filters import KendamaTrickFliter, ComboFliter
+from kendama.filters import KendamaTrickFliter, ComboFliter, KendamaFliter
 from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm
 from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick
 
@@ -22,12 +22,6 @@ from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboT
 class KendamaTrickList(FilterView):
     filterset_class = KendamaTrickFliter
     context_object_name = 'tricks'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            context['form'] = KendamaTrickForm()
-        return context
 
 
 class KendamaTrickDetail(DetailView):
@@ -215,3 +209,8 @@ def create_trick_from_modal(request):
         trick.save()
         return JsonResponse({'success': True, 'id': trick.id, 'name': trick.name})
     return JsonResponse({'success': False, 'message': 'Il y a des erreurs dans le formulaire', 'errors': form.errors})
+
+
+class KendamaList(FilterView):
+    filterset_class = KendamaFliter
+    context_object_name = 'kendamas'

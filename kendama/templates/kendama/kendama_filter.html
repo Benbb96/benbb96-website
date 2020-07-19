@@ -1,0 +1,54 @@
+{% extends 'kendama/base.html' %}
+
+{% block title %}Kendamas{% endblock %}
+{% block h2_title %}
+    <a href="{% url 'kendama:kendamas' %}">Kendamas</a>
+    <span class="badge">{{ kendamas.count }}</span>
+{% endblock %}
+
+{% block content %}
+    <form method="get">
+        <div class="row">
+            <div class="col col-5">
+                <div class="form-group">
+                    {{ filter.form.text.label_tag }}
+                    {{ filter.form.text }}
+                    {{ filter.form.text.errors }}
+                </div>
+            </div>
+            <div class="col col-5">
+                <div class="form-group">
+                    <label>Date de création comprise entre :</label>
+                    {{ filter.form.created_at__gte }}
+                    {{ filter.form.created_at__gte.errors }}
+                    {{ filter.form.created_at__lt }}
+                    {{ filter.form.created_at__lt.errors }}
+                </div>
+            </div>
+            <div class="col col-2">
+                <br>
+                <button type="submit">OK</button>
+            </div>
+        </div>
+    </form>
+
+    {% if request.user.is_authenticated %}
+        <div class="text-center">
+            <a href="{% url 'kendama:create-trick' %}" class="paper-btn">Ajouter mon kendama</a>
+        </div>
+    {% endif %}
+
+    <div class="row flex-spaces">
+        {% for kendama in kendamas %}
+            <div class="card md-5 sm-12 margin-small">
+                <div class="card-body">
+                    <h4 class="card-title">{{ kendama.name }}</h4>
+                    <h6 class="card-subtitle">Créé par {{ kendama.owner }} le {{ kendama.created_at|date }}</h6>
+                    <div class="text-right">
+                        <a class="paper-btn btn-small" href="{{ kendama.get_absolute_url }}">Détail</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
