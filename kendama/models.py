@@ -83,7 +83,7 @@ class BasePlayerFrequency(models.Model):
     frequency = models.PositiveSmallIntegerField(
         'fréquence de réussite',
         choices=FREQUENCY,
-        default=IMPOSSIBLE
+        default=NEVER
     )
     created_at = models.DateTimeField('date création', auto_now_add=True)
 
