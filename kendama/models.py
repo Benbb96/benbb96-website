@@ -66,24 +66,24 @@ class BasePlayerFrequency(models.Model):
         on_delete=models.CASCADE,
         verbose_name='joueur'
     )
-    IMPOSSIBLE = 1
+    NEVER = 1
     ONCE = 2
     RARELY = 3
     SOMETIMES = 4
     GENERALLY = 5
     ALWAYS = 6
     FREQUENCY = (
-        (IMPOSSIBLE, 'Impossible'),
+        (NEVER, 'Jamais'),
         (ONCE, 'Seulement une fois'),
-        (RARELY, 'Rarement'),
-        (SOMETIMES, 'Parfois'),
-        (GENERALLY, 'Généralement'),
-        (ALWAYS, 'Tout le temps'),
+        (RARELY, 'Rarement (environ 10%)'),
+        (SOMETIMES, 'Parfois (environ 33%)'),
+        (GENERALLY, 'Généralement (environ 66%)'),
+        (ALWAYS, 'Presque toujours (environ 99%)'),
     )
     frequency = models.PositiveSmallIntegerField(
         'fréquence de réussite',
         choices=FREQUENCY,
-        default=IMPOSSIBLE
+        default=NEVER
     )
     created_at = models.DateTimeField('date création', auto_now_add=True)
 
