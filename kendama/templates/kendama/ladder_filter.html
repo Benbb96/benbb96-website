@@ -21,6 +21,9 @@
                 <div class="card-body">
                     <h4 class="card-title">{{ ladder.name }}</h4>
                     <h6 class="card-subtitle">Créé par {{ ladder.creator }}</h6>
+                    <p class="card-text">
+                        {% include 'kendama/components/difficulty_label.html' with obj=ladder %}
+                    </p>
                     {% if ladder.description %}
                         <p class="card-text">{{ ladder.description }}</p>
                     {% endif %}
