@@ -21,6 +21,9 @@
                 <div class="card-body">
                     <h4 class="card-title">{{ trick.name }}</h4>
                     <h6 class="card-subtitle">Créé par {{ trick.creator }}</h6>
+                    <p class="card-text">
+                        {% include 'kendama/components/difficulty_label.html' with obj=trick %}
+                    </p>
                     {% if trick.description %}
                         <p class="card-text">{{ trick.description }}</p>
                     {% endif %}
