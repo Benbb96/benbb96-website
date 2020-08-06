@@ -49,6 +49,9 @@
                 <li{% block versus_active %}{% endblock %}>
                     <a href="{% url 'base:profil-versus' user.username %}">Versus</a>
                 </li>
+                <li>
+                    <a href="{% url 'kendama:profil' user.username %}">Kendama</a>
+                </li>
                 {# TODO Ajouter spots #}
             </ul>
         </div>

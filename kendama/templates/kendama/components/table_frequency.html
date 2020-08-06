@@ -5,16 +5,16 @@
             <tr>
                 <th>Profil</th>
                 <th>Fréquence de réussite</th>
-                <th>Date de mise à jour</th>
+                <th>Historique</th>
             </tr>
         </thead>
         <tbody>
             {% if request.user.is_authenticated %}
                 <tr>
-                    <td><a href="{{ request.user.profil.get_absolute_url }}">{{ request.user }}</a></td>
+                    <td><a href="{% url 'kendama:profil' request.user.username %}">{{ request.user }}</a></td>
                     <td>{{ form.frequency }}</td>
                     <td>
-                        <span id="lastUpdate">
+                        <span id="lastUpdate" title="Date de dernière modification">
                             {{ authenticated_user_frequency.history.first.history_date }}
                         </span>
                         {% include 'kendama/components/frequency_history_button.html' with user=request.user %}
@@ -24,10 +24,13 @@
             {% for player_frequency in player_frequencies %}
                 {% if player_frequency.player.user != request.user %}
                     <tr>
-                        <td><a href="{{ player_frequency.player.get_absolute_url }}">{{ player_frequency.player }}</a></td>
+                        <td>
+                            <a href="{% url 'kendama:profil' player_frequency.player.user.username %}">
+                                {{ player_frequency.player }}
+                            </a>
+                        </td>
                         <td>{{ player_frequency.get_frequency_display }}</td>
                         <td>
-                            {{ player_frequency.history.first.history_date }}
                             {% include 'kendama/components/frequency_history_button.html' with user=player_frequency.player %}
                         </td>
                     </tr>

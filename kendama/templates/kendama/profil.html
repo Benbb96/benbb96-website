@@ -1,0 +1,142 @@
+{% extends 'kendama/base.html' %}
+
+{% load kendama_tags %}
+
+{% block title %}Profil {{ profil }}{% endblock %}
+{% block h2_title %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col col-sm-6 col-xs-12">
+            <img class="img-rounded" src="{{ profil.avatar.url }}" alt="Avatar de {{ profil }}" style="max-height: 200px"/>
+        </div>
+        <div class="col col-sm-6 col-xs-12">
+            <h2 class="margin-top-none margin-bottom-small">Profil de {{ profil }}</h2>
+            <p>
+                <a href="{{ profil.get_absolute_url }}">Voir le profil sur le site principal</a>
+            </p>
+            <p>Inscrit depuis {{ profil.user.date_joined }}</p>
+        </div>
+    </div>
+
+    <div class="row flex-spaces tabs">
+        <input id="tab1" type="radio" name="tabs" checked>
+        <label for="tab1">Tricks</label>
+
+        <input id="tab2" type="radio" name="tabs">
+        <label for="tab2">Combos</label>
+
+        <input id="tab3" type="radio" name="tabs">
+        <label for="tab3">Ladders</label>
+
+        <input id="tab4" type="radio" name="tabs">
+        <label for="tab4">Kendamas</label>
+
+        <div class="content" id="content1">
+            {# TODO Ajouter des graphs et autres stats #}
+            <table class="table-alternating">
+                <thead>
+                <tr>
+                    <th>Trick</th>
+                    <th>Difficulté</th>
+                    <th>Fréquence de réussite</th>
+                    <th>Historique</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for trick_player in player_tricks %}
+                    <tr>
+                        <td>
+                            <a href="{{ trick_player.trick.get_absolute_url }}">{{ trick_player.trick }}</a>
+                        </td>
+                        <td>{{ trick_player.trick.get_difficulty_display }}</td>
+                        <td>{{ trick_player.get_frequency_display }}</td>
+                        <td>
+                            {{ player_frequency.history.first.history_date }}
+                            {% include 'kendama/components/frequency_history_button.html' with user=profil.user obj_id=trick_player.trick.id cls='tricks' %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="content" id="content2">
+            <table class="table-alternating">
+                <thead>
+                <tr>
+                    <th>Combo</th>
+                    <th>Difficulté</th>
+                    <th>Fréquence de réussite</th>
+                    <th>Historique</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for combo_player in player_combos %}
+                    <tr>
+                        <td>
+                            <a href="{{ combo_player.combo.get_absolute_url }}">{{ combo_player.combo }}</a>
+                        </td>
+                        <td>{{ combo_player.combo.get_difficulty_display }}</td>
+                        <td>{{ combo_player.get_frequency_display }}</td>
+                        <td>
+                            {% include 'kendama/components/frequency_history_button.html' with user=profil.user obj_id=combo_player.combo.id cls='combos' %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="content" id="content3">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ladder</th>
+                        <th>Difficulté</th>
+                        <th>Date de création</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ladder in profil.ladder_set.all %}
+                        <tr>
+                            <td>
+                                <a href="{{ ladder.get_absolute_url }}">
+                                    {{ ladder }}
+                                </a>
+                            </td>
+                            <td>{{ ladder.get_difficulty_display }}</td>
+                            <td>{{ ladder.created_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="content" id="content4">
+            <div class="row flex-spaces">
+                {% for kendama in profil.kendamas.all %}
+                    <div class="card sm-5 xs-12 margin-small">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ kendama.name }}</h4>
+                            <h6 class="card-subtitle">Créé le {{ kendama.created_at|date }}</h6>
+                            <div class="text-right">
+                                {% if request.user.profil == kendama.owner %}
+                                    <a class="paper-btn btn-small"
+                                       href="{% url 'kendama:update-kendama' kendama.slug %}">Modifier</a>
+                                {% endif %}
+                                <a class="paper-btn btn-small" href="{{ kendama.get_absolute_url }}">Détail</a>
+                            </div>
+                        </div>
+                        <a href="{{ kendama.get_absolute_url }}">
+                            <img class="image-bottom" src="{{ kendama.photo_url }}"
+                                 alt="Photo du kendama {{ kendama }}">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% include 'kendama/components/frequency_history_modal.html' %}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
