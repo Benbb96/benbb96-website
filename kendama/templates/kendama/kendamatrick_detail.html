@@ -70,21 +70,23 @@
 {% endblock %}
 
 {% block javascript %}
-    <script>
-        document.getElementById('id_frequency').addEventListener('change', function (event) {
-            const frequency = event.target.value
-            if (frequency === '' || frequency === undefined) {
-                alert('Veuillez choisir une option !')
-                return
-            }
-            fetch('{% url 'kendama:update_player_frequency' "tricks" kendamatrick.id %}', {
-                method: 'post',
-                headers: headers,
-                body: JSON.stringify({frequency})
-            }).then(status)
-            .then(json)
-            .then(updateFrequency)
-            .catch(catchError);
-        })
-    </script>
+    {% if request.user.is_authenticated %}
+        <script>
+            document.getElementById('id_frequency').addEventListener('change', function (event) {
+                const frequency = event.target.value
+                if (frequency === '' || frequency === undefined) {
+                    alert('Veuillez choisir une option !')
+                    return
+                }
+                fetch('{% url 'kendama:update_player_frequency' "tricks" kendamatrick.id %}', {
+                    method: 'post',
+                    headers: headers,
+                    body: JSON.stringify({frequency})
+                }).then(status)
+                .then(json)
+                .then(updateFrequency)
+                .catch(catchError);
+            })
+        </script>
+    {% endif %}
 {% endblock %}
