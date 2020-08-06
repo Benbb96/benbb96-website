@@ -38,6 +38,17 @@
 
         {% include 'kendama/components/table_frequency.html' with player_frequencies=combo.combo_players.all %}
 
+        {% if combo.ladders.all %}
+            <h5>Ce combo apparait dans les ladders suivants :</h5>
+            <ul>
+                {% for ladder in combo.ladders.all %}
+                    <li>
+                        <a href="{{ ladder.get_absolute_url }}">{{ ladder }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif%}
+
         {% if 'youtube' in combo.tutorial_video_link %}
             <div class="video-responsive">
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ combo.tutorial_video_link|youtube_id }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
