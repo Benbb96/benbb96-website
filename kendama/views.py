@@ -279,7 +279,7 @@ class KendamaCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         kendama = form.save(commit=False)
         kendama.owner = self.request.user.profil
         kendama.save()
-        return redirect('kendama:kendamas')  # TODO redirect to kendama
+        return redirect(kendama)
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
