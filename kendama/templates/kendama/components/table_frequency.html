@@ -39,5 +39,11 @@
         </tbody>
     </table>
 
+    {% if not request.user.is_authenticated %}
+        <h5>
+            <a href="{% url 'login' %}?next={{ request.path }}">Connectez-vous</a> pour renseigner votre fréquence de réussite !
+        </h5>
+    {% endif %}
+
     {# TODO Montrer la répartition en camembert des fréquences #}
 {% endif %}
