@@ -167,8 +167,23 @@ class Kendama(PhotoAbstract):
         return reverse('kendama:detail-kendama', args=[self.slug])
 
 
+class LadderQueryset(models.QuerySet):
+    def private(self):
+        return self.filter(private=True)
+
+    def public(self):
+        return self.exclude(private=True)
+
+
 class Ladder(BaseModel):
     combos = models.ManyToManyField(Combo, related_name='ladders', through='LadderCombo')
+    private = models.BooleanField(
+        'privé',
+        default=False,
+        help_text="Cochez cette case pour que ce ladder ne soit visible qu'à vous."
+    )
+
+    objects = LadderQueryset.as_manager()
 
     class Meta:
         verbose_name = 'ladder'

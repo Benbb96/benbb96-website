@@ -45,6 +45,18 @@ class LadderFilter(BaseKendamaFilter):
         model = Ladder
         fields = ('text', 'difficulty')
 
+    @property
+    def qs(self):
+        """ Filtre les ladders pour ne faire apparaître que les publics
+        ou bien ceux que l'utilisateur connecté a créé """
+        parent = super().qs
+        user = getattr(self.request, 'user', None)
+
+        if user and not user.is_authenticated:
+            return parent.public()
+
+        return parent.filter(private=False) | parent.filter(creator__user=user)
+
 
 class KendamaFliter(BaseKendamaFilter):
     text = django_filters.CharFilter(

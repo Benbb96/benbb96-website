@@ -41,7 +41,17 @@
         {% if combo.ladders.all %}
             <h5>Ce combo apparait dans les ladders suivants :</h5>
             <ul>
-                {% for ladder in combo.ladders.all %}
+                {# Liste les ladders privés dont l'utilisateur connecté en ait le créateur #}
+                {% if request.user.is_authenticated %}
+                    {% for ladder in combo.ladders.private %}
+                        {% if ladder.creator == request.user.profil %}
+                            <li>
+                                <a href="{{ ladder.get_absolute_url }}">{{ ladder }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% for ladder in combo.ladders.public %}
                     <li>
                         <a href="{{ ladder.get_absolute_url }}">{{ ladder }}</a>
                     </li>
