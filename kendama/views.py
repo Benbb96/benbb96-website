@@ -32,6 +32,11 @@ class KendamaTrickDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Prépare les statitistiques pour le bar chart
+        frequency_count = {}
+        for frequency, frequency_name in TrickPlayer.FREQUENCY:
+            frequency_count[frequency_name] = self.get_object().trick_players.filter(frequency=frequency).count()
+        context['frequency_count'] = frequency_count
         if self.request.user.is_authenticated:
             try:
                 authenticated_trick_player = self.request.user.profil.trickplayer_set.get(trick=self.get_object())
@@ -87,6 +92,11 @@ class ComboDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Prépare les statitistiques pour le bar chart
+        frequency_count = {}
+        for frequency, frequency_name in ComboPlayer.FREQUENCY:
+            frequency_count[frequency_name] = self.get_object().combo_players.filter(frequency=frequency).count()
+        context['frequency_count'] = frequency_count
         if self.request.user.is_authenticated:
             try:
                 authenticated_combo_player = self.request.user.profil.comboplayer_set.get(combo=self.get_object())
