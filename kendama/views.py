@@ -50,6 +50,8 @@ class KendamaTrickCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         kendama_trick = form.save(commit=False)
         kendama_trick.creator = self.request.user.profil
         kendama_trick.save()
+        # Initialise la première fréquence de réussite à "Jamais" par défaut
+        self.request.user.profil.trickplayer_set.create(trick=kendama_trick)
         return redirect(kendama_trick)
 
 
@@ -127,6 +129,8 @@ class ComboCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             combo.save()
             combo_trick_formset.instance = combo
             combo_trick_formset.save()
+            # Initialise la première fréquence de réussite à "Jamais" par défaut
+            self.request.user.profil.comboplayer_set.create(combo=combo)
             messages.success(self.request, 'Le combo %s a bien été créé.' % combo)
             return redirect(combo)
         return self.render_to_response(self.get_context_data(form=form))
