@@ -10,7 +10,7 @@
 {% block content %}
     <article class="article">
         <h3 class="article-title text-right">
-            Ajouté par <a href="{% url 'kendama:kendamas' %}?text={{ kendama.owner.user.username }}" popover-bottom="Voir ses autres kendamas">
+            Ajouté par <a href="{% url 'kendama:profil' kendama.owner.user.username %}">
                 {{ kendama.owner }}
             </a>
         </h3>

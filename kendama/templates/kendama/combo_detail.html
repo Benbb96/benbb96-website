@@ -15,7 +15,7 @@
             </a>
         </h3>
         <p class="article-meta">
-            Créé par <a href="{{ combo.creator.get_absolute_url }}">{{ combo.creator }}</a>
+            Créé par <a href="{% url 'kendama:profil' combo.creator.user.username %}">{{ combo.creator }}</a>
             le <code title="{{ combo.created_at|date:'r' }}">{{ combo.created_at }}</code>
             {% if combo.updated_at %}
                 et mis à jour le <code title="{{ combo.updated_at|date:'r' }}">{{ combo.updated_at }}</code>
@@ -36,7 +36,7 @@
             {% endfor %}
         </ol>
 
-        {% include 'kendama/components/table_frequency.html' with player_frequencies=combo.combo_players.all %}
+        {% include 'kendama/components/table_frequency.html' with player_frequencies=combo.combo_players.all obj_id=combo.id cls='combos' %}
 
         {% if combo.ladders.all %}
             <h5>Ce combo apparait dans les ladders suivants :</h5>
@@ -95,17 +95,6 @@
             .then(json)
             .then(updateFrequency)
             .catch(catchError);
-        })
-
-        document.querySelectorAll('.openFrequencyHistoryModal').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.getElementById('user').innerText = btn.dataset.user
-                fetch('{% url 'kendama:frequency_history' "combos" combo.id %}?userId=' + btn.dataset.userId)
-                    .then(status)
-                    .then(text)
-                    .then(frequencyHistory)
-                    .catch(catchError);
-            })
         })
     </script>
 {% endblock %}

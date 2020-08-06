@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 
+from base.models import Profil
 from kendama.filters import KendamaTrickFilter, ComboFilter, KendamaFliter, LadderFilter
 from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm, KendamaForm, LadderForm
 from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama, Ladder, LadderCombo
@@ -202,17 +203,19 @@ def update_player_frequency(request, cls, obj_id):
     })
 
 
-def frequency_history(request, cls, obj_id):
+def frequency_history(request):
     user_id = request.GET.get('userId')
     if not user_id:
         return HttpResponseNotFound
     user = get_object_or_404(User, id=user_id)
+    cls = request.GET.get('cls')
     if cls == 'tricks':
         klass = KendamaTrick
     elif cls == 'combos':
         klass = Combo
     else:
         raise ValueError('cls est incorrect : %s' % cls)
+    obj_id = request.GET.get('objId')
     obj = get_object_or_404(klass, id=obj_id)
 
     params = {}
@@ -373,3 +376,14 @@ class LadderDelete(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Le ladder %s a bien été supprimé.' % self.get_object())
         return super().delete(request, *args, **kwargs)
+
+
+def profil_page(request, username):
+    profil = get_object_or_404(Profil, user__username=username)
+    player_tricks = profil.trickplayer_set.filter(trick__creator=profil)
+    player_combos = profil.comboplayer_set.filter(combo__creator=profil)
+    return render(request, 'kendama/profil.html', {
+        'profil': profil,
+        'player_tricks': player_tricks,
+        'player_combos': player_combos
+    })
