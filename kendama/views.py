@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.forms import inlineformset_factory, Select, NumberInput
 from django.http import JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
@@ -309,6 +310,11 @@ class LadderList(FilterView):
 
 class LadderDetail(DetailView):
     model = Ladder
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return super().get_queryset().public()
+        return super().get_queryset().filter(Q(creator=self.request.user.profil) | Q(private=False))
 
 
 LadderComboFormSet = inlineformset_factory(
