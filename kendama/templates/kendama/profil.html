@@ -32,8 +32,10 @@
         <input id="tab4" type="radio" name="tabs">
         <label for="tab4">Kendamas</label>
 
+        {# TODO Ajouter des graphs et autres stats dans un nouvel onglet ? #}
+
         <div class="content" id="content1">
-            {# TODO Ajouter des graphs et autres stats #}
+            {# TODO Filtrer les lignes (par difficulté, nom, date) ? #}
             <table class="table-alternating">
                 <thead>
                 <tr>
@@ -49,7 +51,9 @@
                         <td>
                             <a href="{{ trick_player.trick.get_absolute_url }}">{{ trick_player.trick }}</a>
                         </td>
-                        <td>{{ trick_player.trick.get_difficulty_display }}</td>
+                        <td>
+                            {% include 'kendama/components/difficulty_label.html' with obj=trick_player.trick %}
+                        </td>
                         <td>{{ trick_player.get_frequency_display }}</td>
                         <td>
                             {{ player_frequency.history.first.history_date }}
@@ -76,7 +80,9 @@
                         <td>
                             <a href="{{ combo_player.combo.get_absolute_url }}">{{ combo_player.combo }}</a>
                         </td>
-                        <td>{{ combo_player.combo.get_difficulty_display }}</td>
+                        <td>
+                            {% include 'kendama/components/difficulty_label.html' with obj=combo_player.combo %}
+                        </td>
                         <td>{{ combo_player.get_frequency_display }}</td>
                         <td>
                             {% include 'kendama/components/frequency_history_button.html' with user=profil.user obj_id=combo_player.combo.id cls='combos' %}
@@ -103,7 +109,9 @@
                                     {{ ladder }}
                                 </a>
                             </td>
-                            <td>{{ ladder.get_difficulty_display }}</td>
+                            <td>
+                                {% include 'kendama/components/difficulty_label.html' with obj=ladder %}
+                            </td>
                             <td>{{ ladder.created_at }}</td>
                         </tr>
                     {% endfor %}
