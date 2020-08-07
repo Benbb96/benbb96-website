@@ -27,7 +27,8 @@
     {% if request.user == user %}
         <div>
             {% block change_password %}
-                <a href="{% url 'base:change_password' %}">Changer le mot de passe</a>
+                <a href="{% url 'base:change_password' %}">Changer mon mot de passe</a> |
+                <a href="{% url 'base:update_profil' user.username %}">Modifier mon profil</a>
             {% endblock %}
         </div>
     {% endif %}
