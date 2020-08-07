@@ -3,13 +3,14 @@ from django.contrib.auth import update_session_auth_hash, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
 from django.core.mail import mail_admins
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.safestring import mark_safe
 from django.views.generic import ListView, DetailView
 
-from base.forms import SignUpForm
-from base.models import Projet
+from base.forms import SignUpForm, ProfilForm
+from base.models import Projet, Profil
 
 
 def signup(request):
@@ -57,6 +58,34 @@ def change_password(request):
     elif request.POST:
         messages.error(request, 'Merci de corriger les erreurs ci-dessous.')
     return render(request, 'base/profil/change_password.html', {
+        'form': form
+    })
+
+
+@login_required
+def update_profil(request, username):
+    profil = get_object_or_404(Profil, user__username=username)
+    if request.user != profil.user and not request.user.is_superuser:
+        raise PermissionDenied
+
+    form = ProfilForm(data=request.POST or None, instance=profil, files=request.FILES, initial={
+        'username': profil.user.username,
+        'first_name': profil.user.first_name,
+        'last_name': profil.user.last_name,
+        'email': profil.user.email,
+    })
+    if form.is_valid():
+        profil = form.save()
+        profil.user.username = form.cleaned_data.get('username')
+        profil.user.first_name = form.cleaned_data.get('first_name')
+        profil.user.last_name = form.cleaned_data.get('last_name')
+        profil.user.email = form.cleaned_data.get('email')
+        profil.user.save()
+        messages.success(request, 'Votre profil a bien été mis à jour !')
+        return redirect(profil)
+
+    return render(request, 'base/profil/update_profil.html', {
+        'profil': profil,
         'form': form
     })
 
