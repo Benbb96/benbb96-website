@@ -7,9 +7,11 @@
 
 {% block content %}
     <div class="row">
-        <div class="col col-sm-6 col-xs-12">
-            <img class="img-rounded" src="{{ profil.avatar.url }}" alt="Avatar de {{ profil }}" style="max-height: 200px"/>
-        </div>
+        {% if profil.avatar %}
+            <div class="col col-sm-6 col-xs-12">
+                <img class="img-rounded" src="{{ profil.avatar.url }}" alt="Avatar de {{ profil }}" style="max-height: 200px"/>
+            </div>
+        {% endif %}
         <div class="col col-sm-6 col-xs-12">
             <h2 class="margin-top-none margin-bottom-small">Profil de {{ profil }}</h2>
             <p>
