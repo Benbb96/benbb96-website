@@ -11,7 +11,9 @@
         {% if request.user.is_authenticated %}
             <tr>
                 <td><a href="{% url 'kendama:profil' request.user.username %}">{{ request.user }}</a></td>
-                <td>{{ form.frequency }}</td>
+                <td>
+                    <input type="range" name="frequency" min="0" max="100" step="1">
+                </td>
                 <td>
                     <span id="lastUpdate" title="Date de dernière modification">
                         {{ authenticated_user_frequency.history.first.history_date }}
