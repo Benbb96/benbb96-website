@@ -68,7 +68,7 @@ def update_profil(request, username):
     if request.user != profil.user and not request.user.is_superuser:
         raise PermissionDenied
 
-    form = ProfilForm(data=request.POST or None, instance=profil, files=request.FILES, initial={
+    form = ProfilForm(data=request.POST or None, instance=profil, files=request.FILES or None, initial={
         'username': profil.user.username,
         'first_name': profil.user.first_name,
         'last_name': profil.user.last_name,
