@@ -94,7 +94,7 @@ class BasePlayerFrequency(models.Model):
 
 
 class TrickPlayer(BasePlayerFrequency):
-    trick = models.ForeignKey(KendamaTrick, on_delete=models.PROTECT, related_name='trick_players')
+    trick = models.ForeignKey(KendamaTrick, on_delete=models.CASCADE, related_name='trick_players')
     history = HistoricalRecords()
 
     class Meta:
@@ -125,7 +125,7 @@ class Combo(BaseModel):
 
 class ComboTrick(models.Model):
     combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='combo_tricks')
-    trick = models.ForeignKey(KendamaTrick, on_delete=models.PROTECT, related_name='combo_tricks')
+    trick = models.ForeignKey(KendamaTrick, on_delete=models.CASCADE, related_name='combo_tricks')
     order = models.PositiveSmallIntegerField('ordre', default=0, db_index=True)
 
     class Meta:
@@ -167,8 +167,23 @@ class Kendama(PhotoAbstract):
         return reverse('kendama:detail-kendama', args=[self.slug])
 
 
+class LadderQueryset(models.QuerySet):
+    def private(self):
+        return self.filter(private=True)
+
+    def public(self):
+        return self.exclude(private=True)
+
+
 class Ladder(BaseModel):
     combos = models.ManyToManyField(Combo, related_name='ladders', through='LadderCombo')
+    private = models.BooleanField(
+        'privé',
+        default=False,
+        help_text="Cochez cette case pour que ce ladder ne soit visible qu'à vous."
+    )
+
+    objects = LadderQueryset.as_manager()
 
     class Meta:
         verbose_name = 'ladder'
@@ -181,7 +196,7 @@ class Ladder(BaseModel):
 
 class LadderCombo(models.Model):
     ladder = models.ForeignKey(Ladder, on_delete=models.CASCADE, related_name='ladder_combos')
-    combo = models.ForeignKey(Combo, on_delete=models.PROTECT, related_name='ladder_combos')
+    combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='ladder_combos')
     order = models.PositiveSmallIntegerField('ordre', default=0, db_index=True)
 
     class Meta:

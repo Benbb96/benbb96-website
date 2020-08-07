@@ -40,8 +40,7 @@
                     <li></li>
                     {% if request.user.is_authenticated %}
                         <li>
-                            <a href="{{ request.user.profil.get_absolute_url }}">
-                                {# TODO Faire une page spécial pour le user sur Kendama #}
+                            <a href="{% url 'kendama:profil' request.user.username %}">
                                 {{ request.user }}
                             </a>
                         </li>
@@ -123,6 +122,18 @@
             // Open modal
             document.getElementById('frequencyHistoryModal').checked = true
         }
+
+        // Open the frequency history modal to see evolution of a trick or a combo mastering
+        document.querySelectorAll('.openFrequencyHistoryModal').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.getElementById('user').innerText = btn.dataset.user
+                fetch('{% url 'kendama:frequency_history' %}?cls=' + btn.dataset.cls + '&objId=' + btn.dataset.objId + '&userId=' + btn.dataset.userId)
+                    .then(status)
+                    .then(text)
+                    .then(frequencyHistory)
+                    .catch(catchError);
+            })
+        })
     </script>
     {% block javascript %}{% endblock %}
 </div>

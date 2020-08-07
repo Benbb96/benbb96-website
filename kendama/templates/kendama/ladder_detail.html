@@ -15,7 +15,7 @@
             </a>
         </h3>
         <p class="article-meta">
-            Créé par <a href="{{ ladder.creator.get_absolute_url }}">{{ ladder.creator }}</a>
+            Créé par <a href="{% url 'kendama:profil' ladder.creator.user.username %}">{{ ladder.creator }}</a>
             le <code title="{{ ladder.created_at|date:'r' }}">{{ ladder.created_at }}</code>
             {% if ladder.updated_at %}
                 et mis à jour le <code title="{{ ladder.updated_at|date:'r' }}">{{ ladder.updated_at }}</code>

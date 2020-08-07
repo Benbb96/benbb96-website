@@ -28,7 +28,7 @@ urlpatterns = [
         name='update_player_frequency'
     ),
     path(
-        '<str:cls>/<int:obj_id>/frequency-history',
+        'frequency-history',
         views.frequency_history,
         name='frequency_history'
     ),
@@ -46,6 +46,9 @@ urlpatterns = [
     path('create', views.KendamaCreate.as_view(), name='create-kendama'),
     path('<slug:slug>/update', views.KendamaUpdate.as_view(), name='update-kendama'),
     path('<slug:slug>/delete', views.KendamaDelete.as_view(), name='delete-kendama'),
+
+    # Profil
+    path('profil/<str:username>', views.profil_page, name='profil'),
 
     path('test/', TemplateView.as_view(template_name='kendama/base.html'), name='test-page'),
 ]

@@ -4,13 +4,13 @@
 
 {% block title %}Kendama {{ kendama.name }}{% endblock %}
 {% block h2_title %}
-    <a href="{% url 'kendama:tricks' %}">Tricks</a> > {{ kendama.name }}
+    <a href="{% url 'kendama:kendamas' %}">Kendamas</a> > {{ kendama.name }}
 {% endblock %}
 
 {% block content %}
     <article class="article">
         <h3 class="article-title text-right">
-            Ajouté par <a href="{% url 'kendama:kendamas' %}?text={{ kendama.owner.user.username }}" popover-bottom="Voir ses autres kendamas">
+            Ajouté par <a href="{% url 'kendama:profil' kendama.owner.user.username %}">
                 {{ kendama.owner }}
             </a>
         </h3>
