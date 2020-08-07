@@ -15,7 +15,7 @@
             </a>
         </h3>
         <p class="article-meta">
-            Créé par <a href="{{ kendamatrick.creator.get_absolute_url }}">{{ kendamatrick.creator }}</a>
+            Créé par <a href="{% url 'kendama:profil' kendamatrick.creator.user.username %}">{{ kendamatrick.creator }}</a>
             le <code title="{{ kendamatrick.created_at|date:'r' }}">{{ kendamatrick.created_at }}</code>
             {% if kendamatrick.updated_at %}
                 et mis à jour le <code title="{{ kendamatrick.updated_at|date:'r' }}">{{ kendamatrick.updated_at }}</code>
@@ -25,7 +25,7 @@
             <p class="text-lead">{{ kendamatrick.description }}</p>
         {% endif %}
 
-        {% include 'kendama/components/table_frequency.html' with player_frequencies=kendamatrick.trick_players.all %}
+        {% include 'kendama/components/table_frequency.html' with player_frequencies=kendamatrick.trick_players.all obj_id=kendamatrick.id cls='tricks' %}
 
         {% if 'youtube' in kendamatrick.tutorial_video_link %}
             <div class="video-responsive">
@@ -70,32 +70,23 @@
 {% endblock %}
 
 {% block javascript %}
-    <script>
-        document.getElementById('id_frequency').addEventListener('change', function (event) {
-            const frequency = event.target.value
-            if (frequency === '' || frequency === undefined) {
-                alert('Veuillez choisir une option !')
-                return
-            }
-            fetch('{% url 'kendama:update_player_frequency' "tricks" kendamatrick.id %}', {
-                method: 'post',
-                headers: headers,
-                body: JSON.stringify({frequency})
-            }).then(status)
-            .then(json)
-            .then(updateFrequency)
-            .catch(catchError);
-        })
-
-        document.querySelectorAll('.openFrequencyHistoryModal').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.getElementById('user').innerText = btn.dataset.user
-                fetch('{% url 'kendama:frequency_history' "tricks" kendamatrick.id %}?userId=' + btn.dataset.userId)
-                    .then(status)
-                    .then(text)
-                    .then(frequencyHistory)
-                    .catch(catchError);
+    {% if request.user.is_authenticated %}
+        <script>
+            document.getElementById('id_frequency').addEventListener('change', function (event) {
+                const frequency = event.target.value
+                if (frequency === '' || frequency === undefined) {
+                    alert('Veuillez choisir une option !')
+                    return
+                }
+                fetch('{% url 'kendama:update_player_frequency' "tricks" kendamatrick.id %}', {
+                    method: 'post',
+                    headers: headers,
+                    body: JSON.stringify({frequency})
+                }).then(status)
+                .then(json)
+                .then(updateFrequency)
+                .catch(catchError);
             })
-        })
-    </script>
+        </script>
+    {% endif %}
 {% endblock %}

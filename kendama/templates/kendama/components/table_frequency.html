@@ -1,40 +1,76 @@
-{% if request.user.is_authenticated or player_frequencies %}
-    <h5 class="margin-bottom-small">Fréquence de réussites des joueurs :</h5>
-    <table class="table-alternating">
-        <thead>
+<h5 class="margin-bottom-small">Fréquence de réussites des joueurs :</h5>
+<table class="table-alternating">
+    <thead>
+        <tr>
+            <th>Profil</th>
+            <th>Fréquence de réussite</th>
+            <th>Historique</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if request.user.is_authenticated %}
             <tr>
-                <th>Profil</th>
-                <th>Fréquence de réussite</th>
-                <th>Date de mise à jour</th>
+                <td><a href="{% url 'kendama:profil' request.user.username %}">{{ request.user }}</a></td>
+                <td>{{ form.frequency }}</td>
+                <td>
+                    <span id="lastUpdate" title="Date de dernière modification">
+                        {{ authenticated_user_frequency.history.first.history_date }}
+                    </span>
+                    {% include 'kendama/components/frequency_history_button.html' with user=request.user %}
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            {% if request.user.is_authenticated %}
+        {% endif %}
+        {% for player_frequency in player_frequencies %}
+            {% if player_frequency.player.user != request.user %}
                 <tr>
-                    <td><a href="{{ request.user.profil.get_absolute_url }}">{{ request.user }}</a></td>
-                    <td>{{ form.frequency }}</td>
                     <td>
-                        <span id="lastUpdate">
-                            {{ authenticated_user_frequency.history.first.history_date }}
-                        </span>
-                        {% include 'kendama/components/frequency_history_button.html' with user=request.user %}
+                        <a href="{% url 'kendama:profil' player_frequency.player.user.username %}">
+                            {{ player_frequency.player }}
+                        </a>
+                    </td>
+                    <td>{{ player_frequency.get_frequency_display }}</td>
+                    <td>
+                        {% include 'kendama/components/frequency_history_button.html' with user=player_frequency.player %}
                     </td>
                 </tr>
             {% endif %}
-            {% for player_frequency in player_frequencies %}
-                {% if player_frequency.player.user != request.user %}
-                    <tr>
-                        <td><a href="{{ player_frequency.player.get_absolute_url }}">{{ player_frequency.player }}</a></td>
-                        <td>{{ player_frequency.get_frequency_display }}</td>
-                        <td>
-                            {{ player_frequency.history.first.history_date }}
-                            {% include 'kendama/components/frequency_history_button.html' with user=player_frequency.player %}
-                        </td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+        {% endfor %}
+    </tbody>
+</table>
 
-    {# TODO Montrer la répartition en camembert des fréquences #}
+{% if not request.user.is_authenticated %}
+    <h5>
+        <a href="{% url 'login' %}?next={{ request.path }}">Connectez-vous</a> pour renseigner votre fréquence de réussite !
+    </h5>
 {% endif %}
+
+{# Montre la répartition des fréquences de réussite dans un graphique #}
+<canvas id="myChart" width="400" height="200"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
+<script>
+    const myPieChart = new Chart(document.getElementById('myChart'), {
+        type: 'bar',
+        data: {
+            datasets: [
+                {
+                    data: [{% for frequency in frequency_count.values %}{{ frequency }},{% endfor %}],
+                    backgroundColor: ['rgb(0,0,0)', 'rgb(70,65,75)', 'rgb(100,100,100)', 'rgb(150,150,150)', 'rgb(200,200,200)', 'rgb(235,235,235)']
+                }
+            ],
+            labels: [{% for frequency_name in frequency_count.keys %}"{{ frequency_name }}",{% endfor %}]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            responsive: true,
+            legend: {
+                display: false
+            }
+        }
+    });
+</script>

@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.forms import inlineformset_factory, Select, NumberInput
 from django.http import JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
@@ -15,6 +16,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 
+from base.models import Profil
 from kendama.filters import KendamaTrickFilter, ComboFilter, KendamaFliter, LadderFilter
 from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm, KendamaForm, LadderForm
 from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama, Ladder, LadderCombo
@@ -30,6 +32,11 @@ class KendamaTrickDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Prépare les statitistiques pour le bar chart
+        frequency_count = {}
+        for frequency, frequency_name in TrickPlayer.FREQUENCY:
+            frequency_count[frequency_name] = self.get_object().trick_players.filter(frequency=frequency).count()
+        context['frequency_count'] = frequency_count
         if self.request.user.is_authenticated:
             try:
                 authenticated_trick_player = self.request.user.profil.trickplayer_set.get(trick=self.get_object())
@@ -49,6 +56,8 @@ class KendamaTrickCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         kendama_trick = form.save(commit=False)
         kendama_trick.creator = self.request.user.profil
         kendama_trick.save()
+        # Initialise la première fréquence de réussite à "Jamais" par défaut
+        self.request.user.profil.trickplayer_set.create(trick=kendama_trick)
         return redirect(kendama_trick)
 
 
@@ -83,6 +92,11 @@ class ComboDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Prépare les statitistiques pour le bar chart
+        frequency_count = {}
+        for frequency, frequency_name in ComboPlayer.FREQUENCY:
+            frequency_count[frequency_name] = self.get_object().combo_players.filter(frequency=frequency).count()
+        context['frequency_count'] = frequency_count
         if self.request.user.is_authenticated:
             try:
                 authenticated_combo_player = self.request.user.profil.comboplayer_set.get(combo=self.get_object())
@@ -126,6 +140,8 @@ class ComboCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             combo.save()
             combo_trick_formset.instance = combo
             combo_trick_formset.save()
+            # Initialise la première fréquence de réussite à "Jamais" par défaut
+            self.request.user.profil.comboplayer_set.create(combo=combo)
             messages.success(self.request, 'Le combo %s a bien été créé.' % combo)
             return redirect(combo)
         return self.render_to_response(self.get_context_data(form=form))
@@ -202,17 +218,19 @@ def update_player_frequency(request, cls, obj_id):
     })
 
 
-def frequency_history(request, cls, obj_id):
+def frequency_history(request):
     user_id = request.GET.get('userId')
     if not user_id:
         return HttpResponseNotFound
     user = get_object_or_404(User, id=user_id)
+    cls = request.GET.get('cls')
     if cls == 'tricks':
         klass = KendamaTrick
     elif cls == 'combos':
         klass = Combo
     else:
         raise ValueError('cls est incorrect : %s' % cls)
+    obj_id = request.GET.get('objId')
     obj = get_object_or_404(klass, id=obj_id)
 
     params = {}
@@ -261,7 +279,7 @@ class KendamaCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         kendama = form.save(commit=False)
         kendama.owner = self.request.user.profil
         kendama.save()
-        return redirect('kendama:kendamas')  # TODO redirect to kendama
+        return redirect(kendama)
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -302,6 +320,11 @@ class LadderList(FilterView):
 
 class LadderDetail(DetailView):
     model = Ladder
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return super().get_queryset().public()
+        return super().get_queryset().filter(Q(creator=self.request.user.profil) | Q(private=False))
 
 
 LadderComboFormSet = inlineformset_factory(
@@ -373,3 +396,14 @@ class LadderDelete(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Le ladder %s a bien été supprimé.' % self.get_object())
         return super().delete(request, *args, **kwargs)
+
+
+def profil_page(request, username):
+    profil = get_object_or_404(Profil, user__username=username)
+    player_tricks = profil.trickplayer_set.filter(trick__creator=profil)
+    player_combos = profil.comboplayer_set.filter(combo__creator=profil)
+    return render(request, 'kendama/profil.html', {
+        'profil': profil,
+        'player_tricks': player_tricks,
+        'player_combos': player_combos
+    })

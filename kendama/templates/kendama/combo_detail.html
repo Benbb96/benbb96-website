@@ -15,7 +15,7 @@
             </a>
         </h3>
         <p class="article-meta">
-            Créé par <a href="{{ combo.creator.get_absolute_url }}">{{ combo.creator }}</a>
+            Créé par <a href="{% url 'kendama:profil' combo.creator.user.username %}">{{ combo.creator }}</a>
             le <code title="{{ combo.created_at|date:'r' }}">{{ combo.created_at }}</code>
             {% if combo.updated_at %}
                 et mis à jour le <code title="{{ combo.updated_at|date:'r' }}">{{ combo.updated_at }}</code>
@@ -36,7 +36,28 @@
             {% endfor %}
         </ol>
 
-        {% include 'kendama/components/table_frequency.html' with player_frequencies=combo.combo_players.all %}
+        {% include 'kendama/components/table_frequency.html' with player_frequencies=combo.combo_players.all obj_id=combo.id cls='combos' %}
+
+        {% if combo.ladders.all %}
+            <h5>Ce combo apparait dans les ladders suivants :</h5>
+            <ul>
+                {# Liste les ladders privés dont l'utilisateur connecté en ait le créateur #}
+                {% if request.user.is_authenticated %}
+                    {% for ladder in combo.ladders.private %}
+                        {% if ladder.creator == request.user.profil %}
+                            <li>
+                                <a href="{{ ladder.get_absolute_url }}">{{ ladder }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% for ladder in combo.ladders.public %}
+                    <li>
+                        <a href="{{ ladder.get_absolute_url }}">{{ ladder }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif%}
 
         {% if 'youtube' in combo.tutorial_video_link %}
             <div class="video-responsive">
@@ -69,32 +90,23 @@
 {% endblock %}
 
 {% block javascript %}
-    <script>
-        document.getElementById('id_frequency').addEventListener('change', function (event) {
-            const frequency = event.target.value
-            if (frequency === '' || frequency === undefined) {
-                alert('Veuillez choisir une option !')
-                return
-            }
-            fetch('{% url 'kendama:update_player_frequency' "combos" combo.id %}', {
-                method: 'post',
-                headers: headers,
-                body: JSON.stringify({frequency})
-            }).then(status)
-            .then(json)
-            .then(updateFrequency)
-            .catch(catchError);
-        })
-
-        document.querySelectorAll('.openFrequencyHistoryModal').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.getElementById('user').innerText = btn.dataset.user
-                fetch('{% url 'kendama:frequency_history' "combos" combo.id %}?userId=' + btn.dataset.userId)
-                    .then(status)
-                    .then(text)
-                    .then(frequencyHistory)
-                    .catch(catchError);
+    {% if request.user.is_authenticated %}
+        <script>
+            document.getElementById('id_frequency').addEventListener('change', function (event) {
+                const frequency = event.target.value
+                if (frequency === '' || frequency === undefined) {
+                    alert('Veuillez choisir une option !')
+                    return
+                }
+                fetch('{% url 'kendama:update_player_frequency' "combos" combo.id %}', {
+                    method: 'post',
+                    headers: headers,
+                    body: JSON.stringify({frequency})
+                }).then(status)
+                .then(json)
+                .then(updateFrequency)
+                .catch(catchError);
             })
-        })
-    </script>
+        </script>
+    {% endif %}
 {% endblock %}
