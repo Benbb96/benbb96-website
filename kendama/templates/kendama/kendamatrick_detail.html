@@ -36,7 +36,7 @@
         {% if kendamatrick.combos.all %}
             <h5>Ce trick apparait dans les combos suivants :</h5>
             <ul>
-                {% for combo in kendamatrick.combos.all %}
+                {% for combo in kendamatrick.combos.distinct %}
                     <li>
                         <a href="{{ combo.get_absolute_url }}">{{ combo }}</a>
                     </li>
