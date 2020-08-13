@@ -105,6 +105,8 @@
                         option.appendChild(document.createTextNode(response.name))
                         select.appendChild(option)
                     })
+                    // Reset form
+                    form.reset()
                 } else {
                     alert(response.message)
                     for (const [key, errors] of Object.entries(response.errors)) {
