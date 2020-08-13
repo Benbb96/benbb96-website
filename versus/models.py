@@ -99,6 +99,12 @@ class Partie(models.Model):
     def __str__(self):
         return '%s (%s)' % (self.jeu, self.date)
 
+    def classement_joueur(self):
+        """ Retourne la liste des joueurs dans l'ordre de leur classement"""
+        if self.jeu.type == Jeu.SCORE:
+            return self.partiejoueur_set.order_by('-score_classement')
+        return self.partiejoueur_set.order_by('score_classement')
+
     def get_winners(self):
         """ Retourne le ou les gagnants de cette partie """
         if self.jeu.type == self.jeu.CLASSEMENT:
