@@ -1,0 +1,21 @@
+{% extends 'versus/base_versus.html' %}
+
+{% block versus_title %}Les joueurs{% endblock %}
+
+{% block jumbotron_title %}Joueurs{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
+            <div class="list-group text-center">
+                {% for joueur in object_list %}
+                    <a class="list-group-item" href="{{ joueur.get_absolute_url }}">
+                        {{ joueur.nom }}
+                    </a>
+                {% empty %}
+                    <div>Pas de joueur enregistré.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
