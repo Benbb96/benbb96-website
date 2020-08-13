@@ -11,11 +11,14 @@
         <div class="col-md-6 col-md-offset-3 col-xs-12">
             {% if next %}
                 {% if user.is_authenticated %}
-                    {% bootstrap_alert "Désolé mais ton compte n'a pas accès à cette page.<br>Contacte-moi pour en obtenir l'accès !" %}
-                    <p>
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                         Désolé mais ton compte n'a pas accès à cette page.<br>
-                        Contacte-moi pour en obtenir l'accès !
-                    </p>
+                        Contacte-moi pour en obtenir l'accès !<br>
+                        <div class="text-center">
+                            <a class="alert-link" href="#" onclick="window.history.back()">Retour à la page précédente</a>
+                        </div>
+                    </div>
                 {% else %}
                     {% bootstrap_alert "Connecte-toi pour accéder à cette page !" alert_type='warning' %}
                 {% endif %}

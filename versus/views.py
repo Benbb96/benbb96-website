@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.forms import inlineformset_factory, NumberInput
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
@@ -42,6 +43,7 @@ PartieJoueurFormSet = inlineformset_factory(
 )
 
 
+@permission_required('versus.add_partie')
 def ajout_partie(request, slug):
     jeu = get_object_or_404(Jeu, slug=slug)
     partie = Partie(jeu=jeu)
@@ -54,6 +56,7 @@ def ajout_partie(request, slug):
     return render(request, 'versus/partie_form.html', {'jeu': jeu, 'formset': formset})
 
 
+@permission_required('versus.change_partie')
 def edition_partie(request, slug, partie_id):
     jeu = get_object_or_404(Jeu, slug=slug)
     partie = get_object_or_404(Partie, id=partie_id)
@@ -65,10 +68,11 @@ def edition_partie(request, slug, partie_id):
     return render(request, 'versus/partie_form.html', {'jeu': jeu, 'partie': partie, 'formset': formset})
 
 
+@permission_required('versus.delete_partie')
 def suppression_partie(request, slug, partie_id):
     jeu = get_object_or_404(Jeu, slug=slug)
     partie = get_object_or_404(Partie, id=partie_id)
-    if request.POST:
+    if request.method == 'POST':
         partie.delete()
         messages.success(request, 'La partie de %s a bien été supprimée.' % jeu)
         return redirect(jeu)
