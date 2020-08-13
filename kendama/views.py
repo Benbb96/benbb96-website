@@ -257,6 +257,8 @@ def create_trick_from_modal(request):
         trick = form.save(commit=False)
         trick.creator = request.user.profil
         trick.save()
+        # Initialise la première fréquence de réussite à "Jamais" par défaut
+        request.user.profil.trickplayer_set.create(trick=trick)
         return JsonResponse({'success': True, 'id': trick.id, 'name': trick.name})
     return JsonResponse({'success': False, 'message': 'Il y a des erreurs dans le formulaire', 'errors': form.errors})
 
