@@ -1,0 +1,81 @@
+{% extends 'versus/base_jeu.html' %}
+
+{% block versus_title %}{% if partie %}Edition{% else %}Ajout{% endif %} partie de {{ jeu }}{% endblock %}
+
+{% block stylesheet %}
+    {{ formset.media.css }}
+{% endblock %}
+
+{% block jeu_content %}
+    <h2>{% if partie %}Edition de la partie du {{ partie.date }}{% else %}Ajout d'une nouvelle partie{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        {% if formset.errors %}
+            <p class="text-danger">
+                Il y a des erreurs dans le formulaire.<br>
+                {{ formset.non_field_errors }}
+            </p>
+        {% endif %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width: 75%">
+                        Joueur
+                    </th>
+                    <th class="text-center" style="width: 25%">
+                        {% if jeu.type == jeu.CLASSEMENT %}
+                            Classement
+                        {% else %}
+                            Score
+                        {% endif %}
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="joueurs">
+                    {% for form in formset %}
+                        <tr>
+                            {{ form.id }}
+                            <td>
+                                {{ form.joueur }}
+                                {{ form.joueur.errors }}
+                                {{ form.non_field_errors }}
+                            </td>
+                            <td>
+                                {{ form.score_classement }}
+                                {{ form.score_classement.errors }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="btn btn-default" id="add_form" title="Ajouter un joueur">
+                <i class="fa fa-plus"></i>
+                Ajouter un joueur
+            </button>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-check"></i>
+                {% if partie %}Modifier{% else %}Ajouter{% endif %}
+            </button>
+            <a class="btn btn-default" href="{{ jeu.get_absolute_url }}">Annuler</a>
+        </div>
+    </form>
+{% endblock %}
+
+{% block javascript %}
+    {{ formset.media.js }}
+    <script>
+        let form_count = {{ formset.total_form_count }};
+        $('#add_form').on('click', function() {
+            const joueur = '{{ formset.empty_form.joueur|escapejs }}'.replace(/__prefix__/g, form_count);
+            const score_classement = '{{ formset.empty_form.score_classement|escapejs }}'.replace(/__prefix__/g, form_count);
+            $('#joueurs').append(`<tr><td>${joueur}</td><td>${score_classement}</td></tr>`)
+            $('.django-select2').djangoSelect2();
+            form_count++;
+            $('#id_partiejoueur_set-TOTAL_FORMS').val(form_count);
+        });
+    </script>
+{% endblock %}
