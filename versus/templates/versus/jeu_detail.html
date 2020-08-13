@@ -3,7 +3,7 @@
 {% block jeu_content %}
     <h2>
         Dernières parties jouées
-        {% if request.user.is_staff %}
+        {% if perms.versus.add_partie %}
             <div class="pull-right">
                 <a class="btn btn-default" href="{% url 'versus:ajout-partie' jeu.slug %}">
                     <i class="fa fa-plus"></i>
@@ -15,10 +15,12 @@
     {% for partie in jeu.parties.all %}
         <h3>
             {{ partie.date|date:'l j F Y, H:i'|capfirst }}
-            {% if request.user.is_staff %}
+            {% if perms.versus.change_partie %}
                 <a class="btn btn-default" href="{% url 'versus:edition-partie' jeu.slug partie.id %}">
                     <i class="fa fa-edit"></i>
                 </a>
+            {% endif %}
+            {% if perms.versus.delete_partie %}
                 <a class="btn btn-danger" href="{% url 'versus:suppression-partie' jeu.slug partie.id %}">
                     <i class="fa fa-trash"></i>
                 </a>
