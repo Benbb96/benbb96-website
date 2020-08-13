@@ -15,9 +15,14 @@
     {% for partie in jeu.parties.all %}
         <h3>
             {{ partie.date|date:'l j F Y, H:i'|capfirst }}
-            <a class="btn btn-default" href="{% url 'versus:edition-partie' jeu.slug partie.id %}">
-                <i class="fa fa-edit"></i>
-            </a>
+            {% if request.user.is_staff %}
+                <a class="btn btn-default" href="{% url 'versus:edition-partie' jeu.slug partie.id %}">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="btn btn-danger" href="{% url 'versus:suppression-partie' jeu.slug partie.id %}">
+                    <i class="fa fa-trash"></i>
+                </a>
+            {% endif %}
         </h3>
         {% include 'versus/partie_table.html' %}
     {% endfor %}
