@@ -4,7 +4,9 @@
 
 {% block title %}{% block versus_title %}Jeux{% endblock %} | Versus{% endblock %}
 
-{% block jumbotron_title %}<a href="{% url 'versus:liste-jeux' %}">Jeux</a>{% endblock %}
+{% block jumbotron_title %}Versus{% endblock %}
 {% block jumbotron_description %}
-    Les jeux sur lesquelles on s'affronte et où l'on garde des statistiques avec ses amis
+    Les jeux sur lesquelles on s'affronte et où l'on garde des statistiques avec ses amis<br>
+    <a href="{% url 'versus:liste-jeux' %}">Jeux</a> |
+    <a href="{% url 'versus:liste-joueurs' %}">Joueurs</a>
 {% endblock %}

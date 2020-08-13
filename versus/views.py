@@ -12,6 +12,10 @@ class JeuListView(ListView):
     model = Jeu
 
 
+class JoueurListView(ListView):
+    model = Joueur
+
+
 class JeuDetailView(DetailView):
     model = Jeu
     slug_field = 'slug'
