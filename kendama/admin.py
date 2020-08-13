@@ -8,7 +8,7 @@ from kendama.models import KendamaTrick, TrickPlayer, Combo, ComboPlayer, Kendam
 class BaseKendamaAdmin(admin.ModelAdmin):
     list_display = ('name', 'creator', 'difficulty', 'created_at')
     list_filter = ('difficulty',)
-    search_fields = ('name', 'creator__username')
+    search_fields = ('name', 'creator__user__username')
     date_hierarchy = 'created_at'
     autocomplete_fields = ('creator',)
     list_select_related = ('creator',)
