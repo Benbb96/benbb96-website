@@ -1,0 +1,15 @@
+{% extends 'versus/base_jeu.html' %}
+
+{% block versus_title %}Suppression partie de {{ jeu }}{% endblock %}
+
+{% block jeu_content %}
+    <div class="well text-center">
+        <h2>Suppression partie</h2>
+        <form method="post">
+            {% csrf_token %}
+            <p>Êtest-vous sûr de vouloir supprimer la partie de {{ jeu }} du {{ partie.date }} ?</p>
+            <button type="submit" class="btn btn-danger">Oui, je suis sûr</button>
+            <a class="btn btn-default" href="{{ jeu.get_absolute_url }}">Annuler</a>
+        </form>
+    </div>
+{% endblock %}
