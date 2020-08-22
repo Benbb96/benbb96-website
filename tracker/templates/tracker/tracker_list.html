@@ -10,6 +10,11 @@
 {% endblock %}
 
 {% block content %}
+    {% if trackers|length > 1 %}
+        <div class="text-right">
+            <a class="btn btn-default" href="{% url 'tracker:compare-trackers' %}">Comparer des trackers</a>
+        </div>
+    {% endif %}
     <div class="flex-container">
         {% for tracker in trackers %}
             <div class="tracker" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">

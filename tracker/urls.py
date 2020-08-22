@@ -20,6 +20,7 @@ urlpatterns = [
     path('get-history/', views.tracker_history, name='tracker-history'),
     path('track/<int:pk>/update/', views.TrackUpdateView.as_view(), name='update-track'),
     path('track/<int:pk>/delete/', views.TrackDeleteView.as_view(), name='delete-track'),
+    path('compare/', views.compare_trackers, name='compare-trackers'),
 
     path('api/', include(router.urls))
 ]

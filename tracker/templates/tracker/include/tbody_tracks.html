@@ -1,42 +1,49 @@
 {% for track in tracks %}
     <tr class="track" id="{{ track.id }}">
+        {% if compare %}
+            <td>{{ track.tracker }}</td>
+        {% endif %}
         <td class="date">{{ track.datetime|date }} {{ track.datetime|time }}</td>
         <td class="commentaire">
             {{ track.commentaire }}
         </td>
-        <td>
-            <button type="button" class="btn btn-default displayForm">
-                <i class="fa fa-edit" title="Editer ce track"></i>
-            </button>
-            <button type="button" class="btn btn-warning modalConfirmDelete"
-                    data-target-url="{% url 'tracker:delete-track' track.id %}">
-                <i class="fa fa-trash" title="Supprimer ce track"></i>
-            </button>
-        </td>
+        {% if not compare %}
+            <td>
+                <button type="button" class="btn btn-default displayForm">
+                    <i class="fa fa-edit" title="Editer ce track"></i>
+                </button>
+                <button type="button" class="btn btn-warning modalConfirmDelete"
+                        data-target-url="{% url 'tracker:delete-track' track.id %}">
+                    <i class="fa fa-trash" title="Supprimer ce track"></i>
+                </button>
+            </td>
+        {% endif %}
     </tr>
-    <tr class="trackForm hidden">
-        <td colspan="3">
-            <form class="form" action="{% url 'tracker:update-track' track.id %}">
-                {% csrf_token %}
-                <div class="col-xs-5">
-                    <input type="datetime-local" name="datetime"
-                           value="{{ track.datetime|date:"Y-m-d" }}T{{ track.datetime|time:"H:i" }}"
-                           class="form-control" required="" id="id_datetime">
-                </div>
-                <div class="col-xs-5">
-                    {{ track.form.commentaire }}
-                </div>
-                <div class="col-xs-2">
-                    <button type="submit" class="btn btn-primary validateBtn">
-                        <i class="fa fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-default cancelBtn">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </form>
-        </td>
-    </tr>
+    {% if not compare %}
+        <tr class="trackForm hidden">
+            <td colspan="3">
+                <form class="form" action="{% url 'tracker:update-track' track.id %}">
+                    {% csrf_token %}
+                    <div class="col-xs-5">
+                        <input type="datetime-local" name="datetime"
+                               value="{{ track.datetime|date:"Y-m-d" }}T{{ track.datetime|time:"H:i" }}"
+                               class="form-control" required>
+                    </div>
+                    <div class="col-xs-5">
+                        {{ track.form.commentaire }}
+                    </div>
+                    <div class="col-xs-2">
+                        <button type="submit" class="btn btn-primary validateBtn">
+                            <i class="fa fa-check"></i>
+                        </button>
+                        <button type="button" class="btn btn-default cancelBtn">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+    {% endif %}
 {% empty %}
     <tr>
     <td colspan="3" class="text-center text-danger">Aucun track pour la période donnée. </td>

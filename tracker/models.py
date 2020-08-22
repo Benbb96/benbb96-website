@@ -55,6 +55,18 @@ class Tracker(SortableMixin):
 
         return days
 
+    @property
+    def rgba_background_color(self):
+        """
+        Retourne la commande css pour afficher la couleur du tracker avec une opacité diminué afin de voir
+        les différentes courbes les unes à travers les autres.
+        """
+        opacity = '0.3'
+        return 'rgba(%s,%s)' % (
+            ','.join(tuple(str(int(self.color.lstrip('#')[i:i+2], 16)) for i in (0, 2, 4))),
+            opacity
+        )
+
 
 class TrackManager(models.Manager):
     def first_track(self):
