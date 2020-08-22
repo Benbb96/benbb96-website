@@ -383,16 +383,16 @@
         });
 
         const update_track_graph = frequency => {
-            $.post("{% url 'tracker:tracker-data' %}", {id: trackerId, frequency: frequency, start: start, end: end})
+            $.post("{% url 'tracker:tracker-data' %}", {id: [trackerId], frequency: frequency, start: start, end: end})
                 .done(response => {
                     if (response.labels.length > 0) {
                         $('div#noTracks').addClass('hidden');
                         $('div#track_gaph').removeClass('hidden');
                         allTracks.data.labels = response.labels;
-                        allTracks.data.datasets[0].data = response.data;
+                        allTracks.data.datasets = response.datasets;
                         allTracks.update();
                         $('span#frequency').text(frequency_map[frequency]);
-                        $('strong#avg').text(response.avg);
+                        $('strong#avg').text(response.averages[0].avg);
                         $('.btn-frequency').removeClass('active');
                         $('.btn-frequency[data-frequency=' + frequency + ']').addClass('active')
                     } else {
@@ -408,7 +408,7 @@
         const update_all = frequency => {
             update_track_graph(frequency);
 
-            $.post("{% url 'tracker:tracker-other-stats' %}", {id: trackerId, start: start, end: end})
+            $.post("{% url 'tracker:tracker-other-stats' %}", {id: [trackerId], start: start, end: end})
                 .done(response => {
                     if (response.trackByHourChart !== undefined && response.trackByDayChart !== undefined) {
                         trackByHourChart.data.labels = response.trackByHourChart.labels;
@@ -428,7 +428,7 @@
                     console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
                 });
 
-            $.post("{% url 'tracker:tracker-history' %}", {id: trackerId, start: start, end: end})
+            $.post("{% url 'tracker:tracker-history' %}", {id: [trackerId], start: start, end: end})
                 .done(response => {
                     $('tbody#tracks').html(response.html);
                     $('span#trackCount').text(response.trackCount);

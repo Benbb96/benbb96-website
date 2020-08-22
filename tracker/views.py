@@ -16,7 +16,7 @@ import pandas as pd
 from rest_framework import generics
 from rest_framework.viewsets import ModelViewSet
 
-from tracker.forms import TrackForm, TrackerForm
+from tracker.forms import TrackForm, TrackerForm, SelectTrackersForm
 from tracker.models import Tracker, Track
 from tracker.serializers import TrackerSerializer, CustomTrackSerializer, TrackSerializer
 
@@ -115,20 +115,25 @@ class TrackDeleteView(generics.DestroyAPIView):
 
 
 def get_tracks_from_request(request):
-    tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=request.POST.get('id'))
+    ids = request.POST.getlist('id[]')
+    trackers = {}
+    for tracker_id in ids:
+        tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=tracker_id)
+        trackers[tracker] = tracker.tracks.all()
 
     start = request.POST.get('start', None)
     end = request.POST.get('end', None)
 
-    tracks = tracker.tracks.all()
     if start:
         start = make_aware(datetime.strptime(start, '%y-%m-%d %H:%M:%S'))
-        tracks = tracks.filter(datetime__gte=start)
+        for tracker, tracks in trackers.items():
+            trackers[tracker] = tracks.filter(datetime__gte=start)
     if end:
         end = make_aware(datetime.strptime(end, '%y-%m-%d %H:%M:%S'))
-        tracks = tracks.filter(datetime__lte=end)
+        for tracker, tracks in trackers.items():
+            trackers[tracker] = tracks.filter(datetime__lte=end)
 
-    return tracks
+    return trackers
 
 
 @require_POST
@@ -136,58 +141,71 @@ def tracker_data(request):
     if not request.is_ajax():
         return JsonResponse({'error': 'Unauthorized access'}, status=401)
 
-    tracks = get_tracks_from_request(request)
+    trackers = get_tracks_from_request(request)
+    datasets = []
+    labels = set()
+    averages = []
+    for tracker, tracks in trackers.items():
+        if tracks.exists():
+            # Regroupe les données par date pour faire des stats
+            frequency = request.POST.get('frequency', 'D')
+            df = read_frame(tracks, fieldnames=['datetime'])
+            df['datetime'] = pd.to_datetime(df['datetime'])
+            df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
+            df.index = df['datetime']
+            df['count'] = [1] * tracks.count()
+            data = df.resample(frequency).sum()
 
-    labels = []
-    data = []
-    avg = 0
+            delta = timezone.now().date() - tracks.earliest('datetime').datetime.date()
 
-    if tracks.exists():
-        # Regroupe les données par date pour faire des stats
-        frequency = request.POST.get('frequency', 'D')
-        df = read_frame(tracks, fieldnames=['datetime'])
-        df['datetime'] = pd.to_datetime(df['datetime'])
-        df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
-        df.index = df['datetime']
-        df['count'] = [1] * tracks.count()
-        data = df.resample(frequency).sum()
+            date_format = '%d/%m/%y'
+            avg = tracks.count() / (delta.days + 1)  # On ajoute un jour pour éviter la division par 0
 
-        delta = timezone.now().date() - tracks.earliest('datetime').datetime.date()
+            if frequency == 'H':
+                date_format = '%d/%m/%y %M:%H'
+                avg /= 24
+            elif frequency == 'W':
+                avg *= 7
+            elif frequency == 'M':
+                date_format = '%B %Y'
+                avg *= 30
+            elif frequency == 'Q':
+                date_format = '%B %Y'
+                avg *= 120
+            elif frequency == 'Y':
+                date_format = '%Y'
+                avg *= 365
 
-        date_format = '%d/%m/%y'
-        avg = tracks.count() / (delta.days + 1)  # On ajoute un jour pour éviter la division par 0
+            averages.append({'tracker': tracker.nom, 'avg': round(avg, 2)})
 
-        if frequency == 'H':
-            date_format = '%d/%m/%y %M:%H'
-            avg /= 24
-        elif frequency == 'W':
-            avg *= 7
-        elif frequency == 'M':
-            date_format = '%B %Y'
-            avg *= 30
-        elif frequency == 'Q':
-            date_format = '%B %Y'
-            avg *= 120
-        elif frequency == 'Y':
-            date_format = '%Y'
-            avg *= 365
+            data.index = data.index.strftime(date_format)
 
-        data.index = data.index.strftime(date_format)
+            # Ajoute les labels dans le set en utilisant leur valeur en datetime
+            for label in data.index.values.tolist():
+                labels.add(datetime.strptime(label, date_format))
 
-        labels = data.index.values.tolist()
-        data = data.values.tolist()
+            data = data.values.tolist()
 
-        # TODO Faire en sorte que tous les dates entre le dernier track et ojd apparaissent
-        # Ajoute la date d'aujourd'hui si elle n'y est pas déjà
-        # today = timezone.now().strftime(date_format)
-        # if today not in labels:
-        #     labels.append(today)
-        #     data.append([0])
+            # FIXME Sur la comparaison, les data ne correspondent pas forcément avec leur label de date...
+
+            # TODO Faire en sorte que tous les dates entre le dernier track et ojd apparaissent
+            # Ajoute la date d'aujourd'hui si elle n'y est pas déjà
+            # today = timezone.now().strftime(date_format)
+            # if today not in labels:
+            #     labels.append(today)
+            #     data.append([0])
+
+            datasets.append({
+                'data': data,
+                'label': tracker.nom,
+                'backgroundColor': tracker.rgba_background_color
+            })
 
     return JsonResponse({
-        'labels': labels,
-        'data': data,
-        'avg': round(avg, 2)
+        # Il faut au préalable remettre les labels dans l'ordre
+        'labels': [label.strftime(date_format) for label in sorted(list(labels))],
+        'datasets': datasets,
+        'averages': averages
     })
 
 
@@ -217,8 +235,12 @@ def get_other_stats(request):
     if not request.is_ajax():
         return JsonResponse({'error': 'Unauthorized access'}, status=401)
 
-    tracks = get_tracks_from_request(request)
+    trackers = get_tracks_from_request(request)
+    if not len(trackers) == 1:
+        return JsonResponse({})
 
+    # Récupère directement les tracks du seul tracker qui est censé être dans le dictionnaire
+    tracks = trackers[next(iter(trackers))]
     if not tracks.exists():
         return JsonResponse({})
 
@@ -295,11 +317,43 @@ def tracker_history(request):
     if not request.is_ajax():
         return JsonResponse({'error': 'Unauthorized access'}, status=401)
 
-    tracks = get_tracks_from_request(request)
-    for track in tracks:
-        track.form = TrackForm(instance=track)
-    html = render_to_string('tracker/include/tbody_tracks.html', {'tracks': tracks}, request)
+    trackers = get_tracks_from_request(request)
+    total_count = 0
+    all_tracks = []
+    for tracker, tracks in trackers.items():
+        for track in tracks:
+            track.form = TrackForm(instance=track)
+        # Dans le cas où l'on est sur la page détail, on renvoit direct le JSON
+        if len(trackers) == 1:
+            return JsonResponse({
+                'html': render_to_string('tracker/include/tbody_tracks.html', {'tracks': tracks}, request),
+                'trackCount': tracks.count()
+            })
+        else:
+            all_tracks += list(tracks)
+            total_count += tracks.count()
     return JsonResponse({
-        'html': html,
-        'trackCount': tracks.count()
+        'html': render_to_string(
+            'tracker/include/tbody_tracks.html',
+            {'tracks': sorted(all_tracks, key=lambda item: item.datetime, reverse=True), 'compare': True},
+            request
+        ),
+        'trackCount': total_count
+    })
+
+
+def compare_trackers(request):
+    form = SelectTrackersForm(data=request.GET or None, user=request.user)
+    trackers = []
+    first_track = last_track = None
+    if form.is_valid():
+        trackers = form.cleaned_data.get('trackers')
+        all_tracks = Track.objects.filter(tracker__in=trackers)
+        first_track = all_tracks.earliest('datetime')
+        last_track = all_tracks.latest('datetime')
+    return render(request, 'tracker/compare_trackers.html', {
+        'form': form,
+        'trackers': trackers,
+        'first_track': first_track,
+        'last_track': last_track
     })
