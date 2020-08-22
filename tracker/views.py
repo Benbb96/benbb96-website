@@ -154,32 +154,32 @@ def tracker_data(request):
 
         delta = timezone.now().date() - tracks.earliest('datetime').datetime.date()
 
-        format = '%d/%m/%y'
+        date_format = '%d/%m/%y'
         avg = tracks.count() / (delta.days + 1)  # On ajoute un jour pour éviter la division par 0
 
         if frequency == 'H':
-            format = '%d/%m/%y %M:%H'
+            date_format = '%d/%m/%y %M:%H'
             avg /= 24
         elif frequency == 'W':
             avg *= 7
         elif frequency == 'M':
-            format = '%B %Y'
+            date_format = '%B %Y'
             avg *= 30
         elif frequency == 'Q':
-            format = '%B %Y'
+            date_format = '%B %Y'
             avg *= 120
         elif frequency == 'Y':
-            format = '%Y'
+            date_format = '%Y'
             avg *= 365
 
-        data.index = data.index.strftime(format)
+        data.index = data.index.strftime(date_format)
 
         labels = data.index.values.tolist()
         data = data.values.tolist()
 
         # TODO Faire en sorte que tous les dates entre le dernier track et ojd apparaissent
         # Ajoute la date d'aujourd'hui si elle n'y est pas déjà
-        # today = timezone.now().strftime(format)
+        # today = timezone.now().strftime(date_format)
         # if today not in labels:
         #     labels.append(today)
         #     data.append([0])
@@ -264,16 +264,16 @@ def get_other_stats(request):
 
     delta_stats = None
     if deltas:
-        format = '%d/%m/%y %H:%M'
+        date_format = '%d/%m/%y %H:%M'
         delta_stats = {
             'deltaMin': format_html(
                 '<b>{}</b> <br><small>Entre le {} et le {}</small>',
-                format_timedelta(minimum), min_1.strftime(format), min_2.strftime(format)
+                format_timedelta(minimum), min_1.strftime(date_format), min_2.strftime(date_format)
             ),
             'deltaAvg': format_timedelta(sum(deltas, timedelta(0)) / len(deltas)),
             'deltaMax': format_html(
                 '<b>{}</b> <br><small>Entre le {} et le {}</small>',
-                format_timedelta(maximum), max_1.strftime(format), max_2.strftime(format)
+                format_timedelta(maximum), max_1.strftime(date_format), max_2.strftime(date_format)
             )
         }
 
