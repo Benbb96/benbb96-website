@@ -142,13 +142,13 @@ def tracker_data(request):
         return JsonResponse({'error': 'Unauthorized access'}, status=401)
 
     trackers = get_tracks_from_request(request)
+    frequency = request.POST.get('frequency', 'D')
     datasets = []
-    labels = set()
+    labels = {}
     averages = []
     for tracker, tracks in trackers.items():
         if tracks.exists():
             # Regroupe les données par date pour faire des stats
-            frequency = request.POST.get('frequency', 'D')
             df = read_frame(tracks, fieldnames=['datetime'])
             df['datetime'] = pd.to_datetime(df['datetime'])
             df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
@@ -181,15 +181,19 @@ def tracker_data(request):
 
             data.index = data.index.strftime(date_format)
 
+            data_values = data.values.tolist()
+
             # Ajoute les labels dans le set en utilisant leur valeur en datetime
+            i = 0
             for label in data.index.values.tolist():
-                labels.add(datetime.strptime(label, date_format))
+                label_date = datetime.strptime(label, date_format)
+                if label_date not in labels.keys():
+                    labels[label_date] = {tracker.nom: data_values[i][0]}
+                else:
+                    labels[label_date][tracker.nom] = data_values[i][0]
+                i += 1
 
-            data = data.values.tolist()
-
-            # FIXME Sur la comparaison, les data ne correspondent pas forcément avec leur label de date...
-
-            # TODO Faire en sorte que tous les dates entre le dernier track et ojd apparaissent
+            # TODO Faire en sorte que toutes les dates entre le dernier track et ojd apparaissent
             # Ajoute la date d'aujourd'hui si elle n'y est pas déjà
             # today = timezone.now().strftime(date_format)
             # if today not in labels:
@@ -197,14 +201,18 @@ def tracker_data(request):
             #     data.append([0])
 
             datasets.append({
-                'data': data,
                 'label': tracker.nom,
                 'backgroundColor': tracker.rgba_background_color
             })
 
+    # Réorganise les data pour les mettre dans leur dataset en initialisant à 0 pour les valeurs absentes sur un
+    # même label d'un tracker à l'autre
+    for dataset in datasets:
+        dataset['data'] = [values.get(dataset['label'], 0) for values in labels.values()]
+
     return JsonResponse({
-        # Il faut au préalable remettre les labels dans l'ordre
-        'labels': [label.strftime(date_format) for label in sorted(list(labels))],
+        # Il faut au préalable remettre les labels dans l'ordre et en tant que texte
+        'labels': [label.strftime(date_format) for label in sorted(labels.keys())],
         'datasets': datasets,
         'averages': averages
     })
