@@ -153,10 +153,11 @@ def tracker_data(request):
             df['datetime'] = pd.to_datetime(df['datetime'])
             df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
             df.index = df['datetime']
+            # Ajoute une nouvelle colonne pour compter comme un chaque track
             df['count'] = [1] * tracks.count()
             data = df.resample(frequency).sum()
 
-            delta = timezone.now().date() - tracks.earliest('datetime').datetime.date()
+            delta = tracks.latest('datetime').datetime.date() - tracks.earliest('datetime').datetime.date()
 
             date_format = '%d/%m/%y'
             avg = tracks.count() / (delta.days + 1)  # On ajoute un jour pour éviter la division par 0

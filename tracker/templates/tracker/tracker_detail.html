@@ -122,26 +122,7 @@
                         <div class="text-center">
                             <canvas id="allTracks" width="600" height="400"></canvas>
                         </div>
-                        <div class="row">
-                            <div class="col-md-2 col-xs-6 text-center">
-                                <button type="button" class="btn btn-default btn-frequency" data-frequency="H">Heure</button>
-                            </div>
-                            <div class="col-md-2 col-xs-6 text-center">
-                                <button type="button" class="btn btn-default btn-frequency" data-frequency="D" id="default">Jour</button>
-                            </div>
-                            <div class="col-md-2 col-xs-6 text-center">
-                                <button type="button" class="btn btn-default btn-frequency" data-frequency="W">Semaine</button>
-                            </div>
-                            <div class="col-md-2 col-xs-6 text-center">
-                                <button type="button" class="btn btn-default btn-frequency" data-frequency="M">Mois</button>
-                            </div>
-                            <div class="col-md-2 col-xs-6 text-center">
-                                <button type="button" class="btn btn-default btn-frequency" data-frequency="Q">Quart d'année</button>
-                            </div>
-                            <div class="col-md-2 col-xs-6 text-center">
-                                <button type="button" class="btn btn-default btn-frequency" data-frequency="Y">Année</button>
-                            </div>
-                        </div>
+                        {% include 'tracker/include/frequency_buttons.html' %}
                         <h3>Ecarts</h3>
                         <p>Voici les statistiques des différences de temps entre deux tracks à la suite.</p>
                         <div class="row">
@@ -182,83 +163,24 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
         {% get_current_language as LANGUAGE_CODE %}
-        moment.locale('{{ LANGUAGE_CODE }}');
-
-        let allTracks = undefined;
-        let trackByHourChart = undefined;
-        let trackByDayChart = undefined;
-        let start = moment().subtract(1, 'month');
-        let end = moment();
-        const minDate = moment("{{ tracker.tracks.first_track.datetime|date:"c" }}");
-        const maxDate = moment("{{ tracker.tracks.last_track.datetime|date:"c" }}").add(1, 'minute');
-
-        const trackerId = '{{ tracker.id }}';
-        const frequency_map = {
-            H: 'heure',
-            D: 'jour',
-            W: 'semaine',
-            M: 'mois',
-            Q: "quart d'année",
-            Y: 'an',
-        };
+        moment.locale('{{ LANGUAGE_CODE }}')
+        const minDate = moment("{{ tracker.tracks.first_track.datetime|date:"c" }}")
+        const maxDate = moment("{{ tracker.tracks.last_track.datetime|date:"c" }}").add(1, 'minute')
+        const trackerDataUrl = '{% url 'tracker:tracker-data' %}'
+    </script>
+    <script src="{% static 'tracker/js/tracker.js' %}"></script>
+    <script>
+        const trackerIds = ['{{ tracker.id }}'];
 
         $(() => {
             function daterange_callback(s, e) {
                 $('#reportrange span').html(s.format('LLLL') + ' - ' + e.format('LLLL'));
                 start = s.format('YY-MM-DD HH:mm:ss');
                 end = e.format('YY-MM-DD HH:mm:ss');
-                update_all($('button.btn-frequency.active').data('frequency'))
+                update_all($('button.btn-frequency.btn-primary').data('frequency'))
             }
 
-            $('input[name="dates"]').daterangepicker({
-                showDropdowns: true,
-                timePicker: true,
-                timePicker24Hour: true,
-                startDate: start,
-                endDate: end,
-                minDate: minDate,
-                maxDate: maxDate,
-                locale: {
-                    format: 'LLLL',
-                    applyLabel: "OK",
-                    cancelLabel: "Annuler",
-                    fromLabel: "From",
-                    toLabel: "To",
-                    customRangeLabel: "Personnalisé",
-                    weekLabel: "W",
-                    daysOfWeek: [
-                        "Di",
-                        "Lu",
-                        "Ma",
-                        "Me",
-                        "Je",
-                        "Ve",
-                        "Sa"
-                    ],
-                    monthNames: [
-                        "Janvier",
-                        "Février",
-                        "Mars",
-                        "Avril",
-                        "Mai",
-                        "Juin",
-                        "Juillet",
-                        "Août",
-                        "Septembre",
-                        "Octobre",
-                        "Novembre",
-                        "Décembre"
-                    ]
-                },
-                ranges: {
-                   'Les 7 derniers jours': [moment().subtract(6, 'days'), moment()],
-                   'Les 30 derniers jours': [moment().subtract(1, 'month'), moment()],
-                   'Les 3 derniers mois': [moment().subtract(3, 'month'), moment()],
-                   'Les 6 derniers mois': [moment().subtract(6, 'month'), moment()],
-                   'Les 12 derniers mois': [moment().subtract(1, 'year'), moment()],
-                   'Tous': [minDate, maxDate],
-                }
-            }, daterange_callback);
+            $('input[name="dates"]').daterangepicker(dateRangeOptions, daterange_callback);
 
             allTracks = new Chart(document.getElementById("allTracks"), {
                 type: 'line',
@@ -270,12 +192,12 @@
                 },
                 options: {
                     legend: {
-                        display:false
+                        display: false
                     },
                     scales: {
                         yAxes: [{
                             ticks: {
-                                beginAtZero:true
+                                beginAtZero: true
                             }
                         }]
                     }
@@ -353,13 +275,6 @@
 
             daterange_callback(start, end);
 
-            $('.btn-frequency').click(function () {
-                update_track_graph($(this).data('frequency'), start, end)
-            });
-
-            // Trigger the default one
-            $('.btn-frequency#default').trigger('click');
-
             // Tracker Management
 
             $('button#toggleDatetime').click(function () {
@@ -374,7 +289,7 @@
                         $("#modalConfirmDelete").modal('hide');
                         $('span#trackCount').text(parseInt($('span#trackCount').text()) - 1);
                         $('b#totalCount').text(parseInt($('b#totalCount').text()) - 1);
-                        update_all($('button.btn-frequency.active').data('frequency'))
+                        update_all($('button.btn-frequency.btn-primary').data('frequency'))
                     })
                     .fail((xhr, textStatus, errorThrown) => {
                         alert(textStatus + ' - ' + errorThrown)
@@ -382,33 +297,10 @@
             })
         });
 
-        const update_track_graph = frequency => {
-            $.post("{% url 'tracker:tracker-data' %}", {id: [trackerId], frequency: frequency, start: start, end: end})
-                .done(response => {
-                    if (response.labels.length > 0) {
-                        $('div#noTracks').addClass('hidden');
-                        $('div#track_gaph').removeClass('hidden');
-                        allTracks.data.labels = response.labels;
-                        allTracks.data.datasets = response.datasets;
-                        allTracks.update();
-                        $('span#frequency').text(frequency_map[frequency]);
-                        $('strong#avg').text(response.averages[0].avg);
-                        $('.btn-frequency').removeClass('active');
-                        $('.btn-frequency[data-frequency=' + frequency + ']').addClass('active')
-                    } else {
-                        $('div#track_gaph').addClass('hidden');
-                        $('div#noTracks').removeClass('hidden');
-                    }
-                })
-                .fail((xhr, textStatus, errorThrown) => {
-                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
-                });
-        };
-
         const update_all = frequency => {
             update_track_graph(frequency);
 
-            $.post("{% url 'tracker:tracker-other-stats' %}", {id: [trackerId], start: start, end: end})
+            $.post("{% url 'tracker:tracker-other-stats' %}", {id: trackerIds, start: start, end: end})
                 .done(response => {
                     if (response.trackByHourChart !== undefined && response.trackByDayChart !== undefined) {
                         trackByHourChart.data.labels = response.trackByHourChart.labels;
@@ -428,7 +320,7 @@
                     console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
                 });
 
-            $.post("{% url 'tracker:tracker-history' %}", {id: [trackerId], start: start, end: end})
+            $.post("{% url 'tracker:tracker-history' %}", {id: trackerIds, start: start, end: end})
                 .done(response => {
                     $('tbody#tracks').html(response.html);
                     $('span#trackCount').text(response.trackCount);
