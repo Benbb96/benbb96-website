@@ -48,7 +48,7 @@
 
             <div class="tab-content">
                 <div id="historique" class="tab-pane fade">
-                    <h2>Historique <small><span id="trackCount"></span> {{ tracker.nom|lower }}s</small></h2>
+                    <h2>Historique <small><span id="trackCount"></span> résultats</small></h2>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -67,9 +67,10 @@
                 <div id="statistiques" class="tab-pane fade in active">
                     <h2>Statistiques</h2>
                     <div id="track_gaph"{% if not trackers %} class="hidden" {% endif %}>
-                        <p>
-                            <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
-                        </p>
+                        {# TODO afficher les moyennes pour chaque tracker ? #}
+{#                        <p>#}
+{#                            <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>#}
+{#                        </p>#}
                         <div class="text-center">
                             <canvas id="allTracks" width="600" height="400"></canvas>
                         </div>
