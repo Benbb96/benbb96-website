@@ -168,7 +168,7 @@
         const maxDate = moment("{{ tracker.tracks.last_track.datetime|date:"c" }}").add(1, 'minute')
         const trackerDataUrl = '{% url 'tracker:tracker-data' %}'
     </script>
-    <script src="{% static 'tracker/js/tracker.js' %}"></script>
+    <script src="{% static 'tracker/js/common.js' %}"></script>
     <script>
         const trackerIds = ['{{ tracker.id }}'];
 
