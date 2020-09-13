@@ -1,3 +1,4 @@
+import string
 from datetime import datetime, timedelta
 
 from django.contrib import messages
@@ -270,18 +271,35 @@ def get_other_stats(request):
     for weekday in weekdays.values():
         days[weekday] = 0
 
+    words = {}
     deltas = []
     prev = minimum = maximum = None
     min_1 = min_2 = max_1 = max_2 = None
     for track in tracks:
+        # Compte les mots présents dans chaque track pour en faire un nuage de mots-clefs
+        if track.commentaire:
+            # Récupère tous les mots séparés par des espaces
+            commentaire_words = track.commentaire.split()
+            # Prépare une table de traduction pour retirer la ponctuation
+            table = str.maketrans('', '', string.punctuation)
+            # J'en profite aussi pour mettre tous les mots en miniscule
+            stripped = [w.translate(table).lower() for w in commentaire_words]
+            for word in stripped:
+                # Incrémente le compteur pour le mot en question
+                if word not in words.keys():
+                    words[word] = 1
+                else:
+                    words[word] += 1
+
+        # Récupère la datetime du track et incrémente les compteurs de l'heure et de jour de la semaine
         dt = make_naive(track.datetime)
         hours[str(dt.hour)] += 1
         days[weekdays[dt.weekday()]] += 1
         if prev:
-            # Store the diff between the previous track and this one
+            # Sauvegarde la différence entre le datetime précédent et l'actuel
             delta = prev.datetime - track.datetime
             deltas.append(delta)
-            # Keep min and max with their respective datetime
+            # Garde le minimum et le maximum avec le datetime correspondant
             if not minimum or delta < minimum:
                 minimum = delta
                 min_1 = timezone.localtime(track.datetime)
@@ -290,11 +308,11 @@ def get_other_stats(request):
                 maximum = delta
                 max_1 = timezone.localtime(track.datetime)
                 max_2 = timezone.localtime(prev.datetime)
-
         prev = track
 
     delta_stats = None
     if deltas:
+        # Formate correctement les dates pour les afficher
         date_format = '%d/%m/%y %H:%M'
         delta_stats = {
             'deltaMin': format_html(
@@ -317,7 +335,9 @@ def get_other_stats(request):
             'labels': list(days.keys()),
             'values': list(days.values())
         },
-        'deltaStats': delta_stats
+        'deltaStats': delta_stats,
+        # Remet les mots dans l'ordre des valeurs d'appartition et limite à 50 résultats
+        'words': {k: v for k, v in sorted(words.items(), key=lambda item: item[1], reverse=True)[:50]}
     })
 
 
