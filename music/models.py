@@ -181,7 +181,7 @@ class Musique(models.Model):
 
     class Meta:
         ordering = ('artiste__nom_artiste', 'titre')
-        unique_together = ('artiste', 'titre')
+        unique_together = ('artiste', 'titre', 'remixed_by')
 
     def __str__(self):
         return '%s - %s' % (self.artiste_display(), self.titre_display())
