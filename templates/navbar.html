@@ -50,7 +50,7 @@
                         <a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> {% trans "Login" %}</a>
                     </li>
                 {% else %}
-                    <li>
+                    <li{% if profil %} class="active"{% endif %}>
                         <a href="{% url 'base:profil' request.user.username %}">{{ request.user }}</a>
                     </li>
                     <li>
