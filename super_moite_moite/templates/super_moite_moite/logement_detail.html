@@ -25,10 +25,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="progress">
-                        <div v-for="(habitant, index) in logement.habitants" :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
-                             role="progressbar" :style="'width:' + pourcentagePointProfil(habitant) + '%'">
-                            [[ habitant.user ]] ([[ pourcentagePointProfil(habitant) | round(2) ]]%)
+                    <div v-for="(habitant, index) in logement.habitants" class="progress">
+                        <div :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
+                             :title="pourcentagePointProfil(habitant) | round(2) + '%'"
+                             role="progressbar" :style="'width:' + pourcentagePointProfil(habitant) + '%'"
+                             data-toggle="tooltip" data-placement="right">
+                            [[ habitant.user ]] ([[ pointsProfil(habitant) ]] points)
                         </div>
                     </div>
                 </div>
@@ -63,7 +65,10 @@
                             <div v-for="categorie in categoriesFiltrees" class="col-md-3 col-sm-4 col-xs-12"
                                  ref="categories" :data-id="categorie.id">
                                 <div class="well" :style="{backgroundColor: categorieEnEdition === categorie.id && couleurCategorieEdition !== ''? couleurCategorieEdition : categorie.couleur}">
-                                    <h4 class="text-center showOnHover handleCategorie" @click="editionCategorie(categorie)"
+                                    <div class="pull-right">
+                                        <i class="fa fa-arrows handleCategorie" title="Changer l'ordre de la catégorie"></i>
+                                    </div>
+                                    <h4 class="text-center showOnHover" @click="editionCategorie(categorie)"
                                         v-if="categorieEnEdition !== categorie.id"
                                         title="Cliquer pour éditer la catégorie">
                                         [[ categorie.nom ]]
@@ -118,7 +123,10 @@
                                         <div class="panel panel-default" v-for="tache in categorieTachesFiltrees(categorie)"
                                              :ref="'taches' + categorie.id" :data-id="tache.id">
                                             <div class="panel-heading">
-                                                <a @click="detailTache(tache)" class="handleTache">
+                                                <div class="pull-right">
+                                                    <i class="fa fa-arrows-v handleTache" title="Déplacer la tâche au sein de la catégorie"></i>
+                                                </div>
+                                                <a @click="detailTache(tache)">
                                                     [[ tache.nom ]]
                                                 </a>
                                             </div>
@@ -220,6 +228,14 @@
                     </div>
                 </div>
                 <div id="statistiques" class="row tab-pane fade">
+                    <div class="col-xs-12">
+                        <div class="progress">
+                            <div v-for="(habitant, index) in logement.habitants" :class="(habitant.id === idProfilConnecte ? 'progress-bar-striped active ' : '') + 'progress-bar progress-bar-' + bootstrapClassColors[index]"
+                                 role="progressbar" :style="'width:' + pourcentagePointProfil(habitant) + '%'">
+                                [[ habitant.user ]] ([[ pourcentagePointProfil(habitant) | round(2) ]]%)
+                            </div>
+                        </div>
+                    </div>
                     <div v-for="(habitant, index) in logement.habitants" class="col-sm-6 col-xs-12">
                         <div :class="'panel panel-default panel-' + bootstrapClassColors[index]">
                             <div class="panel-heading text-center">
