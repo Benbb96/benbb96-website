@@ -75,8 +75,16 @@ class PlaylistDetailView(DetailView):
     def get_queryset(self):
         return Playlist.objects.select_related('createur__user').prefetch_related(
             'musiqueplaylist_set__musique__styles', 'musiqueplaylist_set__musique__artiste',
-            'musiqueplaylist_set__musique__remixed_by', 'musiqueplaylist_set__musique__featuring'
+            'musiqueplaylist_set__musique__remixed_by', 'musiqueplaylist_set__musique__featuring',
+            'musiqueplaylist_set__musique__liens'
         )
+
+    def get_context_data(self, **kwargs):
+        # Prépare les musiques de la playslists afin de les avoir dans le bon ordre
+        kwargs['musiques'] = (
+            musique_playlist.musique for musique_playlist in self.get_object().musiqueplaylist_set.all()
+        )
+        return super().get_context_data(**kwargs)
 
 
 class MusiqueDetailView(FormMixin, DetailView):
