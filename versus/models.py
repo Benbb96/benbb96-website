@@ -1,15 +1,20 @@
+from autoslug import AutoSlugField
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from base.models import Profil
 
 
 class Joueur(models.Model):
     nom = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
+    slug = AutoSlugField(unique=True, populate_from='nom')
     profil = models.OneToOneField(Profil, on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
+
+    class Meta:
+        ordering = ('nom',)
 
     def __str__(self):
         return self.nom
@@ -17,7 +22,7 @@ class Joueur(models.Model):
     def get_absolute_url(self):
         return reverse('versus:detail-joueur', kwargs={'slug': self.slug})
 
-    @property
+    @cached_property
     def nb_victoire(self):
         nb = 0
         for partiejoueur in self.partiejoueur_set.all():

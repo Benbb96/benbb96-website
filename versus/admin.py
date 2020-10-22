@@ -6,11 +6,11 @@ from versus.models import Joueur, Jeu, Partie, PartieJoueur
 
 @admin.register(Joueur)
 class JoueurAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'profil', 'nb_victoire', 'ratio')
+    list_display = ('nom', 'slug', 'profil', 'date_creation')
     search_fields = ('nom', 'profil__user__username')
     ordering = ('nom',)
     date_hierarchy = 'date_creation'
-    prepopulated_fields = {'slug': ('nom',), }
+    list_select_related = ('profil__user',)
 
 
 @admin.register(Jeu)

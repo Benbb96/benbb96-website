@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.forms import inlineformset_factory, NumberInput
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView
 from django_select2.forms import ModelSelect2Widget
 
 from versus.models import Jeu, Joueur, Partie, PartieJoueur
@@ -12,8 +13,17 @@ class JeuListView(ListView):
     model = Jeu
 
 
-class JoueurListView(ListView):
+class JoueurListView(CreateView):
+    """ Une ListView avec un formulaire de création """
     model = Joueur
+    template_name = 'versus/joueur_list.html'
+    fields = '__all__'
+    success_url = reverse_lazy('versus:liste-joueurs')
+
+    def get_context_data(self, **kwargs):
+        kwargs['object_list'] = Joueur.objects.select_related('profil__user')\
+            .prefetch_related('partiejoueur_set__partie__jeu')
+        return super().get_context_data(**kwargs)
 
 
 class JeuDetailView(DetailView):

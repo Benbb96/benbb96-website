@@ -27,6 +27,13 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if request.user.is_staff %}
+                    <div class="text-center">
+                        <a class="btn btn-default" href="{% url 'admin:versus_joueur_change' joueur.id %}">
+                            Editer le joueur
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
