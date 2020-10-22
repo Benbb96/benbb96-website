@@ -55,18 +55,7 @@
         </div>
         <div class="col-sm-8 col-xs-12">
             <h2>{% trans "Musics" %}</h2>
-            {% for musiqueplaylist in playlist.musiqueplaylist_set.all %}
-                <a href="{{ musiqueplaylist.musique.get_absolute_url }}">
-                    <b>{{ musiqueplaylist.musique }}</b>
-                </a>
-                <div>
-                    {% blocktrans with date=musiqueplaylist.date_ajout|date:'l j F Y, H:i' %}
-                        Added on {{ date }}
-                    {% endblocktrans %}
-                </div>
-            {% empty %}
-                <p>{% blocktrans %}This playlist is empty...{% endblocktrans %}</p>
-            {% endfor %}
+            {% include 'music/components/table_musics.html' %}
         </div>
     </div>
 {% endblock %}
