@@ -1,5 +1,7 @@
 import django_filters
-from django_select2.forms import ModelSelect2MultipleWidget
+from django.db.models import ManyToManyField
+from django_filters.filterset import remote_queryset
+from django_select2.forms import ModelSelect2MultipleWidget, Select2MultipleWidget
 
 from music.models import Musique, Style, Label, Artiste
 
@@ -13,7 +15,21 @@ class MusiqueFilter(django_filters.FilterSet):
     class Meta:
         model = Musique
         fields = {
-            'titre': ['icontains'], 'artiste': ['exact'], 'styles': ['exact']
+            'titre': ['icontains'],
+            'artiste': ['exact'],
+            'remixed_by': ['exact'],
+            'featuring': ['exact'],
+            'styles': ['exact']
+        }
+        # Utilise un widget Select2 pour les champs ManyToMany
+        filter_overrides = {
+            ManyToManyField: {
+                'filter_class': django_filters.ModelMultipleChoiceFilter,
+                'extra': lambda f: {
+                    'queryset': remote_queryset(f),
+                    'widget': Select2MultipleWidget(attrs={'style': 'width: 100%'})
+                }
+            },
         }
 
     def search_has_link(self, queryset, name, value):

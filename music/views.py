@@ -18,7 +18,7 @@ from music.templates.music.forms import LienForm
 def liste_musiques(request):
     all_musiques = Musique.objects.select_related('artiste', 'remixed_by')\
         .prefetch_related('featuring', 'liens', 'styles')
-    f = MusiqueFilter(request.GET, queryset=all_musiques)
+    f = MusiqueFilter(request.GET or None, queryset=all_musiques)
     paginator = Paginator(f.qs, 20)
     page = request.GET.get('page', 1)
     try:
