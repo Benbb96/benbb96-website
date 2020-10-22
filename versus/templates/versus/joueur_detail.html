@@ -21,6 +21,10 @@
                         <p>Nombre de parties jouées : <b>{{ joueur.partiejoueur_set.count }}</b></p>
                         <p>Nombre de victoire : <b>{{ joueur.nb_victoire }}</b></p>
                         <p>Ratio : <b>{{ joueur.ratio }}%</b></p>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped active progress-bar-{% if joueur.ratio >= 60 %}success{% elif joueur.ratio >= 40 %}warning{% else %}danger{% endif %}"
+                                 style="width: {{ joueur.ratio }}%"></div>
+                        </div>
                     </div>
                 {% endif %}
             </div>
