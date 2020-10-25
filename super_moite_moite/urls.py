@@ -25,6 +25,6 @@ urlpatterns = [
         login_required()(views.LogementUpdateView.as_view()),
         name='edition-logement'
     ),
-
+    path('logement/<slug>/duplicate', views.dupliquer_logement, name='dupliquer-logement'),
     path('api/', include(router.urls))
 ]

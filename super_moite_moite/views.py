@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView, UpdateView
 from django.contrib.auth.decorators import login_required
 
@@ -54,3 +54,39 @@ class LogementUpdateView(UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['profil'] = self.request.user.profil
         return kwargs
+
+
+@login_required
+def dupliquer_logement(request, slug):
+    logement = get_object_or_404(request.user.profil.logements.all(), slug=slug)
+    # Copie du logement
+    duplicata_logement = Logement.objects.create(
+        nom='Copie de ' + logement.nom,
+        slug='copie-' + logement.slug,
+    )
+    # Ajout des habitants
+    for habitant in logement.habitants.all():
+        duplicata_logement.habitants.add(habitant)
+    # Copie des Catégories
+    for categorie in logement.categories.all():
+        duplicata_categorie = duplicata_logement.categories.create(
+            nom=categorie.nom,
+            order=categorie.order,
+            couleur=categorie.couleur
+        )
+        # Copie des tâches de la catégorie
+        for tache in categorie.taches.all():
+            duplicata_tache = duplicata_categorie.taches.create(
+                nom=tache.nom,
+                description=tache.description,
+                order=tache.order
+            )
+            # Copie des points par défaut
+            for point_defaut in tache.point_profils.all():
+                duplicata_tache.point_profils.create(
+                    profil=point_defaut.profil,
+                    point=point_defaut.point
+                )
+
+    messages.success(request, 'Le logement %s a bien été dupliqué.' % logement)
+    return redirect(duplicata_logement)
