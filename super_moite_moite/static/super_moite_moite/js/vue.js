@@ -357,9 +357,18 @@ let app = new Vue({
         pointsCategorieProfil: function (categorie, profil) {
             return categorie.taches.reduce((totalPoints, tache) => totalPoints + this.pointsTacheProfil(tache, profil), 0)
         },
+        pointsDefautCategorieProfil: function (categorie, profil) {
+            return categorie.taches.reduce((totalPointsDefaut, tache) => totalPointsDefaut + this.pointParDefautProfil(tache, profil), 0)
+        },
         pointsProfil: function (profil) {
             return this.logement.categories.reduce(
                 (totalPoints, categorie) => totalPoints + this.pointsCategorieProfil(categorie, profil),
+                0
+            )
+        },
+        totalPointsParDefautProfil: function (profil) {
+            return this.logement.categories.reduce(
+                (totalPointsDefaut, categorie) => totalPointsDefaut + this.pointsDefautCategorieProfil(categorie, profil),
                 0
             )
         },
