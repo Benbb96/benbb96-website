@@ -18,7 +18,7 @@
                         <tr>
                             <th>Nom</th>
                             <th>Participants</th>
-                            <th>Actions</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,13 +33,18 @@
                                     <td>
                                         {% for habitant in habitants %}{{ habitant }}{% if not forloop.last %}, {% endif %}{% endfor %}
                                     </td>
-                                    <td>
-                                        <a class="btn btn-success btn-sm" href="{% url 'super-moite-moite:edition-logement' logement.slug %}">
+                                    <td class="text-center">
+                                        <a class="btn btn-default btn-sm" href="{% url 'super-moite-moite:edition-logement' logement.slug %}"
+                                           title="Editer les informations du logement">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                         <a class="btn btn-info btn-sm" href="{% url 'super-moite-moite:dupliquer-logement' logement.slug %}"
                                            title="Permet de copier toutes les catégories et les tâches dans un nouveau logement avec les mêmes participants et les mêmes points par défaut">
                                             <i class="fa fa-copy"></i>
+                                        </a>
+                                        <a class="btn btn-danger btn-sm" href="{% url 'super-moite-moite:suppression-logement' logement.slug %}"
+                                           title="Suppression du logement">
+                                            <i class="fa fa-trash"></i>
                                         </a>
                                     </td>
                                 </tr>
