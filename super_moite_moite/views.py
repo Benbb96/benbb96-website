@@ -88,7 +88,8 @@ def dupliquer_logement(request, slug):
             duplicata_tache = duplicata_categorie.taches.create(
                 nom=tache.nom,
                 description=tache.description,
-                order=tache.order
+                order=tache.order,
+                photo=tache.photo
             )
             # Copie des points par défaut
             for point_defaut in tache.point_profils.all():
