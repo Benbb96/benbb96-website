@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import DetailView, UpdateView
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 
 
@@ -56,13 +57,21 @@ class LogementUpdateView(UpdateView):
         return kwargs
 
 
+class LogementDeleteView(DeleteView):
+    context_object_name = 'logement'
+    model = Logement
+    success_url = reverse_lazy('super-moite-moite:liste-logements')
+
+    def get_queryset(self):
+        return self.request.user.profil.logements.all()
+
+
 @login_required
 def dupliquer_logement(request, slug):
     logement = get_object_or_404(request.user.profil.logements.all(), slug=slug)
     # Copie du logement
     duplicata_logement = Logement.objects.create(
-        nom='Copie de ' + logement.nom,
-        slug='copie-' + logement.slug,
+        nom='Copie de ' + logement.nom
     )
     # Ajout des habitants
     for habitant in logement.habitants.all():

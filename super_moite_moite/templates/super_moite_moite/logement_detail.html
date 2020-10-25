@@ -14,6 +14,10 @@
        title="Editer les informations du logement">
         <i class="fa fa-edit"></i>
     </a>
+    <a href="{% url 'super-moite-moite:suppression-logement' logement.slug %}" class="btn btn-danger btn-sm"
+       title="Supprimer le logement">
+        <i class="fa fa-trash"></i>
+    </a>
 {% endblock %}
 
 {% block stylesheet %}
