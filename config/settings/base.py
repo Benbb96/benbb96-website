@@ -191,3 +191,5 @@ ADMINS = [('Benbb96', 'benbb96@gmail.com')]
 EMAIL_SUBJECT_PREFIX = '[Benbb96] '
 DEFAULT_FROM_EMAIL = 'webmaster@benbb96.com'
 SERVER_EMAIL = 'benbb96@benbb96.com'
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 1500
