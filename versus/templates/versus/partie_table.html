@@ -1,4 +1,4 @@
-{% with winners=partie.get_winners %}
+{% with winners=partie.winners %}
     {% if partie.jeu.type == partie.jeu.CLASSEMENT %}
         <div class="list-group">
             {% for partie_joueur in partie.classement_joueur %}
