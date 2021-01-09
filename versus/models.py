@@ -26,7 +26,7 @@ class Joueur(models.Model):
     def nb_victoire(self):
         nb = 0
         for partiejoueur in self.partiejoueur_set.all():
-            if self in partiejoueur.partie.get_winners():
+            if self in partiejoueur.partie.winners:
                 nb += 1
         return nb
 
@@ -72,7 +72,7 @@ class Jeu(models.Model):
     def top_players(self):
         player_scores = {}
         for partie in self.parties.all():
-            for joueur in partie.get_winners():
+            for joueur in partie.winners:
                 if joueur not in player_scores.keys():
                     player_scores[joueur] = 1
                 else:
@@ -110,7 +110,8 @@ class Partie(models.Model):
             return self.partiejoueur_set.order_by('-score_classement')
         return self.partiejoueur_set.order_by('score_classement')
 
-    def get_winners(self):
+    @cached_property
+    def winners(self):
         """ Retourne le ou les gagnants de cette partie """
         if self.jeu.type == self.jeu.CLASSEMENT:
             # On veut la ou les personnes arrivées en première place
