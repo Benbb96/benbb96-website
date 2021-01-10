@@ -53,7 +53,7 @@
                     <div class="col-sm-6 col-xs-12">
                         <h2>{% trans "Links" %}</h2>
                         {% for lien in musique.liens.valide_seulement %}
-                            {% include 'music/lien.html' %}
+                            {% include 'music/components/lien.html' %}
                         {% endfor %}
                     </div>
                 {% endif %}
@@ -62,7 +62,7 @@
                         <div class="col-sm-6 col-xs-12">
                             <h3>{% trans "Links to validate" %}</h3>
                             {% for lien in musique.liens.a_valider %}
-                                {% include 'music/lien.html' with a_valider=True %}
+                                {% include 'music/components/lien.html' with a_valider=True %}
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -96,7 +96,7 @@
                 <h3>
                     {% blocktrans %}This music is present in these playlists{% endblocktrans %} :
                 </h3>
-                {% include 'music/list_group_playlist.html' with playlists=musique.playlists.all %}
+                {% include 'music/components/list_group_playlist.html' with playlists=musique.playlists.all %}
             {% endif %}
         </div>
     </div>

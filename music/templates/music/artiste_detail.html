@@ -117,7 +117,7 @@
                 <h3>
                     {% blocktrans with artiste_name=artiste.nom_artiste %}Playlists with {{ artiste_name }}{% endblocktrans %} :
                 </h3>
-                {% include 'music/list_group_playlist.html' with playlists=artiste.playlists.all %}
+                {% include 'music/components/list_group_playlist.html' with playlists=artiste.playlists.all %}
             {% endif %}
         </div>
     </div>

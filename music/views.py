@@ -1,42 +1,30 @@
 from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView
 from django.views.generic.edit import FormMixin
 from django_filters.views import FilterView
 
-from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter
+from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter, PlaylistFilter
 from music.models import Playlist, Musique, Lien, Artiste, Style, Label
 from music.templates.music.forms import LienForm
 
 
-def liste_musiques(request):
-    all_musiques = Musique.objects.select_related('artiste', 'remixed_by')\
+class MusiqueListView(FilterView):
+    filterset_class = MusiqueFilter
+    paginate_by = 20
+    queryset = Musique.objects.select_related('artiste', 'remixed_by')\
         .prefetch_related('featuring', 'liens', 'styles')
-    f = MusiqueFilter(request.GET or None, queryset=all_musiques)
-    paginator = Paginator(f.qs, 20)
-    page = request.GET.get('page', 1)
-    try:
-        musiques = paginator.page(page)
-    except PageNotAnInteger:
-        musiques = paginator.page(1)
-    except EmptyPage:
-        musiques = paginator.page(paginator.num_pages)
-    return render(request, 'music/music_list.html', {
-        'filter': f,
-        'paginator': paginator,
-        'page_obj': musiques,
-        'is_paginated': musiques.has_other_pages()
-    })
 
 
 class StyleListView(FilterView):
     filterset_class = StyleFilter
+    paginate_by = 20
+    queryset = Style.objects.prefetch_related('musiques')
 
 
 class StyleDetailView(DetailView):
@@ -51,6 +39,8 @@ class StyleDetailView(DetailView):
 
 class LabelListView(FilterView):
     filterset_class = LabelFilter
+    paginate_by = 20
+    queryset = Label.objects.prefetch_related('musiques')
 
 
 class LabelDetailView(DetailView):
@@ -64,8 +54,10 @@ class LabelDetailView(DetailView):
         )
 
 
-class PlaylistListView(ListView):
-    model = Playlist
+class PlaylistListView(FilterView):
+    filterset_class = PlaylistFilter
+    paginate_by = 20
+    queryset = Playlist.objects.select_related('createur__user').prefetch_related('musiqueplaylist_set__musique')
 
 
 class PlaylistDetailView(DetailView):
