@@ -1,0 +1,51 @@
+{% extends 'music/base_music.html' %}
+
+{% load i18n bootstrap3 %}
+
+{% block music_title %}{% trans "My playlists" %}{% endblock %}
+
+{% block stylesheet %}
+    {{ filter.form.media.css }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+            <div class="row">
+                <div class="col-sm-7 col-xs-12">
+                    <h2>{% trans "Playlists" %}</h2>
+                </div>
+                <div class="col-sm-5 col-xs-12">
+                    <form method="get">
+                        <div class="input-group">
+                            {% bootstrap_field filter.form.styles show_label=False placeholder="Filtrer sur un style" %}
+                            <div class="input-group-btn">
+                                {% buttons submit='Filtrer <i class="fa fa-filter"></i>' %}{% endbuttons %}
+                            </div>
+                        </div>
+                        {{ filter.form.styles.errors }}
+                    </form>
+                </div>
+            </div>
+            <h2>{% trans "" %}</h2>
+            <div class="list-group">
+                {% for playlist in object_list %}
+                    <a class="list-group-item" href="{{ playlist.get_absolute_url }}">
+                        <b>{{ playlist.nom }}</b>
+                        <small>
+                            - {{ playlist.createur }}, {% trans "on" %} {{ playlist.date_creation|date:"d/m/y" }}
+                        </small>
+                        <span class="badge" title="{% trans "Nomber of music in the playlist" %}">{{ playlist.musiqueplaylist_set.count }}</span>
+                    </a>
+                {% empty %}
+                    <div class="list-group-item">{% blocktrans %}No playlist has been created yet...{% endblocktrans %}</div>
+                {% endfor %}
+            </div>
+            {% include 'components/pagination.html' %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ filter.form.media.js }}
+{% endblock %}
