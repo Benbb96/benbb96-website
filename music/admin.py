@@ -21,6 +21,7 @@ class MusiqueStyleInline(admin.TabularInline):
 class StyleAdmin(admin.ModelAdmin):
     list_display = ('nom',)
     search_fields = ('nom',)
+    prepopulated_fields = {'slug': ('nom',), }
     save_on_top = True
 
     inlines = [MusiqueStyleInline]

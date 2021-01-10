@@ -19,6 +19,18 @@
                         <h3>{% trans "Description" %}</h3>
                         <p>{{ label.description|linebreaksbr }}</p>
                     {% endif %}
+                    {% if label.styles.exists %}
+                        <h3>{% trans "Styles" %}</h3>
+                        <ul>
+                            {% for style in label.styles.all %}
+                                <li>
+                                    <a href="{{ style.get_absolute_url }}">
+                                        {{ style }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                     {% if label.artistes %}
                         <h3>Artistes de ce label</h3>
                         {% if label.artistes.count > 4 %}

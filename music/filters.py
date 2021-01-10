@@ -1,5 +1,5 @@
 import django_filters
-from django.db.models import ManyToManyField
+from django.db.models import ManyToManyField, Q
 from django_filters.filterset import remote_queryset
 from django_select2.forms import ModelSelect2MultipleWidget, Select2MultipleWidget
 
@@ -44,6 +44,16 @@ class StyleFilter(django_filters.FilterSet):
         fields = ('nom',)
 
 
+styles_multiple_choice_field = django_filters.ModelMultipleChoiceFilter(
+    queryset=Style.objects.all(),
+    widget=ModelSelect2MultipleWidget(
+        queryset=Style.objects.all(),
+        search_fields=['nom__icontains'],
+        attrs={'class': 'form-control', 'style': 'width: 100%', 'data-minimum-input-length': 0}
+    )
+)
+
+
 class LabelFilter(django_filters.FilterSet):
     nom = django_filters.CharFilter(lookup_expr='icontains', label='Nom')
     artistes = django_filters.ModelMultipleChoiceFilter(
@@ -54,16 +64,26 @@ class LabelFilter(django_filters.FilterSet):
             attrs={'class': 'form-control', 'style': 'width: 100%', 'data-minimum-input-length': 0}
         )
     )
-    styles = django_filters.ModelMultipleChoiceFilter(
-        queryset=Style.objects.all(),
-        widget=ModelSelect2MultipleWidget(
-            queryset=Style.objects.all(),
-            search_fields=['nom__icontains'],
-            attrs={'class': 'form-control', 'style': 'width: 100%', 'data-minimum-input-length': 0}
-        )
-    )
+    styles = styles_multiple_choice_field
 
     class Meta:
         model = Label
-        fields = ('nom', 'artistes', 'styles')
+        fields = ('nom', 'artistes')
 
+
+class ArtisteFilter(django_filters.FilterSet):
+    text = django_filters.CharFilter(
+        label='Texte',
+        method='filter_text'
+    )
+    styles = styles_multiple_choice_field
+
+    class Meta:
+        model = Artiste
+        fields = ('text', 'styles')
+
+    def filter_text(self, queryset, name, value):
+        return queryset.filter(
+            Q(nom_artiste__icontains=value) | Q(prenom__icontains=value) |
+            Q(nom__icontains=value) | Q(slug__icontains=value)
+        )
