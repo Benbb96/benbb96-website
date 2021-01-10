@@ -10,7 +10,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 from django_filters.views import FilterView
 
-from music.filters import MusiqueFilter, StyleFilter, LabelFilter
+from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter
 from music.models import Playlist, Musique, Lien, Artiste, Style, Label
 from music.templates.music.forms import LienForm
 
@@ -127,6 +127,11 @@ class MusiqueDetailView(FormMixin, DetailView):
         lien.save()
         messages.success(self.request, 'Le lien a bien été ajouté.')
         return redirect(self.object.get_absolute_url())
+
+
+class ArtisteListView(FilterView):
+    filterset_class = ArtisteFilter
+    paginate_by = 15
 
 
 class ArtisteDetailView(DetailView):

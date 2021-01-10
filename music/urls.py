@@ -13,6 +13,7 @@ urlpatterns = [
     path('playlists', views.PlaylistListView.as_view(), name='liste-playlists'),
     path('playlists/<slug:slug>', views.PlaylistDetailView.as_view(), name='detail-playlist'),
     path('artists/<slug:slug>', views.ArtisteDetailView.as_view(), name='detail-artiste'),
+    path('artists/', views.ArtisteListView.as_view(), name='liste-artiste'),
     path('<slug:slug_artist>/<slug:slug>-<int:pk>', views.MusiqueDetailView.as_view(), name='detail-musique'),
     path(
         'lien/<int:lien_id>/incremente_click_count',
