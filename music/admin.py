@@ -58,7 +58,7 @@ class PlaylistAdmin(NonSortableParentAdmin):
 class MusiqueInline(admin.StackedInline):
     model = Musique
     prepopulated_fields = {'slug': ('titre',), }
-    autocomplete_fields = ('featuring', 'remixed_by', 'styles',)
+    autocomplete_fields = ('featuring', 'remixed_by', 'styles', 'createur')
     fk_name = 'artiste'
     extra = 0
 
