@@ -82,7 +82,7 @@ class ArtisteAdmin(SimpleHistoryAdmin):
     list_display = ('nom_artiste', 'nom', 'prenom', 'ville', 'pays', 'date_creation', 'date_modification')
     list_filter = ('styles', 'labels', 'createur')
     search_fields = (
-        'nom_artiste', 'prenom', 'nom', 'ville', 'pays__nom', 'labels__nom', 'styles__nom'
+        'nom_artiste', 'slug', 'prenom', 'nom',
     )
     date_hierarchy = 'date_creation'
     ordering = ('-date_modification',)
@@ -113,8 +113,8 @@ class MusiqueAdmin(SimpleHistoryAdmin):
     list_display_links = ('titre_display',)
     list_filter = ('styles', 'remixed_by')
     search_fields = (
-        'titre', 'artiste__nom_artiste', 'remixed_by__nom_artiste', 'featuring__nom_artiste',
-        'album', 'styles__nom', 'musiqueplaylist__playlist__nom'
+        'titre', 'artiste__nom_artiste', 'artiste__slug', 'remixed_by__nom_artiste',
+        'featuring__nom_artiste', 'album', 'styles__nom', 'musiqueplaylist__playlist__nom'
     )
     date_hierarchy = 'date_creation'
     ordering = ('-date_modification',)
@@ -133,13 +133,13 @@ class MusiqueAdmin(SimpleHistoryAdmin):
 @admin.register(Lien)
 class LienAdmin(admin.ModelAdmin):
     list_display = ('id', 'musique', 'url', 'plateforme', 'createur', 'click_count', 'date_creation', 'date_validation')
-    list_filter = ('plateforme', 'createur')
+    list_filter = ('plateforme',)
     search_fields = (
         'musique__titre', 'musique__artiste__nom_artiste', 'plateforme'
     )
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('musique',)
-    list_select_related = ('musique', 'createur')
+    list_select_related = ('musique__artiste', 'musique__remixed_by', 'createur__user')
 
     def get_changeform_initial_data(self, request):
         return {'createur': request.user}
