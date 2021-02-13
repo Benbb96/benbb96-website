@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'django.contrib.humanize',
     'avis.apps.AvisConfig',
     'base.apps.BaseConfig',
     'tracker.apps.TrackerConfig',
