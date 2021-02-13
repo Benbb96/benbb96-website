@@ -1,11 +1,11 @@
 # benbb96
 
 <!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here ---> 
-![GitHub repo size](https://img.shields.io/github/repo-size/benbb96/benbb96)
-![GitHub contributors](https://img.shields.io/github/contributors/benbb96/benbb96)
-![issues](https://img.shields.io/github/issues/benbb96/benbb96)
-![GitHub stars](https://img.shields.io/github/stars/benbb96/benbb96?style=social)
-![GitHub forks](https://img.shields.io/github/forks/benbb96/benbb96?style=social)
+![GitHub repo size](https://img.shields.io/github/repo-size/benbb96/benbb96-website)
+![GitHub contributors](https://img.shields.io/github/contributors/benbb96/benbb96-website)
+![issues](https://img.shields.io/github/issues/benbb96/benbb96-website)
+![GitHub stars](https://img.shields.io/github/stars/benbb96/benbb96-website?style=social)
+![GitHub forks](https://img.shields.io/github/forks/benbb96/benbb96-website?style=social)
 ![Twitter Follow](https://img.shields.io/twitter/follow/benbb96?style=social)
 
 This is my very personal Django project where I want to put all of my ideas to make my life easier.
@@ -19,7 +19,7 @@ I'm always open to remarks and suggestions in order to progress in Python and Dj
 To install and use my website, follow these steps:
 
 ```
-git clone https://github.com/Benbb96/benbb96.git
+git clone https://github.com/Benbb96/benbb96-website.git
 cd benbb96
 ```
 
@@ -75,4 +75,4 @@ If you want to contact me you can reach me at <benbb96@gmail.com>.
 
 ## License 
 
-This project uses the following license: [MIT License](https://github.com/Benbb96/benbb96/blob/master/LICENSE).
+This project uses the following license: [MIT License](https://github.com/Benbb96/benbb96-website/blob/master/LICENSE).
