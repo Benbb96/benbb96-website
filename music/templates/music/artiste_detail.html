@@ -1,5 +1,5 @@
 {% extends 'music/base_music.html' %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block music_title %}{% trans "Artist" %} {{ artiste.nom }}{% endblock %}
 
@@ -37,6 +37,11 @@
                         {% if artiste.telephone_contact %}
                             <p>{% trans "Contact phone number" %} :
                                 <a href="tel: {{ artiste.telephone_contact }}">{{ artiste.telephone_contact }}</a>
+                            </p>
+                        {% endif %}
+                        {% if artiste.soundcloud_followers %}
+                            <p>{% trans "Followers on Soundcloud" %} :
+                                <span class="badge">{{ artiste.soundcloud_followers|intcomma }}</span>
                             </p>
                         {% endif %}
                         {# TODO Ajouter liens réseaux sociaux #}

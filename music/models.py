@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
+from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 
 from base.models import Profil
@@ -116,12 +117,12 @@ class Artiste(models.Model):
             | Q(musiqueplaylist__musique__featuring=self)
         ).distinct()
 
-    @property
+    @cached_property
     def soundcloud_followers(self):
-        # client = soundcloud.Client(client_id=YOUR_CLIENT_ID)
-        # L'API de Soundcloud ne propose plus de Client ID :
-        # https://docs.google.com/forms/d/e/1FAIpQLSfNxc82RJuzC0DnISat7n4H-G7IsPQIdaMpe202iiHZEoso9w/closedform
-        return random.randint(1, 10000)
+        if self.soundcloud_id:
+            client = soundcloud.Client(client_id='D7YkmhAjzaV0qsA9e71yKXufTMyJAX2Q')
+            artist = client.get(f'/users/{self.soundcloud_id}')
+            return int(artist.fields().get('followers_count'))
 
 
 class Label(models.Model):
