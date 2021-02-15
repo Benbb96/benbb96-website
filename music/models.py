@@ -121,8 +121,13 @@ class Artiste(models.Model):
     def soundcloud_followers(self):
         if self.soundcloud_id:
             client = soundcloud.Client(client_id='D7YkmhAjzaV0qsA9e71yKXufTMyJAX2Q')
-            artist = client.get(f'/users/{self.soundcloud_id}')
-            return int(artist.fields().get('followers_count'))
+            try:
+                artist = client.get(f'/users/{self.soundcloud_id}')
+            except Exception as e:
+                print(f"Erreur sur l'appel API du nombre de followers de l'artiste {self} :")
+                print(e)
+            else:
+                return int(artist.fields().get('followers_count'))
 
 
 class Label(models.Model):
