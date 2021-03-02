@@ -113,8 +113,8 @@ class MusiqueAdmin(SimpleHistoryAdmin):
     list_display_links = ('titre_display',)
     list_filter = ('styles', 'remixed_by')
     search_fields = (
-        'titre', 'artiste__nom_artiste', 'artiste__slug', 'remixed_by__nom_artiste',
-        'featuring__nom_artiste', 'album', 'label__nom'
+        'titre', 'slug', 'artiste__nom_artiste', 'artiste__slug', 'remixed_by__nom_artiste', 'remixed_by__slug'
+        'featuring__nom_artiste', 'featuring__slug', 'album', 'label__nom'
     )
     date_hierarchy = 'date_creation'
     ordering = ('-date_modification',)
