@@ -75,7 +75,7 @@ ipython-genutils==0.2.0
 isort==4.3.21
 itypes==1.1.0
 jedi==0.15.1
-Jinja2==2.10.1
+Jinja2==2.11.3
 jws==0.1.3
 lazy-object-proxy==1.4.2
 libsass==0.19.2
