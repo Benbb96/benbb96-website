@@ -39,6 +39,8 @@ class PlaylistAdmin(NonSortableParentAdmin):
     search_fields = ('nom',)
     prepopulated_fields = {'slug': ('nom',), }
     save_on_top = True
+    autocomplete_fields = ('createur',)
+    list_select_related = ('createur',)
 
     inlines = [MusiquePlaylistInline]
 

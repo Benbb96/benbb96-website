@@ -8,7 +8,14 @@
         <div class="col-sm-4 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="text-center">{{ playlist.nom }}</h2>
+                    <h2 class="text-center">
+                        {{ playlist.nom }}
+                        {% if playlist.createur.user == request.user %}
+                            <a href="{% url 'admin:music_playlist_change' playlist.id %}" class="btn btn-sm btn-default">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </h2>
                 </div>
                 <div class="panel-body">
                     <div>
@@ -21,16 +28,7 @@
                         <h3>{% trans "Description" %}</h3>
                         <p>{{ playlist.description|linebreaksbr }}</p>
                     {% endif %}
-                    {% if playlist.styles.exists %}
-                        <h3>{% trans "Styles" %}</h3>
-                        <ul class="list-inline">
-                            {% for style in playlist.styles.all %}
-                                <li>
-                                    <a class="label label-default" href="{{ style.get_absolute_url }}">{{ style.nom }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                    {% include 'music/components/style_list_inline.html' with styles=playlist.styles.all %}
                     {% if playlist.musiqueplaylist_set.exists %}
                         <h3>{% blocktrans %}Playlist artists{% endblocktrans %}</h3>
                         {% if playlist.artistes.count > 4 %}
@@ -54,7 +52,14 @@
             </div>
         </div>
         <div class="col-sm-8 col-xs-12">
-            <h2>{% trans "Musics" %}</h2>
+            <h2>
+                {% trans "Musics" %}
+                <small>
+                    <span class="badge" title="Nombre de musique dans la playlist">
+                        {{ musiques|length }}
+                    </span>
+                </small>
+            </h2>
             {% include 'music/components/table_musics.html' %}
         </div>
     </div>

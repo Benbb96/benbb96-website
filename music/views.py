@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
 from django.views.generic.edit import FormMixin
+from django.views.generic.list import MultipleObjectMixin
 from django_filters.views import FilterView
 
 from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter, PlaylistFilter
@@ -27,9 +28,15 @@ class StyleListView(FilterView):
     queryset = Style.objects.prefetch_related('musiques')
 
 
-class StyleDetailView(DetailView):
+class StyleDetailView(DetailView, MultipleObjectMixin):
     model = Style
+    paginate_by = 20
     slug_field = 'slug'
+
+    def get_context_data(self, **kwargs):
+        object_list = self.get_object().musiques.all()
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        return context
 
     def get_queryset(self):
         return Style.objects.prefetch_related(
@@ -65,18 +72,15 @@ class PlaylistDetailView(DetailView):
     slug_field = 'slug'
 
     def get_queryset(self):
-        return Playlist.objects.select_related('createur__user').prefetch_related(
-            'musiqueplaylist_set__musique__styles', 'musiqueplaylist_set__musique__artiste',
-            'musiqueplaylist_set__musique__remixed_by', 'musiqueplaylist_set__musique__featuring',
-            'musiqueplaylist_set__musique__liens'
-        )
+        return Playlist.objects.select_related('createur__user')
 
     def get_context_data(self, **kwargs):
         # Prépare les musiques de la playslists afin de les avoir dans le bon ordre
-        kwargs['musiques'] = (
-            musique_playlist.musique for musique_playlist in self.get_object().musiqueplaylist_set.all()
-        )
-        return super().get_context_data(**kwargs)
+        musiques = self.get_object().musiques\
+            .select_related('artiste', 'remixed_by')\
+            .prefetch_related('styles', 'featuring', 'liens')\
+            .order_by('musiqueplaylist__position')
+        return super().get_context_data(musiques=musiques, **kwargs)
 
 
 class MusiqueDetailView(FormMixin, DetailView):

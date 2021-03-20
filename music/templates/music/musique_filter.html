@@ -31,6 +31,7 @@
                     <i class="fa fa-eraser"></i>
                 </a>
             </form>
+            {% include 'components/pagination.html' %}
             {% include 'music/components/table_musics.html' with musiques=page_obj%}
             {% include 'components/pagination.html' %}
         </div>

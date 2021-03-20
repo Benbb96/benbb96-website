@@ -8,7 +8,14 @@
         <div class="col-sm-4 col-xs-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h2 class="text-center">{{ artiste.nom_artiste }}</h2>
+                    <h2 class="text-center">
+                        {{ artiste.nom_artiste }}
+                        {% if artiste.createur.user == request.user %}
+                            <a href="{% url 'admin:music_artiste_change' artiste.id %}" class="btn btn-sm btn-default">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </h2>
                 </div>
                 <div class="panel-body">
                     <div>
@@ -57,18 +64,7 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                    {% if artiste.styles.exists %}
-                        <h3>{% trans "Styles" %}</h3>
-                        <ul>
-                            {% for style in artiste.styles.all %}
-                                <li>
-                                    <a href="{{ style.get_absolute_url }}">
-                                        {{ style }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                    {% include 'music/components/style_list_inline.html' with styles=artiste.styles.all %}
                 </div>
                 <div class="panel-footer">
                     {% blocktrans  with artiste_date=artiste.date_creation|date artiste_time=artiste.date_creation|time artiste_createur_url=artiste.createur.get_absolute_url artiste_createur=artiste.createur %}
