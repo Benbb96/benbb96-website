@@ -12,25 +12,21 @@
         <div class="col-sm-4 col-xs-12">
             <div class="panel panel-warning">
                 <div class="panel-heading">
-                    <h2 class="text-center">{{ label.nom }}</h2>
+                    <h2 class="text-center">
+                        {{ label.nom }}
+                        {% if perms.music.change_label %}
+                            <a href="{% url 'admin:music_label_change' label.id %}" class="btn btn-sm btn-default">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </h2>
                 </div>
                 <div class="panel-body">
                     {% if label.description %}
                         <h3>{% trans "Description" %}</h3>
                         <p>{{ label.description|linebreaksbr }}</p>
                     {% endif %}
-                    {% if label.styles.exists %}
-                        <h3>{% trans "Styles" %}</h3>
-                        <ul>
-                            {% for style in label.styles.all %}
-                                <li>
-                                    <a href="{{ style.get_absolute_url }}">
-                                        {{ style }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                    {% include 'music/components/style_list_inline.html' with styles=label.styles.all %}
                     {% if label.artistes %}
                         <h3>Artistes de ce label</h3>
                         {% if label.artistes.count > 4 %}

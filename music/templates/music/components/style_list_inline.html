@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% if styles %}
+    {% if not header_inline %}
+        <h3>{% trans "Styles" %}</h3>
+    {% endif %}
+    <ul class="list-inline">
+        {% if header_inline %}{% trans "Styles" %} :{% endif %}
+        {% for style in styles.all %}
+            <li>
+                <a class="label label-default" href="{{ style.get_absolute_url }}">
+                    {{ style }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

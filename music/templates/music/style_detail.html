@@ -7,12 +7,20 @@
     <div class="row">
         <div class="col-sm-8 col-xs-12">
             <h2>{% trans "Musics" %}</h2>
-            {% include 'music/components/table_musics.html' with musiques=style.musiques.all %}
+            {% include 'music/components/table_musics.html' with musiques=object_list %}
+            {% include 'components/pagination.html' %}
         </div>
         <div class="col-sm-4 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="text-center">{{ style.nom }}</h2>
+                    <h2 class="text-center">
+                        {{ style.nom }}
+                        {% if perms.music.change_style %}
+                            <a href="{% url 'admin:music_style_change' style.id %}" class="btn btn-sm btn-default">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </h2>
                 </div>
                 <div class="panel-body">
                     {% if style.description %}
