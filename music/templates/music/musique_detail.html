@@ -20,6 +20,11 @@
                     {% if musique.remixed_by %}
                         (<a href="{{ musique.remixed_by.get_absolute_url }}">{{ musique.remixed_by }}</a> {% trans "Remix" %})
                     {% endif %}
+                    {% if musique.createur.user == request.user %}
+                        <a href="{% url 'admin:music_musique_change' musique.id %}" class="btn btn-sm btn-default">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    {% endif %}
                 </h1>
                 <div>
                     {% blocktrans with musique_date=musique.date_creation|date musique_time=musique.date_creation|time musique_createur_url=musique.createur.get_absolute_url musique_createur=musique.createur %}
@@ -78,6 +83,9 @@
                 </a>
                 <a class="btn btn-sm btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
                     <i class="fa fa-soundcloud"></i>
+                </a>
+                <a class="btn btn-sm btn-social-icon btn-spotify" href="https://open.spotify.com/search/{{ musique|url_quote_plus }}" title="{% trans "Search on Spotify" %}" target="_blank">
+                    <i class="fa fa-spotify"></i>
                 </a>
             </p>
             {% if musique.playlists.exists %}
