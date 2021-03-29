@@ -88,7 +88,7 @@
                 <a class="btn btn-sm btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
                     <i class="fa fa-soundcloud"></i>
                 </a>
-                <a class="btn btn-sm btn-social-icon btn-spotify" href="https://open.spotify.com/search/{{ musique|url_quote_plus }}" title="{% trans "Search on Spotify" %}" target="_blank">
+                <a class="btn btn-sm btn-social-icon btn-spotify" href="https://open.spotify.com/search/{{ musique|urlencode }}" title="{% trans "Search on Spotify" %}" target="_blank">
                     <i class="fa fa-spotify"></i>
                 </a>
             </p>
