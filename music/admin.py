@@ -111,7 +111,7 @@ class PlaylistInline(admin.TabularInline):
 @admin.register(Musique)
 class MusiqueAdmin(SimpleHistoryAdmin):
     list_display = ('artiste_display', 'titre_display', 'album', 'label', 'createur',
-                    'date_creation', 'date_modification', 'nb_vue')
+                    'date_creation', 'date_modification', 'nombre_vue')
     list_display_links = ('titre_display',)
     list_filter = ('styles', 'remixed_by')
     search_fields = (

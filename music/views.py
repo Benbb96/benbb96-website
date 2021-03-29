@@ -140,7 +140,12 @@ def incremente_link_click_count(request, lien_id):
     lien = get_object_or_404(Lien, id=lien_id)
     lien.click_count += 1
     lien.save(update_fields=['click_count'])
-    return JsonResponse({'success': True, 'click_count': lien.click_count, 'music_id': lien.musique.id})
+    return JsonResponse({
+        'success': True,
+        'click_count': lien.click_count,
+        'music_id': lien.musique.id,
+        'music_count': lien.musique.nombre_vue()
+    })
 
 
 def valider_lien(request, lien_id):

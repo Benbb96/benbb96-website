@@ -147,6 +147,14 @@ class Label(models.Model):
         return reverse('music:detail-label', kwargs={'slug': self.slug})
 
 
+class MusiqueManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()\
+            .select_related('artiste', 'remixed_by')\
+            .prefetch_related('featuring', 'liens', 'styles')\
+            .annotate(nb_vue=models.Sum('liens__click_count'))
+
+
 class Musique(models.Model):
     titre = models.CharField(max_length=50)
     slug = models.SlugField()
@@ -185,6 +193,8 @@ class Musique(models.Model):
     date_modification = models.DateTimeField('dernière modification', auto_now=True)
     history = HistoricalRecords()
 
+    objects = MusiqueManager()
+
     class Meta:
         ordering = ('artiste__nom_artiste', 'titre')
         unique_together = ('artiste', 'titre', 'remixed_by')
@@ -195,7 +205,7 @@ class Musique(models.Model):
     def artiste_display(self):
         featuring = self.featuring.all()
         if featuring:
-            return '%s & %s' % (self.artiste, ' & '.join(artiste.nom_artiste for artiste in featuring))
+            return ' & '.join([self.artiste.nom_artiste] + list(artiste.nom_artiste for artiste in featuring))
         return self.artiste.nom_artiste
     artiste_display.short_description = 'Artistes'
     artiste_display.admin_order_field = 'artiste'
@@ -208,12 +218,17 @@ class Musique(models.Model):
     titre_display.admin_order_field = 'titre'
 
     def get_absolute_url(self):
-        return reverse('music:detail-musique',
-                       kwargs={'slug_artist': self.artiste.slug, 'slug': self.slug, 'pk': self.pk})
+        return reverse(
+            'music:detail-musique',
+            kwargs={'slug_artist': self.artiste.slug, 'slug': self.slug, 'pk': self.pk}
+        )
 
-    def nb_vue(self):
-        return sum((lien.click_count for lien in self.liens.all()))
-    nb_vue.short_description = 'Nombre de vue'
+    def nombre_vue(self):
+        if hasattr(self, 'nb_vue'):
+            return self.nb_vue
+        return self.liens.aggregate(total=models.Sum('click_count'))['total']
+    nombre_vue.short_description = 'Nombre de vue'
+    nombre_vue.admin_order_field = 'nb_vue'
 
 
 class MusiquePlaylist(SortableMixin):
