@@ -29,8 +29,9 @@
                 $.post($(this).data('linkUrl'))
                     .done(response => {
                         if (response.success) {
-                            // Met à jour le compteur du lien
-                            $('.click_count#' + $(this).data('linkId')).text(response.click_count);
+                            // Met à jour le compteur du lien et de le total de la musique
+                            $('.click_count#lien' + $(this).data('linkId')).text(response.click_count);
+                            $('.click_count#musique' + response.music_id).text(response.music_count);
                         }
                     })
                     .fail((xhr, textStatus, errorThrown) => {

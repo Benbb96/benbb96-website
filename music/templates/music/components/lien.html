@@ -1,13 +1,14 @@
 {% load i18n %}
 
-<a class="platformLink" data-link-id="{{ lien.id }}" data-link-url="{% url 'music:incremente_link_click_count' lien.id %}" href="{{ lien.url }}" target="_blank">
+<a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"
+   data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
     <i class="fa fa-{{ lien.get_plateforme_display|lower }}"></i>
     <b>{{ lien.get_plateforme_display }}</b> <i class="fa fa-external-link"></i>
 </a>
 <div>
     {% blocktrans with lien_createur=lien.createur lien_date=lien.date_creation|date:'d/m/y' lien_id=lien.id lien_click_count=lien.click_count %}
         Added by {{ lien_createur }} on {{ lien_date }},
-        seen <span class="click_count" id="{{ lien_id }}">{{ lien_click_count }}</span> times.
+        seen <span class="click_count" id="lien{{ lien_id }}">{{ lien_click_count }}</span> times.
     {% endblocktrans %}
     {% if a_valider %}
         <a class="btn btn-xs btn-default" href="{% url 'music:valider_lien' lien.id %}">

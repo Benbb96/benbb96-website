@@ -82,7 +82,7 @@
                     <tr>
                         <th>{% trans "Title" %}</th>
                         <th>{% trans "Date add" %}</th>
-                        <th>{% trans "View count" %}</th>
+                        <th class="text-center">{% trans "View count" %}</th>
                         <th>{% trans "Liens" %}</th>
                     </tr>
                     </thead>
@@ -95,7 +95,7 @@
                             </a>
                         </td>
                         <td>{{ musique.date_creation|date:'l j F Y, H:i' }}</td>
-                        <td>{{ musique.nb_vue }}</td>
+                        <td class="text-center"><span class="badge click_count" id="musique{{ musique.id }}">{{ musique.nb_vue|default:0 }}</span></td>
                         <td>
                             <ul class="list-inline">
                             {% for lien in musique.liens.all %}

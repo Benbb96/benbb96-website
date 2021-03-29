@@ -35,12 +35,15 @@
                     </td>
                     <td class="text-center">{{ musique.date_creation|date:'DATETIME_FORMAT' }}</td>
                     <td class="text-center">
-                        <span class="badge">{{ musique.nb_vue }}</span>
+                        <span class="badge click_count" id="musique{{ musique.id }}">{{ musique.nb_vue|default:0 }}</span>
                     </td>
                     <td class="text-center">
                         {% if musique.liens %}
                             {% for lien in musique.liens.all %}
-                                <i class="fa fa-{{ lien.get_plateforme_display|lower }}"></i>
+                                <a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"
+                                   data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
+                                    <i class="fa fa-{{ lien.get_plateforme_display|lower }}"></i>
+                                </a>
                             {% endfor %}
                         {% endif %}
                     </td>
