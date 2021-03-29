@@ -2,8 +2,8 @@
 
 <a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"
    data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
-    <i class="fa fa-{{ lien.get_old_plateforme_display|lower }}"></i>
-    <b>{{ lien.get_old_plateforme_display }}</b> <i class="fa fa-external-link"></i>
+    <i class="fa fa-{{ lien.plateforme|lower }}"></i>
+    <b>{{ lien.plateforme }}</b> <i class="fa fa-external-link"></i>
 </a>
 <div>
     {% blocktrans with lien_createur=lien.createur lien_date=lien.date_creation|date:'d/m/y' lien_id=lien.id lien_click_count=lien.click_count %}

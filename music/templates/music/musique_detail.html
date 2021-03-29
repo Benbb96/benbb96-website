@@ -112,10 +112,10 @@
                 const val = $(this).val();
                 const select = $('select#id_plateforme');
                 const plateformes = {
-                    'SC': 'soundcloud',
-                    'YT': 'youtube',
-                    'SP': 'spotify'
-                };
+                    {% for plateforme in plateformes %}
+                        {{ plateforme.id }}: '{{ plateforme.nom|lower }}',
+                    {% endfor %}
+                }
                 let selected = false;
                 for (const [key, value] of Object.entries((plateformes))) {
                     if (val.indexOf(value) >= 0) {

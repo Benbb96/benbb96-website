@@ -11,7 +11,7 @@ from django.views.generic.list import MultipleObjectMixin
 from django_filters.views import FilterView
 
 from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter, PlaylistFilter
-from music.models import Playlist, Musique, Lien, Artiste, Style, Label
+from music.models import Playlist, Musique, Lien, Artiste, Style, Label, Plateforme
 from music.templates.music.forms import LienForm
 
 
@@ -92,6 +92,7 @@ class MusiqueDetailView(FormMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(MusiqueDetailView, self).get_context_data(**kwargs)
         context['form'] = self.get_form()
+        context['plateformes'] = Plateforme.objects.all()
         return context
 
     def post(self, *args, **kwargs):

@@ -244,6 +244,14 @@ class MusiquePlaylist(SortableMixin):
         ordering = ('position',)
 
 
+class Plateforme(models.Model):
+    nom = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(unique=True)
+
+    def __str__(self):
+        return self.nom
+
+
 class LienQuerySet(models.QuerySet):
     def valide_seulement(self):
         return self.filter(date_validation__isnull=False)
@@ -264,7 +272,7 @@ class Lien(models.Model):
         (YOUTUBE, 'YouTube'),
         (SPOTIFY, 'Spotify')
     ]
-    old_plateforme = models.CharField(max_length=2, choices=PLATEFORMES_MUSIQUE, blank=True)
+    plateforme = models.ForeignKey(Plateforme, on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_validation = models.DateTimeField('date de validation', null=True, blank=True)
     click_count = models.PositiveIntegerField(default=0)
@@ -272,4 +280,4 @@ class Lien(models.Model):
     objects = LienQuerySet.as_manager()
 
     def __str__(self):
-        return '(%s) %s' % (self.get_old_plateforme_display(), self.url)
+        return self.url
