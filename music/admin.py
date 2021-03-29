@@ -134,10 +134,10 @@ class MusiqueAdmin(SimpleHistoryAdmin):
 
 @admin.register(Lien)
 class LienAdmin(admin.ModelAdmin):
-    list_display = ('id', 'musique', 'url', 'plateforme', 'createur', 'click_count', 'date_creation', 'date_validation')
-    list_filter = ('plateforme',)
+    list_display = ('id', 'musique', 'url', 'old_plateforme', 'createur', 'click_count', 'date_creation', 'date_validation')
+    list_filter = ('old_plateforme',)
     search_fields = (
-        'musique__titre', 'musique__artiste__nom_artiste', 'plateforme'
+        'musique__titre', 'musique__artiste__nom_artiste', 'old_plateforme'
     )
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('musique',)
