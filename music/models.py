@@ -264,7 +264,7 @@ class Lien(models.Model):
         (YOUTUBE, 'YouTube'),
         (SPOTIFY, 'Spotify')
     ]
-    plateforme = models.CharField(max_length=2, choices=PLATEFORMES_MUSIQUE, blank=True)
+    old_plateforme = models.CharField(max_length=2, choices=PLATEFORMES_MUSIQUE, blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_validation = models.DateTimeField('date de validation', null=True, blank=True)
     click_count = models.PositiveIntegerField(default=0)
@@ -272,4 +272,4 @@ class Lien(models.Model):
     objects = LienQuerySet.as_manager()
 
     def __str__(self):
-        return '(%s) %s' % (self.get_plateforme_display(), self.url)
+        return '(%s) %s' % (self.get_old_plateforme_display(), self.url)
