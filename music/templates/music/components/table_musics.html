@@ -42,7 +42,7 @@
                             {% for lien in musique.liens.all %}
                                 <a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"
                                    data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
-                                    <i class="fa fa-{{ lien.get_old_plateforme_display|lower }}"></i>
+                                    <i class="fa fa-{{ lien.plateforme|lower }}"></i>
                                 </a>
                             {% endfor %}
                         {% endif %}

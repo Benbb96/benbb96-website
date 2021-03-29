@@ -103,7 +103,7 @@
                                     <a class="platformLink" data-link-id="{{ lien.id }}"
                                        data-link-url="{% url 'music:incremente_link_click_count' lien.id %}"
                                        href="{{ lien.url }}" target="_blank">
-                                        {{ lien.get_old_plateforme_display }} <i class="fa fa-external-link"></i>
+                                        {{ lien.plateforme }} <i class="fa fa-external-link"></i>
                                     </a>
                                 </li>
                             {% endfor %}

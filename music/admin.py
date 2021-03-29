@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db.models import Count
 from simple_history.admin import SimpleHistoryAdmin
 
-from music.models import Pays, Artiste, Style, Label, Playlist, Musique, MusiquePlaylist, Lien
+from music.models import Pays, Artiste, Style, Label, Playlist, Musique, MusiquePlaylist, Lien, Plateforme
 
 
 @admin.register(Pays)
@@ -132,16 +132,24 @@ class MusiqueAdmin(SimpleHistoryAdmin):
         return {'createur': request.user}
 
 
+@admin.register(Plateforme)
+class PlateformeAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'slug')
+    search_fields = ('nom',)
+    prepopulated_fields = {'slug': ('nom',)}
+
+
 @admin.register(Lien)
 class LienAdmin(admin.ModelAdmin):
-    list_display = ('id', 'musique', 'url', 'old_plateforme', 'createur', 'click_count', 'date_creation', 'date_validation')
-    list_filter = ('old_plateforme',)
+    list_display = ('id', 'musique', 'url', 'plateforme', 'createur', 'click_count', 'date_creation', 'date_validation')
+    list_filter = ('plateforme',)
     search_fields = (
-        'musique__titre', 'musique__artiste__nom_artiste', 'old_plateforme'
+        'musique__titre', 'musique__artiste__nom_artiste', 'plateforme__nom'
     )
     date_hierarchy = 'date_creation'
     autocomplete_fields = ('musique',)
-    list_select_related = ('musique__artiste', 'musique__remixed_by', 'createur__user')
+    list_select_related = ('musique__artiste', 'musique__remixed_by', 'createur__user', 'plateforme')
+    list_per_page = 30
 
     def get_changeform_initial_data(self, request):
         return {'createur': request.user}
