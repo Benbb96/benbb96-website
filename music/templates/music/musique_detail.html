@@ -70,10 +70,13 @@
             <h3>Ajouter un lien</h3>
             <form method="post">
                 {% csrf_token %}
-                <ul class="list-inline list-unstyled">
+                <ul class="list-inline">
                     {{ form.as_ul }}
                     <li>
-                        <button class="btn btn-success" type="submit">Ajouter</button>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-plus"></i>
+                            Ajouter le lien
+                        </button>
                     </li>
                 </ul>
             </form>
@@ -106,28 +109,5 @@
 
 {% block javascript %}
     {{ block.super }}
-    <script type="text/javascript">
-        $(() => {
-            $('#id_url').on('input', function() {
-                const val = $(this).val();
-                const select = $('select#id_plateforme');
-                const plateformes = {
-                    {% for plateforme in plateformes %}
-                        {{ plateforme.id }}: '{{ plateforme.nom|lower }}',
-                    {% endfor %}
-                }
-                let selected = false;
-                for (const [key, value] of Object.entries((plateformes))) {
-                    if (val.indexOf(value) >= 0) {
-                        select.val(key);
-                        selected = true;
-                        break
-                    }
-                }
-                if (!selected) {
-                    select.val('')
-                }
-            })
-        })
-    </script>
+    {% include 'music/components/auto_select_plateforme_script.html' %}
 {% endblock %}

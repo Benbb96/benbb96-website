@@ -12,7 +12,7 @@ from django_filters.views import FilterView
 
 from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter, PlaylistFilter
 from music.models import Playlist, Musique, Lien, Artiste, Style, Label, Plateforme
-from music.templates.music.forms import LienForm
+from music.forms import LienForm, LienPlaylistForm
 
 
 class MusiqueListView(FilterView):
@@ -67,9 +67,10 @@ class PlaylistListView(FilterView):
     queryset = Playlist.objects.select_related('createur__user').prefetch_related('musiqueplaylist_set__musique')
 
 
-class PlaylistDetailView(DetailView):
+class PlaylistDetailView(FormMixin, DetailView):
     model = Playlist
     slug_field = 'slug'
+    form_class = LienPlaylistForm
 
     def get_queryset(self):
         return Playlist.objects.select_related('createur__user')
@@ -80,7 +81,25 @@ class PlaylistDetailView(DetailView):
             .select_related('artiste', 'remixed_by')\
             .prefetch_related('styles', 'featuring', 'liens')\
             .order_by('musiqueplaylist__position')
-        return super().get_context_data(musiques=musiques, **kwargs)
+        context = super().get_context_data(musiques=musiques, **kwargs)
+        context['form'] = self.get_form()
+        context['plateformes'] = Plateforme.objects.all()
+        return context
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if self.request.user.profil == self.object.createur and form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        lien = form.save(commit=False)
+        lien.playlist = self.object
+        lien.save()
+        messages.success(self.request, 'Le lien a bien été ajouté.')
+        return redirect(self.object.get_absolute_url())
 
 
 class MusiqueDetailView(FormMixin, DetailView):

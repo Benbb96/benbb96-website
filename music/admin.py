@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db.models import Count
 from simple_history.admin import SimpleHistoryAdmin
 
-from music.models import Pays, Artiste, Style, Label, Playlist, Musique, MusiquePlaylist, Lien, Plateforme
+from music.models import Pays, Artiste, Style, Label, Playlist, Musique, MusiquePlaylist, Lien, Plateforme, LienPlaylist
 
 
 @admin.register(Pays)
@@ -27,6 +27,11 @@ class StyleAdmin(admin.ModelAdmin):
     inlines = [MusiqueStyleInline]
 
 
+class LienPlaylistInline(admin.TabularInline):
+    model = LienPlaylist
+    readonly_fields = ('date_creation',)
+
+
 class MusiquePlaylistInline(SortableTabularInline):
     model = MusiquePlaylist
     autocomplete_fields = ('musique',)
@@ -42,7 +47,7 @@ class PlaylistAdmin(NonSortableParentAdmin):
     autocomplete_fields = ('createur',)
     list_select_related = ('createur',)
 
-    inlines = [MusiquePlaylistInline]
+    inlines = [LienPlaylistInline, MusiquePlaylistInline]
 
     def get_changeform_initial_data(self, request):
         return {'createur': request.user}
@@ -137,6 +142,16 @@ class PlateformeAdmin(admin.ModelAdmin):
     list_display = ('nom', 'slug')
     search_fields = ('nom',)
     prepopulated_fields = {'slug': ('nom',)}
+
+
+@admin.register(LienPlaylist)
+class LienPlaylistAdmin(admin.ModelAdmin):
+    list_display = ('id', 'playlist', 'url', 'plateforme', 'date_creation')
+    list_filter = ('plateforme',)
+    search_fields = ('playlist__nom', 'plateforme__nom')
+    date_hierarchy = 'date_creation'
+    autocomplete_fields = ('playlist',)
+    list_select_related = ('playlist', 'plateforme')
 
 
 @admin.register(Lien)
