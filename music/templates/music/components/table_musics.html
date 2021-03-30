@@ -7,7 +7,6 @@
         <table class="table">
             <thead>
             <tr>
-                <th>{% trans "Artist" %}</th>
                 <th>{% trans "Title" %}</th>
                 <th>{% trans "Style" %}</th>
                 <th class="text-center">{% trans "Date add" %}</th>
@@ -19,13 +18,8 @@
             {% for musique in musiques %}
                 <tr>
                     <td>
-                        <a href="{{ musique.artiste.get_absolute_url }}">
-                            <b>{{ musique.artiste_display }}</b>
-                        </a>
-                    </td>
-                    <td>
                         <a href="{{ musique.get_absolute_url }}">
-                            <b>{{ musique.titre_display }}</b>
+                            <b>{{ musique }}</b>
                         </a>
                     </td>
                     <td>
