@@ -252,6 +252,22 @@ class Plateforme(models.Model):
         return self.nom
 
 
+class BaseLien(models.Model):
+    url = models.URLField('lien vers la playlist')
+    plateforme = models.ForeignKey(Plateforme, on_delete=models.SET_NULL, null=True, blank=True)
+    date_creation = models.DateTimeField('date de création', auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.url
+
+
+class LienPlaylist(BaseLien):
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name='liens')
+
+
 class LienQuerySet(models.QuerySet):
     def valide_seulement(self):
         return self.filter(date_validation__isnull=False)
@@ -260,24 +276,13 @@ class LienQuerySet(models.QuerySet):
         return self.filter(date_validation__isnull=True)
 
 
-class Lien(models.Model):
+class Lien(BaseLien):
     musique = models.ForeignKey(Musique, on_delete=models.CASCADE, related_name='liens')
     url = models.URLField('lien vers la musique')
     createur = models.ForeignKey(Profil, related_name='liens_crees', on_delete=models.SET_NULL, null=True, blank=True)
-    SOUNDCLOUD = 'SC'
-    YOUTUBE = 'YT'
-    SPOTIFY = 'SP'
-    PLATEFORMES_MUSIQUE = [
-        (SOUNDCLOUD, 'Soundcloud'),
-        (YOUTUBE, 'YouTube'),
-        (SPOTIFY, 'Spotify')
-    ]
     plateforme = models.ForeignKey(Plateforme, on_delete=models.SET_NULL, null=True, blank=True)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     date_validation = models.DateTimeField('date de validation', null=True, blank=True)
     click_count = models.PositiveIntegerField(default=0)
 
     objects = LienQuerySet.as_manager()
-
-    def __str__(self):
-        return self.url

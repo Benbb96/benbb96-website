@@ -1,0 +1,24 @@
+<script type="text/javascript">
+    $(() => {
+        $('#id_url').on('input', function() {
+            const val = $(this).val();
+            const select = $('select#id_plateforme');
+            const plateformes = {
+                {% for plateforme in plateformes %}
+                    {{ plateforme.id }}: '{{ plateforme.nom|lower }}',
+                {% endfor %}
+            }
+            let selected = false;
+            for (const [key, value] of Object.entries((plateformes))) {
+                if (val.indexOf(value) >= 0) {
+                    select.val(key);
+                    selected = true;
+                    break
+                }
+            }
+            if (!selected) {
+                select.val('')
+            }
+        })
+    })
+</script>

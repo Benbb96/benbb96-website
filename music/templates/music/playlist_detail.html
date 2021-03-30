@@ -28,6 +28,34 @@
                         <h3>{% trans "Description" %}</h3>
                         <p>{{ playlist.description|linebreaksbr }}</p>
                     {% endif %}
+                    {% with liens=playlist.liens.all %}
+                        {% if liens %}
+                            <h4>Liens</h4>
+                            <ul class="list-inline">
+                                {% for lien in liens %}
+                                    <li>
+                                        <a href="{{ lien.url }}" target="_blank">
+                                            <i class="fa fa-{{ lien.plateforme|lower }}"></i>
+                                            {{ lien.plateforme }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endwith %}
+                    {% if request.user.profil == playlist.createur %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <ul class="list-inline">
+                                {{ form.as_ul }}
+                                <li>
+                                    <button class="btn btn-success" type="submit" title="Ajouter le lien">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </form>
+                    {% endif %}
                     {% include 'music/components/style_list_inline.html' with styles=playlist.styles.all %}
                     {% if playlist.musiqueplaylist_set.exists %}
                         <h3>{% blocktrans %}Playlist artists{% endblocktrans %}</h3>
@@ -63,4 +91,9 @@
             {% include 'music/components/table_musics.html' %}
         </div>
     </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    {% include 'music/components/auto_select_plateforme_script.html' %}
 {% endblock %}
