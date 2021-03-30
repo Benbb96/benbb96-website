@@ -55,6 +55,11 @@ a.platformLink:hover {
     text-decoration: none;
 }
 
+a.platformLink:focus, a.platformLink:active {
+    text-decoration: none;
+    color: red;
+}
+
 
 /* Rallye des Colocs */
 #map {
