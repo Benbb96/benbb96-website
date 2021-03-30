@@ -76,44 +76,7 @@
         </div>
         <div class="col-sm-8 col-xs-12">
             <h2>{% trans "Musics" %}</h2>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>{% trans "Title" %}</th>
-                        <th>{% trans "Date add" %}</th>
-                        <th class="text-center">{% trans "View count" %}</th>
-                        <th>{% trans "Liens" %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for musique in artiste.all_musics %}
-                        <tr>
-                        <td>
-                            <a href="{{ musique.get_absolute_url }}">
-                                <b>{{ musique.titre_display }}</b>
-                            </a>
-                        </td>
-                        <td>{{ musique.date_creation|date:'l j F Y, H:i' }}</td>
-                        <td class="text-center"><span class="badge click_count" id="musique{{ musique.id }}">{{ musique.nb_vue|default:0 }}</span></td>
-                        <td>
-                            <ul class="list-inline">
-                            {% for lien in musique.liens.all %}
-                                <li>
-                                    <a class="platformLink" data-link-id="{{ lien.id }}"
-                                       data-link-url="{% url 'music:incremente_link_click_count' lien.id %}"
-                                       href="{{ lien.url }}" target="_blank">
-                                        {{ lien.plateforme }} <i class="fa fa-external-link"></i>
-                                    </a>
-                                </li>
-                            {% endfor %}
-                            </ul>
-                        </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            {% include 'music/components/table_musics.html' with musiques=artiste.all_musics %}
             {% if artiste.playlists.exists %}
                 <h3>
                     {% blocktrans with artiste_name=artiste.nom_artiste %}Playlists with {{ artiste_name }}{% endblocktrans %} :
