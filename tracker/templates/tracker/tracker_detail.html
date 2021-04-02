@@ -43,7 +43,17 @@
                 </h1>
                 <div>
                     {% with tracks_count=tracker.tracks.count %}
-                        Créé le {{ tracker.date_creation|date }} à {{ tracker.date_creation|time }}, <b id="totalCount">{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
+                        Créé il y a
+                        <span class="text-italic" title="{{ tracker.date_creation }}">
+                            {{ tracker.date_creation|timesince }}
+                        </span>,
+                        <b id="totalCount" class="badge">{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
+                        {% if tracks_count %}
+                            <br>Tracké pour la dernière fois il y a
+                            <span class="text-italic" title="{{ tracker.tracks.first.datetime }}">
+                                {{ tracker.tracks.first.datetime|timesince }}
+                            </span>.
+                        {% endif %}
                     {% endwith %}
                 </div>
             </div>
