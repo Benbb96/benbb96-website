@@ -6,6 +6,7 @@
 
 {% block stylesheet %}
     {{ filter.form.media.css }}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
 {% endblock %}
 
 {% block content %}
@@ -27,19 +28,51 @@
                     </form>
                 </div>
             </div>
-            <h2>{% trans "" %}</h2>
-            <div class="list-group">
-                {% for playlist in object_list %}
-                    <a class="list-group-item" href="{{ playlist.get_absolute_url }}">
-                        <b>{{ playlist.nom }}</b>
-                        <small>
-                            - {{ playlist.createur }}, {% trans "on" %} {{ playlist.date_creation|date:"d/m/y" }}
-                        </small>
-                        <span class="badge" title="{% trans "Nomber of music in the playlist" %}">{{ playlist.musiqueplaylist_set.count }}</span>
-                    </a>
-                {% empty %}
-                    <div class="list-group-item">{% blocktrans %}No playlist has been created yet...{% endblocktrans %}</div>
-                {% endfor %}
+            <div class="table-responsive">
+                <table id="table_playlists" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Creator" %}</th>
+                        <th>{% blocktrans %}Creation date{% endblocktrans %}</th>
+                        <th data-type="num">{% blocktrans %}Number of musics{% endblocktrans %}</th>
+                        <th data-type="num">{% blocktrans %}Number of views{% endblocktrans %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for playlist in object_list %}
+                        <tr>
+                            <td>
+                                <a href="{{ playlist.get_absolute_url }}">
+                                    {{ playlist }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ playlist.createur.get_absolute_url }}">
+                                    {{ playlist.createur }}
+                                </a>
+                            </td>
+                            <td data-order="{{ playlist.date_creation|date:"U" }}">{{ playlist.date_creation|date:"d/m/y" }}</td>
+                            <td data-order="{{ playlist.musiqueplaylist_set.count }}">
+                                <span class="badge">
+                                    {{ playlist.musiqueplaylist_set.count }}
+                                </span>
+                            </td>
+                            <td data-order="{{ playlist.total_vue }}">
+                                <span class="badge">
+                                    {{ playlist.total_vue }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                {% blocktrans %}No playlist has been created yet...{% endblocktrans %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
             {% include 'components/pagination.html' %}
         </div>
@@ -48,4 +81,18 @@
 
 {% block javascript %}
     {{ filter.form.media.js }}
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+    <script>
+        $(() => {
+            $('#table_playlists').DataTable({
+                paging: false,
+                {% get_current_language as LANGUAGE_CODE %}
+                {% if LANGUAGE_CODE == 'fr' %}
+                language: {
+                    url: 'https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/fr_fr.json'
+                }
+                {% endif %}
+            });
+        } );
+    </script>
 {% endblock %}

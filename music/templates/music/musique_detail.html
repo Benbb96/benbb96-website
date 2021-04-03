@@ -38,7 +38,7 @@
                 {% include 'music/components/style_list_inline.html' with styles=musique.styles.all header_inline=True %}
                 {% if musique.label %}
                     <div class="text-center">
-                        Label : <a href="{{ musique.label.get_absolute_url }}">{{ musique.label }}</a>
+                        {% trans "Label" %} : <a href="{{ musique.label.get_absolute_url }}">{{ musique.label }}</a>
                     </div>
                 {% endif %}
             </div>
@@ -67,7 +67,7 @@
                 {% endif %}
             {% endif %}
             <div class="clearfix"></div>
-            <h3>Ajouter un lien</h3>
+            <h3>{% blocktrans %}Add a link{% endblocktrans %}</h3>
             <form method="post">
                 {% csrf_token %}
                 <ul class="list-inline">
@@ -75,7 +75,7 @@
                     <li>
                         <button class="btn btn-primary" type="submit">
                             <i class="fa fa-plus"></i>
-                            Ajouter le lien
+                            {% blocktrans %}Add the link{% endblocktrans %}
                         </button>
                     </li>
                 </ul>

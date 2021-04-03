@@ -1,5 +1,3 @@
-import random
-
 import soundcloud
 from adminsortable.fields import SortableForeignKey
 from adminsortable.models import SortableMixin
@@ -8,6 +6,7 @@ from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
 
 from base.models import Profil
@@ -277,12 +276,30 @@ class LienQuerySet(models.QuerySet):
 
 
 class Lien(BaseLien):
-    musique = models.ForeignKey(Musique, on_delete=models.CASCADE, related_name='liens')
-    url = models.URLField('lien vers la musique')
-    createur = models.ForeignKey(Profil, related_name='liens_crees', on_delete=models.SET_NULL, null=True, blank=True)
-    plateforme = models.ForeignKey(Plateforme, on_delete=models.SET_NULL, null=True, blank=True)
-    date_creation = models.DateTimeField('date de création', auto_now_add=True)
-    date_validation = models.DateTimeField('date de validation', null=True, blank=True)
-    click_count = models.PositiveIntegerField(default=0)
+    musique = models.ForeignKey(
+        Musique,
+        on_delete=models.CASCADE,
+        verbose_name=_('Music'),
+        related_name='liens'
+    )
+    url = models.URLField(_('Link to the music'))
+    createur = models.ForeignKey(
+        Profil,
+        verbose_name=_('Creator'),
+        related_name='liens_crees',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    plateforme = models.ForeignKey(
+        Plateforme,
+        on_delete=models.SET_NULL,
+        verbose_name=_('Platform'),
+        null=True,
+        blank=True
+    )
+    date_creation = models.DateTimeField(_('Creation date'), auto_now_add=True)
+    date_validation = models.DateTimeField(_('Validation date'), null=True, blank=True)
+    click_count = models.PositiveIntegerField(_('Click count'), default=0)
 
     objects = LienQuerySet.as_manager()

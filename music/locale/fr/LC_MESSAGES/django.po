@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-13 14:14+0200\n"
+"POT-Creation-Date: 2021-04-03 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,41 +17,86 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: .\filters.py:12
+msgid "Has links"
+msgstr "Possède des liens"
+
+#: .\filters.py:48 .\filters.py:66 .\templates\music\playlist_filter.html:35
+msgid "Name"
+msgstr "Nom"
+
+#: .\filters.py:84
+msgid "Text"
+msgstr "Text"
+
+#: .\filters.py:110
+msgid "Search via a style"
+msgstr "Rechercher via un style"
+
+#: .\models.py:282 .\templates\music\base_music.html:5
+#: .\templates\music\base_music.html:11
+msgid "Music"
+msgstr "Musique"
+
+#: .\models.py:285
+msgid "Link to the music"
+msgstr "Lien vers la musique"
+
+#: .\models.py:288 .\templates\music\playlist_filter.html:36
+msgid "Creator"
+msgstr "Créateur"
+
+#: .\models.py:297
+msgid "Platform"
+msgstr "Plateforme"
+
+#: .\models.py:301 .\templates\music\playlist_filter.html:37
+msgid "Creation date"
+msgstr "Date de création"
+
+#: .\models.py:302
+msgid "Validation date"
+msgstr "Date de validation"
+
+#: .\models.py:303
+msgid "Click count"
+msgstr "Nombre de clique"
+
 #: .\templates\music\artiste_detail.html:4
 msgid "Artist"
 msgstr "Artiste"
 
-#: .\templates\music\artiste_detail.html:19
+#: .\templates\music\artiste_detail.html:26
 msgid "Country"
 msgstr "Pays"
 
-#: .\templates\music\artiste_detail.html:22
+#: .\templates\music\artiste_detail.html:29
 msgid "City"
 msgstr "Ville"
 
-#: .\templates\music\artiste_detail.html:26
+#: .\templates\music\artiste_detail.html:33
 msgid "Website"
 msgstr "Site web"
 
-#: .\templates\music\artiste_detail.html:33
+#: .\templates\music\artiste_detail.html:40
 msgid "Mail contact"
 msgstr "Contact par mail"
 
-#: .\templates\music\artiste_detail.html:38
+#: .\templates\music\artiste_detail.html:45
 msgid "Contact phone number"
 msgstr "Contact par téléphone"
 
-#: .\templates\music\artiste_detail.html:45
+#: .\templates\music\artiste_detail.html:50
+msgid "Followers on Soundcloud"
+msgstr "Abonnés sur Soundcloud"
+
+#: .\templates\music\artiste_detail.html:57
+#: .\templates\music\base_music.html:22 .\templates\music\label_filter.html:5
+#: .\templates\music\label_filter.html:15
 msgid "Labels"
 msgstr "Labels"
 
-#: .\templates\music\artiste_detail.html:53
-#: .\templates\music\musique_detail.html:34
-#: .\templates\music\playlist_detail.html:25
-msgid "Styles"
-msgstr "Styles"
-
-#: .\templates\music\artiste_detail.html:62
+#: .\templates\music\artiste_detail.html:70
 #, python-format
 msgid ""
 "\n"
@@ -67,38 +111,51 @@ msgstr ""
 "%(artiste_createur)s</a>.\n"
 "                    "
 
-#: .\templates\music\artiste_detail.html:70
-#: .\templates\music\playlist_detail.html:55
+#: .\templates\music\artiste_detail.html:78
+#: .\templates\music\base_music.html:19 .\templates\music\label_detail.html:9
+#: .\templates\music\musique_filter.html:5
+#: .\templates\music\playlist_detail.html:84
+#: .\templates\music\style_detail.html:9
 msgid "Musics"
 msgstr "Musiques"
 
-#: .\templates\music\artiste_detail.html:75
-msgid "Title"
-msgstr "Titre"
-
-#: .\templates\music\artiste_detail.html:76
-msgid "Date add"
-msgstr "Date d'ajout"
-
-#: .\templates\music\artiste_detail.html:77
-msgid "View count"
-msgstr "Nombre de vue"
-
-#: .\templates\music\artiste_detail.html:78
-#: .\templates\music\musique_detail.html:43
-msgid "Liens"
-msgstr "Liens"
-
-#: .\templates\music\artiste_detail.html:111
+#: .\templates\music\artiste_detail.html:82
 #, python-format
 msgid "Playlists with %(artiste_name)s"
 msgstr "Playlists avec du %(artiste_name)s"
 
-#: .\templates\music\base_music.html:5 .\templates\music\base_music.html:7
-msgid "Music"
-msgstr "Musique"
+#: .\templates\music\artiste_filter.html:5
+#: .\templates\music\artiste_filter.html:15
+#: .\templates\music\base_music.html:20
+msgid "Artists"
+msgstr "Artistes"
 
-#: .\templates\music\base_music.html:9
+#: .\templates\music\artiste_filter.html:31
+msgid "Artist name"
+msgstr "Nom d'Artiste"
+
+#: .\templates\music\artiste_filter.html:32
+msgid "First name / Last name"
+msgstr "Prénom Nom"
+
+#: .\templates\music\artiste_filter.html:33
+#: .\templates\music\playlist_filter.html:38
+msgid "Number of musics"
+msgstr "Nombre de musiques"
+
+#: .\templates\music\artiste_filter.html:34
+msgid "Number of featuring"
+msgstr "Nombre de feat"
+
+#: .\templates\music\artiste_filter.html:35
+msgid "Number of remixes"
+msgstr "Nombre de remix"
+
+#: .\templates\music\artiste_filter.html:52
+msgid "No artist has been created yet..."
+msgstr "Aucun artiste n'a encore été créé..."
+
+#: .\templates\music\base_music.html:13
 msgid ""
 "\n"
 "        My new project to save all my playlists which are on my phone and "
@@ -112,66 +169,192 @@ msgstr ""
 "        de lien vers différentes plate-formes pour écouter les musiques.\n"
 "    "
 
-#: .\templates\music\list_group_playlist.html:6
+#: .\templates\music\base_music.html:18
+#: .\templates\music\playlist_filter.html:17
+msgid "Playlists"
+msgstr "Playlists"
+
+#: .\templates\music\base_music.html:21
+#: .\templates\music\components\style_list_inline.html:5
+#: .\templates\music\components\style_list_inline.html:8
+#: .\templates\music\style_filter.html:5 .\templates\music\style_filter.html:12
+msgid "Styles"
+msgstr "Styles"
+
+#: .\templates\music\components\lien.html:9
+#, python-format
+msgid ""
+"\n"
+"        Added by %(lien_createur)s on %(lien_date)s,\n"
+"        seen <span class=\"click_count\" id=\"lien%(lien_id)s\">"
+"%(lien_click_count)s</span> times.\n"
+"    "
+msgstr ""
+"\n"
+"        Ajouté par %(lien_createur)s le %(lien_date)s,\n"
+"        vu <span class=\"click_count\" id=\"%(lien_id)s\">"
+"%(lien_click_count)s</span> fois.\n"
+"    "
+
+#: .\templates\music\components\lien.html:15
+msgid "Validate the link"
+msgstr "Valider le lien"
+
+#: .\templates\music\components\list_group_playlist.html:6
 #, python-format
 msgid "Created by %(playlist_createur)s on %(playlist_date)s"
 msgstr "Crée par %(playlist_createur)s le %(playlist_date)s"
 
-#: .\templates\music\list_group_playlist.html:8
+#: .\templates\music\components\list_group_playlist.html:8
+#: .\templates\music\playlist_detail.html:86
 msgid "Playlist music count"
 msgstr "Nombre de musique de la playlist"
 
-#: .\templates\music\musique_detail.html:10
+#: .\templates\music\components\list_group_playlist.html:11
+msgid "No playlist has been created."
+msgstr "Aucune playlist n'a été créée."
+
+#: .\templates\music\components\table_musics.html:4
+msgid "No music has been created here."
+msgstr "Aucune musique n'a été créée ici."
+
+#: .\templates\music\components\table_musics.html:10
+msgid "Title"
+msgstr "Titre"
+
+#: .\templates\music\components\table_musics.html:11
+#: .\templates\music\style_detail.html:4
+msgid "Style"
+msgstr "Style"
+
+#: .\templates\music\components\table_musics.html:12
+msgid "Date add"
+msgstr "Date d'ajout"
+
+#: .\templates\music\components\table_musics.html:13
+msgid "View count"
+msgstr "Nombre de vue"
+
+#: .\templates\music\components\table_musics.html:14
+#: .\templates\music\musique_detail.html:47
+#: .\templates\music\playlist_detail.html:33
+msgid "Links"
+msgstr "Liens"
+
+#: .\templates\music\label_detail.html:4
+#: .\templates\music\musique_detail.html:41
+msgid "Label"
+msgstr "Label"
+
+#: .\templates\music\label_detail.html:26
+#: .\templates\music\playlist_detail.html:28
+#: .\templates\music\style_detail.html:27
+msgid "Description"
+msgstr "Description"
+
+#: .\templates\music\label_detail.html:31
+msgid "Artists from this label"
+msgstr "Artistes de ce label"
+
+#: .\templates\music\label_detail.html:37
+#: .\templates\music\playlist_detail.html:67
+#: .\templates\music\style_detail.html:45
+msgid "See all..."
+msgstr "Voir tout..."
+
+#: .\templates\music\label_filter.html:18
+#: .\templates\music\musique_filter.html:18
+msgid "Filter options"
+msgstr "Options de filtre"
+
+#: .\templates\music\label_filter.html:30
+msgid "Nomber of music from this label"
+msgstr "Nombre de musiques dans ce label"
+
+#: .\templates\music\label_filter.html:36
+msgid "No labels has been created yet..."
+msgstr "Aucun label n'a encore été créé..."
+
+#: .\templates\music\musique_detail.html:11
 msgid "See artist page"
 msgstr "Voir la page de l'artiste"
 
-#: .\templates\music\musique_detail.html:20
+#: .\templates\music\musique_detail.html:21
 msgid "Remix"
-msgstr ""
+msgstr "Remix"
 
-#: .\templates\music\musique_detail.html:24
+#: .\templates\music\musique_detail.html:30
 #, python-format
 msgid ""
 "\n"
-"                    Added on %(musique_date)s at %(musique_time)s\n"
-"                by <a href=\"%(musique_createur_url)s\">"
+"                        Added on %(musique_date)s at %(musique_time)s\n"
+"                    by <a href=\"%(musique_createur_url)s\">"
 "%(musique_createur)s</a>.\n"
-"                "
+"                    "
 msgstr ""
 "\n"
-"                    Ajouté le %(musique_date)s à %(musique_time)s\n"
-"                par <a href=\"%(musique_createur_url)s\">"
+"                        Ajouté le %(musique_date)s à %(musique_time)s\n"
+"                    par <a href=\"%(musique_createur_url)s\">"
 "%(musique_createur)s</a>.\n"
 "                "
 
-#: .\templates\music\musique_detail.html:30
+#: .\templates\music\musique_detail.html:36
 msgid "Album"
 msgstr "Album"
 
-#: .\templates\music\musique_detail.html:49
-#, python-format
-msgid ""
-"\n"
-"                            Added by %(lien_createur)s on %(lien_date)s,\n"
-"                            seen <span class=\"click_count\" id=\"%(lien_id)s"
-"\">%(lien_click_count)s</span> times.\n"
-"                        "
-msgstr ""
-"\n"
-"                            Ajouté par %(lien_createur)s le %(lien_date)s,\n"
-"                            vu <span class=\"click_count\" id=\"%(lien_id)s"
-"\">%(lien_click_count)s</span> fois.\n"
-"                        "
-
 #: .\templates\music\musique_detail.html:58
+msgid "Links to validate"
+msgstr "Liens à valider"
+
+#: .\templates\music\musique_detail.html:70
+msgid "Add a link"
+msgstr "Ajouter un lien"
+
+#: .\templates\music\musique_detail.html:78
+msgid "Add the link"
+msgstr "Ajouter le lien"
+
+#: .\templates\music\musique_detail.html:84
+msgid "Search on :"
+msgstr "Rechercher sur :"
+
+#: .\templates\music\musique_detail.html:85
+msgid "Search on Google"
+msgstr "Rechercher sur Google"
+
+#: .\templates\music\musique_detail.html:88
+msgid "Search on YouTube"
+msgstr "Rechercher sur Youtube"
+
+#: .\templates\music\musique_detail.html:91
+msgid "Search on Soundcloud"
+msgstr "Recherche sur Soundcloud"
+
+#: .\templates\music\musique_detail.html:94
+msgid "Search on Spotify"
+msgstr "Rechercher sur Spotify"
+
+#: .\templates\music\musique_detail.html:101
 msgid "This music is present in these playlists"
 msgstr "Cette musique est présente dans les playlists"
+
+#: .\templates\music\musique_filter.html:15
+msgid "All Musics"
+msgstr "Toutes les musiques"
+
+#: .\templates\music\musique_filter.html:26
+msgid "Filter"
+msgstr "Filtrer"
+
+#: .\templates\music\musique_filter.html:30
+msgid "Erase"
+msgstr "Effacer"
 
 #: .\templates\music\playlist_detail.html:4
 msgid "Playlist"
 msgstr "Playlist"
 
-#: .\templates\music\playlist_detail.html:15
+#: .\templates\music\playlist_detail.html:22
 #, python-format
 msgid ""
 "\n"
@@ -187,45 +370,53 @@ msgstr ""
 "%(playlist_createur)s</a>.\n"
 "                        "
 
-#: .\templates\music\playlist_detail.html:21
-msgid "Description"
-msgstr "Description"
-
-#: .\templates\music\playlist_detail.html:33
+#: .\templates\music\playlist_detail.html:61
 msgid "Playlist artists"
 msgstr "Artistes de la playlist"
 
-#: .\templates\music\playlist_detail.html:39
-msgid "See all..."
-msgstr "Voir tout..."
-
-#: .\templates\music\playlist_detail.html:61
-#, python-format
-msgid ""
-"\n"
-"                        Added on %(date)s\n"
-"                    "
-msgstr ""
-"\n"
-"                        Ajouté le %(date)s\n"
-"                    "
-
-#: .\templates\music\playlist_detail.html:66
-msgid "This playlist is empty..."
-msgstr "Cette playlist est vide..."
-
-#: .\templates\music\playlist_list.html:5
+#: .\templates\music\playlist_filter.html:5
 msgid "My playlists"
 msgstr "Mes playlists"
 
-#: .\templates\music\playlist_list.html:15
-msgid "on"
-msgstr "le"
+#: .\templates\music\playlist_filter.html:39
+msgid "Number of views"
+msgstr "Nombre de vue"
 
-#: .\templates\music\playlist_list.html:17
-msgid "Nomber of music in the playlist"
-msgstr "Nombre de musiques dans la playlist"
-
-#: .\templates\music\playlist_list.html:20
+#: .\templates\music\playlist_filter.html:70
 msgid "No playlist has been created yet..."
 msgstr "Aucune playlist n'a encore été créée"
+
+#: .\templates\music\style_detail.html:33
+msgid "Wiki link"
+msgstr "Lien wiki"
+
+#: .\templates\music\style_detail.html:39
+msgid "Artists playing this style"
+msgstr "Artistes jouant ce style"
+
+#: .\templates\music\style_filter.html:30
+msgid "Nomber of music from this style"
+msgstr "Nombre de musiques de ce style"
+
+#: .\templates\music\style_filter.html:36
+msgid "No styles has been created yet..."
+msgstr "Aucun style n'a encore été créé"
+
+#~ msgid "Liens"
+#~ msgstr "Liens"
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "                        Added on %(date)s\n"
+#~ "                    "
+#~ msgstr ""
+#~ "\n"
+#~ "                        Ajouté le %(date)s\n"
+#~ "                    "
+
+#~ msgid "This playlist is empty..."
+#~ msgstr "Cette playlist est vide..."
+
+#~ msgid "on"
+#~ msgstr "le"
