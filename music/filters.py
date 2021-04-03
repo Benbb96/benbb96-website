@@ -1,5 +1,6 @@
 import django_filters
 from django.db.models import ManyToManyField, Q, ForeignKey
+from django.utils.translation import gettext_lazy as _
 from django_filters.filterset import remote_queryset
 from django_select2.forms import ModelSelect2MultipleWidget, Select2MultipleWidget, Select2Widget
 
@@ -8,7 +9,7 @@ from music.models import Musique, Style, Label, Artiste, Playlist
 
 class MusiqueFilter(django_filters.FilterSet):
     has_link = django_filters.BooleanFilter(
-        label='Possède des liens',
+        label=_('Has links'),
         method='search_has_link'
     )
 
@@ -44,7 +45,7 @@ class MusiqueFilter(django_filters.FilterSet):
 
 
 class StyleFilter(django_filters.FilterSet):
-    nom = django_filters.CharFilter(lookup_expr='icontains', label='Nom')
+    nom = django_filters.CharFilter(lookup_expr='icontains', label=_('Name'))
 
     class Meta:
         model = Style
@@ -62,7 +63,7 @@ styles_multiple_choice_field = django_filters.ModelMultipleChoiceFilter(
 
 
 class LabelFilter(django_filters.FilterSet):
-    nom = django_filters.CharFilter(lookup_expr='icontains', label='Nom')
+    nom = django_filters.CharFilter(lookup_expr='icontains', label=_('Name'))
     artistes = django_filters.ModelMultipleChoiceFilter(
         queryset=Artiste.objects.all(),
         widget=ModelSelect2MultipleWidget(
@@ -80,7 +81,7 @@ class LabelFilter(django_filters.FilterSet):
 
 class ArtisteFilter(django_filters.FilterSet):
     text = django_filters.CharFilter(
-        label='Texte',
+        label=_('Text'),
         method='search_text'
     )
     styles = styles_multiple_choice_field
@@ -106,7 +107,7 @@ class PlaylistFilter(django_filters.FilterSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.filters['styles'].method = 'filter_styles'
-        self.filters['styles'].field.widget.attrs['data-placeholder'] = 'Rechercher via un style'
+        self.filters['styles'].field.widget.attrs['data-placeholder'] = _('Search via a style')
 
     def filter_styles(self, queryset, name, value):
         return queryset.filter(musiqueplaylist__musique__styles__in=value).distinct()

@@ -28,7 +28,7 @@
                     {% endif %}
                     {% include 'music/components/style_list_inline.html' with styles=label.styles.all %}
                     {% if label.artistes %}
-                        <h3>Artistes de ce label</h3>
+                        <h3>{% blocktrans %}Artists from this label{% endblocktrans %}</h3>
                         {% if label.artistes.count > 4 %}
                         <div class="panel-group">
                             <div class="panel panel-default">

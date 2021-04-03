@@ -15,11 +15,11 @@
         platforms to listening to music
     {% endblocktrans %}
     <br>
-    <a href="{% url 'music:liste-playlists' %}">Playlists</a> |
-    <a href="{% url 'music:liste-musiques' %}">Musiques</a> |
-    <a href="{% url 'music:liste-artiste' %}">Artistes</a> |
-    <a href="{% url 'music:liste-styles' %}">Styles</a> |
-    <a href="{% url 'music:liste-labels' %}">Labels</a>
+    <a href="{% url 'music:liste-playlists' %}">{% trans "Playlists" %}</a> |
+    <a href="{% url 'music:liste-musiques' %}">{% trans "Musics" %}</a> |
+    <a href="{% url 'music:liste-artiste' %}">{% trans "Artists" %}</a> |
+    <a href="{% url 'music:liste-styles' %}">{% trans "Styles" %}</a> |
+    <a href="{% url 'music:liste-labels' %}">{% trans "Labels" %}</a>
 {% endblock %}
 
 {% block javascript %}

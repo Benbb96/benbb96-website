@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
@@ -64,7 +65,10 @@ class LabelDetailView(DetailView):
 class PlaylistListView(FilterView):
     filterset_class = PlaylistFilter
     paginate_by = 20
-    queryset = Playlist.objects.select_related('createur__user').prefetch_related('musiqueplaylist_set__musique')
+    queryset = Playlist.objects\
+        .select_related('createur__user')\
+        .prefetch_related('musiqueplaylist_set__musique')\
+        .annotate(total_vue=Sum('musiqueplaylist__musique__liens__click_count'))
 
 
 class PlaylistDetailView(FormMixin, DetailView):
@@ -81,9 +85,11 @@ class PlaylistDetailView(FormMixin, DetailView):
             .select_related('artiste', 'remixed_by')\
             .prefetch_related('styles', 'featuring', 'liens')\
             .order_by('musiqueplaylist__position')
-        context = super().get_context_data(musiques=musiques, **kwargs)
-        context['form'] = self.get_form()
-        context['plateformes'] = Plateforme.objects.all()
+        context = super().get_context_data(
+            musiques=musiques,
+            plateformes=Plateforme.objects.all(),
+            **kwargs
+        )
         return context
 
     def post(self, *args, **kwargs):

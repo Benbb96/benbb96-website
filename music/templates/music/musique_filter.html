@@ -15,7 +15,7 @@
                 {% trans "All Musics" %}
                 <span class="pull-right">
                     <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#filter">
-                        Options de filtre <i class="fa fa-filter"></i>
+                        {% blocktrans %}Filter options{% endblocktrans %} <i class="fa fa-filter"></i>
                     </button>
                 </span>
             </h2>
@@ -23,11 +23,11 @@
             <form method="get" id="filter" class="collapse">
                 {% bootstrap_form filter.form %}
                 <button type="submit" class="btn btn-primary">
-                    Filtrer
+                    {% trans "Filter" %}
                     <i class="fa fa-filter"></i>
                 </button>
                 <a class="btn btn-default" href="{% url 'music:liste-musiques' %}">
-                    Effacer
+                    {% trans "Erase" %}
                     <i class="fa fa-eraser"></i>
                 </a>
             </form>
