@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'adminsortable',
     'django_select2',
     'simple_history',
-    'anymail'
+    'anymail',
+    'corsheaders'
 ]
 
 SITE_ID = 1
@@ -63,11 +64,18 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://www.benbb96.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:8000"
 ]
 
 ROOT_URLCONF = 'config.urls'
