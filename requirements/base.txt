@@ -19,7 +19,7 @@ coreschema==0.0.4
 coverage==5.3.1
 decorator==4.4.0
 defusedxml==0.6.0
-Django==2.2.18
+Django==2.2.20
 django-admin-sortable==2.2.3
 django-allauth==0.42.0
 django-anymail==7.1.0
@@ -29,6 +29,7 @@ django-avatar==5.0.0
 django-bootstrap3==14.2.0
 django-colorfield==0.3.2
 django-compressor==2.4
+django-cors-headers==3.7.0
 django-coverage-plugin==1.8.0
 django-crispy-forms==1.10.0
 django-environ==0.4.5
@@ -151,7 +152,7 @@ traitlets==4.3.2
 typed-ast==1.4.0
 typing-extensions==3.7.4
 uritemplate==3.0.0
-urllib3==1.26.3
+urllib3==1.26.4
 wcwidth==0.1.7
 Werkzeug==0.15.3
 wrapt==1.11.2
