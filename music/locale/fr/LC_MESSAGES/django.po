@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-03 12:43+0200\n"
+"POT-Creation-Date: 2021-04-27 15:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -182,21 +182,22 @@ msgid "Styles"
 msgstr "Styles"
 
 #: .\templates\music\components\lien.html:9
-#, python-format
-msgid ""
-"\n"
-"        Added by %(lien_createur)s on %(lien_date)s,\n"
-"        seen <span class=\"click_count\" id=\"lien%(lien_id)s\">"
-"%(lien_click_count)s</span> times.\n"
-"    "
-msgstr ""
-"\n"
-"        Ajouté par %(lien_createur)s le %(lien_date)s,\n"
-"        vu <span class=\"click_count\" id=\"%(lien_id)s\">"
-"%(lien_click_count)s</span> fois.\n"
-"    "
+msgid "Added by"
+msgstr "Ajouté par"
 
-#: .\templates\music\components\lien.html:15
+#: .\templates\music\components\lien.html:9
+msgid "on"
+msgstr "le"
+
+#: .\templates\music\components\lien.html:10
+msgid "seen"
+msgstr "vu"
+
+#: .\templates\music\components\lien.html:10
+msgid "times"
+msgstr "fois"
+
+#: .\templates\music\components\lien.html:13
 msgid "Validate the link"
 msgstr "Valider le lien"
 
@@ -402,6 +403,20 @@ msgstr "Nombre de musiques de ce style"
 msgid "No styles has been created yet..."
 msgstr "Aucun style n'a encore été créé"
 
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "        Added by %(lien_createur)s on %(lien_date)s,\n"
+#~ "        seen <span class=\"click_count\" id=\"lien%(lien_id)s\">"
+#~ "%(lien_click_count)s</span> times.\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "        Ajouté par %(lien_createur)s le %(lien_date)s,\n"
+#~ "        vu <span class=\"click_count\" id=\"%(lien_id)s\">"
+#~ "%(lien_click_count)s</span> fois.\n"
+#~ "    "
+
 #~ msgid "Liens"
 #~ msgstr "Liens"
 
@@ -417,6 +432,3 @@ msgstr "Aucun style n'a encore été créé"
 
 #~ msgid "This playlist is empty..."
 #~ msgstr "Cette playlist est vide..."
-
-#~ msgid "on"
-#~ msgstr "le"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-03 00:47+0200\n"
+"POT-Creation-Date: 2021-04-27 15:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\filters.py:12
+msgid "Has links"
+msgstr ""
+
+#: .\filters.py:48 .\filters.py:66 .\templates\music\playlist_filter.html:35
+msgid "Name"
+msgstr ""
+
+#: .\filters.py:84
+msgid "Text"
+msgstr ""
+
+#: .\filters.py:110
+msgid "Search via a style"
+msgstr ""
+
+#: .\models.py:282 .\templates\music\base_music.html:5
+#: .\templates\music\base_music.html:11
+msgid "Music"
+msgstr ""
+
+#: .\models.py:285
+msgid "Link to the music"
+msgstr ""
+
+#: .\models.py:288 .\templates\music\playlist_filter.html:36
+msgid "Creator"
+msgstr ""
+
+#: .\models.py:297
+msgid "Platform"
+msgstr ""
+
+#: .\models.py:301 .\templates\music\playlist_filter.html:37
+msgid "Creation date"
+msgstr ""
+
+#: .\models.py:302
+msgid "Validation date"
+msgstr ""
+
+#: .\models.py:303
+msgid "Click count"
+msgstr ""
 
 #: .\templates\music\artiste_detail.html:4
 msgid "Artist"
@@ -106,10 +151,6 @@ msgstr ""
 msgid "No artist has been created yet..."
 msgstr ""
 
-#: .\templates\music\base_music.html:5 .\templates\music\base_music.html:11
-msgid "Music"
-msgstr ""
-
 #: .\templates\music\base_music.html:13
 msgid ""
 "\n"
@@ -132,16 +173,22 @@ msgid "Styles"
 msgstr ""
 
 #: .\templates\music\components\lien.html:9
-#, python-format
-msgid ""
-"\n"
-"        Added by %(lien_createur)s on %(lien_date)s,\n"
-"        seen <span class=\"click_count\" id=\"lien%(lien_id)s\">"
-"%(lien_click_count)s</span> times.\n"
-"    "
+msgid "Added by"
 msgstr ""
 
-#: .\templates\music\components\lien.html:15
+#: .\templates\music\components\lien.html:9
+msgid "on"
+msgstr ""
+
+#: .\templates\music\components\lien.html:10
+msgid "seen"
+msgstr ""
+
+#: .\templates\music\components\lien.html:10
+msgid "times"
+msgstr ""
+
+#: .\templates\music\components\lien.html:13
 msgid "Validate the link"
 msgstr ""
 
@@ -181,7 +228,9 @@ msgid "View count"
 msgstr ""
 
 #: .\templates\music\components\table_musics.html:14
-msgid "Liens"
+#: .\templates\music\musique_detail.html:47
+#: .\templates\music\playlist_detail.html:33
+msgid "Links"
 msgstr ""
 
 #: .\templates\music\label_detail.html:4
@@ -238,11 +287,6 @@ msgstr ""
 
 #: .\templates\music\musique_detail.html:36
 msgid "Album"
-msgstr ""
-
-#: .\templates\music\musique_detail.html:47
-#: .\templates\music\playlist_detail.html:33
-msgid "Links"
 msgstr ""
 
 #: .\templates\music\musique_detail.html:58
@@ -314,18 +358,6 @@ msgstr ""
 
 #: .\templates\music\playlist_filter.html:5
 msgid "My playlists"
-msgstr ""
-
-#: .\templates\music\playlist_filter.html:35
-msgid "Name"
-msgstr ""
-
-#: .\templates\music\playlist_filter.html:36
-msgid "Creator"
-msgstr ""
-
-#: .\templates\music\playlist_filter.html:37
-msgid "Creation date"
 msgstr ""
 
 #: .\templates\music\playlist_filter.html:39
