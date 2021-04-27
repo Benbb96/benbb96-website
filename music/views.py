@@ -20,7 +20,7 @@ class MusiqueListView(FilterView):
     filterset_class = MusiqueFilter
     paginate_by = 20
     queryset = Musique.objects.select_related('artiste', 'remixed_by')\
-        .prefetch_related('featuring', 'liens', 'styles')
+        .prefetch_related('featuring', 'liens__plateforme', 'styles')
 
 
 class StyleListView(FilterView):
@@ -83,7 +83,7 @@ class PlaylistDetailView(FormMixin, DetailView):
         # Prépare les musiques de la playslists afin de les avoir dans le bon ordre
         musiques = self.get_object().musiques\
             .select_related('artiste', 'remixed_by')\
-            .prefetch_related('styles', 'featuring', 'liens')\
+            .prefetch_related('styles', 'featuring', 'liens__plateforme')\
             .order_by('musiqueplaylist__position')
         context = super().get_context_data(
             musiques=musiques,
