@@ -67,19 +67,26 @@
                 {% endif %}
             {% endif %}
             <div class="clearfix"></div>
-            <h3>{% blocktrans %}Add a link{% endblocktrans %}</h3>
-            <form method="post">
-                {% csrf_token %}
-                <ul class="list-inline">
-                    {{ form.as_ul }}
-                    <li>
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fa fa-plus"></i>
-                            {% blocktrans %}Add the link{% endblocktrans %}
-                        </button>
-                    </li>
-                </ul>
-            </form>
+                <h3>{% blocktrans %}Add a link{% endblocktrans %}</h3>
+            {% if request.user.is_authenticated %}
+                <form method="post">
+                    {% csrf_token %}
+                    <ul class="list-inline">
+                        {{ form.as_ul }}
+                        <li>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fa fa-plus"></i>
+                                {% blocktrans %}Add the link{% endblocktrans %}
+                            </button>
+                        </li>
+                    </ul>
+                </form>
+            {% else %}
+                <p>
+                    <a href="{% url 'login' %}">{% trans "Login" %}</a>
+                    {% blocktrans %}to be able to add a link{% endblocktrans %}
+                </p>
+            {% endif %}
             <p>
                 {% trans "Search on :" %}
                 <a class="btn btn-sm btn-social-icon btn-google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">

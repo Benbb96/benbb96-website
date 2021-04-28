@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-27 15:21+0200\n"
+"POT-Creation-Date: 2021-04-28 14:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -311,31 +311,39 @@ msgstr "Liens à valider"
 msgid "Add a link"
 msgstr "Ajouter un lien"
 
-#: .\templates\music\musique_detail.html:78
+#: .\templates\music\musique_detail.html:79
 msgid "Add the link"
 msgstr "Ajouter le lien"
 
-#: .\templates\music\musique_detail.html:84
+#: .\templates\music\musique_detail.html:86
+msgid "Login"
+msgstr "Connecte-toi"
+
+#: .\templates\music\musique_detail.html:87
+msgid "to be able to add a link"
+msgstr "pour pouvoir ajouter un lien"
+
+#: .\templates\music\musique_detail.html:91
 msgid "Search on :"
 msgstr "Rechercher sur :"
 
-#: .\templates\music\musique_detail.html:85
+#: .\templates\music\musique_detail.html:92
 msgid "Search on Google"
 msgstr "Rechercher sur Google"
 
-#: .\templates\music\musique_detail.html:88
+#: .\templates\music\musique_detail.html:95
 msgid "Search on YouTube"
 msgstr "Rechercher sur Youtube"
 
-#: .\templates\music\musique_detail.html:91
+#: .\templates\music\musique_detail.html:98
 msgid "Search on Soundcloud"
 msgstr "Recherche sur Soundcloud"
 
-#: .\templates\music\musique_detail.html:94
+#: .\templates\music\musique_detail.html:101
 msgid "Search on Spotify"
 msgstr "Rechercher sur Spotify"
 
-#: .\templates\music\musique_detail.html:101
+#: .\templates\music\musique_detail.html:108
 msgid "This music is present in these playlists"
 msgstr "Cette musique est présente dans les playlists"
 

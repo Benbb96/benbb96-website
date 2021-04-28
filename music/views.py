@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.db.models import Sum
@@ -122,6 +123,9 @@ class MusiqueDetailView(FormMixin, DetailView):
 
     def post(self, *args, **kwargs):
         self.object = self.get_object()
+        if not self.request.user.is_authenticated:
+            messages.error(self.request, 'Vous devez être connecté pour proposer un lien.')
+            return redirect_to_login(self.object.get_absolute_url())
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
