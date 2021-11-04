@@ -187,6 +187,11 @@
                                                         </tbody>
                                                     </table>
                                                 </div>
+                                                <div v-if="tache.tracks.length">
+                                                    Date dernier track :<br>
+                                                    <b>[[ tache.tracks[0].datetime | moment('L') ]] à [[ tache.tracks[0].datetime | moment('LT') ]]</b>
+                                                    ([[ tache.tracks[0].datetime | fromNow ]])
+                                                </div>
                                             </div>
                                             <div class="panel-footer text-center">
                                                 <button @click="detailTache(tache, 'detail')" type="button" class="btn btn-default btn-sm"
