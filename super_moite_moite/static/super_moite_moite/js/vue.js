@@ -554,8 +554,11 @@ let app = new Vue({
         }
     },
     filters: {
-        moment: function (date) {
-            return moment(date).format('LLL');
+        moment: function (date, format='LLL') {
+            return moment(date).format(format);
+        },
+        fromNow: function (date) {
+            return moment(date).fromNow();
         },
         round: function (value, decimals) {
             if (!value) {
