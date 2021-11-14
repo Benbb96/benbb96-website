@@ -62,7 +62,7 @@ def get_all_view_names(url_patterns, app_name=None):
             get_all_view_names(pattern.url_patterns, pattern.namespace)  # call this function recursively
         elif isinstance(pattern, URLPattern):
             view_name = pattern.name  # get the view name
-            if app_name:
+            if app_name and view_name:
                 view_name = app_name + ':' + view_name
             VIEW_NAMES.append(view_name)  # add the view to the global list
     return VIEW_NAMES

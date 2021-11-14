@@ -1,4 +1,4 @@
-{% load bootstrap3 static fontawesome %}
+{% load bootstrap3 static fontawesome_5 %}
 
 <!DOCTYPE html>
 {# TODO use {% get_current_language as LANGUAGE_CODE %} ? #}
@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'avis/css/avis-style.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap-social.css' %}">
-    {% fontawesome_stylesheet %}
+    {% fontawesome_5_static %}
 
     {% block stylesheet %}{% endblock %}
 </head>
