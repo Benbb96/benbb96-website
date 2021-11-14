@@ -63,7 +63,7 @@ class StructureAdmin(admin.ModelAdmin):
         if instance.adresse is not None:
             # TODO Maybe need to add client ID and signature
             return format_html('<img src="http://maps.googleapis.com/maps/api/staticmap?key=%(map_api_key)s&center=%(latitude)s,%(longitude)s&zoom=%(zoom)s&size=%(width)sx%(height)s&maptype=roadmap&markers=%(latitude)s,%(longitude)s&sensor=false&visual_refresh=true&scale=%(scale)s" width="%(width)s" height="%(height)s">' % {
-                'map_api_key': settings.GEOPOSITION_GOOGLE_MAPS_API_KEY[0],
+                'map_api_key': settings.GOOGLE_API_KEY[0],
                 'latitude': instance.adresse.latitude,
                 'longitude': instance.adresse.longitude,
                 'zoom': 14,

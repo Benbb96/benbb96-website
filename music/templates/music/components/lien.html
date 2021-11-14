@@ -1,9 +1,9 @@
-{% load i18n %}
+{% load i18n fontawesome_5 %}
 
 <a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"
    data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
-    <i class="fa fa-{{ lien.plateforme|lower }}"></i>
-    <b>{{ lien.plateforme }}</b> <i class="fa fa-external-link"></i>
+    {% fa5_icon lien.plateforme|lower 'fab' %}
+    <b>{{ lien.plateforme }}</b> {% fa5_icon 'external-link-alt' %}
 </a>
 <div>
     {% blocktrans %}Added by{% endblocktrans %} {{ lien.createur }} {% trans "on" %} {{ lien.date_creation|date:'d/m/y' }},
