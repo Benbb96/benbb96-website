@@ -1,5 +1,6 @@
 import json
 import os
+import soundcloud
 from datetime import timedelta
 
 from django.core.exceptions import ImproperlyConfigured
@@ -180,6 +181,8 @@ GOOGLE_API_KEY = get_secret_setting('GOOGLE_API_KEY')
 GEOPOSITION_GOOGLE_MAPS_API_KEY = GOOGLE_API_KEY
 
 FIREBASE_CONFIG = get_secret_setting('FIREBASE_CONFIG')
+
+SOUNDCLOUD_CLIENT = soundcloud.Client(client_id=get_secret_setting('SOUNDCLOUD_CLIENT_ID'))
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

@@ -1,6 +1,23 @@
 from django import forms
+from django_select2.forms import ModelSelect2Widget, ModelSelect2MultipleWidget
 
-from music.models import Lien, LienPlaylist
+from music.models import Lien, LienPlaylist, Musique, Artiste, Style
+
+
+class MusiqueForm(forms.ModelForm):
+    class Meta:
+        model = Musique
+        fields = ('titre', 'artiste', 'featuring', 'remixed_by', 'styles', 'album', 'label')
+        widgets = {
+            'artiste': ModelSelect2Widget(queryset=Artiste.objects.all(), search_fields=['nom_artiste__icontains']),
+            'featuring': ModelSelect2MultipleWidget(
+                queryset=Artiste.objects.all(), search_fields=['nom_artiste__icontains']
+            ),
+            'remixed_by': ModelSelect2Widget(queryset=Artiste.objects.all(), search_fields=['nom_artiste__icontains']),
+            'styles': ModelSelect2MultipleWidget(
+                queryset=Style.objects.all(), search_fields=['nom__icontains']
+            ),
+        }
 
 
 class BaseLienForm(forms.ModelForm):

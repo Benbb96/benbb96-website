@@ -1,6 +1,6 @@
-import soundcloud
 from adminsortable.fields import SortableForeignKey
 from adminsortable.models import SortableMixin
+from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
@@ -119,14 +119,13 @@ class Artiste(models.Model):
     @cached_property
     def soundcloud_followers(self):
         if self.soundcloud_id:
-            client = soundcloud.Client(client_id='D7YkmhAjzaV0qsA9e71yKXufTMyJAX2Q')
             try:
-                artist = client.get(f'/users/{self.soundcloud_id}')
+                results = settings.SOUNDCLOUD_CLIENT.get(f'/users/{self.soundcloud_id}')
             except Exception as e:
                 print(f"Erreur sur l'appel API du nombre de followers de l'artiste {self} :")
                 print(e)
             else:
-                return int(artist.fields().get('followers_count'))
+                return int(results.fields().get('followers_count'))
 
 
 class Label(models.Model):

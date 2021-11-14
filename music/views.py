@@ -1,25 +1,30 @@
+from urllib.parse import urlparse, parse_qs
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.db.models import Sum
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
 from django.views.generic.edit import FormMixin
 from django.views.generic.list import MultipleObjectMixin
 from django_filters.views import FilterView
+from googleapiclient import discovery
+from slugify import slugify
 
 from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter, PlaylistFilter
 from music.models import Playlist, Musique, Lien, Artiste, Style, Label, Plateforme
-from music.forms import LienForm, LienPlaylistForm
+from music.forms import LienForm, LienPlaylistForm, MusiqueForm
 
 
 class MusiqueListView(FilterView):
     filterset_class = MusiqueFilter
-    paginate_by = 20
+    paginate_by = 50
     queryset = Musique.objects.select_related('artiste', 'remixed_by')\
         .prefetch_related('featuring', 'liens__plateforme', 'styles')
 
@@ -65,10 +70,9 @@ class LabelDetailView(DetailView):
 
 class PlaylistListView(FilterView):
     filterset_class = PlaylistFilter
-    paginate_by = 20
     queryset = Playlist.objects\
         .select_related('createur__user')\
-        .prefetch_related('musiqueplaylist_set__musique')\
+        .prefetch_related('musiqueplaylist_set')\
         .annotate(total_vue=Sum('musiqueplaylist__musique__liens__click_count'))
 
 
@@ -107,6 +111,90 @@ class PlaylistDetailView(FormMixin, DetailView):
         lien.save()
         messages.success(self.request, 'Le lien a bien été ajouté.')
         return redirect(self.object.get_absolute_url())
+
+
+def create_music_from_url(request):
+    form = MusiqueForm(request.POST or None)
+    link_form = LienForm(request.POST or None)
+    if form.is_valid() and link_form.is_valid():
+        musique = form.save(commit=False)
+        musique.createur = request.user.profil
+        musique.slug = slugify(musique.titre)
+        musique.save()
+        link = link_form.save(commit=False)
+        link.musique = musique
+        link.createur = request.user.profil
+        link.date_validation = timezone.now()
+        link.save()
+        messages.success(request, 'La musique a bien été créée et ajoutée à la playlist.')
+        return redirect(musique)
+
+    return render(request, 'music/create_musique_from_url.html', {
+        'form': form,
+        'link_form': link_form,
+        'plateformes': Plateforme.objects.all()
+    })
+
+
+def get_music_info_from_link(request):
+    plateforme_id = request.POST.get('plateforme')
+    if not plateforme_id:
+        return JsonResponse({'success': False, 'error': 'plateforme_id manquant'})
+    plateforme = get_object_or_404(Plateforme, id=plateforme_id)
+
+    url = request.POST.get('url')
+    if not url:
+        return JsonResponse({'success': False, 'error': 'url manquante'})
+
+    title = artist = ''
+    if plateforme.nom == 'Youtube':
+        o = urlparse(url)
+        query = parse_qs(o.query)
+        print(query)
+        if 'v' in query:
+            video_id = query['v']
+
+            youtube = discovery.build(
+                'youtube', 'v3', developerKey=settings.GOOGLE_API_KEY
+            )
+
+            request = youtube.videos().list(
+                part="snippet",
+                id=video_id
+            )
+            response = request.execute()
+            print(response)
+            if response['items']:
+                title = response['items'][0]['snippet'].get('title')
+                print(title)
+                if '-' in title:
+                    artist, title = map(str.strip, title.split('-', 2))
+                    print(artist)
+    elif plateforme.nom == 'Soundcloud':
+        try:
+            result = settings.SOUNDCLOUD_CLIENT.get(f'/resolve/', url=url)
+        except Exception as e:
+            print("Erreur lors de l'appel API vers Soundcloud :")
+            print(e)
+        else:
+            title = result.fields().get('title')
+            if '-' in title:
+                artist, title = map(str.strip, title.split('-', 1))
+            else:
+                artist = result.fields().get('user').get('username')
+
+    if not title and not artist:
+        return JsonResponse({'success': False, 'error': "Impossible de retrouver des infos via l'url."})
+
+    # TODO extract Remixed by with a regex
+
+    try:
+        artist_obj = Artiste.objects.get(nom_artiste__iexact=artist)
+        artist = {'name': artist_obj.nom_artiste, 'id': artist_obj.id}
+    except Artiste.DoesNotExist:
+        pass
+
+    return JsonResponse({'success': True, 'title': title, 'artist': artist})
 
 
 class MusiqueDetailView(FormMixin, DetailView):
@@ -157,7 +245,8 @@ class MusiqueDetailView(FormMixin, DetailView):
 
 class ArtisteListView(FilterView):
     filterset_class = ArtisteFilter
-    paginate_by = 15
+    paginate_by = 50
+    queryset = Artiste.objects.prefetch_related('musiques', 'musiques_featuring', 'remixes')
 
 
 class ArtisteDetailView(DetailView):

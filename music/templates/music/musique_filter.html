@@ -1,6 +1,6 @@
 {% extends 'music/base_music.html' %}
 
-{% load i18n bootstrap3 %}
+{% load i18n bootstrap3 fontawesome_5 %}
 
 {% block music_title %}{% trans "Musics" %}{% endblock %}
 
@@ -14,6 +14,12 @@
             <h2>
                 {% trans "All Musics" %}
                 <span class="pull-right">
+                    {% if request.user.is_superuser %}
+                        <a href="{% url 'music:create-music-from-url' %}" class="btn btn-default">
+                            Ajouter une musique via un lien
+                            {% fa5_icon 'plus' %}
+                        </a>
+                    {% endif %}
                     <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#filter">
                         {% blocktrans %}Filter options{% endblocktrans %} <i class="fa fa-filter"></i>
                     </button>
