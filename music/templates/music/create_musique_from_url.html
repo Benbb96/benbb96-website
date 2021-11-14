@@ -1,0 +1,86 @@
+{% extends 'music/base_music.html' %}
+{% load i18n bootstrap3 %}
+
+{% block music_title %}{% trans "Add music to playlist" %} {{ playlist.nom }}{% endblock %}
+
+{% block stylesheet %}
+    {{ form.media.css }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2>
+                        {% trans "Add music to playlist" %}
+                        <a href="{{ playlist.get_absolute_url }}">{{ playlist.nom }}</a>
+                    </h2>
+                </div>
+                <div class="panel-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <p>
+                            Tu peux pré-remplir certains champs en collant un lien vers la musique dans
+                            l'encart ci-dessous.
+                        </p>
+
+                        <div class="well">
+                            <ul class="list-inline">
+                                {{ link_form.as_ul }}
+                                <li>
+                                    <button class="btn btn-primary" type="button" id="addLink">
+                                        {% blocktrans %}Get music from link{% endblocktrans %}
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {% bootstrap_form form %}
+                        <div class="text-center">
+                            <button class="btn btn-primary">Valider</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    {{ form.media.js }}
+    {% include 'music/components/auto_select_plateforme_script.html' %}
+    <script>
+        $(() => {
+            $('#id_url').on('input', function () {
+                $('#addLink').toggle($(this).val() !== '')
+            })
+
+            $('#addLink').on('click', () => {
+                const url = $('#id_url').val()
+                const plateforme = $('#id_plateforme').val()
+                $.post('{% url 'music:get_music_info_from_link' %}', {url, plateforme})
+                    .done(response => {
+                        if (response.success) {
+                            console.log(response.artist)
+                            console.log(response.title)
+                            $('#id_titre').val(response.title)
+
+                            if (response.artist.name) {
+                                let option = new Option(response.artist.name, response.artist.id, true, true);
+                                $('#id_artiste').append(option).trigger('change');
+                            } else {
+                                $('label[for=id_artiste]').after('<span style="margin-left: 10px">Nom récupéré via le lien : <b>' + response.artist +'</b></span>')
+                            }
+                        } else {
+                            alert(response.error)
+                        }
+                    }).fail(err => {
+                        console.error(err)
+                    })
+            })
+        })
+    </script>
+{% endblock %}

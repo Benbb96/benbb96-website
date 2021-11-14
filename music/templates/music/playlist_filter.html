@@ -74,7 +74,6 @@
                     </tbody>
                 </table>
             </div>
-            {% include 'components/pagination.html' %}
         </div>
     </div>
 {% endblock %}
@@ -85,7 +84,7 @@
     <script>
         $(() => {
             $('#table_playlists').DataTable({
-                paging: false,
+                paging: true,
                 {% get_current_language as LANGUAGE_CODE %}
                 {% if LANGUAGE_CODE == 'fr' %}
                 language: {
