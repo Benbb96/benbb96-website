@@ -4,7 +4,7 @@ import colorfield.fields
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import fontawesome.fields
+import fontawesome_5.fields
 import geoposition.fields
 
 
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ('nom', models.CharField(max_length=100)),
                 ('slug', models.SlugField(null=True, unique=True)),
                 ('date_creation', models.DateTimeField(auto_now_add=True, verbose_name='date de création')),
-                ('icone', fontawesome.fields.IconField(blank=True, max_length=60, verbose_name='icône')),
+                ('icone', fontawesome_5.fields.IconField(blank=True, max_length=60, verbose_name='icône')),
                 ('color', colorfield.fields.ColorField(default='#FFFFFF', max_length=18, verbose_name='couleur')),
             ],
             options={

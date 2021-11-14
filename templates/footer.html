@@ -1,9 +1,9 @@
-{% load fontawesome %}
+{% load fontawesome_5 %}
 <footer class="container-fluid text-center">
     <p>
         {# Les liens vers mes réseaux sociaux sont dans le context processor #}
         {% for lien in liens_reseaux_sociaux %}
-            <a class="btn btn-social-icon btn-{{ lien.reseau_social }}" href="{{ lien.lien }}"
+            <a class="btn btn-social-icon btn-{{ lien.reseau_social.name }}" href="{{ lien.lien }}"
                {% if lien.ouvrir_nouvel_onglet %}target="_blank"{% endif %}>
                 {{ lien.reseau_social.as_html }}
             </a>

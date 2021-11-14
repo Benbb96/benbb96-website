@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import fontawesome.fields
+import fontawesome_5.fields
 
 
 class Migration(migrations.Migration):
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='LienReseauSocial',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reseau_social', fontawesome.fields.IconField(blank=True, max_length=60, verbose_name='réseau social')),
+                ('reseau_social', fontawesome_5.fields.IconField(blank=True, max_length=60, verbose_name='réseau social')),
                 ('lien', models.URLField()),
                 ('ouvrir_nouvel_onglet', models.BooleanField(default=False, help_text="Indique s'il faut ouvrir le lien dans un nouvel onglet")),
                 ('actif', models.BooleanField(default=True)),

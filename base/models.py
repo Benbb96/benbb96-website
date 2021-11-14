@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Avg
 from django.urls import reverse
 from django.utils import timezone
-from fontawesome.fields import IconField
+from fontawesome_5.fields import IconField
 from pyrebase import pyrebase
 
 
