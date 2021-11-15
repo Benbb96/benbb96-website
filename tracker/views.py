@@ -371,6 +371,7 @@ def tracker_history(request):
     })
 
 
+@login_required
 def compare_trackers(request):
     form = SelectTrackersForm(data=request.GET or None, user=request.user)
     trackers = []
