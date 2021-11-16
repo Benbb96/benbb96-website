@@ -90,16 +90,16 @@
             <p>
                 {% trans "Search on :" %}
                 <a class="btn btn-sm btn-social-icon btn-google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">
-                    <i class="fa fa-google"></i>
+                    <i class="fab fa-google"></i>
                 </a>
                 <a class="btn btn-sm btn-social-icon btn-youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="{% trans "Search on YouTube" %}" target="_blank">
-                    <i class="fa fa-youtube"></i>
+                    <i class="fab fa-youtube"></i>
                 </a>
                 <a class="btn btn-sm btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
-                    <i class="fa fa-soundcloud"></i>
+                    <i class="fab fa-soundcloud"></i>
                 </a>
                 <a class="btn btn-sm btn-social-icon btn-spotify" href="https://open.spotify.com/search/{{ musique|urlencode }}" title="{% trans "Search on Spotify" %}" target="_blank">
-                    <i class="fa fa-spotify"></i>
+                    <i class="fab fa-spotify"></i>
                 </a>
             </p>
             {% if musique.playlists.exists %}

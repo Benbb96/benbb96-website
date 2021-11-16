@@ -1,6 +1,9 @@
 import json
 import os
 import soundcloud
+import spotipy
+
+from spotipy.oauth2 import SpotifyClientCredentials
 from datetime import timedelta
 
 from django.core.exceptions import ImproperlyConfigured
@@ -183,6 +186,12 @@ GEOPOSITION_GOOGLE_MAPS_API_KEY = GOOGLE_API_KEY
 FIREBASE_CONFIG = get_secret_setting('FIREBASE_CONFIG')
 
 SOUNDCLOUD_CLIENT = soundcloud.Client(client_id=get_secret_setting('SOUNDCLOUD_CLIENT_ID'))
+
+auth_manager = SpotifyClientCredentials(
+    client_id=get_secret_setting('SPOTIFY_CLIENT_ID'),
+    client_secret=get_secret_setting('SPOTIFY_CLIENT_SECRET')
+)
+SPOTIFY = spotipy.Spotify(auth_manager=auth_manager)
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

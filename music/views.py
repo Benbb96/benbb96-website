@@ -2,6 +2,7 @@ from urllib.parse import urlparse, parse_qs
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
@@ -136,6 +137,7 @@ def create_music_from_url(request):
     })
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def get_music_info_from_link(request):
     plateforme_id = request.POST.get('plateforme')
     if not plateforme_id:
@@ -147,10 +149,10 @@ def get_music_info_from_link(request):
         return JsonResponse({'success': False, 'error': 'url manquante'})
 
     title = artist = ''
+    featuring = []
     if plateforme.nom == 'Youtube':
         o = urlparse(url)
         query = parse_qs(o.query)
-        print(query)
         if 'v' in query:
             video_id = query['v']
 
@@ -163,25 +165,42 @@ def get_music_info_from_link(request):
                 id=video_id
             )
             response = request.execute()
-            print(response)
             if response['items']:
                 title = response['items'][0]['snippet'].get('title')
-                print(title)
                 if '-' in title:
                     artist, title = map(str.strip, title.split('-', 2))
-                    print(artist)
     elif plateforme.nom == 'Soundcloud':
         try:
             result = settings.SOUNDCLOUD_CLIENT.get(f'/resolve/', url=url)
         except Exception as e:
-            print("Erreur lors de l'appel API vers Soundcloud :")
-            print(e)
+            return JsonResponse({'success': False, 'error': f"Erreur lors de l'appel API vers Soundcloud : {e}"})
+        title = result.fields().get('title')
+        if '-' in title:
+            artist, title = map(str.strip, title.split('-', 1))
         else:
-            title = result.fields().get('title')
-            if '-' in title:
-                artist, title = map(str.strip, title.split('-', 1))
-            else:
-                artist = result.fields().get('user').get('username')
+            artist = result.fields().get('user').get('username')
+    elif plateforme.nom == 'Spotify':
+        try:
+            track = settings.SPOTIFY.track(url)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': f"Erreur lors de l'appel API vers Spotify : {e}"})
+        title = track.get('name')
+        artists = track.get('artists')
+        if artists:
+            artist = artists[0].get('name')
+            # Add to featuring other artists
+            if len(artists) > 1:
+                for a in artists[1:]:
+                    try:
+                        artist_obj = Artiste.objects.get(nom_artiste__iexact=a.get('name'))
+                        featuring.append({'name': artist_obj.nom_artiste, 'id': artist_obj.id})
+                    except Artiste.DoesNotExist:
+                        pass
+    else:
+        return JsonResponse({
+            'success': False,
+            'error': f"Le traitement de la plateforme {plateforme} n'a pas été fait..."
+        })
 
     if not title and not artist:
         return JsonResponse({'success': False, 'error': "Impossible de retrouver des infos via l'url."})
@@ -194,7 +213,7 @@ def get_music_info_from_link(request):
     except Artiste.DoesNotExist:
         pass
 
-    return JsonResponse({'success': True, 'title': title, 'artist': artist})
+    return JsonResponse({'success': True, 'title': title, 'artist': artist, 'featuring': featuring})
 
 
 class MusiqueDetailView(FormMixin, DetailView):

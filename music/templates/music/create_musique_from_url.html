@@ -1,7 +1,7 @@
 {% extends 'music/base_music.html' %}
-{% load i18n bootstrap3 %}
+{% load i18n bootstrap3 fontawesome_5 %}
 
-{% block music_title %}{% trans "Add music to playlist" %} {{ playlist.nom }}{% endblock %}
+{% block music_title %}Création musique via URL{% endblock %}
 
 {% block stylesheet %}
     {{ form.media.css }}
@@ -13,7 +13,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2>
-                        {% trans "Add music to playlist" %}
+                        Créer une musique depuis un lien
                         <a href="{{ playlist.get_absolute_url }}">{{ playlist.nom }}</a>
                     </h2>
                 </div>
@@ -30,8 +30,9 @@
                             <ul class="list-inline">
                                 {{ link_form.as_ul }}
                                 <li>
-                                    <button class="btn btn-primary" type="button" id="addLink">
-                                        {% blocktrans %}Get music from link{% endblocktrans %}
+                                    <button class="btn btn-primary" type="button" id="addLink" style="display: none">
+                                        Rechercher les infos
+                                        {% fa5_icon 'arrow-alt-circle-down' %}
                                     </button>
                                 </li>
                             </ul>
@@ -39,7 +40,22 @@
 
                         {% bootstrap_form form %}
                         <div class="text-center">
-                            <button class="btn btn-primary">Valider</button>
+                            <a href="{% url 'admin:music_artiste_add' %}" class="btn btn-default" target="_blank">
+                                Créer Artiste
+                            </a>
+                            <a href="{% url 'admin:music_style_add' %}" class="btn btn-default" target="_blank">
+                                Créer Style
+                            </a>
+                            <a href="{% url 'admin:music_label_add' %}" class="btn btn-default" target="_blank">
+                                Créer Label
+                            </a>
+                            <a href="{% url 'admin:music_playlist_add' %}" class="btn btn-default" target="_blank">
+                                Créer Playlist
+                            </a>
+                            <button class="btn btn-lg btn-primary">
+                                {% fa5_icon 'check' %}
+                                Valider
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -59,25 +75,31 @@
             })
 
             $('#addLink').on('click', () => {
+                // clear possible displayed artist
+                $('#displayFetchedArtist').remove()
                 const url = $('#id_url').val()
                 const plateforme = $('#id_plateforme').val()
                 $.post('{% url 'music:get_music_info_from_link' %}', {url, plateforme})
                     .done(response => {
                         if (response.success) {
-                            console.log(response.artist)
-                            console.log(response.title)
                             $('#id_titre').val(response.title)
 
                             if (response.artist.name) {
                                 let option = new Option(response.artist.name, response.artist.id, true, true);
                                 $('#id_artiste').append(option).trigger('change');
                             } else {
-                                $('label[for=id_artiste]').after('<span style="margin-left: 10px">Nom récupéré via le lien : <b>' + response.artist +'</b></span>')
+                                $('label[for=id_artiste]').after('<span style="margin-left: 10px" id="displayFetchedArtist">Nom récupéré via le lien : <b>' + response.artist +'</b></span>')
                             }
+
+                            response.featuring.forEach(artist => {
+                                let option = new Option(artist.name, artist.id, true, true);
+                                $('#id_featuring').append(option).trigger('change');
+                            })
                         } else {
                             alert(response.error)
                         }
                     }).fail(err => {
+                        alert("Une erreur s'est produite. Voir les logs.")
                         console.error(err)
                     })
             })

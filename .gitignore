@@ -16,3 +16,5 @@ __pycache__/
 *.pot
 
 test_mails/
+
+.cache
