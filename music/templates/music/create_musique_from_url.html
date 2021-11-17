@@ -36,6 +36,7 @@
                                     </button>
                                 </li>
                             </ul>
+                            <div class="text-muted" id="full-title"></div>
                         </div>
 
                         {% bootstrap_form form %}
@@ -75,13 +76,18 @@
             })
 
             $('#addLink').on('click', () => {
-                // clear possible displayed artist
+                // Clear possible displayed artists and the full title
                 $('#displayFetchedArtist').remove()
+                $('#displayFetchedRemixedBy').remove()
+                $('#full-title').text('')
+
                 const url = $('#id_url').val()
                 const plateforme = $('#id_plateforme').val()
                 $.post('{% url 'music:get_music_info_from_link' %}', {url, plateforme})
                     .done(response => {
                         if (response.success) {
+                            $('#full-title').text(response.full_title)
+
                             $('#id_titre').val(response.title)
 
                             if (response.artist.name) {
@@ -89,6 +95,13 @@
                                 $('#id_artiste').append(option).trigger('change');
                             } else {
                                 $('label[for=id_artiste]').after('<span style="margin-left: 10px" id="displayFetchedArtist">Nom récupéré via le lien : <b>' + response.artist +'</b></span>')
+                            }
+
+                            if (response.remixed_by.name) {
+                                let option = new Option(response.remixed_by.name, response.remixed_by.id, true, true);
+                                $('#id_remixed_by').append(option).trigger('change');
+                            } else if (response.remixed_by) {
+                                $('label[for=id_remixed_by]').after('<span style="margin-left: 10px" id="displayFetchedRemixedBy">Nom récupéré via le lien : <b>' + response.remixed_by +'</b></span>')
                             }
 
                             response.featuring.forEach(artist => {
