@@ -1,3 +1,4 @@
+import re
 from urllib.parse import urlparse, parse_qs
 
 from django.conf import settings
@@ -148,7 +149,7 @@ def get_music_info_from_link(request):
     if not url:
         return JsonResponse({'success': False, 'error': 'url manquante'})
 
-    title = artist = ''
+    full_title = title = artist = remixed_by = ''
     featuring = []
     if plateforme.nom == 'Youtube':
         o = urlparse(url)
@@ -166,17 +167,17 @@ def get_music_info_from_link(request):
             )
             response = request.execute()
             if response['items']:
-                title = response['items'][0]['snippet'].get('title')
-                if '-' in title:
-                    artist, title = map(str.strip, title.split('-', 2))
+                full_title = response['items'][0]['snippet'].get('title')
+                if '-' in full_title:
+                    artist, title = map(str.strip, full_title.split('-', 2))
     elif plateforme.nom == 'Soundcloud':
         try:
             result = settings.SOUNDCLOUD_CLIENT.get(f'/resolve/', url=url)
         except Exception as e:
             return JsonResponse({'success': False, 'error': f"Erreur lors de l'appel API vers Soundcloud : {e}"})
-        title = result.fields().get('title')
-        if '-' in title:
-            artist, title = map(str.strip, title.split('-', 1))
+        full_title = result.fields().get('title')
+        if '-' in full_title:
+            artist, title = map(str.strip, full_title.split('-', 1))
         else:
             artist = result.fields().get('user').get('username')
     elif plateforme.nom == 'Spotify':
@@ -205,7 +206,14 @@ def get_music_info_from_link(request):
     if not title and not artist:
         return JsonResponse({'success': False, 'error': "Impossible de retrouver des infos via l'url."})
 
-    # TODO extract Remixed by with a regex
+    # Extract a possible artist who remixed the track with a regex
+    remixed = re.findall(r'\((.*) Re?mi?x\)', title, flags=re.IGNORECASE)
+    if remixed:
+        try:
+            artist_obj = Artiste.objects.get(nom_artiste__iexact=remixed[0])
+            remixed_by = {'name': artist_obj.nom_artiste, 'id': artist_obj.id}
+        except Artiste.DoesNotExist:
+            remixed_by = remixed[0]
 
     try:
         artist_obj = Artiste.objects.get(nom_artiste__iexact=artist)
@@ -213,7 +221,14 @@ def get_music_info_from_link(request):
     except Artiste.DoesNotExist:
         pass
 
-    return JsonResponse({'success': True, 'title': title, 'artist': artist, 'featuring': featuring})
+    return JsonResponse({
+        'success': True,
+        'full_title': full_title,
+        'title': title,
+        'artist': artist,
+        'remixed_by': remixed_by,
+        'featuring': featuring
+    })
 
 
 class MusiqueDetailView(FormMixin, DetailView):
