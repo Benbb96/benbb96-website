@@ -170,6 +170,8 @@ def get_music_info_from_link(request):
                 full_title = response['items'][0]['snippet'].get('title')
                 if '-' in full_title:
                     artist, title = map(str.strip, full_title.split('-', 2))
+                else:
+                    title = full_title
     elif plateforme.nom == 'Soundcloud':
         try:
             result = settings.SOUNDCLOUD_CLIENT.get(f'/resolve/', url=url)
@@ -179,6 +181,7 @@ def get_music_info_from_link(request):
         if '-' in full_title:
             artist, title = map(str.strip, full_title.split('-', 1))
         else:
+            title = full_title
             artist = result.fields().get('user').get('username')
     elif plateforme.nom == 'Spotify':
         try:
