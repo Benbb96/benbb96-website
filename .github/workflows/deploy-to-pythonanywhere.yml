@@ -9,6 +9,8 @@ jobs:
     environment: production
     concurrency: production
     steps:
+      - run: echo "SSH_HOST=${{ secrets.SSH_HOST }}"
+      - run: echo "SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY }}"
       - name: Connect via SSH and Deploy new version
         uses: appleboy/ssh-action@master
         with:
