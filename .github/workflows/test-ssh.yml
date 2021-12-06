@@ -1,0 +1,21 @@
+name: Test SSH
+
+on: push
+
+jobs:
+  Deploy-Through-SSH:
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: production
+    steps:
+      - run: echo "SSH_USER=${{ secrets.SSH_USER }}"
+      - name: Connect via SSH and ls
+        uses: fifsky/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          user: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          pass: ${{ secrets.SSH_PASSPHRASE }}
+          commands: |
+            cd benbb96/
+            ls -l
