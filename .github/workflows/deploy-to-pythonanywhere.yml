@@ -1,0 +1,27 @@
+name: Deploy to PythonAnywhere
+on:
+  push:
+    branches:
+      - master
+jobs:
+  Deploy-Through-SSH:
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: production
+    steps:
+      - name: Connect via SSH and Deploy new version
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script_stop: true
+          script: |
+            cd benbb96/
+            workon benbb96
+            git pull
+            pip install -r requirements/prod.txt
+            python manage.py migrate
+            python manage.py collectstatic --noinput
+            touch config/wsgi.py
