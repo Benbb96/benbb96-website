@@ -24,4 +24,4 @@ jobs:
             pip install -r requirements/prod.txt
             python manage.py migrate
             python manage.py collectstatic --noinput
-            touch config/wsgi.py
+            touch /var/www/www_benbb96_com_wsgi.py
