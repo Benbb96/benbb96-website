@@ -19,7 +19,7 @@ coreschema==0.0.4
 coverage==6.1.2
 decorator==4.4.0
 defusedxml==0.6.0
-Django==3.2.9
+Django==3.2.10
 django-admin-sortable==2.2.4
 django-allauth==0.42.0
 django-anymail==8.4
@@ -39,7 +39,7 @@ django-fontawesome-5==1.0.18
 django-geoposition-2==0.3.11
 django-model-utils==4.2.0
 django-pandas==0.6.6
-django-redis==5.0.0
+django-redis==5.2.0
 django-sass-processor==1.1
 django-select2==7.9.0
 django-simple-history==3.0.0
@@ -127,7 +127,7 @@ python3-openid==3.1.0
 pytz==2021.3
 PyYAML==5.4.1
 rcssmin==1.0.6
-redis==3.5.3
+redis==4.0.2
 requests==2.26.0
 requests-oauthlib==1.3.0
 requests-toolbelt==0.9.1
