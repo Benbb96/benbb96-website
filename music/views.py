@@ -123,6 +123,7 @@ def create_music_from_url(request):
         musique.createur = request.user.profil
         musique.slug = slugify(musique.titre)
         musique.save()
+        form.save_m2m()
         link = link_form.save(commit=False)
         link.musique = musique
         link.createur = request.user.profil
@@ -172,6 +173,7 @@ def get_music_info_from_link(request):
                     artist, title = map(str.strip, full_title.split('-', 2))
                 else:
                     title = full_title
+                    artist = full_title = response['items'][0]['snippet'].get('channelTitle')
     elif plateforme.nom == 'Soundcloud':
         try:
             result = settings.SOUNDCLOUD_CLIENT.get(f'/resolve/', url=url)
