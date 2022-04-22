@@ -19,7 +19,7 @@ coreschema==0.0.4
 coverage==6.1.2
 decorator==4.4.0
 defusedxml==0.6.0
-Django==3.2.10
+Django==3.2.13
 django-admin-sortable==2.2.4
 django-allauth==0.42.0
 django-anymail==8.4
