@@ -221,7 +221,7 @@ def update_player_frequency(request, cls, obj_id):
 def frequency_history(request):
     user_id = request.GET.get('userId')
     if not user_id:
-        return HttpResponseNotFound
+        return HttpResponseNotFound('usedId undefined')
     user = get_object_or_404(User, id=user_id)
     cls = request.GET.get('cls')
     if cls == 'tricks':
@@ -229,7 +229,7 @@ def frequency_history(request):
     elif cls == 'combos':
         klass = Combo
     else:
-        raise ValueError('cls est incorrect : %s' % cls)
+        return HttpResponseNotFound('cls parameter incorrect')
     obj_id = request.GET.get('objId')
     obj = get_object_or_404(klass, id=obj_id)
 
