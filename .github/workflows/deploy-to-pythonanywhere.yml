@@ -18,7 +18,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script_stop: true
           script: |
-            cd benbb96/
+            cd benbb96-website/
             workon benbb96
             git pull
             pip install -r requirements/prod.txt
