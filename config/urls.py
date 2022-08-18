@@ -23,7 +23,7 @@ urlpatterns = [
     path(
         'robots.txt',
         lambda x: HttpResponse(
-            "User-Agent: *\nDisallow: /admin/\n\nSitemap: http://benbb96.pythonanywhere.com/sitemap.xml",
+            "User-Agent: *\nDisallow: /admin/\n\nSitemap: https://www.benbb96.com/sitemap.xml",
             content_type="text/plain"
         ),
         name="robots_file"
