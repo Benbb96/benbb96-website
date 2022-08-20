@@ -1,6 +1,6 @@
 # benbb96
 
-<!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here ---> 
+[![Deploy to PythonAnywhere](https://github.com/Benbb96/benbb96-website/actions/workflows/deploy-to-pythonanywhere.yml/badge.svg)](https://github.com/Benbb96/benbb96-website/actions/workflows/deploy-to-pythonanywhere.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/benbb96/benbb96-website)
 ![GitHub contributors](https://img.shields.io/github/contributors/benbb96/benbb96-website)
 ![issues](https://img.shields.io/github/issues/benbb96/benbb96-website)
