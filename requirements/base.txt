@@ -100,7 +100,7 @@ Pillow==9.1.1
 pluggy==0.13.0
 prompt-toolkit==2.0.9
 proto-plus==1.13.0
-protobuf==3.20.1
+protobuf==3.20.2
 ptyprocess==0.6.0
 py==1.10.0
 pyasn1==0.4.5
