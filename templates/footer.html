@@ -3,7 +3,7 @@
     <p>
         {# Les liens vers mes réseaux sociaux sont dans le context processor #}
         {% for lien in liens_reseaux_sociaux %}
-            <a class="btn btn-social-icon btn-{{ lien.reseau_social.name }}" href="{{ lien.lien }}"
+            <a class="btn btn-social-icon btn-{{ lien.reseau_social.name }}" href="{{ lien.lien }}" rel="me"
                {% if lien.ouvrir_nouvel_onglet %}target="_blank"{% endif %}>
                 {{ lien.reseau_social.as_html }}
             </a>
