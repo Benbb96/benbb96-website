@@ -1,6 +1,6 @@
 {% load fontawesome_5 custom_tags %}
 
 <a href="{{ tag.get_absolute_url }}" class="spot-tag label" style="background-color: {{ tag.color }}; color: {{ tag.color|contrast_color }}">
-    {% if tag.icone %}{% fa5_icon tag.icone.name tracker.icone.style_prefix %}{% endif %}
+    {% if tag.icone %}{% fa5_icon tag.icone.name tag.icone.style_prefix %}{% endif %}
     {{ tag }}
 </a>

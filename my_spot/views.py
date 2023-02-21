@@ -69,9 +69,12 @@ def carte(request, tag_slug=None):
 
 
 def spot_detail(request, spot_slug):
-    spot = get_object_or_404(Spot.objects.visible_for_user(request.user)
+    spot = get_object_or_404(
+        Spot.objects.visible_for_user(request.user)
         .select_related('explorateur__user')
-        .prefetch_related('photos__photographe__user', 'notes__auteur__user', 'tags', 'groupes'), slug=spot_slug)
+        .prefetch_related('photos__photographe__user', 'notes__auteur__user', 'tags', 'groupes'),
+        slug=spot_slug
+    )
 
     groupes = None
     if request.user.is_authenticated:

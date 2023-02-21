@@ -47,7 +47,7 @@ class SpotManager(models.Manager):
         if not user.is_authenticated:
             # Seulement les publics pour un utilisateur non connecté
             return self.get_queryset().filter(visibilite=PUBLIC)
-        # Les publics + ceux qu'il a créé et ceux de ses groupes
+        # Les publics + ceux qu'il a créés et ceux de ses groupes
         return self.get_queryset().filter(
             Q(visibilite=PUBLIC) | Q(explorateur=user.profil) | Q(groupes__profils__user=user)
         )
