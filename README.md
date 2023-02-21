@@ -44,6 +44,7 @@ Then, you should create a virtual environement, load the migration to build the 
 ```
 python -m venv venv
 source venv/bin/activate
+pip install -r requirements/dev.txt
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py collectstatic --noinput
@@ -52,27 +53,10 @@ python manage.py runserver
 
 You can then create projects in [127.0.0.1:8000/admin/base/projet/](http://127.0.0.1:8000/admin/base/projet/) that will be displayed on the homepage.
 
-## Contributing to benbb96
-To contribute to benbb96, follow these steps:
-
-1. Fork this repository.
-2. Create a branch: `git checkout -b <branch_name>`. 
-3. Make your changes and commit them: `git commit -m '<commit_message>'
-4. Push to the original branch: `git push origin <project_name>/<location>`
-5. Create the pull request.
-
-Alternatively see the GitHub documentation on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
-
-## Contributors
-
-Thanks to the following people who have contributed to this project:
-
-* @benbb96 💻📖
-
 ## Contact 
 
 If you want to contact me you can reach me at <benbb96@gmail.com>.
 
 ## License 
 
-This project uses the following license: [MIT License](https://github.com/Benbb96/benbb96-website/blob/master/LICENSE).
+This project uses the following license: [MIT License](LICENSE).
