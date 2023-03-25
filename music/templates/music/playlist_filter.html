@@ -58,9 +58,9 @@
                                     {{ playlist.musiqueplaylist_set.count }}
                                 </span>
                             </td>
-                            <td data-order="{{ playlist.total_vue }}">
+                            <td data-order="{{ playlist.total_vue|default_if_none:0 }}">
                                 <span class="badge">
-                                    {{ playlist.total_vue }}
+                                    {{ playlist.total_vue|default_if_none:0 }}
                                 </span>
                             </td>
                         </tr>
