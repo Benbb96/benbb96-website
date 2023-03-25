@@ -1,5 +1,5 @@
 {% extends 'music/base_music.html' %}
-{% load i18n %}
+{% load i18n fontawesome_5 %}
 
 {% block music_title %}{% trans "Playlist" %} {{ playlist.nom }}{% endblock %}
 
@@ -35,7 +35,7 @@
                                 {% for lien in liens %}
                                     <li>
                                         <a href="{{ lien.url }}" target="_blank">
-                                            <i class="fa fa-{{ lien.plateforme|lower }}"></i>
+                                            {% fa5_icon lien.plateforme|lower 'fab' %}
                                             {{ lien.plateforme }}
                                         </a>
                                     </li>
