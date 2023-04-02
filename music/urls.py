@@ -14,6 +14,7 @@ urlpatterns = [
     path('playlists/<slug:slug>', views.PlaylistDetailView.as_view(), name='detail-playlist'),
     path('create-music-from-url/', views.create_music_from_url, name='create-music-from-url'),
     path('get_music_info_from_link/', views.get_music_info_from_link, name='get_music_info_from_link'),
+    path('create_artist/', views.create_artist, name='create_artist'),
     path('artists/<slug:slug>', views.ArtisteDetailView.as_view(), name='detail-artiste'),
     path('artists/', views.ArtisteListView.as_view(), name='liste-artiste'),
     path('<slug:slug_artist>/<slug:slug>-<int:pk>', views.MusiqueDetailView.as_view(), name='detail-musique'),

@@ -70,6 +70,18 @@
     {{ form.media.js }}
     {% include 'music/components/auto_select_plateforme_script.html' %}
     <script>
+        function createArtist(artistName, selectId) {
+            $.post('{% url 'music:create_artist' %}', {name: artistName})
+                .done(response => {
+                    if (response.success) {
+                        const option = new Option(response.name, response.id, true, true);
+                        $('#' + selectId).append(option).trigger('change');
+                    } else {
+                        alert(response.error)
+                    }
+                })
+        }
+
         $(() => {
             $('#id_url').on('input', function () {
                 $('#addLink').toggle($(this).val() !== '')
@@ -91,21 +103,35 @@
                             $('#id_titre').val(response.title)
 
                             if (response.artist.name) {
-                                let option = new Option(response.artist.name, response.artist.id, true, true);
+                                const option = new Option(response.artist.name, response.artist.id, true, true);
                                 $('#id_artiste').append(option).trigger('change');
                             } else {
-                                $('label[for=id_artiste]').after('<span style="margin-left: 10px" id="displayFetchedArtist">Nom récupéré via le lien : <b>' + response.artist +'</b></span>')
+                                $('label[for=id_artiste]').after(
+                                    `<span style="margin-left: 10px" id="displayFetchedArtist">
+                                        Nom récupéré via le lien : <b>${response.artist}</b>
+                                        <button type="button" onclick="createArtist('${response.artist}', 'id_artiste')" class="btn btn-default btn-xs" title="Créer l'artiste">
+                                            <i class="fas fa-plus" />
+                                        </button>
+                                    </span>`
+                                )
                             }
 
                             if (response.remixed_by.name) {
-                                let option = new Option(response.remixed_by.name, response.remixed_by.id, true, true);
+                                const option = new Option(response.remixed_by.name, response.remixed_by.id, true, true);
                                 $('#id_remixed_by').append(option).trigger('change');
                             } else if (response.remixed_by) {
-                                $('label[for=id_remixed_by]').after('<span style="margin-left: 10px" id="displayFetchedRemixedBy">Nom récupéré via le lien : <b>' + response.remixed_by +'</b></span>')
+                                $('label[for=id_remixed_by]').after(
+                                    `<span style="margin-left: 10px" id="displayFetchedRemixedBy">
+                                        Nom récupéré via le lien : <b>${response.remixed_by}</b>
+                                    </span>
+                                    <button type="button" onclick="createArtist('${response.remixed_by}', 'id_remixed_by')" class="btn btn-default btn-xs" title="Créer l'artiste">
+                                        <i class="fas fa-plus" />
+                                    </button>`
+                                )
                             }
 
                             response.featuring.forEach(artist => {
-                                let option = new Option(artist.name, artist.id, true, true);
+                                const option = new Option(artist.name, artist.id, true, true);
                                 $('#id_featuring').append(option).trigger('change');
                             })
                         } else {

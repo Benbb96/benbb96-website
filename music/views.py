@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -234,6 +235,18 @@ def get_music_info_from_link(request):
         'remixed_by': remixed_by,
         'featuring': featuring
     })
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def create_artist(request):
+    name = request.POST.get('name')
+    if not name:
+        return JsonResponse({'success': False, 'error': 'name manquant'})
+    try:
+        artiste = Artiste.objects.create(nom_artiste=name, slug=slugify(name))
+    except IntegrityError as e:
+        return JsonResponse({'success': False, 'error': 'Cet artiste a déjà été créé...'})
+    return JsonResponse({'success': True, 'name': artiste.nom_artiste, 'id': artiste.id})
 
 
 class MusiqueDetailView(FormMixin, DetailView):
