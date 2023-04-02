@@ -160,7 +160,7 @@ def get_music_info_from_link(request):
             video_id = query['v']
 
             youtube = discovery.build(
-                'youtube', 'v3', developerKey=settings.GOOGLE_API_KEY
+                'youtube', 'v3', developerKey=settings.GOOGLE_API_KEY, cache_discovery=False
             )
 
             request = youtube.videos().list(
