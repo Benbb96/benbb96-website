@@ -187,9 +187,11 @@ FIREBASE_CONFIG = get_secret_setting('FIREBASE_CONFIG')
 
 SOUNDCLOUD_CLIENT = soundcloud.Client(client_id=get_secret_setting('SOUNDCLOUD_CLIENT_ID'))
 
+SPOTIFY_CLIENT_ID = get_secret_setting('SPOTIFY_CLIENT_ID')
+SPOTIFY_CLIENT_SECRET = get_secret_setting('SPOTIFY_CLIENT_SECRET')
 auth_manager = SpotifyClientCredentials(
-    client_id=get_secret_setting('SPOTIFY_CLIENT_ID'),
-    client_secret=get_secret_setting('SPOTIFY_CLIENT_SECRET')
+    client_id=SPOTIFY_CLIENT_ID,
+    client_secret=SPOTIFY_CLIENT_SECRET
 )
 SPOTIFY = spotipy.Spotify(auth_manager=auth_manager)
 

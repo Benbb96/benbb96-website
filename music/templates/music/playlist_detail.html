@@ -38,12 +38,18 @@
                                             {% fa5_icon lien.plateforme|lower 'fab' %}
                                             {{ lien.plateforme }}
                                         </a>
+                                        {% if playlist.createur.user == request.user %}
+                                            <a class="btn btn-default btn-xs synchronize"
+                                               data-synchronize-url="{% url 'music:synchroniser_playlist' playlist.id lien.id %}">
+                                                {% fa5_icon 'sync' %}
+                                            </a>
+                                        {% endif %}
                                     </li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
                     {% endwith %}
-                    {% if request.user.profil == playlist.createur %}
+                    {% if playlist.createur.user == request.user %}
                         <form method="post">
                             {% csrf_token %}
                             <ul class="list-inline">
@@ -96,4 +102,17 @@
 {% block javascript %}
     {{ block.super }}
     {% include 'music/components/auto_select_plateforme_script.html' %}
+    <script>
+        $(() => {
+            $('.synchronize').on('click', function () {
+                $.post($(this).data('synchronizeUrl'))
+                    .done(response => {
+                        console.log(response)
+                    })
+                    .fail(error => {
+                        console.error(error)
+                    })
+            })
+        })
+    </script>
 {% endblock %}

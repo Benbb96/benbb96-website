@@ -22,5 +22,11 @@ urlpatterns = [
         'lien/<int:lien_id>/incremente_click_count',
         views.incremente_link_click_count, name='incremente_link_click_count'
     ),
-    path('lien/<int:lien_id>/valider_lien', views.valider_lien, name="valider_lien")
+    path('lien/<int:lien_id>/valider_lien', views.valider_lien, name="valider_lien"),
+    path(
+        'playlists/<int:playlist_id>/lien/<int:lien_id>/synchroniser_playlist',
+        views.synchroniser_playlist,
+        name="synchroniser_playlist"
+    ),
+    path('spotify_callback/', views.spotify_callback, name='spotify_callback')
 ]
