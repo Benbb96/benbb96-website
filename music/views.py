@@ -9,8 +9,9 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.db.models import Sum
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
@@ -19,6 +20,7 @@ from django.views.generic.list import MultipleObjectMixin
 from django_filters.views import FilterView
 from googleapiclient import discovery
 from slugify import slugify
+from spotipy import Spotify, SpotifyOAuth, DjangoSessionCacheHandler
 
 from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter, PlaylistFilter
 from music.models import Playlist, Musique, Lien, Artiste, Style, Label, Plateforme
@@ -153,7 +155,7 @@ def get_music_info_from_link(request):
 
     full_title = title = artist = remixed_by = ''
     featuring = []
-    if plateforme.nom == 'Youtube':
+    if plateforme.est_youtube():
         o = urlparse(url)
         query = parse_qs(o.query)
         if 'v' in query:
@@ -175,7 +177,7 @@ def get_music_info_from_link(request):
                 else:
                     title = full_title
                     artist = full_title = response['items'][0]['snippet'].get('channelTitle')
-    elif plateforme.nom == 'Soundcloud':
+    elif plateforme.est_soundcloud():
         try:
             result = settings.SOUNDCLOUD_CLIENT.get(f'/resolve/', url=url)
         except Exception as e:
@@ -186,7 +188,7 @@ def get_music_info_from_link(request):
         else:
             title = full_title
             artist = result.fields().get('user').get('username')
-    elif plateforme.nom == 'Spotify':
+    elif plateforme.est_spotify():
         try:
             track = settings.SPOTIFY.track(url)
         except Exception as e:
@@ -327,3 +329,58 @@ def valider_lien(request, lien_id):
         lien.date_validation = timezone.now()
         lien.save(update_fields=['date_validation'])
     return redirect(lien.musique.get_absolute_url())
+
+
+def get_spotify_oauth(request):
+    callback_full_url = request.build_absolute_uri(reverse('spotify_callback'))
+    return SpotifyOAuth(
+        client_id=settings.SPOTIFY_CLIENT_ID,
+        client_secret=settings.SPOTIFY_CLIENT_SECRET,
+        scope='playlist-modify-public',
+        redirect_uri=callback_full_url,
+        cache_handler=DjangoSessionCacheHandler(request)
+    )
+
+
+def synchroniser_playlist(request, playlist_id, lien_id):
+    playlist = get_object_or_404(Playlist, id=playlist_id)
+    lien = get_object_or_404(playlist.liens.all(), id=lien_id)
+
+    if not lien.plateforme.est_spotify():
+        return JsonResponse({'error': 'Seul Spotify est géré.'}, status=400)
+
+    try:
+        spotify_playlist = settings.SPOTIFY.playlist(playlist_id=lien.url)
+        spotify_playlist_tracks = settings.SPOTIFY.playlist_tracks(playlist_id=lien.url)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f"Erreur lors de l'appel API vers Spotify : {e}"})
+
+    current_spotify_track_ids = [t['track']['id'] for t in spotify_playlist_tracks['items']]
+    new_spotify_track_ids = []
+    to_add = []
+    for musique in playlist.musiques.prefetch_related('liens__plateforme'):
+        for l in musique.liens.all():
+            if l.plateforme.est_spotify():
+                spotify_track = settings.SPOTIFY.track(l.url)
+                new_spotify_track_ids.append(spotify_track['id'])
+                if spotify_track['id'] not in current_spotify_track_ids:
+                    to_add.append(spotify_track['id'])
+                break
+        else:
+            continue
+
+    sp = Spotify(auth_manager=get_spotify_oauth(request))
+    if to_add:
+        sp.playlist_add_items(spotify_playlist['id'], to_add)
+
+    to_remove = [spotify_id for spotify_id in current_spotify_track_ids if spotify_id not in new_spotify_track_ids]
+    if to_remove:
+        sp.playlist_remove_all_occurrences_of_items(spotify_playlist['id'], to_remove)
+
+    return JsonResponse({'success': True})
+
+
+def spotify_callback(request):
+    auth_manager = get_spotify_oauth(request)
+    auth_manager.get_access_token(request.GET.get('code'))
+    return HttpResponse('Authentification sur Spotify réussi !')

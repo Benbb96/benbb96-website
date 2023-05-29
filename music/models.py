@@ -249,6 +249,15 @@ class Plateforme(models.Model):
     def __str__(self):
         return self.nom
 
+    def est_spotify(self):
+        return self.nom == 'Spotify'
+
+    def est_youtube(self):
+        return self.nom == 'Youtube'
+
+    def est_soundcloud(self):
+        return self.nom == 'Soundcloud'
+
 
 class BaseLien(models.Model):
     url = models.URLField('lien vers la playlist')
