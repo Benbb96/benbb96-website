@@ -107,10 +107,15 @@
             $('.synchronize').on('click', function () {
                 $.post($(this).data('synchronizeUrl'))
                     .done(response => {
-                        console.log(response)
+                        if (response.success) {
+                            $(this).addClass('btn-success')
+                            $(this).removeClass('btn-default')
+                        }
                     })
                     .fail(error => {
                         console.error(error)
+                        $(this).addClass('btn-danger')
+                        $(this).removeClass('btn-default')
                     })
             })
         })

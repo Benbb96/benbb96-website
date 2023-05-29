@@ -11,6 +11,7 @@ from django.db import IntegrityError
 from django.db.models import Sum
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
@@ -330,6 +331,17 @@ def valider_lien(request, lien_id):
     return redirect(lien.musique.get_absolute_url())
 
 
+def get_spotify_oauth(request):
+    callback_full_url = request.build_absolute_uri(reverse('spotify_callback'))
+    return SpotifyOAuth(
+        client_id=settings.SPOTIFY_CLIENT_ID,
+        client_secret=settings.SPOTIFY_CLIENT_SECRET,
+        scope='playlist-modify-public',
+        redirect_uri=callback_full_url,
+        cache_handler=DjangoSessionCacheHandler(request)
+    )
+
+
 def synchroniser_playlist(request, playlist_id, lien_id):
     playlist = get_object_or_404(Playlist, id=playlist_id)
     lien = get_object_or_404(playlist.liens.all(), id=lien_id)
@@ -357,37 +369,18 @@ def synchroniser_playlist(request, playlist_id, lien_id):
         else:
             continue
 
+    sp = Spotify(auth_manager=get_spotify_oauth(request))
     if to_add:
-        sp = Spotify(auth_manager=SpotifyOAuth(
-            client_id=settings.SPOTIFY_CLIENT_ID,
-            client_secret=settings.SPOTIFY_CLIENT_SECRET,
-            scope='playlist-modify-public',
-            redirect_uri='http://127.0.0.1:8000/fr/musique/spotify_callback/',
-            cache_handler=DjangoSessionCacheHandler(request)
-        ))
         sp.playlist_add_items(spotify_playlist['id'], to_add)
 
     to_remove = [spotify_id for spotify_id in current_spotify_track_ids if spotify_id not in new_spotify_track_ids]
     if to_remove:
-        sp = Spotify(auth_manager=SpotifyOAuth(
-            client_id=settings.SPOTIFY_CLIENT_ID,
-            client_secret=settings.SPOTIFY_CLIENT_SECRET,
-            scope='playlist-modify-public',
-            redirect_uri='http://127.0.0.1:8000/fr/musique/spotify_callback/',
-            cache_handler=DjangoSessionCacheHandler(request)
-        ))
         sp.playlist_remove_all_occurrences_of_items(spotify_playlist['id'], to_remove)
 
     return JsonResponse({'success': True})
 
 
 def spotify_callback(request):
-    auth_manager = SpotifyOAuth(
-        client_id=settings.SPOTIFY_CLIENT_ID,
-        client_secret=settings.SPOTIFY_CLIENT_SECRET,
-        scope='playlist-modify-public',
-        redirect_uri='http://127.0.0.1:8000/fr/musique/spotify_callback/',
-        cache_handler=DjangoSessionCacheHandler(request)
-    )
+    auth_manager = get_spotify_oauth(request)
     auth_manager.get_access_token(request.GET.get('code'))
     return HttpResponse('Authentification sur Spotify réussi !')
