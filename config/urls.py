@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from base.sitemap import sitemaps
-
+from music.views import spotify_callback
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
@@ -27,7 +27,8 @@ urlpatterns = [
             content_type="text/plain"
         ),
         name="robots_file"
-    )
+    ),
+    path('spotify_callback/', spotify_callback, name='spotify_callback')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(

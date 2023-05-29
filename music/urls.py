@@ -28,5 +28,4 @@ urlpatterns = [
         views.synchroniser_playlist,
         name="synchroniser_playlist"
     ),
-    path('spotify_callback/', views.spotify_callback, name='spotify_callback')
 ]
