@@ -20,7 +20,7 @@ from django.views.generic.list import MultipleObjectMixin
 from django_filters.views import FilterView
 from googleapiclient import discovery
 from slugify import slugify
-from spotipy import Spotify, SpotifyOAuth, DjangoSessionCacheHandler
+from spotipy import Spotify, SpotifyOAuth, DjangoSessionCacheHandler, SpotifyException
 
 from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter, PlaylistFilter
 from music.models import Playlist, Musique, Lien, Artiste, Style, Label, Plateforme
@@ -361,11 +361,16 @@ def synchroniser_playlist(request, playlist_id, lien_id):
     for musique in playlist.musiques.prefetch_related('liens__plateforme'):
         for l in musique.liens.all():
             if l.plateforme.est_spotify():
-                spotify_track = settings.SPOTIFY.track(l.url)
-                new_spotify_track_ids.append(spotify_track['id'])
-                if spotify_track['id'] not in current_spotify_track_ids:
-                    to_add.append(spotify_track['id'])
-                break
+                try:
+                    spotify_track = settings.SPOTIFY.track(l.url)
+                except SpotifyException as e:
+                    print(e)
+                    return JsonResponse({'success': False, 'error': f"Erreur avec l'URL {l.url}  : {e}"})
+                else:
+                    new_spotify_track_ids.append(spotify_track['id'])
+                    if spotify_track['id'] not in current_spotify_track_ids:
+                        to_add.append(spotify_track['id'])
+                    break
         else:
             continue
 
