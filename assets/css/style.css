@@ -45,6 +45,34 @@ footer p a i:hover {
     align-items: center;
 }
 
+.flex-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.flex-col {
+    flex: 1 1 calc(33.333% - 20px); /* 3 colonnes avec un espace de 20px */
+    max-width: calc(33.333% - 20px); /* Limite la largeur pour respecter la grille */
+    box-sizing: border-box; /* Inclut le padding dans la largeur */
+}
+
+@media (max-width: 768px) {
+    .flex-col {
+        flex: 1 1 calc(50% - 20px); /* 2 colonnes sur les écrans moyens */
+        max-width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 576px) {
+    .flex-col {
+        flex: 1 1 100%; /* 1 colonne sur les petits écrans */
+        max-width: 100%;
+    }
+}
+
+
 .spot-tag {
     margin-right: 5px;
     padding: 4px 7px

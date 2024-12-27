@@ -12,21 +12,21 @@
 
 {% block content %}
     <div class="container-fluid bg-3 text-center">
-        <div class="row">
-        {% for projet in object_list %}
-            {% if projet.actif %}
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <h3>
+        <div class="flex-row">
+            {% for projet in object_list %}
+                {% if projet.actif %}
+                <div class="flex-col">
+                    <h3>
+                        <a href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
+                            {{ projet.nom }}
+                        </a>
+                    </h3>
                     <a href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
-                        {{ projet.nom }}
+                        <img src="{% if projet.image %}{{ projet.image.url }}{% endif %}" class="img-responsive projet" style="max-height: 300px; margin: auto" alt="{% trans "Project" %} {{ projet.nom }}">
                     </a>
-                </h3>
-                <a href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
-                    <img src="{% if projet.image %}{{ projet.image.url }}{% endif %}" class="img-responsive projet" style="max-height: 300px; margin: auto" alt="{% trans "Project" %} {{ projet.nom }}">
-                </a>
-            </div>
-            {% endif %}
-        {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
