@@ -26,3 +26,4 @@ requests==2.32.3
 git+https://github.com/Benbb96/soundcloud-python.git#egg=soundcloud
 spotipy==2.24.0
 zipp>=3.21.0 # not directly required, pinned by Snyk to avoid a vulnerability
+sqlparse>=0.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
