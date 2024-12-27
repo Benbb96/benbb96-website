@@ -1,6 +1,6 @@
 {% extends 'tracker/base_tracker.html' %}
 
-{% load fontawesome_5 custom_tags %}
+{% load fontawesome_6 custom_tags %}
 
 {% block tracker_title %}Mes trackers{% endblock %}
 
@@ -24,7 +24,7 @@
                     </a>
                 </span>
                 <a href="{{ tracker.get_absolute_url }}">
-                    <h1>{% fa5_icon tracker.icone.name tracker.icone.style_prefix %}</h1>
+                    <h1>{% fa6_icon tracker.icone.name tracker.icone.style_prefix %}</h1>
                     <h3>{{ tracker.nom }}</h3>
                 </a>
                 <div>{{ tracker.tracks.count }} tracks</div>

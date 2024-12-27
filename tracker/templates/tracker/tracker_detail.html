@@ -1,6 +1,6 @@
 {% extends 'tracker/base_tracker.html' %}
 
-{% load custom_tags fontawesome_5 admin_urls static i18n %}
+{% load custom_tags fontawesome_6 admin_urls static i18n %}
 
 {% block tracker_title %}Tracker {{ tracker.nom }}{% endblock %}
 
@@ -33,7 +33,7 @@
         <div class="col-md-8 col-md-offset-2 col-xs-12">
             <div class="text-center">
                 <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
-                    {{ tracker.nom }} {% fa5_icon tracker.icone.name tracker.icone.style_prefix %}
+                    {{ tracker.nom }} {% fa6_icon tracker.icone.name tracker.icone.style_prefix %}
                     <a class="btn btn-info" href="{% url 'tracker:update-tracker' tracker.id %}">
                         <i class="fa fa-edit"></i>
                     </a>

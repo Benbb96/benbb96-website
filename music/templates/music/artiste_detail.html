@@ -1,5 +1,5 @@
 {% extends 'music/base_music.html' %}
-{% load i18n humanize fontawesome_5 %}
+{% load i18n humanize fontawesome_6 %}
 
 {% block music_title %}{% trans "Artist" %} {{ artiste.nom }}{% endblock %}
 
@@ -33,7 +33,7 @@
                                 {% trans "Website" %} :
                                 <a href="{{ artiste.site_web }}" target="_blank">
                                     {{ artiste.site_web }}
-                                    {% fa5_icon 'external-link-alt' %}
+                                    {% fa6_icon 'external-link-alt' %}
                                 </a>
                             </p>
                         {% endif %}

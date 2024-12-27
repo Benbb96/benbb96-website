@@ -1,5 +1,5 @@
 {% extends 'music/base_music.html' %}
-{% load i18n fontawesome_5 %}
+{% load i18n fontawesome_6 %}
 
 {% block music_title %}{% trans "Playlist" %} {{ playlist.nom }}{% endblock %}
 
@@ -35,13 +35,13 @@
                                 {% for lien in liens %}
                                     <li>
                                         <a href="{{ lien.url }}" target="_blank">
-                                            {% fa5_icon lien.plateforme|lower 'fab' %}
+                                            {% fa6_icon lien.plateforme|lower 'fab' %}
                                             {{ lien.plateforme }}
                                         </a>
                                         {% if playlist.createur.user == request.user %}
                                             <a class="btn btn-default btn-xs synchronize"
                                                data-synchronize-url="{% url 'music:synchroniser_playlist' playlist.id lien.id %}">
-                                                {% fa5_icon 'sync' %}
+                                                {% fa6_icon 'sync' %}
                                             </a>
                                         {% endif %}
                                     </li>

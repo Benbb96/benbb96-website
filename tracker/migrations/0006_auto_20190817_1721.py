@@ -4,7 +4,7 @@ import adminsortable.fields
 import colorfield.fields
 from django.db import migrations
 import django.db.models.deletion
-import fontawesome_5.fields
+import fontawesome_6.fields
 
 
 class Migration(migrations.Migration):
@@ -27,6 +27,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='tracker',
             name='icone',
-            field=fontawesome_5.fields.IconField(blank=True, max_length=60, verbose_name='icône'),
+            field=fontawesome_6.fields.IconField(blank=True, max_length=60, verbose_name='icône'),
         ),
     ]

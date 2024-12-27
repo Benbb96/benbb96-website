@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
-from fontawesome_5.fields import IconField
+from fontawesome_6.fields import IconField
 from geoposition.fields import GeopositionField
 
 from base.models import Profil, PhotoAbstract

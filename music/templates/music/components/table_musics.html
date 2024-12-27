@@ -1,4 +1,4 @@
-{% load i18n fontawesome_5 %}
+{% load i18n fontawesome_6 %}
 
 {% if not musiques %}
     <h3>{% trans "No music has been created here." %}</h3>
@@ -36,7 +36,7 @@
                             {% for lien in musique.liens.all %}
                                 <a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"
                                    data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
-                                    {% fa5_icon lien.plateforme|lower 'fab' %}
+                                    {% fa6_icon lien.plateforme|lower 'fab' %}
                                 </a>
                             {% endfor %}
                         {% endif %}

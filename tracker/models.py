@@ -3,7 +3,7 @@ from colorfield.fields import ColorField
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from fontawesome_5.fields import IconField
+from fontawesome_6.fields import IconField
 
 from base.models import Profil
 

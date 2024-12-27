@@ -1,5 +1,5 @@
 {% extends 'music/base_music.html' %}
-{% load i18n fontawesome_5 %}
+{% load i18n fontawesome_6 %}
 
 {% block music_title %}{% trans "Style" %} {{ style.nom }}{% endblock %}
 
@@ -31,7 +31,7 @@
                         <h4 class="text-right">
                             <a href="{{ style.lien_wiki }}" target="_blank">
                                 {% trans "Wiki link" %}
-                                {% fa5_icon 'external-link-alt' %}
+                                {% fa6_icon 'external-link-alt' %}
                             </a>
                         </h4>
                     {% endif %}

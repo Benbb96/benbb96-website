@@ -3,7 +3,7 @@
 import colorfield.fields
 from django.db import migrations, models
 import django.db.models.deletion
-import fontawesome_5.fields
+import fontawesome_6.fields
 
 
 class Migration(migrations.Migration):
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('nom', models.CharField(max_length=100)),
-                ('icone', fontawesome_5.fields.IconField(blank=True, max_length=60)),
+                ('icone', fontawesome_6.fields.IconField(blank=True, max_length=60)),
                 ('color', colorfield.fields.ColorField(default='#FFFFFF', max_length=18)),
                 ('date_creation', models.DateTimeField(auto_now_add=True, verbose_name='date de création')),
                 ('createur', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='trackers', to='base.Profil')),
