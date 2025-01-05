@@ -156,7 +156,7 @@ def tracker_data(request):
             df.index = df['datetime']
             # Ajoute une nouvelle colonne pour compter comme un chaque track
             df['count'] = [1] * tracks.count()
-            data = df.resample(frequency).sum()
+            data = df.drop(columns=['datetime']).resample(frequency).sum()
 
             delta = tracks.latest('datetime').datetime.date() - tracks.earliest('datetime').datetime.date()
 
