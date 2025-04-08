@@ -125,7 +125,7 @@
                     {% if not tracker.tracks.exists %}
                         <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
                     {% endif %}
-                    <div id="track_gaph"{% if not tracker.tracks.exists %} class="hidden" {% endif %}>
+                    <div id="track_graph"{% if not tracker.tracks.exists %} class="hidden" {% endif %}>
                         <p>
                             <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
                         </p>

@@ -59,16 +59,19 @@ const dateRangeOptions = {
        'Les 3 derniers mois': [moment().subtract(3, 'month'), moment()],
        'Les 6 derniers mois': [moment().subtract(6, 'month'), moment()],
        'Les 12 derniers mois': [moment().subtract(1, 'year'), moment()],
+       'Les 2 dernières années': [moment().subtract(2, 'year'), moment()],
+       'Les 3 dernières années': [moment().subtract(3, 'year'), moment()],
+       'Les 5 dernières années': [moment().subtract(5, 'year'), moment()],
        'Tous': [minDate, maxDate],
     }
 }
 
 const update_track_graph = (frequency = 'D') => {
-    $.post(trackerDataUrl, {id: trackerIds, frequency: frequency, start: start, end: end})
+    $.post(trackerDataUrl, {id: trackerIds, frequency, start, end})
         .done(response => {
             if (response.labels.length > 0) {
                 $('div#noTracks').addClass('hidden')
-                $('div#track_gaph').removeClass('hidden')
+                $('div#track_graph').removeClass('hidden')
                 allTracks.data.labels = response.labels
                 allTracks.data.datasets = response.datasets
                 allTracks.update()
@@ -77,7 +80,7 @@ const update_track_graph = (frequency = 'D') => {
                 $('.btn-frequency').removeClass('btn-primary')
                 $('.btn-frequency[data-frequency=' + frequency + ']').addClass('btn-primary')
             } else {
-                $('div#track_gaph').addClass('hidden')
+                $('div#track_graph').addClass('hidden')
                 $('div#noTracks').removeClass('hidden')
             }
         })
@@ -88,6 +91,6 @@ const update_track_graph = (frequency = 'D') => {
 
 $(() => {
     $('.btn-frequency').click(function () {
-        update_track_graph($(this).data('frequency'), start, end)
+        update_track_graph($(this).data('frequency'))
     })
 })
