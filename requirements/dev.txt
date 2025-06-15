@@ -1,4 +1,4 @@
 -r base.txt
 
-coverage==7.1.0
-django-debug-toolbar==3.8.1
+coverage==7.9.1
+django-debug-toolbar==5.2.0
