@@ -68,12 +68,14 @@
                     {% include 'music/components/style_list_inline.html' with styles=artiste.styles.all %}
                 </div>
                 <div class="panel-footer">
-                    {% blocktrans  with artiste_date=artiste.date_creation|date artiste_time=artiste.date_creation|time artiste_createur_url=artiste.createur.get_absolute_url artiste_createur=artiste.createur %}
+                    {% blocktrans with artiste_date=artiste.date_creation|date artiste_time=artiste.date_creation|time %}
                         Created on {{ artiste_date }} at {{ artiste_time }}
-                        {% if artiste.createur %}
-                            by <a href="{{ artiste_createur_url }}">{{ artiste_createur }}</a>.
-                        {%endif%}
                     {% endblocktrans %}
+                    {% if artiste.createur %}
+                        {% blocktrans with artiste_createur_url=artiste.createur.get_absolute_url artiste_createur=artiste.createur %}
+                            by <a href="{{ artiste_createur_url }}">{{ artiste_createur }}</a>.
+                        {% endblocktrans %}
+                    {%endif%}
                 </div>
             </div>
         </div>
