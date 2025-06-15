@@ -70,7 +70,9 @@
                 <div class="panel-footer">
                     {% blocktrans  with artiste_date=artiste.date_creation|date artiste_time=artiste.date_creation|time artiste_createur_url=artiste.createur.get_absolute_url artiste_createur=artiste.createur %}
                         Created on {{ artiste_date }} at {{ artiste_time }}
-                        by <a href="{{ artiste_createur_url }}">{{ artiste_createur }}</a>.
+                        {% if artiste.createur %}
+                            by <a href="{{ artiste_createur_url }}">{{ artiste_createur }}</a>.
+                        {%endif%}
                     {% endblocktrans %}
                 </div>
             </div>

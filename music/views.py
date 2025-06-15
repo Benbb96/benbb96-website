@@ -245,7 +245,7 @@ def create_artist(request):
     if not name:
         return JsonResponse({'success': False, 'error': 'name manquant'})
     try:
-        artiste = Artiste.objects.create(nom_artiste=name, slug=slugify(name))
+        artiste = Artiste.objects.create(nom_artiste=name, slug=slugify(name), createur=request.user.profil)
     except IntegrityError as e:
         return JsonResponse({'success': False, 'error': 'Cet artiste a déjà été créé...'})
     return JsonResponse({'success': True, 'name': artiste.nom_artiste, 'id': artiste.id})

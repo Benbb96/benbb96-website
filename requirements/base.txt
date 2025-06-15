@@ -1,4 +1,4 @@
-Django==4.2.20
+Django==4.2.22
 #django-admin-sortable==2.2.4
 git+https://github.com/LEAGUEDORA/django-admin-sortable.git#egg=django-admin-sortable
 django-anymail==9.0
@@ -22,8 +22,8 @@ Pillow==11.0.0
 Pyrebase4==4.8.0
 python-slugify==8.0.0
 redis==4.5.4
-requests==2.32.3
+requests==2.32.4
 git+https://github.com/Benbb96/soundcloud-python.git#egg=soundcloud
-spotipy==2.24.0
+spotipy==2.25.1
 zipp>=3.21.0 # not directly required, pinned by Snyk to avoid a vulnerability
 sqlparse>=0.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
