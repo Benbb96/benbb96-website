@@ -15,7 +15,7 @@ django-redis==5.2.0
 django-select2==8.4.1
 django-simple-history==3.8.0
 djangorestframework==3.16.0
-djangorestframework-simplejwt==5.5.0
+djangorestframework-simplejwt==5.5.1
 google-api-python-client==1.12.11
 pandas==2.2.3
 Pillow==11.0.0
