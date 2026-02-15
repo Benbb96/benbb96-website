@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Start Server",
+            "type": "debugpy",
+            "request": "launch",
+            "args": [
+                "runserver",
+                "--nothreading",  // Disable threading (avoids debugger issues)  
+                "--noreload"      // Disable auto-reload (reload breaks debugging)  
+            ],
+            "program": "${workspaceFolder}\\manage.py",
+            "python": "${workspaceFolder}\\venv\\Scripts\\python.exe",
+            "env": {"DJANGO_SETTINGS_MODULE": "config.settings.dev"},
+            "django": true,
+            "justMyCode": true  // Debug only your code (not Django internals)  
+        }
+    ]
+}
