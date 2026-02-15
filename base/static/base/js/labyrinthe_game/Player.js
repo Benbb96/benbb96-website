@@ -9,7 +9,7 @@ class Player {
         this.sizeY;  // La taille de la hauteur du joueur
 
         this.overPlayer = false;  // Pour savoir si la souris est au-dessus du joueur
-        this.isMoving = false;  // Lorsque le joueur est est en déplacement
+        this.isMoving = false;  // Lorsque le joueur est en déplacement
         this.point = false;  // Affichage des points de marquage du chemin du joueur
         this.chemin = true;  // Affichage des chemins empruntés par le joueur
 
@@ -47,8 +47,10 @@ class Player {
         // Mise à jour de sa position à partir de la position sur la grille de jeu et affichage
         this.updateLocation();
         this.display();
-        // Vérification si le joueur est sur la dernière case
-        labyrinthe.checkFinish();
+        if (state === GAME) {
+            // Vérification si le joueur est sur la dernière case
+            labyrinthe.checkFinish();
+        }
     }
 
     // Affiche le joueur
@@ -91,6 +93,9 @@ class Player {
                 grille[int(this.posOnGrid.y)][int(this.posOnGrid.x)] = 1;  // Indique que le joueur est passé par cette case
                 labyrinthe.chemins.push(new Chemin(oldPosOnGrid, createVector(this.posOnGrid.x, this.posOnGrid.y)));  // Ajoute le nouveau segment de chemin parcouru par le joueur
             }
+        } else {
+            // play a sound
+            wallSounds[int(random(0, wallSounds.length))].play();
         }
 
     }

@@ -207,6 +207,7 @@ class Labyrinthe {
                 this.disappear = false;
             }
             state = LEVEL_UP;
+            successSound.play();
         }
     }
 

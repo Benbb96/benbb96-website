@@ -17,7 +17,7 @@
         {% blocktrans %}
             Pour se déplacer, vous pouvez soit utilisez votre clavier : les flèches de directions pour vous déplacer
             <b>rapidement</b> d'un bout à l'autre, et les touches Z, Q, S et D pour vous déplacer <b>case par case</b> ;
-            ou bien avec la souris en <b>cliquant d'abord</b>> sur le joueur puis en déplaçant la souris. Cliquez de nouveau
+            ou bien avec la souris en <b>cliquant d'abord</b> sur le joueur puis en déplaçant la souris. Cliquez de nouveau
             sur le joueur pour arrêter le déplacement.
         {% endblocktrans %}
     </p>
@@ -56,6 +56,7 @@
 
 {% block javascript %}
     <script src="{% static 'base/js/p5.min.js' %}"></script>
+    <script src="{% static 'base/js/p5.sound.min.js' %}"></script>
     <script src="{% static 'base/js/labyrinthe_game/LabyrintheGame.js' %}"></script>
     <script src="{% static 'base/js/labyrinthe_game/Button.js' %}"></script>
     <script src="{% static 'base/js/labyrinthe_game/Chemin.js' %}"></script>

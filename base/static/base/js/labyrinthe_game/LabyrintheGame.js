@@ -64,6 +64,14 @@ function resetMovingLines() {
     lines[3] = new MovingLine(createVector(1, 2), createVector(1, 0), [4, 5, 1, 6, 3, 5, 1, 2, 6, 3, 5, 1, 6, 3]);
 }
 
+let wallSounds;
+let successSound;
+
+function preload() {
+    wallSounds = ['aie', 'ouille', 'ah', 'oh'].map((sound) => loadSound(`/static/base/js/labyrinthe_game/sounds/${sound}.mp3`));
+    successSound = loadSound(`/static/base/js/labyrinthe_game/sounds/ouais.mp3`);
+}
+
 function setup() {
     let canvas = createCanvas(444, 444);
     canvas.parent('sketch-holder');
@@ -134,16 +142,11 @@ function draw() {
             background(backgroundColor);
 
             // Déplacement du joueur via les touches du clavier
-            if (keyPressed) {
+            if (keyIsPressed) {
                 player.move(keyCode);
-                //delay(delai);
             }
 
             displayGame(false);  // On affiche le jeu et on n'empêche pas le joueur de bouger
-            if (mouseIsPressed) {
-                // Si le joueur essaye de déplacer son personnage en cliquant sur celui-ci
-                player.isMoving = !player.isMoving && player.overPlayer;
-            }
             break;
 
         case LEVEL_UP :
@@ -192,9 +195,16 @@ function updateCaseSize() {
 function displayGame(stopPlayer) {
     updateCaseSize();  // Recalcul de la taille d'une case
     labyrinthe.display();  // Affichage du labyrinthe
-    player.update();  //Met à jour la position du joueur
+    player.update();  // Met à jour la position du joueur
     if (stopPlayer) {
         player.isMoving = false;  // On empêche le joueur de bouger pendant les différents menus
+    }
+}
+
+function mouseClicked() {
+    if (state === GAME) {
+        // Si le joueur essaye de déplacer son personnage en cliquant sur celui-ci
+        player.isMoving = !player.isMoving && player.overPlayer;
     }
 }
 
