@@ -86,6 +86,8 @@ class Player {
                 if (this.posOnGrid.x < nbCase - 1 && matrice[this.posOnMatrice()][(int(this.posOnGrid.x) + 1) * nbCase + int(this.posOnGrid.y)] === 1) this.posOnGrid.x++;
                 else canGoThere = false;
                 break;
+            default:
+                return;  // Le joueur ne bougera pas
         }
 
         if (canGoThere) {

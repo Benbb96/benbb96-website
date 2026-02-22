@@ -8,7 +8,7 @@ class Labyrinthe {
         this.walls = [];  // Liste des murs du labyrinthe
         this.chemins = [];  // Liste des chemins
 
-        this.disappear = false;  // Permet de choisir si les murs du labyrinthe disparaissent ou non
+        this.disappear = mode === BLIND;  // Permet de choisir si les murs du labyrinthe disparaissent ou non
 
 
         // Réinitialise les tableaux à 2 dimensions
@@ -203,9 +203,6 @@ class Labyrinthe {
         if (player.posOnGrid.x === this.endCase.x && player.posOnGrid.y === this.endCase.y) {
             player.isMoving = false;  // On stoppe le joueur pour ne plus qu'il puisse bouger à l'aide de la souris
             timer.end();
-            if (mode === BLIND) {  // Dans ce mode on stoppe la disparition des murs
-                this.disappear = false;
-            }
             state = LEVEL_UP;
             successSound.play();
         }

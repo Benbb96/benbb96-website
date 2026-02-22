@@ -44,25 +44,21 @@ class Button {
             case EASY :
                 nbCaseDefaut = 2;
                 incrementationDefaut = 1;
-                disappear = false;
                 mode = EASY;
                 break;
             case MEDIUM :
                 nbCaseDefaut = 3;
                 incrementationDefaut = 2;
-                disappear = false;
                 mode = MEDIUM;
                 break;
             case HARD :
                 nbCaseDefaut = 4;
                 incrementationDefaut = 3;
-                disappear = false;
                 mode = HARD;
                 break;
             case BLIND :
                 nbCaseDefaut = 3;
                 incrementationDefaut = 3;
-                disappear = true;  // On active le booléen de disparition
                 mode = BLIND;
                 break;
         }

@@ -23,7 +23,6 @@ let grille;  // Grille qui va nous servir pour la construction du labyrinthe
 
 let backgroundColor;  // Couleur du fond de jeu
 let wallColor;  // Couleur des murs du labyrinthe
-let disappear = false;  // Permet de choisir si les murs du labyrinthe disparaissent ou non
 
 // Les différents états du jeu
 let MENU = 1;
@@ -43,10 +42,6 @@ let mode;  // La variable du mode de jeu pour définir les paramètres de jeu
 // Les boutons du menus
 let buttons = [];
 let selectedButton;
-
-// Les sélecteurs de couleurs
-// let backgroundColorPicker = undefined;
-// let wallColorPicker = undefined;
 
 // Les lignes d'animations pour l'écran d'accueil
 let lines = [];
@@ -89,10 +84,6 @@ function setup() {
     buttons[1].selected = true;  // Le mode medium est sélectionné par défaut
     selectedButton = 1;
 
-    // Construction des ColorPickers
-    // backgroundColorPicker = new ColorPicker(20, 20, wallColor);
-    // wallColorPicker = new ColorPicker(20, 60, backgroundColor);
-
     resetMovingLines();
 }
 
@@ -117,15 +108,6 @@ function draw() {
             for (let i = 0; i < 4; i++) {
                 buttons[i].display();
             }
-
-            // Color Picker
-            // fill(wallColor);
-            // textAlign(LEFT);
-            // textSize(12);
-            // text("Couleur de fond", 50, 35);
-            // text("Couleur des murs", 50, 75);
-            // backgroundColorPicker.display();
-            // wallColorPicker.display();
 
             if (mouseIsPressed) {
                 for (let i = 0; i < 4; i++) {
@@ -172,9 +154,6 @@ function draw() {
             displayGame(true);
             popUp("Pause\nNiveau " + niveau + "\nTemps : " + timer.getDisplay() + "\nAppuiez sur Entrée\npour revenir au menu");
             if (mouseIsPressed) {
-                if (mode === BLIND) {
-                    disappear = true;  // On remet la disparition des murs
-                }
                 timer.restart();  // On relance le timer
                 state = GAME;
             }
@@ -233,6 +212,11 @@ function keyPressed() {
             }
             break;
         case GAME :
+            if (keyCode === ESCAPE) {
+                timer.pause();  // On met le timer en pause
+                state = PAUSE;
+                break;
+            }
             switch (key) {
                 // Déplacement du joueur avec ZQSD
                 case 'z' :
@@ -263,18 +247,14 @@ function keyPressed() {
                     labyrinthe.resetAlpha();
                     break;
                 case 'b' :
-                    disappear = !disappear;
-                    break; //Active le BLIND mode
+                    labyrinthe.disappear = !labyrinthe.disappear; // Toggle le BLIND mode
+                    break;
                 case 'w' :
-                    condole.log(player.posOnMatrice());
+                    console.log(player.posOnMatrice());
                     break;
                 case 'x' :
                     // La touche X permet de mettre le jeu en pause
-                    key = 0;  // Empêche le jeu de se fermer
                     timer.pause();  // On met le timer en pause
-                    if (mode === BLIND) {  // Dans ce mode on stoppe la disparition des murs
-                        disappear = false;
-                    }
                     state = PAUSE;
                     break;
             }
@@ -292,33 +272,13 @@ function keyPressed() {
         case PAUSE :
             if (keyCode === ENTER) {
                 gameOver();  // Le jeu est terminé, on appelle donc Game Over
-            } else if (key === 'x') {
-                key = 0;
-                if (mode === BLIND) {
-                    disappear = true;  // On remet la disparition des murs
-                }
+            } else if (key === 'x' || keyCode === ESCAPE) {
                 timer.restart();  // On relance le timer
                 state = GAME;
             }
             break;
     }
 }
-
-// Fonction lors du relachement du clic de la souris
-/*function mouseReleased() {
-    backgroundColorPicker.isDraggingCross = false;
-    backgroundColorPicker.isDraggingLine = false;
-    wallColorPicker.isDraggingCross = false;
-    wallColorPicker.isDraggingLine = false;
-
-    if (backgroundColorPicker.closeColorPicker()) {
-        backgroundColorPicker.ShowColorPicker = false;
-        backgroundColor = backgroundColorPicker.activeColor;
-    } else if (wallColorPicker.closeColorPicker()) {
-        wallColorPicker.ShowColorPicker = false;
-        wallColor = wallColorPicker.activeColor;
-    }
-}*/
 
 // Fonction qui permet de lancer le jeu
 function runGame() {
@@ -345,9 +305,6 @@ function levelUp() {
     player.repositionne(labyrinthe.startCase.x, labyrinthe.startCase.y);
     player.isMoving = false;
 
-    if (mode === BLIND) {  // On remet la disparition des murs
-        disappear = true;
-    }
     timer = new Timer();  // On crée un nouveau timer pour ce nouveau niveau
     state = GAME;
 }
@@ -393,7 +350,7 @@ function drawAnimatedMaze() {
 // Empêche de scroller la page
 window.addEventListener("keydown", function(e) {
     // space and arrow keys
-    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    if(['Space', 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'].indexOf(e.code) > -1) {
         e.preventDefault();
     }
-}, false);
+});
