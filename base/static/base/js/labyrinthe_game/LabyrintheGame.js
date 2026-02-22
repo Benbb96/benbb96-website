@@ -53,8 +53,8 @@ let timer;
 
 function resetMovingLines() {
     // Construction des Moving Lines avec leurs animations prédéfinis
-    lines[0] = new MovingLine(createVector(0, 1), createVector(1, 0), [4, 0, 4, 6, 4, 4, 3, 4, 2, 2, 6, 5, 1, 2, 2, 0, 2, 5, 2, 2, 1, 2, 4, 4, 5, 6, 3, 4]);
-    lines[1] = new MovingLine(createVector(2, 0), createVector(0, 1), [4, 2, 2, 6, 5, 1, 2, 2, 0, 2, 5, 2, 2, 1, 2, 4, 4, 5, 6, 3, 4, 4, 0, 4, 6, 4, 4, 3]);
+    lines[0] = new MovingLine(createVector(0, 1), createVector(1, 0), [4, 0, 3, 5, 6, 3, 4, 4, 0, 3, 5, 6, 3, 4, 3, 4, 4, 6, 4, 4, 3, 4, 2, 2, 6, 4, 4, 3]);
+    lines[1] = new MovingLine(createVector(2, 0), createVector(0, 1), [4, 2, 1, 5, 2, 2, 1, 2, 4, 3, 6, 4, 4, 3, 3, 0, 2, 6, 5, 1, 2, 2, 0, 2, 5, 6, 3, 4]);
     lines[2] = new MovingLine(createVector(1, 1), createVector(0, 1), [3, 0, 4, 4, 5, 2, 0, 1, 0, 2, 2, 6, 4, 0]);
     lines[3] = new MovingLine(createVector(1, 2), createVector(1, 0), [4, 5, 1, 6, 3, 5, 1, 2, 6, 3, 5, 1, 6, 3]);
 }
