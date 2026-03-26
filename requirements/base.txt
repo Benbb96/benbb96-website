@@ -22,7 +22,7 @@ Pillow==12.1.1
 Pyrebase4==4.8.0
 python-slugify==8.0.0
 redis==4.5.4
-requests==2.32.4
+requests==2.33.0
 setuptools==80.9.0
 git+https://github.com/Benbb96/soundcloud-python.git#egg=soundcloud
 spotipy==2.25.2
