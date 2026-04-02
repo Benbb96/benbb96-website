@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'kendama.apps.KendamaConfig',
     'bootstrap3',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
     'geoposition',
     'fontawesome_6',
@@ -204,6 +205,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     )
 }
 
