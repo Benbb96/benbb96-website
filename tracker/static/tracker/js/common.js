@@ -1,10 +1,10 @@
 const frequency_map = {
-    H: 'heure',
+    h: 'heure',
     D: 'jour',
     W: 'semaine',
-    M: 'mois',
-    Q: "quart d'année",
-    Y: 'an',
+    ME: 'mois',
+    QE: "quart d'année",
+    YE: 'an',
 }
 
 let allTracks = undefined

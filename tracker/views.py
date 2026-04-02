@@ -151,11 +151,10 @@ def tracker_data(request):
         if tracks.exists():
             # Regroupe les données par date pour faire des stats
             df = read_frame(tracks, fieldnames=['datetime'])
-            df['datetime'] = pd.to_datetime(df['datetime'])
-            df['datetime'] = df['datetime'].dt.tz_convert('Europe/Paris')
+            df.loc[:, 'datetime'] = pd.to_datetime(df['datetime']).dt.tz_convert('Europe/Paris')
             df.index = df['datetime']
             # Ajoute une nouvelle colonne pour compter comme un chaque track
-            df['count'] = [1] * tracks.count()
+            df.loc[:, 'count'] = 1
             data = df.drop(columns=['datetime']).resample(frequency).sum()
 
             delta = tracks.latest('datetime').datetime.date() - tracks.earliest('datetime').datetime.date()
@@ -163,18 +162,18 @@ def tracker_data(request):
             date_format = '%d/%m/%y'
             avg = tracks.count() / (delta.days + 1)  # On ajoute un jour pour éviter la division par 0
 
-            if frequency == 'H':
+            if frequency == 'h':
                 date_format = '%d/%m/%y %M:%H'
                 avg /= 24
             elif frequency == 'W':
                 avg *= 7
-            elif frequency == 'M':
+            elif frequency == 'ME':
                 date_format = '%B %Y'
                 avg *= 30
-            elif frequency == 'Q':
+            elif frequency == 'QE':
                 date_format = '%B %Y'
                 avg *= 120
-            elif frequency == 'Y':
+            elif frequency == 'YE':
                 date_format = '%Y'
                 avg *= 365
 
