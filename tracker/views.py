@@ -30,7 +30,7 @@ class TrackerView(ModelViewSet):
         return self.request.user.profil.trackers.all()
 
     def perform_create(self, serializer):
-        serializer.save(createur=self.request.user)
+        serializer.save(createur=self.request.user.profil)
 
 
 class TrackView(ModelViewSet):
