@@ -14,7 +14,9 @@ from django.views.decorators.http import require_POST
 from django.views.generic import UpdateView, DeleteView
 from django_pandas.io import read_frame
 import pandas as pd
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from tracker.forms import TrackForm, TrackerForm, SelectTrackersForm
@@ -31,6 +33,21 @@ class TrackerView(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(createur=self.request.user.profil)
+
+    @action(detail=False, methods=['patch'])
+    def reorder(self, request):
+        ids = request.data.get('ids', [])
+        trackers = self.get_queryset()
+        if set(ids) != {t.id for t in trackers}:
+            return Response({'error': 'Liste d\'IDs incomplète ou invalide'}, status=status.HTTP_400_BAD_REQUEST)
+        tracker_map = {t.id: t for t in trackers}
+        to_update = []
+        for order, tracker_id in enumerate(ids):
+            tracker = tracker_map[tracker_id]
+            tracker.order = order
+            to_update.append(tracker)
+        Tracker.objects.bulk_update(to_update, ['order'])
+        return Response({'status': 'ok'})
 
 
 class TrackView(ModelViewSet):
