@@ -17,6 +17,7 @@ class TrackerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tracker
         fields = ('id', 'createur', 'nom', 'icone', 'color', 'contrast_color', 'date_creation', 'order', 'tracks')
+        read_only_fields = ('createur',)
 
     def get_contrast_color(self, tracker):
         return contrast_color(tracker.color)
