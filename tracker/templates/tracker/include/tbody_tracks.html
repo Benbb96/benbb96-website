@@ -5,7 +5,7 @@
         {% endif %}
         <td class="date">{{ track.datetime|date }} {{ track.datetime|time }}</td>
         {% if show_valeur %}
-            <td class="valeur">{{ track.valeur|default:"-" }}</td>
+            <td class="valeur">{{ track.valeur|floatformat:"-2"|default:"-" }}</td>
         {% endif %}
         <td class="commentaire">
             {{ track.commentaire }}
