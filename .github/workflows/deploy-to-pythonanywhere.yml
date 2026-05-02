@@ -16,8 +16,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          script_stop: true
           script: |
+            set -e
             cd benbb96-website/
             workon benbb96
             git pull
