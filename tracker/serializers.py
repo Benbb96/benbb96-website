@@ -7,7 +7,7 @@ from tracker.models import Tracker, Track
 class TrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track
-        fields = ('id', 'tracker', 'datetime', 'commentaire')
+        fields = ('id', 'tracker', 'datetime', 'valeur', 'commentaire')
 
 
 class TrackerSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class TrackerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tracker
-        fields = ('id', 'createur', 'nom', 'icone', 'color', 'contrast_color', 'date_creation', 'order', 'tracks')
+        fields = ('id', 'createur', 'nom', 'icone', 'color', 'contrast_color', 'type', 'date_creation', 'order', 'tracks')
         read_only_fields = ('createur',)
 
     def get_contrast_color(self, tracker):

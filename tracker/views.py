@@ -95,6 +95,9 @@ class TrackerDeleteView(DeleteView):
 @login_required
 def tracker_quick_add(request, pk):
     tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=pk)
+    if tracker.type == Tracker.TYPE_MESURE:
+        messages.info(request, 'Ce tracker nécessite une valeur, veuillez l\'ajouter depuis la page de détail.')
+        return redirect(tracker)
     Track.objects.create(tracker=tracker)
     messages.success(request, 'Un track a bien été ajouté sur le tracker %s' % tracker)
     return redirect('tracker:liste-tracker')
@@ -104,7 +107,7 @@ def tracker_quick_add(request, pk):
 def tracker_detail(request, pk):
     tracker = get_object_or_404(Tracker.objects.filter(createur=request.user.profil), id=pk)
 
-    form = TrackForm(request.POST or None, initial={'datetime': timezone.now()})
+    form = TrackForm(request.POST or None, initial={'datetime': timezone.now()}, tracker_type=tracker.type)
     if form.is_valid():
         track = form.save(commit=False)
         track.tracker = tracker
@@ -113,7 +116,7 @@ def tracker_detail(request, pk):
 
     tracks = tracker.tracks.all()
     for track in tracks:
-        track.form = TrackForm(instance=track)
+        track.form = TrackForm(instance=track, tracker_type=tracker.type)
 
     return render(request, 'tracker/tracker_detail.html', {
         'tracker': tracker,
@@ -161,77 +164,120 @@ def tracker_data(request):
 
     trackers = get_tracks_from_request(request)
     frequency = request.POST.get('frequency', 'D')
+
+    date_format = '%d/%m/%y'
+    if frequency == 'h':
+        date_format = '%d/%m/%y %H:%M'
+    elif frequency in ('ME', 'QE'):
+        date_format = '%B %Y'
+    elif frequency == 'YE':
+        date_format = '%Y'
+
     datasets = []
     labels = {}
     averages = []
+
     for tracker, tracks in trackers.items():
-        if tracks.exists():
-            # Regroupe les données par date pour faire des stats
+        if not tracks.exists():
+            continue
+
+        if tracker.type == Tracker.TYPE_MESURE:
+            df = read_frame(tracks, fieldnames=['datetime', 'valeur'])
+            df.loc[:, 'datetime'] = pd.to_datetime(df['datetime']).dt.tz_convert('Europe/Paris')
+            df.index = df['datetime']
+            df = df.drop(columns=['datetime']).dropna()
+
+            if df.empty:
+                continue
+
+            data_mean = df.resample(frequency)['valeur'].mean()
+            data_min = df.resample(frequency)['valeur'].min()
+            data_max = df.resample(frequency)['valeur'].max()
+
+            averages.append({
+                'tracker': tracker.nom,
+                'avg': round(float(df['valeur'].mean()), 2),
+                'min': float(df['valeur'].min()),
+                'max': float(df['valeur'].max()),
+                'isValeur': True,
+            })
+
+            data_mean.index = data_mean.index.strftime(date_format)
+            data_min.index = data_min.index.strftime(date_format)
+            data_max.index = data_max.index.strftime(date_format)
+
+            for i, label in enumerate(data_mean.index.tolist()):
+                label_date = datetime.strptime(label, date_format)
+                val = {
+                    'mean': None if pd.isna(data_mean.iloc[i]) else round(float(data_mean.iloc[i]), 2),
+                    'min': None if pd.isna(data_min.iloc[i]) else float(data_min.iloc[i]),
+                    'max': None if pd.isna(data_max.iloc[i]) else float(data_max.iloc[i]),
+                }
+                if label_date not in labels:
+                    labels[label_date] = {tracker.nom: val}
+                else:
+                    labels[label_date][tracker.nom] = val
+
+            datasets.append({
+                'label': tracker.nom,
+                'backgroundColor': tracker.rgba_background_color,
+                'trackerType': Tracker.TYPE_MESURE,
+            })
+
+        else:
             df = read_frame(tracks, fieldnames=['datetime'])
             df.loc[:, 'datetime'] = pd.to_datetime(df['datetime']).dt.tz_convert('Europe/Paris')
             df.index = df['datetime']
-            # Ajoute une nouvelle colonne pour compter comme un chaque track
             df.loc[:, 'count'] = 1
             data = df.drop(columns=['datetime']).resample(frequency).sum()
 
             delta = tracks.latest('datetime').datetime.date() - tracks.earliest('datetime').datetime.date()
-
-            date_format = '%d/%m/%y'
-            avg = tracks.count() / (delta.days + 1)  # On ajoute un jour pour éviter la division par 0
+            avg = tracks.count() / (delta.days + 1)
 
             if frequency == 'h':
-                date_format = '%d/%m/%y %M:%H'
                 avg /= 24
             elif frequency == 'W':
                 avg *= 7
             elif frequency == 'ME':
-                date_format = '%B %Y'
                 avg *= 30
             elif frequency == 'QE':
-                date_format = '%B %Y'
                 avg *= 120
             elif frequency == 'YE':
-                date_format = '%Y'
                 avg *= 365
 
-            averages.append({'tracker': tracker.nom, 'avg': round(avg, 2)})
+            averages.append({'tracker': tracker.nom, 'avg': round(avg, 2), 'isValeur': False})
 
             data.index = data.index.strftime(date_format)
-
             data_values = data.values.tolist()
 
-            # Ajoute les labels dans le set en utilisant leur valeur en datetime
-            i = 0
-            for label in data.index.values.tolist():
+            for i, label in enumerate(data.index.tolist()):
                 label_date = datetime.strptime(label, date_format)
-                if label_date not in labels.keys():
-                    labels[label_date] = {tracker.nom: data_values[i][0]}
+                val = {'count': data_values[i][0]}
+                if label_date not in labels:
+                    labels[label_date] = {tracker.nom: val}
                 else:
-                    labels[label_date][tracker.nom] = data_values[i][0]
-                i += 1
-
-            # TODO Faire en sorte que toutes les dates entre le dernier track et ojd apparaissent
-            # Ajoute la date d'aujourd'hui si elle n'y est pas déjà
-            # today = timezone.now().strftime(date_format)
-            # if today not in labels:
-            #     labels.append(today)
-            #     data.append([0])
+                    labels[label_date][tracker.nom] = val
 
             datasets.append({
                 'label': tracker.nom,
-                'backgroundColor': tracker.rgba_background_color
+                'backgroundColor': tracker.rgba_background_color,
+                'trackerType': Tracker.TYPE_EVENEMENT,
             })
 
-    # Réorganise les data pour les mettre dans leur dataset en initialisant à 0 pour les valeurs absentes sur un
-    # même label d'un tracker à l'autre
+    sorted_labels = sorted(labels.keys())
+
     for dataset in datasets:
-        dataset['data'] = [values.get(dataset['label'], 0) for values in labels.values()]
+        if dataset['trackerType'] == Tracker.TYPE_MESURE:
+            dataset['data'] = [labels[label].get(dataset['label'], {}).get('mean') for label in sorted_labels]
+            dataset['minData'] = [labels[label].get(dataset['label'], {}).get('min') for label in sorted_labels]
+            dataset['maxData'] = [labels[label].get(dataset['label'], {}).get('max') for label in sorted_labels]
+        else:
+            dataset['data'] = [labels[label].get(dataset['label'], {}).get('count', 0) for label in sorted_labels]
 
     return JsonResponse({
-        # Il faut au préalable remettre les labels dans l'ordre et en tant que texte
-        'labels': [label.strftime(date_format) for label in sorted(labels.keys())],
+        'labels': [label.strftime(date_format) for label in sorted_labels],
         'datasets': datasets,
-        'averages': averages
+        'averages': averages,
     })
 
 
@@ -265,8 +311,8 @@ def get_other_stats(request):
     if not len(trackers) == 1:
         return JsonResponse({})
 
-    # Récupère directement les tracks du seul tracker qui est censé être dans le dictionnaire
-    tracks = trackers[next(iter(trackers))]
+    tracker_obj = next(iter(trackers))
+    tracks = trackers[tracker_obj]
     if not tracks.exists():
         return JsonResponse({})
 
@@ -327,8 +373,7 @@ def get_other_stats(request):
         prev = track
 
     delta_stats = None
-    if deltas:
-        # Formate correctement les dates pour les afficher
+    if deltas and min_1 and min_2 and max_1 and max_2:
         date_format = '%d/%m/%y %H:%M'
         delta_stats = {
             'deltaMin': format_html(
@@ -342,6 +387,17 @@ def get_other_stats(request):
             )
         }
 
+    valeur_stats = None
+    if tracker_obj.type == Tracker.TYPE_MESURE:
+        valeurs = [t.valeur for t in tracks if t.valeur is not None]
+        if valeurs:
+            valeur_stats = {
+                'min': min(valeurs),
+                'max': max(valeurs),
+                'avg': round(sum(valeurs) / len(valeurs), 2),
+                'count': len(valeurs),
+            }
+
     return JsonResponse({
         'trackByHourChart': {
             'labels': list(x + 'h' for x in hours.keys()),
@@ -352,7 +408,7 @@ def get_other_stats(request):
             'values': list(days.values())
         },
         'deltaStats': delta_stats,
-        # Remet les mots dans l'ordre des valeurs d'appartition et limite à 50 résultats
+        'valeurStats': valeur_stats,
         'words': {k: v for k, v in sorted(words.items(), key=lambda item: item[1], reverse=True)[:50]}
     })
 
@@ -365,13 +421,18 @@ def tracker_history(request):
     trackers = get_tracks_from_request(request)
     total_count = 0
     all_tracks = []
+    show_valeur = any(t.type == Tracker.TYPE_MESURE for t in trackers.keys())
+
     for tracker, tracks in trackers.items():
         for track in tracks:
-            track.form = TrackForm(instance=track)
-        # Dans le cas où l'on est sur la page détail, on renvoit direct le JSON
+            track.form = TrackForm(instance=track, tracker_type=tracker.type)
         if len(trackers) == 1:
             return JsonResponse({
-                'html': render_to_string('tracker/include/tbody_tracks.html', {'tracks': tracks}, request),
+                'html': render_to_string(
+                    'tracker/include/tbody_tracks.html',
+                    {'tracks': tracks, 'show_valeur': show_valeur},
+                    request
+                ),
                 'trackCount': tracks.count()
             })
         else:
@@ -380,7 +441,7 @@ def tracker_history(request):
     return JsonResponse({
         'html': render_to_string(
             'tracker/include/tbody_tracks.html',
-            {'tracks': sorted(all_tracks, key=lambda item: item.datetime, reverse=True), 'compare': True},
+            {'tracks': sorted(all_tracks, key=lambda item: item.datetime, reverse=True), 'compare': True, 'show_valeur': show_valeur},
             request
         ),
         'trackCount': total_count
@@ -393,7 +454,7 @@ def compare_trackers(request):
     trackers = []
     first_track = last_track = None
     if form.is_valid():
-        trackers = form.cleaned_data.get('trackers')
+        trackers = form.cleaned_data.get('trackers', [])
         all_tracks = Track.objects.filter(tracker__in=trackers)
         first_track = all_tracks.earliest('datetime')
         last_track = all_tracks.latest('datetime')
@@ -401,5 +462,6 @@ def compare_trackers(request):
         'form': form,
         'trackers': trackers,
         'first_track': first_track,
-        'last_track': last_track
+        'last_track': last_track,
+        'has_mesure': any(t.type == Tracker.TYPE_MESURE for t in trackers),
     })

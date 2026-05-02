@@ -14,8 +14,8 @@
                 "--nothreading",  // Disable threading (avoids debugger issues)  
                 "--noreload"      // Disable auto-reload (reload breaks debugging)  
             ],
-            "program": "${workspaceFolder}\\manage.py",
-            "python": "${workspaceFolder}\\venv\\Scripts\\python.exe",
+            "program": "${workspaceFolder}/manage.py",
+            "python": "${command:python.interpreterPath}",
             "env": {"DJANGO_SETTINGS_MODULE": "config.settings.dev"},
             "django": true,
             "justMyCode": true  // Debug only your code (not Django internals)  

@@ -60,25 +60,50 @@
 
             <form method="post">
                 {% csrf_token %}
-                <div class="input-group">
-                    {{ form.commentaire.label_tag }}
-                </div>
-                <div class="input-group">
-                    {{ form.commentaire }}
-                    <div class="input-group-btn">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="glyphicon glyphicon-plus" title="Ajouter un nouveau track"></i>
-                        </button>
+                {% if tracker.type == 'mesure' %}
+                    <div class="form-group">
+                        <label for="{{ form.valeur.id_for_label }}">Valeur</label>
+                        <div class="input-group">
+                            {{ form.valeur }}
+                            <div class="input-group-btn">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="glyphicon glyphicon-plus" title="Ajouter un nouveau track"></i>
+                                </button>
+                            </div>
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="button" id="toggleDatetime">
+                                    <i class="glyphicon glyphicon-time" title="Changer la date et l'heure"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {{ form.valeur.errors }}
                     </div>
-                    <div class="input-group-btn">
-                        <button class="btn btn-default" type="button" id="toggleDatetime">
-                            <i class="glyphicon glyphicon-time" title="Changer la date et l'heure"></i>
-                        </button>
+                    <div class="form-group">
+                        <label for="{{ form.commentaire.id_for_label }}">Commentaire (facultatif)</label>
+                        {{ form.commentaire }}
+                        {{ form.commentaire.errors }}
                     </div>
-                </div>
-                <div class="form-group">
-                    {{ form.commentaire.errors }}
-                </div>
+                {% else %}
+                    <div class="input-group">
+                        {{ form.commentaire.label_tag }}
+                    </div>
+                    <div class="input-group">
+                        {{ form.commentaire }}
+                        <div class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="glyphicon glyphicon-plus" title="Ajouter un nouveau track"></i>
+                            </button>
+                        </div>
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="button" id="toggleDatetime">
+                                <i class="glyphicon glyphicon-time" title="Changer la date et l'heure"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.commentaire.errors }}
+                    </div>
+                {% endif %}
                 <div class="form-group row">
                     <div class="col-sm-4 col-xs-12" id="datetime" style="display: none">
                         <label for="id_datetime">Changer la date et l'heure :</label>
@@ -110,6 +135,7 @@
                             <thead>
                             <tr>
                                 <th>Date</th>
+                                {% if tracker.type == 'mesure' %}<th>Valeur</th>{% endif %}
                                 <th>Commentaire</th>
                                 <th>Actions</th>
                             </tr>
@@ -127,12 +153,32 @@
                     {% endif %}
                     <div id="track_graph"{% if not tracker.tracks.exists %} class="hidden" {% endif %}>
                         <p>
-                            <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
+                            {% if tracker.type == 'mesure' %}
+                                Moyenne : <strong id="avg"></strong>
+                                (min : <span id="valMin"></span>, max : <span id="valMax"></span>)
+                                par <span id="frequency"></span>
+                            {% else %}
+                                <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
+                            {% endif %}
                         </p>
                         <div class="text-center">
                             <canvas id="allTracks" width="600" height="400"></canvas>
                         </div>
                         {% include 'tracker/include/frequency_buttons.html' %}
+                        {% if tracker.type == 'mesure' %}
+                            <h3>Statistiques globales</h3>
+                            <div class="row">
+                                <div class="col-sm-4 col-xs-12">
+                                    Valeur min : <strong id="valeurMin">-</strong>
+                                </div>
+                                <div class="col-sm-4 col-xs-12">
+                                    Valeur moyenne : <strong id="valeurAvg">-</strong>
+                                </div>
+                                <div class="col-sm-4 col-xs-12">
+                                    Valeur max : <strong id="valeurMax">-</strong>
+                                </div>
+                            </div>
+                        {% endif %}
                         <h3>Ecarts</h3>
                         <p>Voici les statistiques des différences de temps entre deux tracks à la suite.</p>
                         <div class="row">
@@ -191,6 +237,7 @@
         const minDate = moment("{{ tracker.tracks.first_track.datetime|date:"c" }}")
         const maxDate = moment("{{ tracker.tracks.last_track.datetime|date:"c" }}").add(1, 'minute')
         const trackerDataUrl = '{% url 'tracker:tracker-data' %}'
+        const trackerType = '{{ tracker.type }}'
     </script>
     <script src="{% static 'tracker/js/common.js' %}"></script>
     <script>
@@ -339,6 +386,11 @@
                             $('#' + key).html(value);
                         }
                     }
+                    if (response.valeurStats) {
+                        $('#valeurMin').text(response.valeurStats.min);
+                        $('#valeurAvg').text(response.valeurStats.avg);
+                        $('#valeurMax').text(response.valeurStats.max);
+                    }
                     const wordsBody = $('tbody#words')
                     wordsBody.empty()
                     if (response.words !== undefined) {
@@ -383,6 +435,9 @@
                             .done((response) => {
                                 const track = $(this).closest('tr').prev();
                                 track.find('td.commentaire').text(response.commentaire);
+                                if (response.valeur !== null && response.valeur !== undefined) {
+                                    track.find('td.valeur').text(response.valeur);
+                                }
                                 const datetime = moment(response.datetime).format('LLL');
                                 track.find('td.date').text(datetime);
                                 $(this).find('.cancelBtn').trigger('click')

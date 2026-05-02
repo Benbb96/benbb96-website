@@ -8,21 +8,33 @@ from tracker.models import Track, Tracker
 class TrackerForm(forms.ModelForm):
     class Meta:
         model = Tracker
-        fields = ('nom', 'icone', 'color')
+        fields = ('nom', 'icone', 'color', 'type')
         widgets = {
-            'nom': forms.TextInput(attrs={'class': 'form-control'})
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'type': forms.Select(attrs={'class': 'form-control'})
         }
 
 
 class TrackForm(forms.ModelForm):
+    valeur = forms.FloatField(
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': 'any', 'placeholder': 'Valeur'})
+    )
     datetime = forms.DateTimeField(
         required=True,
         input_formats=['%Y-%m-%dT%H:%M']
     )
 
+    def __init__(self, *args, **kwargs):
+        tracker_type = kwargs.pop('tracker_type', None)
+        super().__init__(*args, **kwargs)
+        if tracker_type == Tracker.TYPE_MESURE:
+            self.fields['valeur'].required = True
+            self.fields['valeur'].widget.attrs['required'] = 'required'
+
     class Meta:
         model = Track
-        fields = ('commentaire', 'datetime')
+        fields = ('valeur', 'commentaire', 'datetime')
         widgets = {
             'tracker': forms.HiddenInput(),
             'commentaire': forms.TextInput(attrs={'placeholder': 'Commentaire facultatif', 'class': 'form-control'})
@@ -42,7 +54,7 @@ class SelectTrackersForm(forms.Form):
         self.fields['trackers'].queryset = user.profil.trackers.all()
 
     def clean_trackers(self):
-        trackers = self.cleaned_data.get('trackers')
+        trackers = self.cleaned_data.get('trackers', [])
         if len(trackers) < 2:
             raise ValidationError('Veuillez sélectionner au minimum 2 trackers.')
         return trackers

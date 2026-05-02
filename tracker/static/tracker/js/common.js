@@ -72,11 +72,60 @@ const update_track_graph = (frequency = 'D') => {
             if (response.labels.length > 0) {
                 $('div#noTracks').addClass('hidden')
                 $('div#track_graph').removeClass('hidden')
+
+                const chartDatasets = []
+                response.datasets.forEach(dataset => {
+                    if (dataset.trackerType === 'mesure' && dataset.minData && dataset.maxData) {
+                        // Zone ombragée entre min et max
+                        chartDatasets.push({
+                            label: '',
+                            data: dataset.minData,
+                            borderColor: dataset.backgroundColor,
+                            backgroundColor: 'transparent',
+                            borderDash: [4, 4],
+                            fill: false,
+                            pointRadius: 0,
+                            borderWidth: 1,
+                        })
+                        chartDatasets.push({
+                            label: '',
+                            data: dataset.maxData,
+                            borderColor: dataset.backgroundColor,
+                            backgroundColor: dataset.backgroundColor,
+                            borderDash: [4, 4],
+                            fill: '-1',
+                            pointRadius: 0,
+                            borderWidth: 1,
+                        })
+                        // Ligne principale (moyenne)
+                        chartDatasets.push({
+                            label: dataset.label,
+                            data: dataset.data,
+                            backgroundColor: dataset.backgroundColor,
+                            fill: false,
+                        })
+                    } else {
+                        chartDatasets.push({
+                            label: dataset.label,
+                            data: dataset.data,
+                            backgroundColor: dataset.backgroundColor,
+                        })
+                    }
+                })
+
                 allTracks.data.labels = response.labels
-                allTracks.data.datasets = response.datasets
+                allTracks.data.datasets = chartDatasets
                 allTracks.update()
+
                 $('span#frequency').text(frequency_map[frequency])
-                $('strong#avg').text(response.averages[0].avg)
+                if (response.averages.length > 0) {
+                    const avg = response.averages[0]
+                    $('strong#avg').text(avg.avg)
+                    if (avg.isValeur) {
+                        $('span#valMin').text(avg.min)
+                        $('span#valMax').text(avg.max)
+                    }
+                }
                 $('.btn-frequency').removeClass('btn-primary')
                 $('.btn-frequency[data-frequency=' + frequency + ']').addClass('btn-primary')
             } else {

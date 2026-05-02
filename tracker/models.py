@@ -9,10 +9,18 @@ from base.models import Profil
 
 
 class Tracker(SortableMixin):
+    TYPE_EVENEMENT = 'evenement'
+    TYPE_MESURE = 'mesure'
+    TYPE_CHOICES = [
+        (TYPE_EVENEMENT, 'Événement'),
+        (TYPE_MESURE, 'Mesure'),
+    ]
+
     createur = SortableForeignKey(Profil, verbose_name='créateur', related_name='trackers', on_delete=models.CASCADE)
     nom = models.CharField(max_length=100)
     icone = IconField('icône')
     color = ColorField('couleur', default='#FFFFFF')
+    type = models.CharField('type', max_length=20, choices=TYPE_CHOICES, default=TYPE_EVENEMENT)
     date_creation = models.DateTimeField('date de création', auto_now_add=True)
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
@@ -79,6 +87,7 @@ class TrackManager(models.Manager):
 class Track(models.Model):
     tracker = models.ForeignKey(Tracker, related_name='tracks', on_delete=models.CASCADE)
     datetime = models.DateTimeField('date et heure', default=timezone.now)
+    valeur = models.FloatField('valeur', null=True, blank=True)
     commentaire = models.CharField(
         max_length=255, help_text='Un texte pour donner une explication sur ce track.', blank=True
     )
