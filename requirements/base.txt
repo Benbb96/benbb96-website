@@ -1,4 +1,4 @@
-Django==5.2.13
+Django==5.2.14
 #django-admin-sortable==2.2.4
 git+https://github.com/LEAGUEDORA/django-admin-sortable.git#egg=django-admin-sortable
 django-anymail==13.0
