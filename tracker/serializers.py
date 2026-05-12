@@ -23,6 +23,14 @@ class TrackerSerializer(serializers.ModelSerializer):
         return contrast_color(tracker.color)
 
 
+class TrackerLightSerializer(serializers.ModelSerializer):
+    """Serializer sans tracks pour les clients à bande passante limitée (ex: montre)."""
+    class Meta:
+        model = Tracker
+        fields = ('id', 'nom', 'color', 'type', 'order')
+        read_only_fields = ('id',)
+
+
 class CustomTrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track

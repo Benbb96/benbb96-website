@@ -21,12 +21,16 @@ from rest_framework.viewsets import ModelViewSet
 
 from tracker.forms import TrackForm, TrackerForm, SelectTrackersForm
 from tracker.models import Tracker, Track
-from tracker.serializers import TrackerSerializer, CustomTrackSerializer, TrackSerializer
+from tracker.serializers import TrackerSerializer, TrackerLightSerializer, CustomTrackSerializer, TrackSerializer
 
 
 class TrackerView(ModelViewSet):
     queryset = Tracker.objects.all()
-    serializer_class = TrackerSerializer
+
+    def get_serializer_class(self):
+        if self.request.query_params.get('tracks') == '0':
+            return TrackerLightSerializer
+        return TrackerSerializer
 
     def get_queryset(self):
         return self.request.user.profil.trackers.all()
