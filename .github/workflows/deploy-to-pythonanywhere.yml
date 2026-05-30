@@ -18,10 +18,10 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             set -e
-            cd benbb96-website/
-            workon benbb96
+            VENV="$HOME/.virtualenvs/benbb96"
+            cd "$HOME/benbb96-website"
             git pull
-            pip install -r requirements/prod.txt
-            python manage.py migrate
-            python manage.py collectstatic --noinput
+            "$VENV/bin/python" -m pip install -r requirements/prod.txt
+            "$VENV/bin/python" manage.py migrate
+            "$VENV/bin/python" manage.py collectstatic --noinput
             touch /var/www/www_benbb96_com_wsgi.py
