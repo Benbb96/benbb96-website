@@ -25,7 +25,18 @@ DATABASES = {
 
 MEDIA_ROOT = '/home/benbb96/media'
 
-# Stockage media via GCS (bucket Firebase existant)
+# Stockage media via Google Cloud Storage (bucket Firebase existant = bucket GCS).
+# Spécifique à la prod : en dev, le stockage reste local (FileSystemStorage + MEDIA_ROOT).
+from google.oauth2 import service_account
+
+GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
+    get_secret_setting('GCS_CREDENTIALS')
+)
+GS_BUCKET_NAME = 'eminent-airport-148108.appspot.com'
+GS_LOCATION = 'media'
+GS_DEFAULT_ACL = 'publicRead'
+GS_QUERYSTRING_AUTH = False
+
 STORAGES = {
     'default': {'BACKEND': 'storages.backends.gcloud.GoogleCloudStorage'},
     'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},

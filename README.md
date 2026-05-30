@@ -45,13 +45,39 @@ You can configure it like this :
   "SECRET_KEY": "[YOUR SECRET_KEY]",
   "GOOGLE_API_KEY": "[YOUR GOOGLE_API_KEY]",
   "GOOGLE_ANALYTICS_KEY": "[YOUR GOOGLE_ANALYTICS_KEY]",
-  "FIREBASE_CONFIG": {
-    [YOUR FIREBASE CONFIG]
-  },
   "EMAIL_HOST_USER": "[YOUR EMAIL_HOST_USER]",
   "EMAIL_HOST_PASSWORD": "[YOUR EMAIL_HOST_PASSWORD]"
 }
 ```
+
+> In **development**, uploaded images are stored locally (`FileSystemStorage` / `MEDIA_ROOT`),
+> so no extra configuration is needed.
+
+### Media storage (Google Cloud Storage)
+
+Uploaded images (avatars, project/game pictures, reviews, tasks, kendamas…) are served from a
+**Google Cloud Storage** bucket via [`django-storages`](https://django-storages.readthedocs.io/).
+The GCS backend is enabled **only in production** (`config/settings/prod.py` → `STORAGES`).
+
+To enable it, add the **service account** credentials to `secrets.json` under `GCS_CREDENTIALS`
+(the full JSON key downloaded from Google Cloud → IAM → Service Accounts, with at least the *Storage Object Admin* role on the bucket):
+
+```
+{
+  ...
+  "GCS_CREDENTIALS": { ...service account JSON... }
+}
+```
+
+The bucket name and options live in `config/settings/prod.py`
+(`GS_BUCKET_NAME`, `GS_LOCATION = 'media'`, `GS_DEFAULT_ACL = 'publicRead'`), next to the `STORAGES`
+setting that enables the GCS backend. Bucket objects must be publicly readable (grant `allUsers` the
+*Storage Object Viewer* role on the bucket).
+
+Images are optimized on upload (resized to 1280 px max + WebP) by `base.image_utils`. Two
+management commands help maintain the bucket:
+`optimize_existing_photos` (batch resize/WebP of existing images) and `clean_orphan_media`
+(remove files no longer referenced in the database — dry-run by default, `--apply` to delete).
 
 Then, you should create a virtual environement, load the migration to build the database (`db.sqlite3`), create a superuser to be able to access the administration module, and finally run the server :
 

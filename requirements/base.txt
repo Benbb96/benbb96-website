@@ -17,7 +17,6 @@ djangorestframework-simplejwt==5.5.1
 google-api-python-client==2.197.0
 pandas==2.2.3
 Pillow==12.2.0
-Pyrebase4==4.8.0
 django-storages[google]==1.14.6
 python-slugify==8.0.0
 redis==4.5.4 # required by spotipy (cache_handler imports redis at module load)
