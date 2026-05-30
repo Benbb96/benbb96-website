@@ -24,25 +24,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand, CommandError
 
-from avis.models import Avis
-from base.image_utils import optimize_image_to_webp
-from base.models import Profil, Projet
-from kendama.models import Kendama
-from my_spot.models import SpotPhoto
-from super_moite_moite.models import Tache
-from versus.models import Jeu
-
-# (label, Model, champ image). Les 4 premiers sont des PhotoAbstract (champ 'photo') hérités
-# de Firebase ; les 3 suivants sont des ImageField historiquement stockés en local.
-MODELS = [
-    ('Avis', Avis, 'photo'),
-    ('Kendama', Kendama, 'photo'),
-    ('SpotPhoto', SpotPhoto, 'photo'),
-    ('Tache', Tache, 'photo'),
-    ('Projet', Projet, 'image'),
-    ('Jeu', Jeu, 'image'),
-    ('Profil', Profil, 'avatar'),
-]
+from base.image_utils import get_photo_models, optimize_image_to_webp
 
 
 class Command(BaseCommand):
@@ -66,7 +48,7 @@ class Command(BaseCommand):
             help="Traite au plus N images au total (utile pour tester)."
         )
         parser.add_argument(
-            '--model', choices=[m for m, _, _ in MODELS],
+            '--model', choices=[m for m, _, _ in get_photo_models()],
             help="Restreint le traitement à un seul modèle."
         )
 
@@ -92,7 +74,7 @@ class Command(BaseCommand):
         total_done = total_skip = total_error = 0
 
         models_to_process = [
-            (label, Model, field) for label, Model, field in MODELS
+            (label, Model, field) for label, Model, field in get_photo_models()
             if not model_filter or label == model_filter
         ]
 

@@ -49,6 +49,32 @@ def optimize_image_to_webp(file_obj, max_width=MAX_WIDTH, quality=WEBP_QUALITY):
     return output
 
 
+def get_photo_models():
+    """
+    Liste des modèles porteurs d'une image, sous forme de tuples (label, Model, champ).
+
+    Imports paresseux (dans la fonction) pour éviter tout import circulaire : ce module
+    est importé par base.models, donc il ne doit pas importer les modèles au chargement.
+    Source unique partagée par les commandes optimize_existing_photos et clean_orphan_media.
+    """
+    from avis.models import Avis
+    from base.models import Profil, Projet
+    from kendama.models import Kendama
+    from my_spot.models import SpotPhoto
+    from super_moite_moite.models import Tache
+    from versus.models import Jeu
+
+    return [
+        ('Avis', Avis, 'photo'),
+        ('Kendama', Kendama, 'photo'),
+        ('SpotPhoto', SpotPhoto, 'photo'),
+        ('Tache', Tache, 'photo'),
+        ('Projet', Projet, 'image'),
+        ('Jeu', Jeu, 'image'),
+        ('Profil', Profil, 'avatar'),
+    ]
+
+
 def optimize_uncommitted_fieldfile(fieldfile, field_name='photo'):
     """
     Si `fieldfile` est un nouvel upload non encore committé, retourne un InMemoryUploadedFile
