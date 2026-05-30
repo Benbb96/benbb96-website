@@ -31,6 +31,7 @@ def get_secret_setting(setting, json_conf=secrets):
 # Application definition
 
 INSTALLED_APPS = [
+    'storages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -186,6 +187,19 @@ GOOGLE_API_KEY = get_secret_setting('GOOGLE_API_KEY')
 GEOPOSITION_GOOGLE_MAPS_API_KEY = GOOGLE_API_KEY
 
 FIREBASE_CONFIG = get_secret_setting('FIREBASE_CONFIG')
+
+# Google Cloud Storage — bucket Firebase = bucket GCS (Phase 2 refonte)
+# Charge les credentials si présents ; le backend GCS est activé UNIQUEMENT en prod (voir prod.py).
+# En dev, le stockage reste local (FileSystemStorage + MEDIA_ROOT de dev.py).
+if 'GCS_CREDENTIALS' in secrets:
+    from google.oauth2 import service_account as _sa
+    GS_CREDENTIALS = _sa.Credentials.from_service_account_info(
+        get_secret_setting('GCS_CREDENTIALS')
+    )
+    GS_BUCKET_NAME = 'eminent-airport-148108.appspot.com'
+    GS_LOCATION = 'media'
+    GS_DEFAULT_ACL = 'publicRead'
+    GS_QUERYSTRING_AUTH = False
 
 SOUNDCLOUD_CLIENT = soundcloud.Client(client_id=get_secret_setting('SOUNDCLOUD_CLIENT_ID'))
 

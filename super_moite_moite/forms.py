@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from django_select2.forms import ModelSelect2MultipleWidget
 
 from base.models import Profil
-from base.widgets import FirebaseUploadWidget
 from super_moite_moite.models import Tache, Logement
 
 
@@ -43,4 +42,3 @@ class TacheForm(forms.ModelForm):
     class Meta:
         model = Tache
         fields = '__all__'
-        widgets = {'photo': FirebaseUploadWidget(folder='taches')}

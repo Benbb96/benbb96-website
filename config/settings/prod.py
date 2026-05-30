@@ -25,6 +25,12 @@ DATABASES = {
 
 MEDIA_ROOT = '/home/benbb96/media'
 
+# Stockage media via GCS (bucket Firebase existant)
+STORAGES = {
+    'default': {'BACKEND': 'storages.backends.gcloud.GoogleCloudStorage'},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+}
+
 GOOGLE_ANALYTICS_KEY = get_secret_setting('GOOGLE_ANALYTICS_KEY')
 
 # Security

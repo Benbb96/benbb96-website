@@ -117,6 +117,8 @@ class Spot(models.Model):
 
 
 class SpotPhoto(PhotoAbstract):
+    PHOTO_FOLDER = 'spots'
+
     spot = models.ForeignKey(Spot, on_delete=models.CASCADE, related_name='photos')
     photographe = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='spot_photos')
     description = models.CharField(max_length=240, blank=True)

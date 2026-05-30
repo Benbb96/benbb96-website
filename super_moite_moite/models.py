@@ -67,6 +67,8 @@ class Categorie(models.Model):
 
 
 class Tache(PhotoAbstract):
+    PHOTO_FOLDER = 'taches'
+
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name='taches')

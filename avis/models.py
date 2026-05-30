@@ -132,7 +132,8 @@ class Avis(PhotoAbstract):
     avis = models.TextField(blank=True, help_text='Ton avis en quelques mots sur le produit.')
     note = models.PositiveIntegerField(default=5, help_text='Une note entre 0 et 10',
                                        validators=[MinValueValidator(0), MaxValueValidator(10)])
-    photo = models.TextField(null=True, blank=True)
+    PHOTO_FOLDER = 'avis'
+
     prive = models.BooleanField('privé', default=False,
                                 help_text='Cochez pour cacher cet avis aux utilisateurs non connectés')
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)

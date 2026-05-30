@@ -147,6 +147,8 @@ class ComboPlayer(BasePlayerFrequency):
 
 
 class Kendama(PhotoAbstract):
+    PHOTO_FOLDER = 'kendamas'
+
     owner = models.ForeignKey(
         Profil,
         on_delete=models.CASCADE,

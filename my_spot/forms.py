@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.models import Group
 from django_select2.forms import ModelSelect2MultipleWidget
 
-from base.widgets import FirebaseUploadWidget
 from my_spot.models import SpotPhoto, VISIBILITE, SpotTag, SpotGroup
 
 
@@ -10,7 +9,6 @@ class SpotPhotoForm(forms.ModelForm):
     class Meta:
         model = SpotPhoto
         fields = '__all__'
-        widgets = {'photo': FirebaseUploadWidget(folder='spots')}
 
 
 class PublicSpotFilterForm(forms.Form):

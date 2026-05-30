@@ -1,3 +1,6 @@
+from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from super_moite_moite.models import Categorie, Tache, PointTache, TrackTache
@@ -24,6 +27,16 @@ class TacheView(ModelViewSet):
 
     def get_queryset(self):
         return Tache.objects.filter(categorie__logement__habitants=self.request.user.profil)
+
+    @action(detail=True, methods=['post'], parser_classes=[MultiPartParser, FormParser], url_path='upload_photo')
+    def upload_photo(self, request, pk=None):
+        tache = self.get_object()
+        file = request.FILES.get('photo')
+        if not file:
+            return Response({'error': 'Aucun fichier fourni.'}, status=400)
+        tache.photo = file
+        tache.save()
+        return Response({'photo_url': tache.photo_url, 'photo': str(tache.photo)})
 
 
 class PointTacheView(ModelViewSet):

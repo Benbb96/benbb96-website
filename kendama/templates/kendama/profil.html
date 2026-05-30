@@ -135,10 +135,12 @@
                                 <a class="paper-btn btn-small" href="{{ kendama.get_absolute_url }}">Détail</a>
                             </div>
                         </div>
-                        <a href="{{ kendama.get_absolute_url }}">
-                            <img class="image-bottom" src="{{ kendama.photo_url }}"
-                                 alt="Photo du kendama {{ kendama }}">
-                        </a>
+                        {% if kendama.photo_url %}
+                            <a href="{{ kendama.get_absolute_url }}">
+                                <img class="image-bottom" src="{{ kendama.photo_url }}"
+                                     alt="Photo du kendama {{ kendama }}">
+                            </a>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>

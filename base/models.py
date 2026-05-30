@@ -1,12 +1,13 @@
-from django.conf import settings
+from io import BytesIO
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.db.models import Avg
 from django.urls import reverse
 from django.utils import timezone
 from fontawesome_6.fields import IconField
-from pyrebase import pyrebase
 
 
 class Profil(models.Model):
@@ -107,11 +108,26 @@ class LienReseauSocial(models.Model):
         return str(self.reseau_social)
 
 
+def photo_upload_to(instance, filename):
+    """
+    Chemin relatif à la racine du storage : <PHOTO_FOLDER>/<YYYY>/<MM>/<DD>/<filename>
+
+    Pas de préfixe 'media/' — il est géré par MEDIA_URL (local) ou GS_LOCATION='media' (GCS).
+    """
+    folder = getattr(instance.__class__, 'PHOTO_FOLDER', 'photos')
+    from datetime import date
+    d = date.today()
+    return f'{folder}/{d.year}/{d.month:02d}/{d.day:02d}/{filename}'
+
+
 class PhotoAbstract(models.Model):
-    photo = models.TextField(
-        'url photo',
-        default='placeholder.jpg',
-        help_text="Vous pouvez également renseigner l'URL d'une image sur internet."
+    PHOTO_FOLDER = 'photos'
+
+    photo = models.ImageField(
+        'photo',
+        null=True,
+        blank=True,
+        upload_to=photo_upload_to,
     )
 
     class Meta:
@@ -119,11 +135,59 @@ class PhotoAbstract(models.Model):
 
     @property
     def photo_url(self):
-        """ Récupère l'URL complète de l'image """
-        # Vérifier s'il s'agit d'une URL de photo
-        if self.photo.startswith('http'):
-            return self.photo
-        # Récupération de l'URL grâce à pyrebase
-        firebase = pyrebase.initialize_app(settings.FIREBASE_CONFIG)
-        storage = firebase.storage()
-        return storage.child(self.photo).get_url(None)
+        """URL complète de l'image — rétrocompatible avec les anciens chemins Firebase."""
+        if not self.photo:
+            return ''
+        name = self.photo.name or ''
+        if not name or name == 'placeholder.jpg':
+            return ''
+        if name.startswith('http'):
+            return name
+        # Les anciens chemins Firebase contiennent le préfixe 'media/' (ex. 'media/avis/…').
+        # Le storage le gère via MEDIA_URL (local) ou GS_LOCATION (GCS) — on ne le stocke pas.
+        if name.startswith('media/'):
+            name = name[len('media/'):]
+        try:
+            return self.photo.storage.url(name)
+        except Exception:
+            return ''
+
+    def save(self, *args, **kwargs):
+        if self.photo and not self.photo._committed:
+            self._optimize_photo()
+        super().save(*args, **kwargs)
+
+    def _optimize_photo(self):
+        """Redimensionne à 1280 px max et réencode en WebP avant envoi au storage."""
+        import os
+        from PIL import Image
+
+        try:
+            img = Image.open(self.photo.file)
+            img.load()
+
+            if img.mode in ('RGBA', 'P', 'LA'):
+                background = Image.new('RGB', img.size, (255, 255, 255))
+                if img.mode in ('RGBA', 'LA'):
+                    background.paste(img, mask=img.split()[-1])
+                else:
+                    background.paste(img.convert('RGBA'), mask=img.convert('RGBA').split()[-1])
+                img = background
+            elif img.mode != 'RGB':
+                img = img.convert('RGB')
+
+            if img.width > 1280:
+                new_height = int(img.height * 1280 / img.width)
+                img = img.resize((1280, new_height), Image.LANCZOS)
+
+            output = BytesIO()
+            img.save(output, format='WEBP', quality=80)
+            output.seek(0)
+
+            base_name = os.path.splitext(os.path.basename(self.photo.name))[0]
+            new_name = base_name + '.webp'
+            self.photo = InMemoryUploadedFile(
+                output, 'photo', new_name, 'image/webp', output.getbuffer().nbytes, None
+            )
+        except Exception:
+            pass

@@ -36,6 +36,8 @@ class PointTacheSerializer(serializers.ModelSerializer):
 class TacheSerializer(serializers.ModelSerializer):
     tracks = TrackTacheSerializer(many=True, read_only=True)
     point_profils = PointTacheSerializer(many=True, read_only=True)
+    # CharField pour rétrocompat avec le client Vue qui envoie le chemin en JSON
+    photo = serializers.CharField(allow_blank=True, allow_null=True, required=False)
 
     class Meta:
         model = Tache

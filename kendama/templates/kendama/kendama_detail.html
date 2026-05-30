@@ -18,7 +18,9 @@
             Créé le <code title="{{ kendama.created_at|date:'r' }}">{{ kendama.created_at }}</code>
         </p>
 
-        <img src="{{ kendama.photo_url }}" alt="Photo du kendama {{ kendama }}">
+        {% if kendama.photo_url %}
+            <img src="{{ kendama.photo_url }}" alt="Photo du kendama {{ kendama }}">
+        {% endif %}
 
         <div class="row flex-spaces">
             {% if kendama.owner.user == request.user %}

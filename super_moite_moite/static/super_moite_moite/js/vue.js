@@ -62,7 +62,6 @@ let app = new Vue({
             photo_url: "",
             tracks: [],
             point_profils: [],
-            displayProgress: "none"
         },
         trackEditee: {
             id: null,
@@ -442,19 +441,31 @@ let app = new Vue({
         },
         updatePhotoUrl: function(url) {
             if (url.startsWith('http')) {
-                const ap = this
-                // Essaye de récupérer l'image pour voir si on l'affiche
-                fetch("https://cors-anywhere.herokuapp.com/" + url)
-                    .then(function (response) {
-                        if (response.status === 200) {
-                            ap.tacheEditee.photo_url = url
-                        } else {
-                            alert("Impossible de récupérer l'image via cette URL...")
-                        }
-                    }).catch(function (error) {
-                        alert(error)
-                })
+                this.tacheEditee.photo_url = url
             }
+        },
+        uploadPhoto: function (tache) {
+            const input = document.getElementById('photoFileInput')
+            const file = input && input.files[0]
+            if (!file) return
+            const ap = this
+            const formData = new FormData()
+            formData.append('photo', file)
+            fetch(`${apiUrl}/taches/${tache.id}/upload_photo`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': Cookies.get('csrftoken'),
+                },
+                body: formData,
+            })
+                .then(status)
+                .then(json)
+                .then(function (data) {
+                    ap.tacheEditee.photo = data.photo
+                    ap.tacheEditee.photo_url = data.photo_url
+                    input.value = ''
+                })
+                .catch(catchError)
         },
         enregistrerModifTache: function (tache) {
             let logement = this.logement
