@@ -1,12 +1,18 @@
-{% load fontawesome_6 %}
-<footer class="container-fluid text-center">
-    <p>
-        {# Les liens vers mes réseaux sociaux sont dans le context processor #}
-        {% for lien in liens_reseaux_sociaux %}
-            <a class="btn btn-social-icon btn-{{ lien.reseau_social.name }}" href="{{ lien.lien }}" rel="me"
-               {% if lien.ouvrir_nouvel_onglet %}target="_blank"{% endif %}>
-                {{ lien.reseau_social.as_html }}
-            </a>
-        {% endfor %}
-    </p>
+{% load fontawesome_6 i18n %}
+<footer class="ds-footer">
+    {% if liens_reseaux_sociaux %}
+        {# Les liens vers mes réseaux sociaux viennent du context processor base_context #}
+        <ul class="ds-footer__social">
+            {% for lien in liens_reseaux_sociaux %}
+                <li>
+                    <a class="ds-social ds-social--{{ lien.reseau_social.name }}" href="{{ lien.lien }}" rel="me"
+                       title="{{ lien.reseau_social.name|capfirst }}"
+                       {% if lien.ouvrir_nouvel_onglet %}target="_blank" rel="me noopener"{% endif %}>
+                        {{ lien.reseau_social.as_html }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p class="ds-footer__copyright">&copy; {% now "Y" %} Benbb96</p>
 </footer>

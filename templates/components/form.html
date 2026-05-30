@@ -1,0 +1,50 @@
+{% comment %}
+    Rendu de formulaire maison — remplace {% bootstrap_form form %}.
+    Usage :  {% include 'components/form.html' %}            (utilise « form »)
+       ou :  {% include 'components/form.html' with form=mon_form %}
+
+    Rend label / widget / aide / erreurs avec les classes .ds-form du design
+    system. Les widgets Django (sans classe) sont stylés par les sélecteurs
+    input/select/textarea de main.css. Les champs cachés et les erreurs
+    non liées à un champ sont gérés. N'inclut PAS la balise <form> ni le
+    bouton submit : à fournir par le template appelant.
+{% endcomment %}
+{% load i18n %}
+
+{% if form.non_field_errors %}
+    <div class="ds-alert ds-alert--danger" role="alert">
+        <div class="ds-alert__content">
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}
+
+{% for field in form.visible_fields %}
+    {% if field.field.widget.input_type == 'checkbox' %}
+        <div class="ds-form__group ds-form__group--checkbox">
+            {{ field }}
+            <label class="ds-form__label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} <span class="ds-form__required">*</span>{% endif %}
+            </label>
+        </div>
+        {% if field.help_text %}<small class="ds-form__help">{{ field.help_text|safe }}</small>{% endif %}
+        {% if field.errors %}
+            <ul class="ds-form__errors">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+    {% else %}
+        <div class="ds-form__group">
+            <label class="ds-form__label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} <span class="ds-form__required">*</span>{% endif %}
+            </label>
+            {{ field }}
+            {% if field.help_text %}<small class="ds-form__help">{{ field.help_text|safe }}</small>{% endif %}
+            {% if field.errors %}
+                <ul class="ds-form__errors">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}

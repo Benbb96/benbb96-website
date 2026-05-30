@@ -1,5 +1,22 @@
 # 02 — Front-end : suppression de Bootstrap & jQuery, modernisation CSS
 
+## État d'avancement
+
+- **Phase 3 — FAITE** (design system + chrome global). Voir la section « Stratégie de
+  coexistence retenue » ci-dessous. Livré :
+  - `assets/css/main.css` : design system maison (tokens, reset léger, typo/éléments de base,
+    layout, composants `.ds-*`). Chargé **en dernier** dans `base.html`.
+  - `assets/js/http.js` : helper `fetch` + CSRF vanilla (`window.http`).
+  - Chrome réécrit : `templates/base.html` (hero, conteneur, scripts), `templates/navbar.html`
+    (nav maison, menu mobile sans JS via checkbox-hack + `:has()`, sélecteur de langue, icônes
+    FontAwesome), `templates/footer.html` (boutons réseaux `.ds-social`).
+  - `templates/components/messages.html` (+ `_message.html`) : messages Django en `.ds-alert`
+    (remplace `{% bootstrap_messages %}`), fermeture sans JS.
+  - `templates/components/pagination.html` restylé en `.ds-pagination`.
+  - `templates/components/form.html` : rendu de formulaire maison (remplace `{% bootstrap_form %}`),
+    **prêt pour la Phase 4** (pas encore branché sur les templates des apps).
+- **Phases 4 et 5 — à venir** (migration des templates des apps, puis retrait de Bootstrap/jQuery).
+
 ## Objectif
 
 Retirer Bootstrap 3.3.7, jQuery et `django-bootstrap3`. Les remplacer par une **feuille CSS maison
@@ -19,6 +36,32 @@ moderne**, sans framework et sans étape de build. Réduire drastiquement le poi
 
 > Alternative écartée : un framework classless (Pico.css, etc.). Plus rapide à poser mais ajoute une
 > dépendance CDN et un style générique. Le propriétaire veut du sur-mesure léger → CSS maison.
+
+## Stratégie de coexistence retenue (Phase 3 → 5)
+
+Bootstrap 3 (CDN) + jQuery **restent chargés** tant que les apps ne sont pas migrées. Pour que le
+design system maison cohabite **sans casser** les pages encore en Bootstrap, 3 règles sont appliquées
+(documentées aussi en tête de `assets/css/main.css`) :
+
+1. **Namespace `ds-` pour tous les composants maison** (`.ds-btn`, `.ds-card`, `.ds-alert`,
+   `.ds-badge`, `.ds-nav`, `.ds-footer`, `.ds-hero`, `.ds-pagination`, `.ds-form`, `.ds-social`…).
+   Aucune classe Bootstrap encore utilisée n'est redéfinie (`.btn`, `.row`, `.col-*`, `.container`,
+   `.panel`, `.jumbotron`, `.form-control`, `.alert`, `.pagination`, `.label`…).
+2. **`main.css` chargé en dernier** (après le CDN Bootstrap et `style.css`). Les **sélecteurs
+   d'éléments** (`body`, titres, `a`, `table`, `input/select/textarea` nus) ont une spécificité
+   d'élément (0,0,1) : ils gagnent le tie-break par l'ordre et modernisent le rendu « nu » partout.
+   Mais les composants Bootstrap passent par des **classes** (spécificité supérieure) → ils gardent
+   la priorité sur les pages d'app. Les styles de champs sont en plus restreints aux `input` nus
+   (exclusion des types bouton/case/fichier) pour ne pas heurter `.form-control`. Aucun `!important`.
+3. **JS — on ajoute sans retirer.** Le helper `fetch`+CSRF (`window.http`) est ajouté, mais le
+   `$.ajaxSetup` jQuery de `base.html` est **conservé** (gardé derrière `if (window.jQuery)`) car
+   `music` et `tracker` font encore du `$.ajax`. Il sera retiré quand ces usages passeront en `fetch`
+   (Phase 4), en même temps que jQuery (Phase 5).
+
+Includes globaux restylés dès la Phase 3 (assumé) : `components/pagination.html` et le rendu des
+messages changent d'apparence sur **toutes** les pages, car ils font partie du chrome global.
+`bootstrap-social.css` n'est plus utilisé (footer migré) mais reste **lié** dans `base.html` ;
+son retrait est planifié en Phase 5.
 
 ## Inventaire de ce qui dépend de Bootstrap/jQuery
 
@@ -64,20 +107,22 @@ Cela permet de **désinstaller `django-bootstrap3`** une fois tous les usages co
 
 ## Plan de découpe (sous-chantiers)
 
-1. **Design system CSS** — créer `assets/css/main.css` (ou plusieurs fichiers) :
-   custom properties (couleurs, typo, espacements, radius), reset léger, base typographique,
-   layout (`.container`, `.grid`, `.flex-*`), composants (`.btn`, `.card`, `.alert`, `.badge`,
-   nav, footer, table, pagination, form). Documenter les classes dans un commentaire en tête.
-2. **Layout global** — réécrire `base.html`, `navbar.html`, `footer.html`, `favicon` :
-   retirer le CDN Bootstrap et `{% bootstrap_javascript %}`, charger `main.css`, navbar moderne
-   (menu `<details>` ou checkbox-hack pour le mobile, sans JS), footer social en FontAwesome.
-   Conserver le bloc Google Analytics et le sélecteur de langue.
-3. **Composant form + messages** — `components/form.html`, rendu des `messages` Django en `.alert`
-   maison (remplace `{% bootstrap_messages %}`), `components/pagination.html`.
+1. **Design system CSS** — ✅ **FAIT** : `assets/css/main.css` (custom properties, reset léger, base
+   typographique, layout `.ds-container`/`.ds-grid`, composants `.ds-btn`/`.ds-card`/`.ds-alert`/
+   `.ds-badge`/`.ds-nav`/`.ds-footer`/`.ds-hero`/`.ds-pagination`/`.ds-form`/`.ds-social`). Classes
+   namespacées `ds-` (pas de collision Bootstrap) et documentées en tête de fichier.
+2. **Layout global** — ✅ **FAIT** : `base.html`, `navbar.html`, `footer.html` réécrits avec le CSS
+   maison. ⚠️ Le CDN Bootstrap et `{% bootstrap_javascript %}` sont **conservés** (transition,
+   Phase 5). Navbar moderne (menu mobile sans JS via checkbox-hack + `:has()`), footer social en
+   FontAwesome (`.ds-social`). Bloc Google Analytics, sélecteur de langue et favicon conservés.
+3. **Composant form + messages** — ✅ **FAIT** : `components/form.html` (rendu maison, branché en
+   Phase 4), messages Django en `.ds-alert` (`components/messages.html`), `components/pagination.html`
+   restylé `.ds-pagination`.
 4. **Migration app par app** des templates : `registration/`, `base`, `avis`, `music`, `tracker`,
    `versus`, `super_moite_moite`, `my_spot` (effort minimal), `kendama` (forms only, doc 6).
    Convertir grille, boutons, panels, alerts, glyphicons.
-5. **JS** : helper `fetch` + CSRF, conversion des usages jQuery, suppression du `$.ajaxSetup`.
+5. **JS** : helper `fetch` + CSRF — ✅ **FAIT** (`assets/js/http.js`, `window.http`). Reste à faire en
+   Phase 4 : conversion des usages jQuery, puis suppression du `$.ajaxSetup` (conservé pour l'instant).
    **Supprimer `moment-with-locales.js` (541 Ko)** — décision actée. Usages réels et remplacements
    **natifs** (pas de Temporal : pas encore fiable en natif sur tous les navigateurs début 2026) :
    - `tracker/static/tracker/js/common.js`, `tracker_detail.html`, `compare_trackers.html` :

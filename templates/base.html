@@ -1,8 +1,7 @@
-{% load bootstrap3 static fontawesome_6 %}
+{% load bootstrap3 static fontawesome_6 i18n %}
 
 <!DOCTYPE html>
-{# TODO use {% get_current_language as LANGUAGE_CODE %} ? #}
-<html lang="fr">
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     {% if GOOGLE_ANALYTICS_KEY %}
         <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -22,14 +21,23 @@
     <!-- Favicon -->
     {% include 'favicon.html' %}
 
-    {# Load CSS and JavaScript #}
+    {% comment %}
+       ── Chargement des CSS / JS ──
+       Bootstrap 3 + jQuery restent chargés pour les apps non encore migrées
+       (Phases 4/5). Le design system maison (main.css) est chargé EN DERNIER :
+       voir la stratégie de coexistence en tête de assets/css/main.css.
+    {% endcomment %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     {% bootstrap_javascript jquery='full' %}
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'avis/css/avis-style.css' %}">
+    {# bootstrap-social.css : désormais inerte (footer migré en .ds-social) ; retrait planifié en Phase 5 #}
     <link rel="stylesheet" href="{% static 'css/bootstrap-social.css' %}">
     {% fontawesome_6_static %}
+
+    {# Design system maison — doit rester le dernier pour la coexistence avec Bootstrap #}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
 
     {% block stylesheet %}{% endblock %}
 </head>
@@ -39,39 +47,48 @@
     {% include 'navbar.html' %}
 {% endblock %}
 
-<div class="jumbotron">
-    <div class="container text-center">
+<header class="ds-hero">
+    <div class="ds-hero__inner">
         <h1>{% block jumbotron_title %}Benbb96{% endblock %}</h1>
         <p>{% block jumbotron_description %}Juste une interface pour experimenter mon code...{% endblock %}</p>
     </div>
+</header>
+
+<div class="ds-container ds-mt-4">
+    {# Messages django.contrib.messages rendus en alertes maison (remplace l'ancien bootstrap_messages) #}
+    {% include 'components/messages.html' %}
 </div>
 
-<div class="container">
-    {# Display django.contrib.messages as Bootstrap alerts #}
-    {% bootstrap_messages %}
-</div>
-
-<div class="content">
+<main class="content">
     {% block content %}{% endblock %}
-</div>
+</main>
+
 {% include 'footer.html' %}
 
+{% comment %}
+   ── JavaScript ──
+   http.js : helper fetch + CSRF vanilla (window.http) pour le nouveau code.
+   Le bloc jQuery $.ajaxSetup ci-dessous reste nécessaire tant que music/tracker
+   utilisent $.ajax (migration en Phase 4) ; il sera retiré en même temps.
+{% endcomment %}
+<script src="{% static 'js/http.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script>
+    // [Transition Bootstrap/jQuery] CSRF pour les requêtes jQuery des apps non migrées.
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+    if (window.jQuery) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+                }
             }
-        }
-    });
+        });
+    }
 </script>
-{# Next is for the Buy me a beer #}
-{#<script data-name="BMC-Widget" src="https://cdn.buymeacoffee.com/widget/1.0.0/prod/widget.prod.min.js" data-id="KEwrlgY" data-description="Supportez moi sur Buy me a coffee!" data-message="Merci de votre visite !" data-color="#101010" data-position="right" data-x_margin="18" data-y_margin="18"></script>#}
 {% block javascript %}{% endblock %}
 </body>
 </html>

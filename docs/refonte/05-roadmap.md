@@ -33,14 +33,29 @@ sauvegarde. Gratuit, images existantes en place, disque PythonAnywhere plus jama
    sur copie de prod.
 6. Déployer code → normaliser en prod → vérifier → retirer Pyrebase4 + SDK Firebase JS + config exposée.
 
-## Phase 3 — Front : design system + layout global (doc 2)
+## Phase 3 — Front : design system + layout global (doc 2) — ✅ FAITE
 
-1. Créer le design system CSS maison (`main.css` : tokens, base, layout, composants).
-2. Réécrire `base.html`, `navbar.html`, `footer.html` (retrait CDN Bootstrap + jQuery).
-3. Composants `form.html`, `messages`, `pagination.html`.
-4. Helper `fetch` + CSRF (remplace `$.ajaxSetup`).
+1. ✅ Design system CSS maison (`assets/css/main.css` : tokens, reset, base, layout, composants `.ds-*`).
+2. ✅ Chrome global réécrit : `base.html`, `navbar.html`, `footer.html` (menu mobile sans JS, footer
+   social `.ds-social`).
+3. ✅ Composants `components/form.html` (prêt, branché en Phase 4), messages Django en `.ds-alert`
+   (`components/messages.html`), `components/pagination.html` restylé `.ds-pagination`.
+4. ✅ Helper `fetch` + CSRF (`assets/js/http.js`, `window.http`). Le `$.ajaxSetup` jQuery est
+   **conservé** pour music/tracker jusqu'à leur migration (Phase 4) ; retiré ensuite.
 
-À ce stade le site doit déjà s'afficher correctement sur les pages globales, les apps suivent.
+**Stratégie de coexistence retenue** (détail en doc 2) : namespace `ds-` pour tous les composants
+maison (aucune classe Bootstrap redéfinie) ; `main.css` chargé en dernier (les sélecteurs d'éléments
+modernisent le rendu « nu », les classes Bootstrap gardent la priorité sur les pages d'app) ; JS
+ajouté sans rien retirer. Validé : `check` OK, `makemigrations --check` sans changement, 27 smoke
+tests OK, pages home/profil/login/signup/listes d'app servies en 200 avec Bootstrap encore actif.
+
+> ⚠️ **Bootstrap et jQuery restent chargés** pendant toute la transition (Phases 3 → 4). Les
+> templates des apps utilisent encore les classes Bootstrap : les retirer maintenant casserait
+> toutes les pages non migrées. Leur **retrait définitif se fait en Phase 5**, une fois la Phase 4
+> terminée. Le design system de la Phase 3 doit donc **coexister** avec Bootstrap (éviter de
+> redéfinir de façon destructive les classes Bootstrap encore utilisées : `.btn`, `.row`, `.col-*`,
+> `.container`, `.panel`, `.alert`… — préférer des sélecteurs d'éléments + de nouvelles classes, ou
+> un préfixe). Le site doit rester **fonctionnel et déployable** après la Phase 3.
 
 ## Phase 4 — Migration des templates app par app (doc 2)
 

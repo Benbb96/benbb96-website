@@ -1,0 +1,12 @@
+{% comment %}
+    Une alerte unique. Attend dans le contexte :
+      message (objet message), variant (success|info|warning|error|debug), icon (nom FA).
+    Inclus depuis components/messages.html.
+{% endcomment %}
+{% load fontawesome_6 i18n %}
+<div class="ds-alert ds-alert--{{ variant }}">
+    <span class="ds-alert__icon">{% fa6_icon icon %}</span>
+    <div class="ds-alert__content">{{ message }}</div>
+    <input type="checkbox" class="ds-alert__dismiss" id="msg-{{ forloop.counter }}-{{ variant }}" aria-hidden="true">
+    <label class="ds-alert__close" for="msg-{{ forloop.counter }}-{{ variant }}" title="{% trans 'Close' %}" aria-label="{% trans 'Close' %}">&times;</label>
+</div>
