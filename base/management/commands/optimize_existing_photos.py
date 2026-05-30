@@ -19,58 +19,34 @@ Usage typique :
 """
 
 import os
-from io import BytesIO
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand, CommandError
 
 from avis.models import Avis
+from base.image_utils import optimize_image_to_webp
+from base.models import Profil, Projet
 from kendama.models import Kendama
 from my_spot.models import SpotPhoto
 from super_moite_moite.models import Tache
+from versus.models import Jeu
 
+# (label, Model, champ image). Les 4 premiers sont des PhotoAbstract (champ 'photo') hérités
+# de Firebase ; les 3 suivants sont des ImageField historiquement stockés en local.
 MODELS = [
-    ('Avis', Avis),
-    ('Kendama', Kendama),
-    ('SpotPhoto', SpotPhoto),
-    ('Tache', Tache),
+    ('Avis', Avis, 'photo'),
+    ('Kendama', Kendama, 'photo'),
+    ('SpotPhoto', SpotPhoto, 'photo'),
+    ('Tache', Tache, 'photo'),
+    ('Projet', Projet, 'image'),
+    ('Jeu', Jeu, 'image'),
+    ('Profil', Profil, 'avatar'),
 ]
-
-MAX_WIDTH = 1280
-WEBP_QUALITY = 80
-
-
-def optimize_image(file_obj):
-    """Ouvre, corrige la rotation EXIF, redimensionne et réencode en WebP. Retourne BytesIO."""
-    from PIL import Image, ImageOps
-
-    img = Image.open(file_obj)
-    img.load()
-    img = ImageOps.exif_transpose(img)
-
-    if img.mode in ('RGBA', 'P', 'LA'):
-        background = Image.new('RGB', img.size, (255, 255, 255))
-        if img.mode in ('RGBA', 'LA'):
-            background.paste(img, mask=img.split()[-1])
-        else:
-            background.paste(img.convert('RGBA'), mask=img.convert('RGBA').split()[-1])
-        img = background
-    elif img.mode != 'RGB':
-        img = img.convert('RGB')
-
-    if img.width > MAX_WIDTH:
-        new_height = int(img.height * MAX_WIDTH / img.width)
-        img = img.resize((MAX_WIDTH, new_height), Image.LANCZOS)
-
-    output = BytesIO()
-    img.save(output, format='WEBP', quality=WEBP_QUALITY)
-    output.seek(0)
-    return output, img.size
 
 
 class Command(BaseCommand):
-    help = 'Optimise (resize + WebP) les photos existantes des modèles PhotoAbstract'
+    help = 'Optimise (resize + WebP) les images existantes (PhotoAbstract + Projet/Jeu/Profil)'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -90,12 +66,15 @@ class Command(BaseCommand):
             help="Traite au plus N images au total (utile pour tester)."
         )
         parser.add_argument(
-            '--model', choices=[m for m, _ in MODELS],
+            '--model', choices=[m for m, _, _ in MODELS],
             help="Restreint le traitement à un seul modèle."
         )
 
     def handle(self, *args, **options):
-        from PIL import Image  # noqa: F401 — vérifie que Pillow est dispo
+        try:
+            import PIL  # noqa: F401 — vérifie que Pillow est dispo
+        except ImportError:
+            raise CommandError("Pillow n'est pas installé dans cet environnement.")
 
         dry_run = options['dry_run']
         source_dir = options.get('source_dir')
@@ -113,20 +92,21 @@ class Command(BaseCommand):
         total_done = total_skip = total_error = 0
 
         models_to_process = [
-            (label, Model) for label, Model in MODELS
+            (label, Model, field) for label, Model, field in MODELS
             if not model_filter or label == model_filter
         ]
 
-        for label, Model in models_to_process:
-            self.stdout.write(f'\n── {label} ──')
-            qs = Model.objects.exclude(photo='').exclude(photo__isnull=True)
+        for label, Model, field in models_to_process:
+            self.stdout.write(f'\n── {label} ({field}) ──')
+            qs = Model.objects.exclude(**{field: ''}).exclude(**{f'{field}__isnull': True})
             done = skip = error = 0
 
             for obj in qs.iterator():
                 if limit and (total_done + done) >= limit:
                     break
 
-                raw = obj.photo.name or ''
+                fieldfile = getattr(obj, field)
+                raw = (fieldfile.name if fieldfile else '') or ''
                 if not raw or raw == 'placeholder.jpg' or raw.startswith('http'):
                     skip += 1
                     continue
@@ -150,7 +130,7 @@ class Command(BaseCommand):
                         error += 1
                         continue
 
-                    output, (w, h) = optimize_image(file_obj)
+                    output = optimize_image_to_webp(file_obj)
                     new_size = output.getbuffer().nbytes
 
                     ratio = (1 - new_size / orig_size) * 100 if orig_size else 0
@@ -158,15 +138,15 @@ class Command(BaseCommand):
                         f'  {"[DRY] " if dry_run else ""}'
                         f'{raw} → {new_storage_name}  '
                         f'{orig_size // 1024} Ko → {new_size // 1024} Ko  '
-                        f'({ratio:.0f}% de réduction)  {w}×{h}'
+                        f'({ratio:.0f}% de réduction)'
                     )
 
                     if not dry_run:
                         if default_storage.exists(new_storage_name):
                             default_storage.delete(new_storage_name)
                         default_storage.save(new_storage_name, ContentFile(output.read()))
-                        obj.photo = new_storage_name
-                        obj.save(update_fields=['photo'])
+                        setattr(obj, field, new_storage_name)
+                        obj.save(update_fields=[field])
 
                     done += 1
 

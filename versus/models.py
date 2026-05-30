@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from base.models import Profil
+from base.models import PhotoOptimizationMixin, Profil
 
 
 class Joueur(models.Model):
@@ -37,7 +37,9 @@ class Joueur(models.Model):
         return None
 
 
-class Jeu(models.Model):
+class Jeu(PhotoOptimizationMixin):
+    OPTIMIZE_IMAGE_FIELD = 'image'
+
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     createur = models.ForeignKey(Profil, on_delete=models.SET_NULL, null=True, blank=True)

@@ -1,16 +1,37 @@
-from io import BytesIO
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.db.models import Avg
 from django.urls import reverse
 from django.utils import timezone
 from fontawesome_6.fields import IconField
 
+from base.image_utils import optimize_uncommitted_fieldfile
 
-class Profil(models.Model):
+
+class PhotoOptimizationMixin(models.Model):
+    """
+    Optimise (resize + WebP) le champ image désigné par `OPTIMIZE_IMAGE_FIELD` à chaque
+    sauvegarde d'un nouvel upload. À utiliser sur les modèles dont le champ image n'est
+    pas `photo` (sinon voir PhotoAbstract).
+    """
+    OPTIMIZE_IMAGE_FIELD = None
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        field_name = self.OPTIMIZE_IMAGE_FIELD
+        if field_name:
+            optimized = optimize_uncommitted_fieldfile(getattr(self, field_name, None), field_name)
+            if optimized is not None:
+                setattr(self, field_name, optimized)
+        super().save(*args, **kwargs)
+
+
+class Profil(PhotoOptimizationMixin):
+    OPTIMIZE_IMAGE_FIELD = 'avatar'
+
     user = models.OneToOneField(User, on_delete=models.PROTECT, related_name='profil')
     avatar = models.ImageField(null=True, blank=True, upload_to="avatars/")
     birthday = models.DateField('date anniversaire', null=True, blank=True)
@@ -38,10 +59,12 @@ class Profil(models.Model):
         return self.avis_set.order_by('-date_creation').prefetch_related('produit__structure__type')
 
 
-class Projet(models.Model):
+class Projet(PhotoOptimizationMixin):
     """
     Gestion des projets à afficher sur la page d'accueil
     """
+    OPTIMIZE_IMAGE_FIELD = 'image'
+
     nom = models.CharField(max_length=100)
     lien = models.CharField(
         max_length=100,
@@ -153,41 +176,7 @@ class PhotoAbstract(models.Model):
             return ''
 
     def save(self, *args, **kwargs):
-        if self.photo and not self.photo._committed:
-            self._optimize_photo()
+        optimized = optimize_uncommitted_fieldfile(self.photo, 'photo')
+        if optimized is not None:
+            self.photo = optimized
         super().save(*args, **kwargs)
-
-    def _optimize_photo(self):
-        """Redimensionne à 1280 px max et réencode en WebP avant envoi au storage."""
-        import os
-        from PIL import Image
-
-        try:
-            img = Image.open(self.photo.file)
-            img.load()
-
-            if img.mode in ('RGBA', 'P', 'LA'):
-                background = Image.new('RGB', img.size, (255, 255, 255))
-                if img.mode in ('RGBA', 'LA'):
-                    background.paste(img, mask=img.split()[-1])
-                else:
-                    background.paste(img.convert('RGBA'), mask=img.convert('RGBA').split()[-1])
-                img = background
-            elif img.mode != 'RGB':
-                img = img.convert('RGB')
-
-            if img.width > 1280:
-                new_height = int(img.height * 1280 / img.width)
-                img = img.resize((1280, new_height), Image.LANCZOS)
-
-            output = BytesIO()
-            img.save(output, format='WEBP', quality=80)
-            output.seek(0)
-
-            base_name = os.path.splitext(os.path.basename(self.photo.name))[0]
-            new_name = base_name + '.webp'
-            self.photo = InMemoryUploadedFile(
-                output, 'photo', new_name, 'image/webp', output.getbuffer().nbytes, None
-            )
-        except Exception:
-            pass
