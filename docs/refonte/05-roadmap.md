@@ -90,18 +90,164 @@ Ordre conseillé (du plus simple/visible au plus complexe) :
 - Revue d'accessibilité / Lighthouse / poids des pages.
 - Nettoyer le code mort éventuel des apps abandonnées.
 
+## Phase 7 — Amélioration progressive avec htmx (étape finale)
+
+> Étape **finale**, une fois le front modernisé (Bootstrap retiré, design system en place).
+> On **refait le tour de l'appli** pour identifier les interactions qui gagneraient à se faire
+> **sans rechargement de page**, et on les enrichit progressivement avec
+> [htmx](https://htmx.org/) (petite lib, pas de build, philosophie « HTML over the wire »).
+
+**Principe.** htmx complète le design system maison sans le remplacer : on garde des vues Django
+qui renvoient des **fragments HTML** (includes existants), et les attributs `hx-*` les injectent
+dans la page. Amélioration progressive : sans JS, les formulaires continuent de fonctionner en
+POST classique (full reload) — htmx n'est qu'une surcouche.
+
+**Cibles candidates (à confirmer pendant le tour de l'appli) :**
+- **Tracker — liste** (`tracker_list.html`) :
+  - Créer un **tracker** via le formulaire en bas sans recharger : `hx-post` → la vue renvoie la
+    nouvelle carte, `hx-target` sur la grille (`hx-swap="beforeend"`), reset du formulaire.
+  - **Ajout rapide d'un track** (bouton « + » des cartes) : `hx-post` vers `tracker_quick_add`,
+    mise à jour en place du compteur + de la date du dernier track (renvoyer le fragment de carte).
+- **super_moite_moite** : validation/ajout de tâches sans reload (en complément du composant Vue
+  existant, ou en remplacement progressif si on veut retirer Vue à terme — à décider).
+- **music / avis / versus** : ajout d'éléments en ligne (liens de plateforme, avis, parties)
+  actuellement en `$.ajax` jQuery → bons candidats pour passer à htmx en supprimant le JS maison.
+- **Filtres / pagination** des listes (`avis`, `music`) : navigation `hx-get` + `hx-push-url`
+  pour filtrer/paginer sans reload complet.
+
+**Méthode.**
+1. Refaire le tour des pages app par app, lister les interactions « POST → reload complet » ou
+   « `$.ajax` jQuery » et noter le gain UX de leur passage en htmx.
+2. Ajouter htmx (CDN ou static local, ~14 Ko) dans `base.html`.
+3. Adapter les vues concernées pour renvoyer un **fragment** quand la requête vient de htmx
+   (`request.headers.get('HX-Request')`), sinon la page complète.
+4. Réutiliser les includes existants comme fragments (ex. une carte tracker isolée dans son include).
+5. Conserver le **fallback sans JS** (le `<form method="post">` doit rester fonctionnel).
+6. Rejouer les smoke tests + vérifier les en-têtes CSRF (htmx envoie le token via le header géré
+   par `window.http`/le middleware).
+
+**Dépendances :** se fait **après** la Phase 5 (front nettoyé). Peut réutiliser le helper
+`window.http` et le rendu de fragments. Indépendant des Phases 1/2.
+
+## Phase 8 — Internationalisation : traduction complète EN (étape finale)
+
+> Objectif : **site entièrement traduit en anglais**. Aujourd'hui le site est bilingue FR/EN mais
+> la couverture est **partielle** et la pipeline `.po`/`.mo` mérite d'être consolidée.
+
+**État des lieux i18n (au moment de la rédaction) :**
+- `LANGUAGE_CODE = 'fr'`, `LANGUAGES = [fr, en]`, `LOCALE_PATHS = (BASE_DIR/locale,)`,
+  `LocaleMiddleware` actif, URLs sous `i18n_patterns`, sélecteur de langue (`set_language`) dans la navbar.
+- Catalogues `.po`/`.mo` présents pour : **projet (`locale/`), `base`, `music`, `avis`** (fr + en).
+- **Apps sans dossier `locale/`** (leurs chaînes ne sont donc pas collectées proprement) :
+  **`tracker`, `versus`, `super_moite_moite`, `my_spot`, `kendama`**.
+- **Beaucoup de texte en dur en français** non enveloppé dans `{% trans %}`/`{% blocktrans %}` ni
+  `gettext`, y compris dans les templates retravaillés en Phase 3+ (ex. `tracker_list.html` :
+  « Mes trackers », « Comparer des trackers », « Créer un nouveau tracker », « track/tracks »,
+  « aucun track », « Ajouter un track rapidement » ; `components/pagination.html` : « Objets … résultats »).
+
+**Travail à faire :**
+1. **Audit de couverture** : repérer toutes les chaînes visibles non internationalisées
+   (templates + Python : messages `messages.add_message`, `verbose_name`, `help_text`, libellés de
+   formulaires, exceptions affichées…). Les envelopper dans `{% trans %}`/`{% blocktrans %}` (templates)
+   et `gettext`/`gettext_lazy` (Python). Penser au pluriel (`{% blocktrans count %}`, `ngettext`).
+2. **Créer les dossiers `locale/`** manquants pour `tracker`, `versus`, `super_moite_moite`,
+   `my_spot`, `kendama` (ou centraliser dans `locale/` projet — décider d'une stratégie unique :
+   per-app vs projet). Privilégier **une seule** approche pour simplifier la pipeline.
+3. **Pipeline `.po`/`.mo`** :
+   - Documenter et fiabiliser `makemessages` (langues, `--ignore` des dossiers `node_modules`/`.venv`/
+     `static` tiers, `--no-obsolete` pour purger les entrées mortes, `--add-location=file` pour des
+     diffs `.po` plus propres).
+   - `compilemessages` à l'étape de build/déploiement (vérifier que le déploiement PythonAnywhere
+     le lance, sinon l'ajouter au workflow GitHub Actions / script de deploy).
+   - Décider si les `.mo` sont versionnés ou (re)générés au déploiement.
+4. **Traduire** l'intégralité des entrées `msgstr` anglaises manquantes (relecture EN).
+5. **Vérifs** : parcourir le site en `?lang=en` / via le sélecteur, contrôler qu'il ne reste **aucun
+   texte français** ; cas des dates/nombres (`Intl` côté JS, `humanize`/`l10n` côté serveur :
+   `naturaltime` etc. sont déjà localisés par `django.contrib.humanize`).
+6. **Tests** : étendre les smoke tests pour charger quelques vues clés en `lang='en'` (le helper
+   `url(..., lang=...)` existe déjà dans `smoke_tests.py`) et vérifier l'absence de chaînes FR
+   témoins.
+
+**Dépendances :** transverse, mais le plus efficace **après la Phase 4** (templates stabilisés, on ne
+réécrit plus les chaînes) et idéalement **après la Phase 7** si htmx ajoute de nouveaux fragments à
+traduire. Peut se faire en dernier, app par app.
+
+## Phase 9 — Modernisation de l'outillage Python (DX)
+
+> Indépendante du front (comme les Phases 1/2) : peut se faire à tout moment, idéalement **tôt** pour
+> profiter du linter/formatter sur tout le reste du chantier. Objectif : outils **plus rapides et plus
+> modernes** (écosystème Astral) pour la qualité et le confort de dev.
+
+**État des lieux outillage :**
+- Gestion des deps : `requirements/{base,dev,prod}.txt` (pip), dont **2 dépendances git forkées**
+  (`django-admin-sortable`, `soundcloud`) et plusieurs **pins Snyk** de deps transitives.
+- **Aucun** `pyproject.toml`, **aucun** linter/formatter/pre-commit configuré. Python 3.14.
+- Déploiement PythonAnywhere : `pip install -r requirements/prod.txt` dans un virtualenv manuel
+  (`~/.virtualenvs/benbb96`), via `.github/workflows/deploy-to-pythonanywhere.yml`.
+
+**1. `uv` (remplace pip / virtualenv / pip-tools).**
+- Migrer `requirements/*.txt` → `pyproject.toml` : `[project].dependencies` (prod) + groupes de deps
+  dev (PEP 735 `[dependency-groups]` ou `optional-dependencies`). Générer un **`uv.lock`** versionné.
+- Exprimer les **deps git** en sources uv (`[tool.uv.sources]` → `{ git = "…", rev/branch }`).
+- Reporter les **pins Snyk** en contraintes (`[tool.uv] constraint-dependencies` / overrides) avec un
+  commentaire sur la raison (vulnérabilité), pour ne pas les perdre.
+- Épingler la version Python (`.python-version` + `uv python pin`).
+- ⚠️ **Déploiement** : ne pas casser PythonAnywhere. Deux options :
+  (a) installer `uv` sur PythonAnywhere et faire `uv sync --frozen` (ou `uv pip sync`) ;
+  (b) garder pip côté serveur et générer un `requirements.txt` via `uv export --no-dev` au build/CI
+  (fallback robuste si installer uv sur PA est contraignant). Choisir et **documenter** dans la doc deploy.
+
+**2. `ruff` (lint + format, remplace flake8 / isort / black / pyupgrade).**
+- Config dans `pyproject.toml` (`[tool.ruff]`) : règles `E,F,I` (imports), `UP` (pyupgrade),
+  `DJ` (django), `B` (bugbear), `S` (sécurité, façon bandit) ; `ruff format` comme formateur.
+- Passe initiale sur le code existant (corrections auto `ruff check --fix`), puis intégration CI.
+
+**3. `pre-commit`.**
+- Hooks : `ruff` + `ruff-format`, plus hygiène (`end-of-file-fixer`, `trailing-whitespace`,
+  `check-yaml`, `check-added-large-files`). Lancement local + en CI.
+
+**4. Vérification de types (optionnel, progressif).**
+- `mypy` + `django-stubs` (mature) **ou** `ty` (vérificateur de types Astral, encore en préversion
+  début 2026 — à adopter quand stable). Démarrer en mode permissif, app par app.
+
+**5. Templates Django.**
+- `djLint` (ou `djhtml`) pour **linter/formatter les templates** — utile vu le volume de templates
+  retravaillés en Phases 3/4. Intégrable à `pre-commit`.
+
+**6. Tests & couverture (optionnel).**
+- `pytest` + `pytest-django` (exécution et fixtures plus agréables que le runner Django) +
+  `pytest-cov`/`coverage`. Migrer les smoke tests si on adopte pytest. CI : lancer les tests sur PR.
+
+**7. Mises à jour de dépendances automatisées.**
+- **Dependabot** ou **Renovate** (PR automatiques de bumps), en complément/remplacement des pins Snyk
+  manuels. Cible : `pyproject.toml`/`uv.lock` + actions GitHub.
+
+**Autres pistes DX éventuelles :** `django-upgrade` (modernisation de code Django ; recouvre en partie
+les règles `UP`/`DJ` de ruff), `interrogate` (couverture de docstrings), un `justfile`/`Makefile` pour
+les commandes courantes (`run`, `lint`, `test`, `messages`), et `uv run` pour exécuter manage.py sans
+activer le venv.
+
+**Dépendances :** indépendante du front. **Recommandé tôt** (uv + ruff + pre-commit d'abord) pour que
+tout le reste du chantier bénéficie du lint/format ; les briques optionnelles (types, pytest, djLint,
+bots de MAJ) peuvent suivre. Seul point dur : **adapter le déploiement** (point 1) sans le casser.
+
 ## Dépendances entre phases
 
 ```
 Phase 0 (filet) ─┬─> Phase 1 (deps sèches)            [indépendant]
                  ├─> Phase 2 (images/Firebase)        [indépendant du front]
+                 ├─> Phase 9 (outillage uv/ruff)      [indépendant — recommandé tôt]
                  └─> Phase 3 (design system) ─> Phase 4 (templates apps) ─> Phase 5 (suppr. Bootstrap)
-                                                                                      │
-                                                          Phase 6 (finitions) <───────┘
+                                                          │                           │
+                              Phase 8 (i18n EN) <─────────┤  Phase 6 (finitions) <─┬──┘
+                                                          └─ Phase 7 (htmx)     <──┘
 ```
 
-Les phases 1 et 2 peuvent avancer en parallèle du front (3→4→5). La Phase 5 ne peut se faire
-qu'après la fin de la Phase 4 (kendama forms inclus).
+Les phases 1, 2 et 9 peuvent avancer en parallèle du front (3→4→5). La Phase 5 ne peut se faire
+qu'après la fin de la Phase 4 (kendama forms inclus). Les Phases 6 (finitions), 7 (htmx) et
+8 (i18n EN) sont les dernières. La Phase 8 est plus efficace une fois les templates stabilisés
+(après la Phase 4), idéalement après la Phase 7 pour traduire aussi les fragments htmx.
+La Phase 9 (outillage) est indépendante et gagne à être faite **tôt**.
 
 ## Rappels opérationnels
 
