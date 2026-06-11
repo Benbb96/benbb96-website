@@ -4,21 +4,34 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
-            "name": "Start Server",
+            "name": "Start Server (auto-reload)",
             "type": "debugpy",
             "request": "launch",
             "args": [
-                "runserver",
-                "--nothreading",  // Disable threading (avoids debugger issues)  
-                "--noreload"      // Disable auto-reload (reload breaks debugging)  
+                "runserver"  // Auto-reload actif : redémarre seul sur changement Python
             ],
             "program": "${workspaceFolder}/manage.py",
             "python": "${command:python.interpreterPath}",
             "env": {"DJANGO_SETTINGS_MODULE": "config.settings.dev"},
             "django": true,
-            "justMyCode": true  // Debug only your code (not Django internals)  
+            "subProcess": true,  // Le débogueur suit le process enfant du reloader
+            "justMyCode": true
+        },
+        {
+            "name": "Start Server (no reload, breakpoints stables)",
+            "type": "debugpy",
+            "request": "launch",
+            "args": [
+                "runserver",
+                "--nothreading",  // Disable threading (avoids debugger issues)
+                "--noreload"      // Disable auto-reload (reload breaks debugging)
+            ],
+            "program": "${workspaceFolder}/manage.py",
+            "python": "${command:python.interpreterPath}",
+            "env": {"DJANGO_SETTINGS_MODULE": "config.settings.dev"},
+            "django": true,
+            "justMyCode": true  // Debug only your code (not Django internals)
         }
     ]
 }

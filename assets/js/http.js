@@ -81,4 +81,38 @@
         request: request,
         json: json
     };
+
+    // ── Shim de compatibilité js-cookie ────────────────────────────────────
+    // Remplace la lib externe js-cookie (CDN), souvent bloquée par les extensions
+    // de confidentialité (script nommé « js.cookie »). Implémente l'API minimale
+    // utilisée par le projet (window.Cookies.get/set/remove). Ne s'installe que
+    // si une vraie lib n'est pas déjà présente.
+    if (!window.Cookies) {
+        window.Cookies = {
+            get: function (name) {
+                if (name === undefined) return null;
+                var v = getCookie(name);
+                return v === null ? undefined : v;
+            },
+            set: function (name, value, options) {
+                options = options || {};
+                var str = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+                if (options.expires) {
+                    var d = options.expires;
+                    if (typeof d === 'number') {
+                        d = new Date();
+                        d.setTime(d.getTime() + options.expires * 864e5);
+                    }
+                    str += '; expires=' + d.toUTCString();
+                }
+                str += '; path=' + (options.path || '/');
+                document.cookie = str;
+                return value;
+            },
+            remove: function (name, options) {
+                options = options || {};
+                document.cookie = encodeURIComponent(name) + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=' + (options.path || '/');
+            }
+        };
+    }
 })(window);

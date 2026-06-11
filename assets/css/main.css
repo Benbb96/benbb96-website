@@ -67,9 +67,9 @@
     --ds-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --ds-font-heading: var(--ds-font-sans);
     --ds-font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
-    --ds-fs-base: 1rem;
-    --ds-fs-sm: 0.875rem;
-    --ds-fs-lg: 1.125rem;
+    --ds-fs-base: 1.0625rem;
+    --ds-fs-sm: 0.9375rem;
+    --ds-fs-lg: 1.1875rem;
     --ds-lh: 1.6;
 
     /* Espacements (échelle) */
@@ -95,7 +95,7 @@
     /* Divers */
     --ds-container: 1140px;
     --ds-transition: 150ms ease;
-    --ds-nav-h: 56px;
+    --ds-nav-h: 80px;
 }
 
 /* 2. ──────────────────────────── RESET LÉGER ───────────────────────────── */
@@ -116,6 +116,19 @@ body {
     color: var(--ds-text);
     background-color: var(--ds-bg);
     -webkit-font-smoothing: antialiased;
+    /* Sticky footer : le contenu pousse le footer en bas de viewport sur les pages courtes */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+/* Le bloc de contenu principal : occupe l'espace restant (sticky footer) et
+   reste centré dans une largeur lisible (évite l'étalement sur grand écran). */
+.content {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: var(--ds-container);
+    margin-inline: auto;
+    padding-inline: var(--ds-space-4);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -403,8 +416,11 @@ textarea { min-height: 6rem; resize: vertical; }
     flex-wrap: wrap;
 }
 .ds-nav__brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--ds-nav-h);   /* fige la hauteur de la ligne marque/burger */
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: #fff;
     letter-spacing: 0.5px;
 }
@@ -414,14 +430,35 @@ textarea { min-height: 6rem; resize: vertical; }
 .ds-nav__toggle { display: none; }
 .ds-nav__burger {
     display: none;
+    align-items: center;
+    justify-content: center;
     margin-left: auto;
+    min-height: var(--ds-nav-h);   /* même hauteur que la marque → pas de décalage à l'ouverture */
+    width: 3rem;
     cursor: pointer;
-    padding: var(--ds-space-2);
-    color: #fff;
-    font-size: 1.25rem;
     background: none;
     border: 0;
 }
+/* Icône burger en 3 barres, qui se transforme en croix quand le menu est ouvert */
+.ds-burger,
+.ds-burger::before,
+.ds-burger::after {
+    display: block;
+    width: 28px;
+    height: 3px;
+    border-radius: 2px;
+    background: #fff;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+}
+.ds-burger { position: relative; }
+.ds-burger::before,
+.ds-burger::after { content: ""; position: absolute; left: 0; }
+.ds-burger::before { top: -9px; }
+.ds-burger::after { top: 9px; }
+/* État ouvert : barre du milieu masquée, les deux autres forment une croix */
+.ds-nav:has(.ds-nav__toggle:checked) .ds-burger { background: transparent; }
+.ds-nav:has(.ds-nav__toggle:checked) .ds-burger::before { transform: translateY(9px) rotate(45deg); }
+.ds-nav:has(.ds-nav__toggle:checked) .ds-burger::after { transform: translateY(-9px) rotate(-45deg); }
 
 .ds-nav__collapse {
     display: flex;
@@ -442,7 +479,8 @@ textarea { min-height: 6rem; resize: vertical; }
     display: inline-flex;
     align-items: center;
     gap: var(--ds-space-2);
-    padding: var(--ds-space-2) var(--ds-space-3);
+    padding: var(--ds-space-2) var(--ds-space-4);
+    font-size: var(--ds-fs-lg);
     color: rgba(255, 255, 255, 0.85);
     border-radius: var(--ds-radius);
     transition: background var(--ds-transition), color var(--ds-transition);
@@ -461,19 +499,58 @@ textarea { min-height: 6rem; resize: vertical; }
 @media (max-width: 860px) {
     .ds-nav__burger { display: inline-flex; }
     .ds-nav__inner { align-items: center; }
-    /* Le menu et le bloc droit s'empilent quand la case est cochée */
+    /* Menu mobile : panneau plein écran qui s'empile sous la barre quand la case est cochée */
     .ds-nav__collapse {
         flex-basis: 100%;
         display: none;
         flex-direction: column;
         align-items: stretch;
-        gap: var(--ds-space-3);
-        padding-bottom: var(--ds-space-3);
+        gap: var(--ds-space-2);
+        /* occupe toute la hauteur restante du viewport */
+        min-height: calc(100vh - var(--ds-nav-h));
+        padding: var(--ds-space-4) 0 var(--ds-space-6);
+        overflow-y: auto;
     }
-    .ds-nav:has(.ds-nav__toggle:checked) .ds-nav__collapse { display: flex; }
-    .ds-nav__menu { flex-direction: column; align-items: stretch; }
-    .ds-nav__menu--right { margin-left: 0; }
-    .ds-nav__item > a { padding: var(--ds-space-3); }
+    .ds-nav:has(.ds-nav__toggle:checked) .ds-nav__collapse {
+        display: flex;
+        animation: ds-nav-open 0.22s ease;
+    }
+    /* Menu principal : remplit toute la hauteur, liens répartis à parts égales */
+    .ds-nav__menu {
+        flex: 1 1 auto;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+    }
+    .ds-nav__item { display: flex; flex: 1 1 0; }
+    .ds-nav__item > a {
+        flex: 1;
+        justify-content: center;   /* centrage horizontal */
+        font-size: 2rem;
+        font-weight: 600;
+        padding: var(--ds-space-3);
+        border-radius: 0;
+    }
+    .ds-nav__item:not(:last-child) > a { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+
+    /* Bloc langue + connexion : poussé en bas, centré */
+    .ds-nav__menu--right {
+        margin-left: 0;
+        margin-top: auto;
+        flex: 0 0 auto;
+        align-items: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        padding-top: var(--ds-space-4);
+        gap: var(--ds-space-3);
+    }
+    .ds-nav__menu--right .ds-nav__item { flex: 0 0 auto; }
+    .ds-nav__menu--right .ds-nav__item > a { font-size: 1.375rem; border-bottom: 0; }
+    .ds-nav__lang { justify-content: center; padding: var(--ds-space-2) var(--ds-space-4); }
+}
+
+@keyframes ds-nav-open {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: none; }
 }
 
 /* 11. ─────────────────────── FOOTER & RÉSEAUX SOCIAUX ───────────────────── */
@@ -539,8 +616,11 @@ textarea { min-height: 6rem; resize: vertical; }
     text-align: center;
 }
 .ds-hero__inner { max-width: var(--ds-container); margin-inline: auto; }
-.ds-hero h1 { color: #fff; margin-bottom: var(--ds-space-3); font-size: clamp(1.75rem, 4vw, 2.75rem); }
-.ds-hero p { color: rgba(255, 255, 255, 0.9); font-size: var(--ds-fs-lg); margin: 0; }
+.ds-hero h1 { color: #fff; margin-bottom: var(--ds-space-3); font-size: clamp(2.25rem, 5vw, 3.5rem); }
+.ds-hero p { color: rgba(255, 255, 255, 0.9); font-size: clamp(1.125rem, 2vw, 1.375rem); margin: 0; }
+/* Liens dans le hero : lisibles sur le fond bleu (sinon bleu sur bleu) */
+.ds-hero a { color: #fff; text-decoration: underline; }
+.ds-hero a:hover { color: #fff; opacity: 0.8; }
 
 /* 13. ───────────────────────────── PAGINATION ──────────────────────────── */
 .ds-pagination {

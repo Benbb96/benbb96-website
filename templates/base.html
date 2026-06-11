@@ -72,9 +72,11 @@
    utilisent $.ajax (migration en Phase 4) ; il sera retiré en même temps.
 {% endcomment %}
 <script src="{% static 'js/http.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+{# http.js expose aussi un shim window.Cookies (remplace la lib js-cookie du CDN, souvent bloquée) utilisé par super_moite_moite/js/vue.js. #}
 <script>
     // [Transition Bootstrap/jQuery] CSRF pour les requêtes jQuery des apps non migrées.
+    // Le token est lu via window.http.getCookie (local, toujours chargé) plutôt que via
+    // la lib externe Cookies, pour ne pas dépendre du CDN sur le chemin CSRF.
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -83,7 +85,7 @@
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
                 if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+                    xhr.setRequestHeader("X-CSRFToken", window.http.getCookie('csrftoken'));
                 }
             }
         });
