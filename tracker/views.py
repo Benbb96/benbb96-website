@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Max
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
@@ -64,7 +65,10 @@ class TrackView(ModelViewSet):
 
 @login_required
 def tracker_list(request):
-    trackers = Tracker.objects.filter(createur=request.user.profil)
+    trackers = Tracker.objects.filter(createur=request.user.profil).annotate(
+        tracks_count=Count('tracks'),
+        last_track_date=Max('tracks__datetime'),
+    ).order_by('order')  # l'annotation (GROUP BY) écrase l'ordre par défaut du Meta → on le réimpose
 
     form = TrackerForm(request.POST or None)
     if form.is_valid():
