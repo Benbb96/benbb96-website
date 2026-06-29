@@ -1,8 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django_select2.forms import ModelSelect2MultipleWidget
 
 from base.models import Profil
+from base.widgets import TomSelectMultipleWidget
 from super_moite_moite.models import Tache, Logement
 
 
@@ -12,15 +12,7 @@ class LogementForm(forms.ModelForm):
         fields = ('nom', 'habitants')
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
-            'habitants': ModelSelect2MultipleWidget(
-                model=Profil,
-                search_fields=[
-                    'user__username__icontains',
-                    'user__first_name__icontains',
-                    'user__last_name__icontains',
-                    'user__email__icontains'
-                ]
-            )
+            'habitants': TomSelectMultipleWidget(placeholder='Habitants')
         }
 
     def __init__(self, *args, **kwargs):

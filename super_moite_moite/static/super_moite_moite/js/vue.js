@@ -1,10 +1,49 @@
 const apiUrl = '/fr/super-moite-moite/api'
 const headers = {
     "Content-type": "application/json; charset=UTF-8",
-    "X-CSRFToken": Cookies.get('csrftoken')
+    "X-CSRFToken": window.http.csrfToken()
 }
-const idProfilConnecte = JSON.parse($('#idProfilConnecte').text())
-const logement = JSON.parse($('#logement').text())
+const idProfilConnecte = JSON.parse(document.getElementById('idProfilConnecte').textContent)
+const logement = JSON.parse(document.getElementById('logement').textContent)
+
+// ── Dates : remplace moment.js par Intl natif ──────────────────────────────
+const LOCALE = document.documentElement.lang || 'fr'
+const DATE_FORMATS = {
+    L: { dateStyle: 'short' },
+    LL: { dateStyle: 'long' },
+    LT: { timeStyle: 'short' },
+    LLL: { dateStyle: 'long', timeStyle: 'short' }
+}
+function toDate(d) { return d instanceof Date ? d : new Date(d) }
+function pad2(n) { return String(n).padStart(2, '0') }
+// Valeur pour un <input type="datetime-local"> (remplace moment().format('YYYY-MM-DDTHH:mm')).
+function toDatetimeLocal(d) {
+    d = toDate(d)
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`
+}
+function formatDate(date, fmt) {
+    return new Intl.DateTimeFormat(LOCALE, DATE_FORMATS[fmt] || DATE_FORMATS.LLL).format(toDate(date))
+}
+function fromNow(date) {
+    const rtf = new Intl.RelativeTimeFormat(LOCALE, { numeric: 'auto' })
+    const diffMs = toDate(date).getTime() - Date.now()
+    const units = [['year', 31536e6], ['month', 2592e6], ['day', 864e5], ['hour', 36e5], ['minute', 6e4], ['second', 1e3]]
+    for (const [unit, ms] of units) {
+        if (Math.abs(diffMs) >= ms || unit === 'second') {
+            return rtf.format(Math.round(diffMs / ms), unit)
+        }
+    }
+}
+
+// ── Modale native <dialog> (remplace le plugin Bootstrap .modal) ────────────
+function openModal() {
+    const m = document.getElementById('modalDetailTache')
+    if (m && typeof m.showModal === 'function' && !m.open) m.showModal()
+}
+function closeModal() {
+    const m = document.getElementById('modalDetailTache')
+    if (m && m.open) m.close()
+}
 
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
@@ -23,19 +62,6 @@ function catchError(error) {
     alert("Une erreur s'est produite lors de la requête")
 }
 
-function initTooltips() {
-    $('[data-toggle="tooltip"]').tooltip();
-}
-
-$(() => {
-    $('#modalDetailTache').on('shown.bs.modal', function (e) {
-        // Focus le cham commentaire après l'ouverture de la modal
-        $('input#commentaire').focus()
-    });
-
-    initTooltips()
-})
-
 Vue.component('apexchart', VueApexCharts)
 
 let app = new Vue({
@@ -43,6 +69,8 @@ let app = new Vue({
     el: '#app',
     data: {
         searchText: "",
+        mainTab: 'home',
+        modalTab: 'tracks',
         idProfilConnecte: parseInt(idProfilConnecte),
         logement: logement,
         nomNouvelleCategorie: "",
@@ -168,7 +196,6 @@ let app = new Vue({
             this.couleurCategorieEdition = categorie.couleur
             this.erreursNomCategorieEdition = []
             this.erreursCouleurCategorieEdition = []
-            setTimeout(initTooltips, 10);  // Wait to have the DOM changed by vue
         },
         enregistreEditionCategorie: function(categorie) {
             const ap = this
@@ -284,7 +311,7 @@ let app = new Vue({
             this.trackEditee.id = track.id
             this.trackEditee.commentaire = track.commentaire
             this.trackEditee.profil = track.profil
-            this.trackEditee.datetime = moment(track.datetime).format("YYYY-MM-DDTHH:mm")
+            this.trackEditee.datetime = toDatetimeLocal(track.datetime)
         },
         enregistreEditionTrack: function(track) {
             const ap = this
@@ -418,10 +445,18 @@ let app = new Vue({
             this.tacheEditee.tacheOriginale = tache
             // Ré-initialise le commentaire d'ajout de Track
             this.commentaireTrack = ""
-            // Ouvre la modale d'édition
-            $('#modalDetailTache').modal()
-            // Sélectionne l'onglet à ouvrir
-            $('a[href=#' + tabId + ']').trigger('click')
+            // Sélectionne l'onglet à ouvrir puis affiche la modale <dialog>
+            this.modalTab = tabId
+            openModal()
+            this.$nextTick(() => {
+                if (tabId === 'tracks') {
+                    const input = document.getElementById('commentaire')
+                    if (input) input.focus()
+                }
+            })
+        },
+        fermerModal: function () {
+            closeModal()
         },
         supprimerTache: function (tache) {
             if (confirm('Êtes-vous certain de vouloir supprimer cette tâche ?')) {
@@ -434,7 +469,7 @@ let app = new Vue({
                         let categorie = logement.categories.find(categorie => categorie.id === tache.categorie)
                         // Retire la tâche qui vient d'être supprimée
                         categorie.taches = categorie.taches.filter(task => task.id !== tache.id)
-                        $('#modalDetailTache').modal('hide')
+                        closeModal()
                     })
                     .catch(catchError);
             }
@@ -516,7 +551,7 @@ let app = new Vue({
                     categorie.taches = categorie.taches.map(tache => tache.id === editTache.id ? editTache : tache)
 
                     // Ferme la modal
-                    $('#modalDetailTache').modal('hide')
+                    closeModal()
                 })
                 .catch(catchError);
         },
@@ -566,10 +601,10 @@ let app = new Vue({
     },
     filters: {
         moment: function (date, format='LLL') {
-            return moment(date).format(format);
+            return formatDate(date, format);
         },
         fromNow: function (date) {
-            return moment(date).fromNow();
+            return fromNow(date);
         },
         round: function (value, decimals) {
             if (!value) {

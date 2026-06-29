@@ -1,5 +1,34 @@
-.well {
-    border-radius: 10px;
+/* Styles spécifiques au tableau de bord super_moite_moite.
+   Le design system (.ds-*) fournit les composants ; ce fichier ne porte que les
+   réglages propres à cette page (grille des catégories, toolbar collante, etc.). */
+
+/* Onglets principaux (Tâches / Statistiques) centrés */
+.smm-main-tabs {
+    max-width: 480px;
+    margin-inline: auto;
+}
+
+.smm-search {
+    max-width: 360px;
+}
+
+/* Grille des catégories.
+   La draggable (.smm-categories) est en display:contents pour que ses enfants
+   (les catégories) ET la carte « nouvelle catégorie » soient des items de la
+   même grille responsive. */
+.smm-categories-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--ds-space-4);
+    align-items: start;
+}
+.smm-categories {
+    display: contents;
+}
+
+/* Barres de progression un peu plus hautes sur ce tableau de bord */
+#app .ds-progress {
+    height: 30px;
 }
 
 .showOnHover i {
@@ -8,18 +37,6 @@
 
 .showOnHover:hover i {
     opacity: 1;
-}
-
-.progress {
-    height: 30px;
-}
-
-.progress-bar {
-    line-height: 30px;
-}
-
-.panel .panel-heading a {
-    cursor: pointer;
 }
 
 table.tableTracks thead {
@@ -35,7 +52,8 @@ table.tableTracks tbody {
     position: sticky;
     top: 0;
     z-index: 10;
-    padding: 10px 5px 0 5px;
+    padding: 10px 5px;
+    margin-bottom: var(--ds-space-3);
     background-color: rgba(255, 255, 255, 0.88);
 }
 

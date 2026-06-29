@@ -684,6 +684,8 @@ table:not([class]) thead th {
 .ds-mt-0 { margin-top: 0; }
 .ds-mb-0 { margin-bottom: 0; }
 .ds-mt-4 { margin-top: var(--ds-space-4); }
+.ds-mb-2 { margin-bottom: var(--ds-space-2); }
+.ds-mb-3 { margin-bottom: var(--ds-space-3); }
 .ds-mb-4 { margin-bottom: var(--ds-space-4); }
 .ds-sr-only {
     position: absolute;
@@ -850,10 +852,18 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
 
 /* Barre de progression — remplace .progress / .progress-bar */
 .ds-progress {
+    display: flex;
     height: 1.25rem;
     background: var(--ds-surface-alt);
     border-radius: var(--ds-radius-pill);
     overflow: hidden;
+}
+/* Segment « à moi » : rayures animées (remplace .progress-bar-striped.active) */
+.ds-progress__bar--striped {
+    background-image: linear-gradient(45deg,
+        rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%,
+        rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
+    background-size: 1.25rem 1.25rem;
 }
 .ds-progress__bar {
     --_c: var(--ds-primary);
@@ -886,12 +896,18 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
 .ds-card__header--primary { background: var(--ds-primary); border-color: var(--ds-primary); }
 .ds-card__header--success { background: var(--ds-success); border-color: var(--ds-success); }
 .ds-card__header--warning { background: var(--ds-warning); border-color: var(--ds-warning); }
+.ds-card__header--info    { background: var(--ds-info); border-color: var(--ds-info); }
+.ds-card__header--danger  { background: var(--ds-danger); border-color: var(--ds-danger); }
 .ds-card__header--primary,
 .ds-card__header--success,
-.ds-card__header--warning { color: #fff; }
+.ds-card__header--warning,
+.ds-card__header--info,
+.ds-card__header--danger { color: #fff; }
 .ds-card__header--primary :is(h1, h2, h3, h4, a),
 .ds-card__header--success :is(h1, h2, h3, h4, a),
-.ds-card__header--warning :is(h1, h2, h3, h4, a) { color: #fff; }
+.ds-card__header--warning :is(h1, h2, h3, h4, a),
+.ds-card__header--info :is(h1, h2, h3, h4, a),
+.ds-card__header--danger :is(h1, h2, h3, h4, a) { color: #fff; }
 /* Boutons (ghost) lisibles sur un en-tête de card coloré */
 .ds-card__header--primary .ds-btn--ghost,
 .ds-card__header--success .ds-btn--ghost,
@@ -1056,3 +1072,22 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 .ts-dropdown .no-results,
 .ts-dropdown .optgroup-header { color: var(--ds-text-muted); }
 .ts-wrapper.disabled .ts-control { background: var(--ds-surface-alt); }
+
+/* 18. ─────────────────── INPUT GROUP + MODALE large ────────────────────────
+   .ds-input-group : champ + bouton accolés (remplace .input-group Bootstrap).
+   .ds-modal--lg   : variante large de la modale <dialog> (remplace .modal-lg). */
+.ds-input-group { display: flex; align-items: stretch; }
+.ds-input-group > * { margin-bottom: 0; }
+.ds-input-group > :not(:first-child) { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.ds-input-group > :not(:last-child) { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.ds-input-group > input,
+.ds-input-group > select { flex: 1 1 auto; width: 1%; min-width: 0; }
+.ds-input-group__addon {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--ds-space-3);
+    background: var(--ds-surface-alt);
+    border: 1px solid var(--ds-border-strong);
+    white-space: nowrap;
+}
+.ds-modal--lg { width: min(94vw, 900px); }
