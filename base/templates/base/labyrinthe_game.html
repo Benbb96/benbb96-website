@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="text-center">
+    <div class="ds-text-center">
         <div id="sketch-holder"></div>
     </div>
     <h3>{% trans "Les commandes" %}</h3>
@@ -25,26 +25,26 @@
         {% blocktrans %}
             Il existe quelques touches spéciales :
         {% endblocktrans %}
-        <div class="row">
-            <dl class="col-sm-3 col-xs-6">
+        <div class="ds-grid ds-grid--4">
+            <dl>
                 <dt>X</dt>
                 <dd>Met en pause le jeu</dd>
                 <dt>P</dt>
                 <dd>Affiche/Cache les cases par lesquelles est passé le joueur</dd>
             </dl>
-            <dl class="col-sm-3 col-xs-6">
+            <dl>
                 <dt>R</dt>
                 <dd>Redémarre le jeu</dd>
                 <dt>B</dt>
                 <dd>Active/désactive le mode Blind (les murs qui disparaissent)</dd>
             </dl>
-            <dl class="col-sm-3 col-xs-6">
+            <dl>
                 <dt>L</dt>
                 <dd>Passe directement au niveau supérieur</dd>
                 <dt>A</dt>
                 <dd>Remet à zéro la disparition des murs</dd>
             </dl>
-            <dl class="col-sm-3 col-xs-6">
+            <dl>
                 <dt>C</dt>
                 <dd>Active/désactive le tracé du parcours du joueur</dd>
                 <dt>W</dt>

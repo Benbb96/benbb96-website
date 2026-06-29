@@ -2,19 +2,19 @@
 
 {% block profil_title %}Avis{% endblock %}
 
-{% block avis_active %} class="active"{% endblock %}
+{% block avis_active %} is-active{% endblock %}
 
 {% block profil_content %}
     <h1>Derniers avis</h1>
-    <div class="row">
+    <div class="ds-grid ds-grid--3">
         {% for avis in user.profil.derniers_avis|slice:"6" %}
             {% if request.user.is_authenticated or not avis.prive %}
-                <div class="col-sm-4 col-xs-12">
+                <div>
                     {% include 'avis/avis_thumbnail.html' %}
                 </div>
             {% endif %}
         {% empty %}
-            <div class="col-xs-12">{{ user }} n'a donné aucun avis pour le moment.</div>
+            <div>{{ user }} n'a donné aucun avis pour le moment.</div>
         {% endfor %}
     </div>
 {% endblock %}

@@ -11,22 +11,20 @@
 {% block jumbotron_description %}{% trans "Here is the list of the projects I make public for the moment." %}{% endblock %}
 
 {% block content %}
-    <div class="container-fluid bg-3 text-center">
-        <div class="flex-row">
-            {% for projet in object_list %}
-                {% if projet.actif %}
-                <div class="flex-col">
-                    <h3>
-                        <a href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
-                            {{ projet.nom }}
-                        </a>
-                    </h3>
-                    <a href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
-                        <img src="{% if projet.image %}{{ projet.image.url }}{% endif %}" class="img-responsive projet" style="max-height: 300px; margin: auto" alt="{% trans "Project" %} {{ projet.nom }}">
-                    </a>
-                </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+    <div class="ds-grid">
+        {% for projet in object_list %}
+            {% if projet.actif %}
+                <a class="ds-card ds-card--hover" href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
+                    {% if projet.image %}
+                        <span class="ds-card__media">
+                            <img src="{{ projet.image.url }}" style="max-height: 300px" alt="{% trans "Project" %} {{ projet.nom }}">
+                        </span>
+                    {% endif %}
+                    <span class="ds-card__body ds-text-center">
+                        <h3 class="ds-card__title ds-mb-0">{{ projet.nom }}</h3>
+                    </span>
+                </a>
+            {% endif %}
+        {% endfor %}
     </div>
 {% endblock %}

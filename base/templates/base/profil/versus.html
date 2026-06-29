@@ -2,14 +2,14 @@
 
 {% block profil_title %}Parties{% endblock %}
 
-{% block versus_active %} class="active"{% endblock %}
+{% block versus_active %} is-active{% endblock %}
 
 {% block profil_content %}
     {% if user.profil.joueur %}
-        <div class="pull-right">
-            <a class="btn btn-default" href="{% url 'versus:detail-joueur' user.profil.joueur.slug %}">Voir le profil dans Versus</a>
+        <div class="ds-cluster" style="justify-content: space-between">
+            <h1 class="ds-mb-0">Dernières parties</h1>
+            <a class="ds-btn ds-btn--ghost" href="{% url 'versus:detail-joueur' user.profil.joueur.slug %}">Voir le profil dans Versus</a>
         </div>
-        <h1>Dernières parties</h1>
         {% for partie in user.profil.joueur.partie_set.all|slice:"6" %}
             <h3>
                 <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a> -
@@ -20,6 +20,6 @@
             <div>{{ user }} n'a fait aucune parties.</div>
         {% endfor %}
     {% else %}
-        <p class="well text-center" style="margin-top: 20px">{{ user }} n'a pas de profil Joueur.</p>
+        <p class="ds-well ds-text-center ds-mt-5">{{ user }} n'a pas de profil Joueur.</p>
     {% endif %}
 {% endblock %}

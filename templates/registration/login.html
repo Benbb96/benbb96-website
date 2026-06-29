@@ -1,40 +1,37 @@
 {% extends 'base.html' %}
 
-{% load bootstrap3 %}
-
 {% block title %}Se connecter{% endblock %}
 {% block jumbotron_title %}Connexion{% endblock %}
 {% block jumbotron_description %}Utilise le formulaire ci-dessous pour te connecter sur mon site.{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3 col-xs-12">
-            {% if next %}
-                {% if user.is_authenticated %}
-                    <div class="alert alert-info alert-dismissable">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <div class="ds-narrow">
+        {% if next %}
+            {% if user.is_authenticated %}
+                <div class="ds-alert ds-alert--info" role="alert">
+                    <div class="ds-alert__content">
                         Désolé mais ton compte n'a pas accès à cette page.<br>
                         Contacte-moi pour en obtenir l'accès !<br>
-                        <div class="text-center">
-                            <a class="alert-link" href="#" onclick="window.history.back()">Retour à la page précédente</a>
+                        <div class="ds-text-center">
+                            <a href="#" onclick="window.history.back()">Retour à la page précédente</a>
                         </div>
                     </div>
-                {% else %}
-                    {% bootstrap_alert "Connecte-toi pour accéder à cette page !" alert_type='warning' %}
-                {% endif %}
-            {% endif %}
-            <form method="post">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <input type="hidden" name="next" value="{{ next }}">
-                <div class="text-center">
-                    {% bootstrap_button "Valider" button_type="submit" button_class="btn-primary" %}
-                    {% url 'base:signup' as url %}
-                    {% bootstrap_button "Se créer un compte" button_type="link" button_class="btn-default" href=url %}
-                    {% url 'password_reset' as url %}
-                    {% bootstrap_button "Mot de passe oublié" button_type="link" button_class="btn-link" href=url %}
                 </div>
-            </form>
-        </div>
+            {% else %}
+                <div class="ds-alert ds-alert--warning" role="alert">
+                    <div class="ds-alert__content">Connecte-toi pour accéder à cette page !</div>
+                </div>
+            {% endif %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {% include 'components/form.html' %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="ds-cluster ds-cluster--center ds-mt-4">
+                <button type="submit" class="ds-btn">Valider</button>
+                <a href="{% url 'base:signup' %}" class="ds-btn ds-btn--ghost">Se créer un compte</a>
+                <a href="{% url 'password_reset' %}" class="ds-btn ds-btn--link">Mot de passe oublié</a>
+            </div>
+        </form>
     </div>
 {% endblock %}

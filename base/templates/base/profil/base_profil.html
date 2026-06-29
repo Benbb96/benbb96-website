@@ -10,8 +10,8 @@
 {% block jumbotron_title %}{{ user }}{% endblock %}
 {% block jumbotron_description %}
     {% if user.profil.avatar %}
-        <div class="text-center">
-            <img class="img-rounded" src="{{ user.profil.avatar.url }}" alt="Avatar de {{ user }}" style="max-height: 300px"/>
+        <div class="ds-text-center">
+            <img class="ds-rounded" src="{{ user.profil.avatar.url }}" alt="Avatar de {{ user }}" style="max-height: 300px"/>
             {% if user.username == 'Benbb96' %}
                 <a href="https://dev.to/benbb96">
                     <img src="https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg" alt="BBB's DEV Profile" height="30" width="30" style="vertical-align: bottom">
@@ -35,32 +35,28 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
-            <ul class="nav nav-pills nav-justified">
-                <li{% block info_active %}{% endblock %}>
-                    <a href="{% url 'base:profil' user.username %}">Informations</a>
-                </li>
-                <li{% block avis_active %}{% endblock %}>
-                    <a href="{% url 'base:profil-avis' user.username %}">Avis</a>
-                </li>
-                <li{% block music_active %}{% endblock %}>
-                    <a href="{% url 'base:profil-music' user.username %}">Musique</a>
-                </li>
-                <li{% block versus_active %}{% endblock %}>
-                    <a href="{% url 'base:profil-versus' user.username %}">Versus</a>
-                </li>
-                <li>
-                    <a href="{% url 'kendama:profil' user.username %}">Kendama</a>
-                </li>
-                {# TODO Ajouter spots #}
-            </ul>
-        </div>
+    <div class="ds-narrow ds-narrow--lg">
+        <ul class="ds-tabs ds-tabs--justified">
+            <li class="ds-tabs__item{% block info_active %}{% endblock %}">
+                <a href="{% url 'base:profil' user.username %}">Informations</a>
+            </li>
+            <li class="ds-tabs__item{% block avis_active %}{% endblock %}">
+                <a href="{% url 'base:profil-avis' user.username %}">Avis</a>
+            </li>
+            <li class="ds-tabs__item{% block music_active %}{% endblock %}">
+                <a href="{% url 'base:profil-music' user.username %}">Musique</a>
+            </li>
+            <li class="ds-tabs__item{% block versus_active %}{% endblock %}">
+                <a href="{% url 'base:profil-versus' user.username %}">Versus</a>
+            </li>
+            <li class="ds-tabs__item">
+                <a href="{% url 'kendama:profil' user.username %}">Kendama</a>
+            </li>
+            {# TODO Ajouter spots #}
+        </ul>
     </div>
 
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-xs-12">
-            {% block profil_content %}{% endblock %}
-        </div>
+    <div class="ds-narrow ds-narrow--lg">
+        {% block profil_content %}{% endblock %}
     </div>
 {% endblock %}

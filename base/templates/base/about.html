@@ -11,11 +11,11 @@
 {% block jumbotron_description %}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-4 text-center">
+    <div class="ds-grid ds-grid--sidebar">
+        <div class="ds-text-center">
             <img src="{% static 'img/bbb.jpg' %}" alt="{% trans "Picture of me" %}" title="{% trans "It's me!" %}" style="width: 80%; margin-bottom: 15px"/>
         </div>
-        <div class="col-sm-8">
+        <div>
             {% blocktrans with django_site='https://www.djangoproject.com/' github='https://github.com/Benbb96/benbb96/' %}
                 Hey, it's me, Benjamin, but everybody call me BBB !<br><br>
                 I love to code in Python with the Framework <a href="{{ django_site }}" target="_blank">Django</a>. That's why this website exists !<br>

@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% load bootstrap3 %}
-
 {% block title %}S'inscrire{% endblock %}
 {% block jumbotron_title %}Création de compte{% endblock %}
 {% block jumbotron_description %}
@@ -10,23 +8,21 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3 col-xs-12">
-            {% if next %}
-                {% if form.errors %}
-                    {% bootstrap_alert "Il y a des erreurs dans le formulaire d'inscription." alert_type='danger' %}
-                    {{ form.non_field_errors }}
-                {% endif %}
-            {% endif %}
-            <form method="post">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <div class="text-center">
-                    {% bootstrap_button "S'inscrire" button_type="submit" button_class="btn-primary" %}
-                    {% url 'login' as url %}
-                    {% bootstrap_button "Se connecter" button_type="link" button_class="btn-link" href=url %}
+    <div class="ds-narrow">
+        {% if next %}
+            {% if form.errors %}
+                <div class="ds-alert ds-alert--danger" role="alert">
+                    <div class="ds-alert__content">Il y a des erreurs dans le formulaire d'inscription.</div>
                 </div>
-            </form>
-        </div>
+            {% endif %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {% include 'components/form.html' %}
+            <div class="ds-cluster ds-cluster--center ds-mt-4">
+                <button type="submit" class="ds-btn">S'inscrire</button>
+                <a href="{% url 'login' %}" class="ds-btn ds-btn--link">Se connecter</a>
+            </div>
+        </form>
     </div>
 {% endblock %}
