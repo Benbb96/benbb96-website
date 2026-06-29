@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import Group
-from django_select2.forms import ModelSelect2MultipleWidget
 
+from base.widgets import TomSelectMultipleWidget
 from my_spot.models import SpotPhoto, VISIBILITE, SpotTag, SpotGroup
 
 
@@ -14,15 +14,7 @@ class SpotPhotoForm(forms.ModelForm):
 class PublicSpotFilterForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(
         queryset=SpotTag.objects.all(),
-        widget=ModelSelect2MultipleWidget(
-            attrs={
-                'style': 'width: 250px',
-                'data-minimum-input-length': '0',
-                'data-placeholder': 'Tags'
-            },
-            model=SpotTag,
-            search_fields=['nom__icontains'],
-        ),
+        widget=TomSelectMultipleWidget(placeholder='Tags'),
         required=False,
     )
 
@@ -40,14 +32,6 @@ class SpotFilterForm(PublicSpotFilterForm):
     )
     groupes = forms.ModelMultipleChoiceField(
         queryset=SpotGroup.objects.none(),
-        widget=ModelSelect2MultipleWidget(
-            attrs={
-                'style': 'width: 250px',
-                'data-minimum-input-length': '0',
-                'data-placeholder': 'Groupes'
-            },
-            model=SpotGroup,
-            search_fields=['nom__icontains'],
-        ),
+        widget=TomSelectMultipleWidget(placeholder='Groupes'),
         required=False
     )

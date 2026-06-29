@@ -21,13 +21,25 @@
 {% block javascript %}
     {{ form.media.js }}
     <script type="text/javascript">
+        // Valeurs d'un <select multiple> (via Tom Select si présent, sinon DOM natif).
+        function selectedValues(id) {
+            const el = document.getElementById(id);
+            if (!el) return [];
+            if (el.tomselect) return el.tomselect.getValue();
+            return Array.from(el.selectedOptions).map(o => o.value);
+        }
+
         function initMap() {
-            const visibilite = $('#id_visibilite input:checked').val();
-            const perso = $('#id_perso').is(':checked');
-            const tags = $('#id_tags').val();
-            const groupes = $('#id_groupes').val();
-            $.get('{% url 'my_spot:map' %}', {visibilite, perso, tags, groupes})
-                .done(reponse => {
+            const params = new URLSearchParams();
+            const visibilite = document.querySelector('#id_visibilite input:checked');
+            if (visibilite) params.append('visibilite', visibilite.value);
+            const perso = document.getElementById('id_perso');
+            if (perso) params.append('perso', perso.checked);
+            selectedValues('id_tags').forEach(v => params.append('tags', v));
+            selectedValues('id_groupes').forEach(v => params.append('groupes', v));
+
+            window.http.json("{% url 'my_spot:map' %}?" + params.toString())
+                .then(reponse => {
                     if (reponse.spots.length > 0) {
                         let bounds = new google.maps.LatLngBounds();
                         let map = new google.maps.Map(document.getElementById('map'));
@@ -74,17 +86,20 @@
                         alert('Aucun résultat pour cette recherche...')
                     }
                 })
-                .fail((err) => {
+                .catch((err) => {
                     console.log(err)
                 });
         }
 
-        $(() => {
-            $('form').submit(function(e) {
-                e.preventDefault();
-                initMap()
-            })
-        })
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    initMap();
+                });
+            }
+        });
     </script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key={{ GEOPOSITION_GOOGLE_MAPS_API_KEY }}&callback=initMap">
