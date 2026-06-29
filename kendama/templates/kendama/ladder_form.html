@@ -1,7 +1,5 @@
 {% extends 'kendama/base.html' %}
 
-{% load bootstrap3 %}
-
 {% block title %}{% if ladder %}Ladder {{ ladder.name }}{% else %}Création Ladder{% endif %}{% endblock %}
 {% block h2_title %}
     <a href="{% url 'kendama:ladders' %}">Ladders</a> >
@@ -11,7 +9,7 @@
 {% block content %}
     <form method="post">
         {% csrf_token %}
-        {% bootstrap_form form %}
+        {% include 'kendama/components/paper_form.html' %}
         <h4>Les combos du ladder :</h4>
         {{ ladder_combo_formset.management_form }}
         {% for error in ladder_combo_formset.non_form_errors %}

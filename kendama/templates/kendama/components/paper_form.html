@@ -1,0 +1,30 @@
+{% comment %}
+    Rendu de formulaire compatible thème « paper » — remplace {% bootstrap_form form %}.
+    Reproduit le markup .form-group + label + widget + erreurs stylé par paper.css
+    (kendama n'utilise ni Bootstrap ni le design system .ds-*).
+    Usage : {% include 'kendama/components/paper_form.html' %}  (utilise « form »)
+{% endcomment %}
+{% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+        <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+{% endif %}
+
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}
+
+{% for field in form.visible_fields %}
+    {% if field.field.widget.input_type == 'checkbox' %}
+        <div class="form-group">
+            <label class="paper-check" for="{{ field.id_for_label }}">{{ field }} <span>{{ field.label }}</span></label>
+            {% if field.help_text %}<small>{{ field.help_text|safe }}</small>{% endif %}
+            {% if field.errors %}<ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+    {% else %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<small>{{ field.help_text|safe }}</small>{% endif %}
+            {% if field.errors %}<ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+    {% endif %}
+{% endfor %}

@@ -1,7 +1,5 @@
 {% extends 'kendama/base.html' %}
 
-{% load bootstrap3 %}
-
 {% block title %}{% if combo %}Combo {{ combo.name }}{% else %}Création Combo{% endif %}{% endblock %}
 {% block h2_title %}
     <a href="{% url 'kendama:combos' %}">Combos</a> >
@@ -11,7 +9,7 @@
 {% block content %}
     <form method="post">
         {% csrf_token %}
-        {% bootstrap_form form %}
+        {% include 'kendama/components/paper_form.html' %}
         <h4>Les tricks du combo :</h4>
         {{ combo_trick_formset.management_form }}
         {% for error in combo_trick_formset.non_form_errors %}
