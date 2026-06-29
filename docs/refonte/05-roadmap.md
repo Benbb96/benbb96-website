@@ -93,12 +93,57 @@ chaque groupe : `check` OK, `makemigrations --check` sans changement, 27 smoke t
 
 ## Phase 5 — Suppression de Bootstrap & jQuery (doc 2)
 
-- Une fois **tous** les `{% bootstrap_* %}` éliminés (apps + kendama) :
-  retirer `django-bootstrap3` de `INSTALLED_APPS` + requirements, supprimer le CDN Bootstrap,
-  `bootstrap-social.css`, et le jQuery global.
-- **Supprimer `moment-with-locales.js` (541 Ko) + `bootstrap-daterangepicker`** : remplacés par
-  `Intl.DateTimeFormat` / `Intl.RelativeTimeFormat` / `Date` natifs (fait en Phase 4 sur tracker &
-  super_moite_moite). Monter **Chart.js → v4**. Pas de Temporal (non fiable en natif début 2026).
+### Phase 5a — Levée des usages jQuery / Bootstrap-JS / moment / select2 — ✅ FAITE
+
+Objectif : **zéro usage public** de jQuery, des plugins Bootstrap-JS, de select2, DataTables,
+moment et daterangepicker, **sans encore retirer** Bootstrap CSS / jQuery / `django-bootstrap3` /
+le CDN (= Phase 5b). Site fonctionnel et déployable à chaque étape (1 commit par app/dépendance).
+Validé après chaque app : `check` OK, `makemigrations --check` sans changement, 27 smoke tests OK.
+
+- **Fondation Tom Select (vanilla, sans jQuery)** remplace `django-select2` :
+  `assets/js/tom-select.complete.min.js` + `css/tom-select.css` (vendorisés v2.4.3),
+  `assets/js/tomselect-init.js` (init des `<select.js-tomselect>` : options rendues + filtrage
+  client, ou chargement distant via `data-ts-url` + `window.http`), `base/widgets.py`
+  (`TomSelect{,Multiple,Remote,RemoteMultiple}Widget`, assets via `Media`), thème `.ts-*` dans
+  `main.css`. Petits jeux (≤ ~110 : styles, playlists, joueurs, habitants, trackers, tags…) rendus
+  côté serveur ; gros jeu **artistes** (~1600) en chargement distant via l'endpoint JSON
+  `music:artiste-search`.
+- **versus** : `ModelSelect2Widget` (joueurs) → `TomSelectWidget` ; formset dynamique réinitialisé
+  via `window.tomSelectInit` (plus de `$('.django-select2')`).
+- **music** : forms/filters select2 → Tom Select (artistes distants) ; `create_musique_from_url.html`
+  `$.post`/`$()`/`.trigger('change')` → `window.http` + API Tom Select ; `auto_select_plateforme`
+  jQuery → vanilla ; **DataTables** (`playlist_filter.html`) → table `.ds-sortable` triable +
+  recherche client en vanilla.
+- **my_spot** : tags/groupes select2 → Tom Select ; `map.html` / `spot_group_detail.html`
+  `$.get` Google Maps → `window.http` + DOM natif (valeurs des selects via l'API Tom Select).
+- **super_moite_moite** : habitants select2 → Tom Select ; `vue.js` débarrassé de jQuery et des
+  plugins Bootstrap-JS (`$('#x').text()` → `textContent` ; `.modal()` → `<dialog>` ; onglets
+  pilotés par l'état Vue `mainTab`/`modalTab` au lieu de `data-toggle` pill/tab ; tooltips supprimés,
+  `title` natif conservé) ; **moment → Intl** (`DateTimeFormat`/`RelativeTimeFormat`) ;
+  `logement_detail.html` migré en `.ds-*` (modale `<dialog class="ds-modal ds-modal--lg">`,
+  `.ds-progress` multi-segments, `.ds-card`, `.ds-input-group`…).
+- **tracker** : `Select2MultipleWidget` → `TomSelectMultipleWidget` ; **bootstrap-daterangepicker**
+  → deux `<input type="date">` + presets en `Date` (`include/date_range.html`, logique dans
+  `common.js`) ; **moment → Intl** ; `$.post`/`$.ajax` → `window.http` (FormData `id[]`, PUT
+  urlencodé, DELETE) ; **Chart.js 2.7.3 → v4** vendorisé (`assets/js/chart.umd.min.js`, API
+  `plugins.legend`/`scales.y`/`plugins.tooltip`).
+- **kendama** : **non touché** (déjà fetch natif + paper.css, embarque son propre Chart.js 2.9.3 ;
+  vérifié sans dépendance au jQuery global).
+- **base.html** : le `$.ajaxSetup` jQuery (CSRF des `$.ajax` des apps) devenu mort a été retiré.
+  Bootstrap CSS + jQuery + `django-bootstrap3` + `bootstrap-social.css` + le CDN restent **chargés
+  mais inutilisés**.
+
+> ⚠️ Le fichier `assets/js/moment-with-locales.js` existe encore sur disque mais **n'est plus
+> chargé par aucun template** (il apparaît seulement dans l'inventaire de la debug toolbar) ;
+> sa suppression sèche est faite en Phase 5b.
+
+### Phase 5b — Retrait sec (à venir)
+
+- Une fois **tous** les `{% bootstrap_* %}` éliminés (apps + kendama, fait en Phase 4) **et** la
+  Phase 5a terminée : retirer `django-bootstrap3` de `INSTALLED_APPS` + requirements, supprimer le
+  CDN Bootstrap, `bootstrap-social.css`, `assets/js/moment-with-locales.js`, le jQuery global, et
+  `django_select2` (`INSTALLED_APPS` + l'URL `select2/` + requirement). `collectstatic` + tests visuels.
+- Pas de Temporal (non fiable en natif début 2026).
 
 ## Phase 6 — Finitions
 

@@ -25,10 +25,20 @@
   `.ds-grid--sidebar/--content`… Les AJAX `$.post`/`$.ajax` de `music` (`.platformLink`,
   `.synchronize`) sont passés en `window.http`. Détail et exceptions (Vue smm, moment/daterangepicker
   tracker) : voir Phase 4 de `05-roadmap.md`.
-- **Phase 5 — à venir** (retrait de Bootstrap/jQuery + moment/daterangepicker, Chart.js v4).
-  `base.html` charge encore le CDN Bootstrap + `{% bootstrap_javascript jquery='full' %}` (jQuery)
-  pour les usages résiduels : composant Vue de `super_moite_moite`, select2/DataTables de `music`,
-  daterangepicker/AJAX de `tracker`. Ces dépendances doivent être levées avant le retrait définitif.
+- **Phase 5a — FAITE** (levée des usages jQuery / Bootstrap-JS / select2 / DataTables / moment /
+  daterangepicker, **sans** encore retirer Bootstrap/jQuery). Tom Select (vanilla) remplace
+  `django-select2` partout via un widget maison (`base/widgets.py`) + init `assets/js/tomselect-init.js`
+  (artistes en chargement distant `music:artiste-search`, autres jeux rendus côté serveur). DataTables
+  → table `.ds-sortable` vanilla. `super_moite_moite` (Vue) et `tracker` purgés de jQuery / des plugins
+  Bootstrap-JS (`.modal()`/`.tooltip()`/onglets) → `<dialog>` natif + état Vue / contrôleur vanilla ;
+  moment → `Intl` ; daterangepicker → `<input type="date">` + presets `Date` ; **Chart.js 2 → v4**
+  (vendorisé). Tous les `$.ajax`/`$.post`/`$.get` publics → `window.http`. Le `$.ajaxSetup` de
+  `base.html` (devenu mort) est retiré. **kendama non touché** (autonome, son Chart.js 2.9.3 préservé).
+  Détail app par app en Phase 5a de `05-roadmap.md`. Validé : `check` OK, `makemigrations --check`
+  sans changement, 27 smoke tests OK, endpoints AJAX tracker/smm/music re-testés.
+- **Phase 5b — à venir** (retrait sec). Bootstrap CSS (CDN), `{% bootstrap_javascript jquery='full' %}`
+  (jQuery), `django-bootstrap3`, `django_select2` (+ URL `select2/`), `bootstrap-social.css` et
+  `assets/js/moment-with-locales.js` restent **chargés/présents mais inutilisés** → à supprimer.
 
 ## Objectif
 
@@ -158,9 +168,9 @@ Cela permet de **désinstaller `django-bootstrap3`** une fois tous les usages co
   convertir avant de désinstaller `django-bootstrap3` (doc 6). Ne pas toucher au reste de kendama.
 - **FontAwesome 6** : conservé (`django-fontawesome-6`). Sert aussi aux `IconField`
   (tracker, my_spot, réseaux sociaux) → **ne pas retirer**.
-- **Select2** (`django-select2`) : composant JS qui embarque sa propre dépendance. Conservé
-  fonctionnellement (versus, music, tracker, smm). Vérifier qu'il fonctionne sans le jQuery global
-  (django-select2 charge son propre jQuery côté admin/forms).
+- **Select2** (`django-select2`) : **remplacé en Phase 5a** par Tom Select (vanilla, sans jQuery)
+  via le widget maison `base/widgets.py` (versus, music, tracker, smm, my_spot). Le paquet
+  `django_select2` et l'URL `select2/` restent installés mais inutilisés → retrait en Phase 5b.
 - **Admin Django** : utilise son propre jQuery (`django.jQuery`) — indépendant du front public.
 - **Responsive** : `style.css` a déjà des breakpoints (768/576px) à harmoniser dans le design system.
 - **i18n** : préserver les `{% trans %}`/`{% blocktrans %}` lors des réécritures de templates.
