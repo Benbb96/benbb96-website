@@ -67,30 +67,13 @@
 
 {% comment %}
    ── JavaScript ──
-   http.js : helper fetch + CSRF vanilla (window.http) pour le nouveau code.
-   Le bloc jQuery $.ajaxSetup ci-dessous reste nécessaire tant que music/tracker
-   utilisent $.ajax (migration en Phase 4) ; il sera retiré en même temps.
+   http.js : helper fetch + CSRF vanilla (window.http) pour tout le code public.
+   Phase 5a terminée : plus aucun code public n'utilise jQuery ($.ajax/$()), les
+   plugins Bootstrap-JS, select2, DataTables, moment ni daterangepicker. jQuery
+   et Bootstrap restent CHARGÉS (CDN) mais inutilisés → retrait sec en Phase 5b.
 {% endcomment %}
 <script src="{% static 'js/http.js' %}"></script>
 {# http.js expose aussi un shim window.Cookies (remplace la lib js-cookie du CDN, souvent bloquée) utilisé par super_moite_moite/js/vue.js. #}
-<script>
-    // [Transition Bootstrap/jQuery] CSRF pour les requêtes jQuery des apps non migrées.
-    // Le token est lu via window.http.getCookie (local, toujours chargé) plutôt que via
-    // la lib externe Cookies, pour ne pas dépendre du CDN sur le chemin CSRF.
-    function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    if (window.jQuery) {
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", window.http.getCookie('csrftoken'));
-                }
-            }
-        });
-    }
-</script>
 {% block javascript %}{% endblock %}
 </body>
 </html>
