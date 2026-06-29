@@ -1,3 +1,15 @@
+/* =============================================================================
+   tracker — Logique commune des graphes & du filtre de dates (vanilla)
+   =============================================================================
+   Phase 5a : remplace jQuery / moment.js / bootstrap-daterangepicker / Chart v2.
+   - dates : deux <input type="date"> natifs + presets calculés en Date ;
+   - formatage : Intl.DateTimeFormat (plus de moment) ;
+   - requêtes : window.http (fetch + CSRF, plus de $.post/$.ajax) ;
+   - graphes : Chart.js v4.
+   Les objets Chart (allTracks, trackByHourChart, trackByDayChart), trackerIds,
+   trackerDataUrl et la fonction update_all sont fournis par chaque template
+   (scope lexical global partagé entre scripts classiques).
+   ============================================================================ */
 const frequency_map = {
     h: 'heure',
     D: 'jour',
@@ -10,68 +22,115 @@ const frequency_map = {
 let allTracks = undefined
 let trackByHourChart = undefined
 let trackByDayChart = undefined
-let start = moment().subtract(1, 'month')
-let end = moment()
 
-const dateRangeOptions = {
-    showDropdowns: true,
-    timePicker: true,
-    timePicker24Hour: true,
-    startDate: start,
-    endDate: end,
-    minDate: minDate,
-    maxDate: maxDate,
-    locale: {
-        format: 'LLLL',
-        applyLabel: "OK",
-        cancelLabel: "Annuler",
-        fromLabel: "De",
-        toLabel: "A",
-        customRangeLabel: "Personnalisé",
-        weekLabel: "W",
-        daysOfWeek: [
-            "Di",
-            "Lu",
-            "Ma",
-            "Me",
-            "Je",
-            "Ve",
-            "Sa"
-        ],
-        monthNames: [
-            "Janvier",
-            "Février",
-            "Mars",
-            "Avril",
-            "Mai",
-            "Juin",
-            "Juillet",
-            "Août",
-            "Septembre",
-            "Octobre",
-            "Novembre",
-            "Décembre"
-        ]
-    },
-    ranges: {
-       'Les 7 derniers jours': [moment().subtract(6, 'days'), moment()],
-       'Les 30 derniers jours': [moment().subtract(1, 'month'), moment()],
-       'Les 3 derniers mois': [moment().subtract(3, 'month'), moment()],
-       'Les 6 derniers mois': [moment().subtract(6, 'month'), moment()],
-       'Les 12 derniers mois': [moment().subtract(1, 'year'), moment()],
-       'Les 2 dernières années': [moment().subtract(2, 'year'), moment()],
-       'Les 3 dernières années': [moment().subtract(3, 'year'), moment()],
-       'Les 5 dernières années': [moment().subtract(5, 'year'), moment()],
-       'Tous': [minDate, maxDate],
+// Bornes de dates « start »/« end » envoyées au serveur, au format attendu
+// par get_tracks_from_request : '%y-%m-%d %H:%M:%S' (année sur 2 chiffres).
+let start = undefined
+let end = undefined
+
+const TRACK_LOCALE = document.documentElement.lang || 'fr'
+
+function tkPad2(n) { return String(n).padStart(2, '0') }
+function toServerDate(d) {
+    return `${tkPad2(d.getFullYear() % 100)}-${tkPad2(d.getMonth() + 1)}-${tkPad2(d.getDate())} ` +
+        `${tkPad2(d.getHours())}:${tkPad2(d.getMinutes())}:${tkPad2(d.getSeconds())}`
+}
+function toInputDate(d) {
+    return `${d.getFullYear()}-${tkPad2(d.getMonth() + 1)}-${tkPad2(d.getDate())}`
+}
+// Formatage type moment('LLL') via Intl (utilisé aussi par les templates).
+function formatTrackDate(date, options) {
+    return new Intl.DateTimeFormat(TRACK_LOCALE, options || { dateStyle: 'long', timeStyle: 'short' })
+        .format(new Date(date))
+}
+
+function activeFrequency() {
+    const btn = document.querySelector('button.btn-frequency.is-active')
+    return btn ? btn.dataset.frequency : 'D'
+}
+
+// ── Filtre de dates (remplace bootstrap-daterangepicker) ────────────────────
+function subtractDate(date, n, unit) {
+    const d = new Date(date)
+    if (unit === 'days') d.setDate(d.getDate() - n)
+    else if (unit === 'month') d.setMonth(d.getMonth() - n)
+    else if (unit === 'year') d.setFullYear(d.getFullYear() - n)
+    return d
+}
+
+let rangeMin = null
+let rangeMax = null
+
+const RANGE_PRESETS = {
+    '7d': () => [subtractDate(new Date(), 6, 'days'), new Date()],
+    '30d': () => [subtractDate(new Date(), 1, 'month'), new Date()],
+    '3m': () => [subtractDate(new Date(), 3, 'month'), new Date()],
+    '6m': () => [subtractDate(new Date(), 6, 'month'), new Date()],
+    '12m': () => [subtractDate(new Date(), 1, 'year'), new Date()],
+    '2y': () => [subtractDate(new Date(), 2, 'year'), new Date()],
+    '3y': () => [subtractDate(new Date(), 3, 'year'), new Date()],
+    '5y': () => [subtractDate(new Date(), 5, 'year'), new Date()],
+    'all': () => [rangeMin || new Date(0), rangeMax || new Date()],
+}
+
+// Initialise le filtre de dates et déclenche la 1re mise à jour.
+function initTrackerDateRange(minIso, maxIso) {
+    rangeMin = minIso ? new Date(minIso) : null
+    rangeMax = maxIso ? new Date(maxIso) : null
+
+    const startInput = document.getElementById('dateStart')
+    const endInput = document.getElementById('dateEnd')
+    const preset = document.getElementById('dateRangePreset')
+    if (!startInput || !endInput) return
+
+    function syncFromInputs() {
+        if (startInput.value) start = toServerDate(new Date(startInput.value + 'T00:00:00'))
+        if (endInput.value) end = toServerDate(new Date(endInput.value + 'T23:59:59'))
     }
+    function setRange(s, e) {
+        startInput.value = toInputDate(s)
+        endInput.value = toInputDate(e)
+        syncFromInputs()
+    }
+    function applyAndUpdate() {
+        syncFromInputs()
+        if (typeof update_all === 'function') update_all(activeFrequency())
+    }
+
+    if (preset) {
+        preset.addEventListener('change', function () {
+            const fn = RANGE_PRESETS[preset.value]
+            if (fn) {
+                const [s, e] = fn()
+                setRange(s, e)
+                applyAndUpdate()
+            }
+        })
+    }
+    startInput.addEventListener('change', function () { if (preset) preset.value = ''; applyAndUpdate() })
+    endInput.addEventListener('change', function () { if (preset) preset.value = ''; applyAndUpdate() })
+
+    // Par défaut : les 30 derniers jours (comportement historique).
+    const [s, e] = RANGE_PRESETS['30d']()
+    if (preset) preset.value = '30d'
+    setRange(s, e)
+    applyAndUpdate()
 }
 
 const update_track_graph = (frequency = 'D') => {
-    $.post(trackerDataUrl, {id: trackerIds, frequency, start, end})
-        .done(response => {
+    const body = new FormData()
+    trackerIds.forEach(id => body.append('id[]', id))
+    body.append('frequency', frequency)
+    if (start) body.append('start', start)
+    if (end) body.append('end', end)
+
+    window.http.json(trackerDataUrl, { method: 'POST', body: body })
+        .then(response => {
+            const noTracks = document.getElementById('noTracks')
+            const graph = document.getElementById('track_graph')
             if (response.labels.length > 0) {
-                $('div#noTracks').addClass('ds-hidden')
-                $('div#track_graph').removeClass('ds-hidden')
+                if (noTracks) noTracks.classList.add('ds-hidden')
+                if (graph) graph.classList.remove('ds-hidden')
 
                 const chartDatasets = []
                 response.datasets.forEach(dataset => {
@@ -102,6 +161,7 @@ const update_track_graph = (frequency = 'D') => {
                             label: dataset.label,
                             data: dataset.data,
                             backgroundColor: dataset.backgroundColor,
+                            borderColor: dataset.backgroundColor,
                             fill: false,
                         })
                     } else {
@@ -109,6 +169,7 @@ const update_track_graph = (frequency = 'D') => {
                             label: dataset.label,
                             data: dataset.data,
                             backgroundColor: dataset.backgroundColor,
+                            borderColor: dataset.backgroundColor,
                         })
                     }
                 })
@@ -117,30 +178,37 @@ const update_track_graph = (frequency = 'D') => {
                 allTracks.data.datasets = chartDatasets
                 allTracks.update()
 
-                $('span#frequency').text(frequency_map[frequency])
+                const freqEl = document.getElementById('frequency')
+                if (freqEl) freqEl.textContent = frequency_map[frequency]
                 if (response.averages.length > 0) {
                     const avg = response.averages[0]
-                    $('strong#avg').text(avg.avg)
+                    const avgEl = document.getElementById('avg')
+                    if (avgEl) avgEl.textContent = avg.avg
                     if (avg.isValeur) {
-                        $('span#valMin').text(avg.min)
-                        $('span#valMax').text(avg.max)
+                        const minEl = document.getElementById('valMin')
+                        const maxEl = document.getElementById('valMax')
+                        if (minEl) minEl.textContent = avg.min
+                        if (maxEl) maxEl.textContent = avg.max
                     }
                 }
-                $('.btn-frequency').removeClass('is-active')
-                $('.btn-frequency[data-frequency=' + frequency + ']').addClass('is-active')
+                document.querySelectorAll('.btn-frequency').forEach(b => b.classList.remove('is-active'))
+                const activeBtn = document.querySelector('.btn-frequency[data-frequency="' + frequency + '"]')
+                if (activeBtn) activeBtn.classList.add('is-active')
             } else {
-                $('div#track_graph').addClass('ds-hidden')
-                $('div#noTracks').removeClass('ds-hidden')
+                if (graph) graph.classList.add('ds-hidden')
+                if (noTracks) noTracks.classList.remove('ds-hidden')
             }
         })
-        .fail((xhr, textStatus, errorThrown) => {
-            console.error('(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus))
+        .catch(error => {
+            console.error('Erreur de chargement du graphe', error)
         })
 }
 
-$(() => {
-    $('.btn-frequency').click(function () {
-        update_track_graph($(this).data('frequency'))
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.btn-frequency').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            update_track_graph(btn.dataset.frequency)
+        })
     })
 })
 

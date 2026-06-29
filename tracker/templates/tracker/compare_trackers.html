@@ -7,7 +7,6 @@
 {% block stylesheet %}
     {{ block.super }}
     {{ form.media.css }}
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 {% endblock %}
 
 {% block content %}
@@ -33,10 +32,7 @@
 
         <hr>
 
-        <div class="ds-form__group">
-            <label class="ds-form__label" for="dates">Filtrer les résultats selon deux dates :</label>
-            <input type="text" name="dates" id="dates" />
-        </div>
+        {% include 'tracker/include/date_range.html' %}
 
         <ul class="ds-tabs ds-tabs--justified" data-tabs>
             <li class="ds-tabs__item is-active"><a href="#statistiques">Statistiques</a></li>
@@ -80,67 +76,45 @@
 {% endblock %}
 
 {% block javascript %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-    <script src="{% static 'js/moment-with-locales.js' %}"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="{% static 'js/chart.umd.min.js' %}"></script>
     {{ form.media.js }}
     <script>
-        {% get_current_language as LANGUAGE_CODE %}
-        moment.locale('{{ LANGUAGE_CODE }}')
-        const minDate = moment("{{ first_track.datetime|date:"c" }}")
-        const maxDate = moment("{{ last_track.datetime|date:"c" }}").add(1, 'minute')
-        const trackerDataUrl = '{% url 'tracker:tracker-data' %}'
+        const minDate = "{{ first_track.datetime|date:"c" }}";
+        const maxDate = "{{ last_track.datetime|date:"c" }}";
+        const trackerDataUrl = '{% url 'tracker:tracker-data' %}';
     </script>
     <script src="{% static 'tracker/js/common.js' %}"></script>
     <script>
         const trackerIds = [{% for tracker in trackers %}'{{ tracker.id }}',{% endfor %}];
+        const historyUrl = "{% url 'tracker:tracker-history' %}";
 
-        $(() => {
-            function daterange_callback(s, e) {
-                $('#reportrange span').html(s.format('LLLL') + ' - ' + e.format('LLLL'));
-                start = s.format('YY-MM-DD HH:mm:ss');
-                end = e.format('YY-MM-DD HH:mm:ss');
-                update_all($('button.btn-frequency.is-active').data('frequency'))
-            }
+        // Met à jour le graphe + le tableau d'historique pour la plage courante.
+        const update_all = frequency => {
+            update_track_graph(frequency);
 
-            $('input[name="dates"]').daterangepicker(dateRangeOptions, daterange_callback);
+            const body = new FormData();
+            trackerIds.forEach(id => body.append('id[]', id));
+            if (start) body.append('start', start);
+            if (end) body.append('end', end);
+            window.http.json(historyUrl, { method: 'POST', body: body })
+                .then(response => {
+                    document.getElementById('tracks').innerHTML = response.html;
+                    document.getElementById('trackCount').textContent = response.trackCount;
+                })
+                .catch(error => console.error('Erreur historique', error));
+        };
 
+        document.addEventListener('DOMContentLoaded', function () {
             allTracks = new Chart(document.getElementById("allTracks"), {
                 type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: []
-                    }]
-                },
+                data: { labels: [], datasets: [{ data: [] }] },
                 options: {
-                    legend: {
-                        display: true
-                    },
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
+                    plugins: { legend: { display: true } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
 
-            daterange_callback(start, end);
+            initTrackerDateRange(minDate, maxDate);
         });
-
-        const update_all = frequency => {
-            update_track_graph(frequency)
-
-            $.post("{% url 'tracker:tracker-history' %}", {id: trackerIds, start: start, end: end})
-                .done(response => {
-                    $('tbody#tracks').html(response.html)
-                    $('span#trackCount').text(response.trackCount)
-                })
-                .fail((xhr, textStatus, errorThrown) => {
-                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus))
-                });
-        }
     </script>
 {% endblock %}

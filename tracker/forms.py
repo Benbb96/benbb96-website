@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django_select2.forms import Select2MultipleWidget
 
+from base.widgets import TomSelectMultipleWidget
 from tracker.models import Track, Tracker
 
 
@@ -46,7 +46,7 @@ class SelectTrackersForm(forms.Form):
     trackers = forms.ModelMultipleChoiceField(
         label='Sélectionner des trackers à comparer',
         queryset=Tracker.objects.all(),
-        widget=Select2MultipleWidget(attrs={'class': 'form-control'})
+        widget=TomSelectMultipleWidget(placeholder='Trackers à comparer')
     )
 
     def __init__(self, user, *args, **kwargs):

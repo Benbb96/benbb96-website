@@ -1,0 +1,20 @@
+{# Filtre de dates natif (remplace bootstrap-daterangepicker). Voir common.js. #}
+<div class="ds-form__group">
+    <label class="ds-form__label">Filtrer les résultats selon deux dates :</label>
+    <div class="ds-cluster">
+        <select id="dateRangePreset" style="flex: 0 0 auto; width: auto">
+            <option value="7d">Les 7 derniers jours</option>
+            <option value="30d">Les 30 derniers jours</option>
+            <option value="3m">Les 3 derniers mois</option>
+            <option value="6m">Les 6 derniers mois</option>
+            <option value="12m">Les 12 derniers mois</option>
+            <option value="2y">Les 2 dernières années</option>
+            <option value="3y">Les 3 dernières années</option>
+            <option value="5y">Les 5 dernières années</option>
+            <option value="all">Tous</option>
+            <option value="">Personnalisé</option>
+        </select>
+        <input type="date" id="dateStart" style="flex: 0 0 auto; width: auto" aria-label="Date de début">
+        <input type="date" id="dateEnd" style="flex: 0 0 auto; width: auto" aria-label="Date de fin">
+    </div>
+</div>
