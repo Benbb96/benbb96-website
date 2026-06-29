@@ -3,10 +3,10 @@
 {% block spot_title %}Groupe {{ spot_group }} {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div>
         <h1>{{ spot_group }}</h1>
-        <div class="row">
-            <div class="col-sm-6 col-xs-12">
+        <div class="ds-grid ds-grid--2">
+            <div>
                 <h3>
                     Créé le {{ spot_group.date_creation|date:"l j F Y à H:i" }}
                 </h3>
@@ -16,12 +16,14 @@
                 {% with profils=spot_group.spotgroupprofil_set.all %}
                     {% if profils %}
                         <p>Liste des personnes appartenants à ce groupe :</p>
-                        <div class="list-group">
+                        <div class="ds-list-group">
                             {% for spotgroupprofil in profils %}
-                                <a class="list-group-item" href="{{ spotgroupprofil.profil.get_absolute_url }}">
-                                    {{ spotgroupprofil.profil }}
-                                    <small>depuis le {{ spotgroupprofil.date_ajout }}</small>
-                                    <span class="badge" title="Nombre de spot partagé avec ce groupe">
+                                <a class="ds-list-group__item ds-cluster" style="justify-content: space-between" href="{{ spotgroupprofil.profil.get_absolute_url }}">
+                                    <span>
+                                        {{ spotgroupprofil.profil }}
+                                        <small>depuis le {{ spotgroupprofil.date_ajout }}</small>
+                                    </span>
+                                    <span class="ds-badge" title="Nombre de spot partagé avec ce groupe">
                                         {{ spotgroupprofil.nb_spot_partages }}
                                     </span>
                                 </a>
@@ -30,11 +32,11 @@
                     {% endif %}
                 {% endwith %}
             </div>
-            <div class="col-sm-6 col-xs-12">
+            <div>
                 {% if spot_group.spots.exists %}
                     <div id="map" style="height: 500px"></div>
                 {% else %}
-                    <p class="text-center">Aucun spot n'a été partagé à ce groupe.</p>
+                    <p class="ds-text-center">Aucun spot n'a été partagé à ce groupe.</p>
                 {% endif %}
             </div>
         </div>

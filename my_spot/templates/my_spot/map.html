@@ -1,6 +1,6 @@
 {% extends 'my_spot/base_my_spot.html' %}
 
-{% load custom_tags bootstrap3 %}
+{% load custom_tags fontawesome_6 %}
 
 {% block spot_title %}Carte {% endblock %}
 
@@ -9,13 +9,11 @@
 {% endblock %}
 
 {% block content %}
-    <form class="form-inline text-center">
-        {% bootstrap_form form layout='inline' %}
-        {% buttons %}
-            <button type="submit" class="btn btn-primary" title="Filtrer les spots">
-                OK {% bootstrap_icon "filter" %}
-            </button>
-        {% endbuttons %}
+    <form class="ds-form-inline">
+        {% include 'components/form.html' %}
+        <button type="submit" class="ds-btn" title="Filtrer les spots">
+            OK {% fa6_icon 'filter' %}
+        </button>
     </form>
     <div id="map" style="height: 500px"></div>
 {% endblock %}

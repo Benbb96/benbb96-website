@@ -31,7 +31,7 @@ def build_data(spots, user):
 
 
 def carte(request, tag_slug=None):
-    if request.is_ajax():
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         spots = Spot.objects.visible_for_user(request.user)
         # Récupère les paramètres et filtre les spots
         visibilite = request.GET.get('visibilite', None)
@@ -91,7 +91,7 @@ def spot_group_detail(request, spot_group_slug):
         SpotGroup.objects.filter(profils__user=request.user).prefetch_related('profils__user'),
         slug=spot_group_slug
     )
-    if request.is_ajax():
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         spots = spot_group.spots.visible_for_user(request.user)
         return JsonResponse({'spots': build_data(spots, request.user)})
 
