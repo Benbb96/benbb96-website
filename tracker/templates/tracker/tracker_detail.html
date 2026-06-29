@@ -11,216 +11,186 @@
 
 {% block content %}
     <!-- Confirm Track delete modal -->
-    <div id="modalConfirmDelete" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Supprimer un track</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sûr de vouloir supprimer le track datant du <span id="toDeleteTrackDate"></span> ?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="deleteTrackBtn">Oui</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                </div>
+    <dialog id="modalConfirmDelete" class="ds-modal">
+        <div class="ds-modal__header">
+            <h4 class="ds-modal__title">Supprimer un track</h4>
+            <button type="button" class="ds-modal__close" onclick="this.closest('dialog').close()">&times;</button>
+        </div>
+        <div class="ds-modal__body">
+            <p>Êtes-vous sûr de vouloir supprimer le track datant du <span id="toDeleteTrackDate"></span> ?</p>
+        </div>
+        <div class="ds-modal__footer">
+            <button type="button" class="ds-btn ds-btn--danger" id="deleteTrackBtn">Oui</button>
+            <button type="button" class="ds-btn ds-btn--ghost" onclick="this.closest('dialog').close()">Annuler</button>
+        </div>
+    </dialog>
+
+    <div class="ds-narrow ds-narrow--lg">
+        <div class="ds-text-center">
+            <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
+                {{ tracker.nom }} {% fa6_icon tracker.icone.name tracker.icone.style_prefix %}
+                <a class="ds-btn ds-btn--secondary ds-btn--sm" href="{% url 'tracker:update-tracker' tracker.id %}">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="ds-btn ds-btn--danger ds-btn--sm" href="{% url 'tracker:delete-tracker' tracker.id %}">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </h1>
+            <div>
+                {% with tracks_count=tracker.tracks.count %}
+                    Créé il y a
+                    <span class="text-italic" title="{{ tracker.date_creation }}">
+                        {{ tracker.date_creation|timesince }}
+                    </span>,
+                    <b id="totalCount" class="ds-badge">{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
+                    {% if tracks_count %}
+                        <br>Tracké pour la dernière fois il y a
+                        <span class="text-italic" title="{{ tracker.tracks.first.datetime }}">
+                            {{ tracker.tracks.first.datetime|timesince }}
+                        </span>.
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 col-xs-12">
-            <div class="text-center">
-                <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
-                    {{ tracker.nom }} {% fa6_icon tracker.icone.name tracker.icone.style_prefix %}
-                    <a class="btn btn-info" href="{% url 'tracker:update-tracker' tracker.id %}">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    <a class="btn btn-danger" href="{% url 'tracker:delete-tracker' tracker.id %}">
-                        <i class="fa fa-trash"></i>
-                    </a>
-                </h1>
-                <div>
-                    {% with tracks_count=tracker.tracks.count %}
-                        Créé il y a
-                        <span class="text-italic" title="{{ tracker.date_creation }}">
-                            {{ tracker.date_creation|timesince }}
-                        </span>,
-                        <b id="totalCount" class="badge">{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
-                        {% if tracks_count %}
-                            <br>Tracké pour la dernière fois il y a
-                            <span class="text-italic" title="{{ tracker.tracks.first.datetime }}">
-                                {{ tracker.tracks.first.datetime|timesince }}
-                            </span>.
-                        {% endif %}
-                    {% endwith %}
+        <form method="post">
+            {% csrf_token %}
+            {% if tracker.type == 'mesure' %}
+                <div class="ds-form__group">
+                    <label class="ds-form__label" for="{{ form.valeur.id_for_label }}">Valeur</label>
+                    <div class="ds-cluster">
+                        {{ form.valeur }}
+                        <button class="ds-btn" type="submit">
+                            <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
+                        </button>
+                        <button class="ds-btn ds-btn--ghost" type="button" id="toggleDatetime">
+                            <i class="fa fa-clock" title="Changer la date et l'heure"></i>
+                        </button>
+                    </div>
+                    {{ form.valeur.errors }}
+                </div>
+                <div class="ds-form__group">
+                    <label class="ds-form__label" for="{{ form.commentaire.id_for_label }}">Commentaire (facultatif)</label>
+                    {{ form.commentaire }}
+                    {{ form.commentaire.errors }}
+                </div>
+            {% else %}
+                <div class="ds-form__group">
+                    {{ form.commentaire.label_tag }}
+                    <div class="ds-cluster">
+                        {{ form.commentaire }}
+                        <button class="ds-btn" type="submit">
+                            <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
+                        </button>
+                        <button class="ds-btn ds-btn--ghost" type="button" id="toggleDatetime">
+                            <i class="fa fa-clock" title="Changer la date et l'heure"></i>
+                        </button>
+                    </div>
+                    {{ form.commentaire.errors }}
+                </div>
+            {% endif %}
+            <div class="ds-form__group" id="datetime" style="display: none">
+                <label class="ds-form__label" for="id_datetime">Changer la date et l'heure :</label>
+                <input type="datetime-local" name="datetime" value="{{ form.datetime.value|date:"Y-m-d" }}T{{ form.datetime.value|time:"H:i" }}" required="" id="id_datetime">
+            </div>
+            <div class="ds-form__group">
+                {{ form.datetime.errors }}
+            </div>
+        </form>
+
+        <hr>
+
+        <div class="ds-form__group">
+            <label class="ds-form__label" for="dates">Filtrer les résultats selon deux dates :</label>
+            <input type="text" name="dates" id="dates" />
+        </div>
+
+        <ul class="ds-tabs ds-tabs--justified" data-tabs>
+            <li class="ds-tabs__item is-active"><a href="#historique">Historique</a></li>
+            <li class="ds-tabs__item"><a href="#statistiques">Statistiques</a></li>
+        </ul>
+
+        <div>
+            <div id="historique" class="ds-tab-panel is-active">
+                <h2>Historique <small><span id="trackCount"></span> {{ tracker.nom|lower }}s</small></h2>
+                <div class="ds-table-wrap">
+                    <table class="ds-table ds-table--striped">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            {% if tracker.type == 'mesure' %}<th>Valeur</th>{% endif %}
+                            <th>Commentaire</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tracks">
+                        {# Will be filled in AJAX #}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
-            <form method="post">
-                {% csrf_token %}
-                {% if tracker.type == 'mesure' %}
-                    <div class="form-group">
-                        <label for="{{ form.valeur.id_for_label }}">Valeur</label>
-                        <div class="input-group">
-                            {{ form.valeur }}
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="glyphicon glyphicon-plus" title="Ajouter un nouveau track"></i>
-                                </button>
-                            </div>
-                            <div class="input-group-btn">
-                                <button class="btn btn-default" type="button" id="toggleDatetime">
-                                    <i class="glyphicon glyphicon-time" title="Changer la date et l'heure"></i>
-                                </button>
-                            </div>
-                        </div>
-                        {{ form.valeur.errors }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.commentaire.id_for_label }}">Commentaire (facultatif)</label>
-                        {{ form.commentaire }}
-                        {{ form.commentaire.errors }}
-                    </div>
-                {% else %}
-                    <div class="input-group">
-                        {{ form.commentaire.label_tag }}
-                    </div>
-                    <div class="input-group">
-                        {{ form.commentaire }}
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="glyphicon glyphicon-plus" title="Ajouter un nouveau track"></i>
-                            </button>
-                        </div>
-                        <div class="input-group-btn">
-                            <button class="btn btn-default" type="button" id="toggleDatetime">
-                                <i class="glyphicon glyphicon-time" title="Changer la date et l'heure"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {{ form.commentaire.errors }}
-                    </div>
+            <div id="statistiques" class="ds-tab-panel">
+                <h2>Statistiques</h2>
+                {% if not tracker.tracks.exists %}
+                    <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
                 {% endif %}
-                <div class="form-group row">
-                    <div class="col-sm-4 col-xs-12" id="datetime" style="display: none">
-                        <label for="id_datetime">Changer la date et l'heure :</label>
-                        <input type="datetime-local" name="datetime" value="{{ form.datetime.value|date:"Y-m-d" }}T{{ form.datetime.value|time:"H:i" }}" class="form-control" required="" id="id_datetime">
+                <div id="track_graph"{% if not tracker.tracks.exists %} class="ds-hidden" {% endif %}>
+                    <p>
+                        {% if tracker.type == 'mesure' %}
+                            Moyenne : <strong id="avg"></strong>
+                            (min : <span id="valMin"></span>, max : <span id="valMax"></span>)
+                            par <span id="frequency"></span>
+                        {% else %}
+                            <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
+                        {% endif %}
+                    </p>
+                    <div class="ds-text-center">
+                        <canvas id="allTracks" width="600" height="400"></canvas>
                     </div>
-                </div>
-                <div class="form-group">
-                    {{ form.datetime.errors }}
-                </div>
-            </form>
-
-            <hr>
-
-            <div class="form-group">
-                <label for="dates">Filtrer les résultats selon deux dates :</label>
-                <input type="text" name="dates" id="dates" class="form-control" />
-            </div>
-
-            <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a data-toggle="tab" href="#historique">Historique</a></li>
-                <li><a data-toggle="tab" href="#statistiques">Statistiques</a></li>
-            </ul>
-
-            <div class="tab-content">
-                <div id="historique" class="tab-pane fade in active">
-                    <h2>Historique <small><span id="trackCount"></span> {{ tracker.nom|lower }}s</small></h2>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
+                    {% include 'tracker/include/frequency_buttons.html' %}
+                    {% if tracker.type == 'mesure' %}
+                        <h3>Statistiques globales</h3>
+                        <div class="ds-grid ds-grid--3">
+                            <div>Valeur min : <strong id="valeurMin">-</strong></div>
+                            <div>Valeur moyenne : <strong id="valeurAvg">-</strong></div>
+                            <div>Valeur max : <strong id="valeurMax">-</strong></div>
+                        </div>
+                    {% endif %}
+                    <h3>Ecarts</h3>
+                    <p>Voici les statistiques des différences de temps entre deux tracks à la suite.</p>
+                    <div class="ds-grid ds-grid--3">
+                        <div>Plus petit écart : <span id="deltaMin">Pas assez de donnée...</span></div>
+                        <div>Ecart moyen : <strong id="deltaAvg">Pas assez de donnée...</strong></div>
+                        <div>Plus grand écart : <span id="deltaMax">Pas assez de donnée...</span></div>
+                    </div>
+                    <h3>Répartition</h3>
+                    <div class="ds-grid ds-grid--2">
+                        <div class="ds-text-center">
+                            <h4>Par heure de la journée</h4>
+                            <canvas id="trackByHourChart" width="600" height="400"></canvas>
+                        </div>
+                        <div class="ds-text-center">
+                            <h4>Par jour de la semaine</h4>
+                            <canvas id="trackByDayChart" width="600" height="400"></canvas>
+                        </div>
+                    </div>
+                    <h3>Mots-clefs (50 max)</h3>
+                    <div class="ds-table-wrap">
+                        <table class="ds-table ds-table--bordered ds-table--striped">
                             <thead>
-                            <tr>
-                                <th>Date</th>
-                                {% if tracker.type == 'mesure' %}<th>Valeur</th>{% endif %}
-                                <th>Commentaire</th>
-                                <th>Actions</th>
-                            </tr>
+                                <tr>
+                                    <th class="ds-text-right">Mot</th>
+                                    <th>Nombre d'occurence</th>
+                                </tr>
                             </thead>
-                            <tbody id="tracks">
-                            {# Will be filled in AJAX #}
+                            <tbody id="words">
+                                {# Filled by ajax #}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div id="statistiques" class="tab-pane fade">
-                    <h2>Statistiques</h2>
-                    {% if not tracker.tracks.exists %}
-                        <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
-                    {% endif %}
-                    <div id="track_graph"{% if not tracker.tracks.exists %} class="hidden" {% endif %}>
-                        <p>
-                            {% if tracker.type == 'mesure' %}
-                                Moyenne : <strong id="avg"></strong>
-                                (min : <span id="valMin"></span>, max : <span id="valMax"></span>)
-                                par <span id="frequency"></span>
-                            {% else %}
-                                <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
-                            {% endif %}
-                        </p>
-                        <div class="text-center">
-                            <canvas id="allTracks" width="600" height="400"></canvas>
-                        </div>
-                        {% include 'tracker/include/frequency_buttons.html' %}
-                        {% if tracker.type == 'mesure' %}
-                            <h3>Statistiques globales</h3>
-                            <div class="row">
-                                <div class="col-sm-4 col-xs-12">
-                                    Valeur min : <strong id="valeurMin">-</strong>
-                                </div>
-                                <div class="col-sm-4 col-xs-12">
-                                    Valeur moyenne : <strong id="valeurAvg">-</strong>
-                                </div>
-                                <div class="col-sm-4 col-xs-12">
-                                    Valeur max : <strong id="valeurMax">-</strong>
-                                </div>
-                            </div>
-                        {% endif %}
-                        <h3>Ecarts</h3>
-                        <p>Voici les statistiques des différences de temps entre deux tracks à la suite.</p>
-                        <div class="row">
-                            <div class="col-sm-4 col-xs-12">
-                                Plus petit écart : <span id="deltaMin">Pas assez de donnée...</span>
-                            </div>
-                            <div class="col-sm-4 col-xs-12">
-                                Ecart moyen : <strong id="deltaAvg">Pas assez de donnée...</strong>
-                            </div>
-                            <div class="col-sm-4 col-xs-12">
-                                Plus grand écart : <span id="deltaMax">Pas assez de donnée...</span>
-                            </div>
-                        </div>
-                        <h3>Répartition</h3>
-                        <div class="row">
-                            <div class="col-sm-6 col-xs-12 text-center">
-                                <h4>Par heure de la journée</h4>
-                                <canvas id="trackByHourChart" width="600" height="400"></canvas>
-                            </div>
-                            <div class="col-sm-6 col-xs-12 text-center">
-                                <h4>Par jour de la semaine</h4>
-                                <canvas id="trackByDayChart" width="600" height="400"></canvas>
-                            </div>
-                        </div>
-                        <h3>Mots-clefs (50 max)</h3>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th class="text-right">Mot</th>
-                                        <th>Nombre d'occurence</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="words">
-                                    {# Filled by ajax #}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="well hidden text-danger text-center" id="noTracks">
-                        Aucun track pour la période donnée.
-                    </div>
+                <div class="ds-well ds-hidden ds-text-danger ds-text-center" id="noTracks">
+                    Aucun track pour la période donnée.
                 </div>
             </div>
         </div>
@@ -248,7 +218,7 @@
                 $('#reportrange span').html(s.format('LLLL') + ' - ' + e.format('LLLL'));
                 start = s.format('YY-MM-DD HH:mm:ss');
                 end = e.format('YY-MM-DD HH:mm:ss');
-                update_all($('button.btn-frequency.btn-primary').data('frequency'))
+                update_all($('button.btn-frequency.is-active').data('frequency'))
             }
 
             $('input[name="dates"]').daterangepicker(dateRangeOptions, daterange_callback);
@@ -357,10 +327,10 @@
                 $.ajax({url: $(this).data('url'), type: 'DELETE'})
                     .done((response) => {
                         $('.track#' + $(this).data('trackId')).fadeOut();
-                        $("#modalConfirmDelete").modal('hide');
+                        document.getElementById('modalConfirmDelete').close();
                         $('span#trackCount').text(parseInt($('span#trackCount').text()) - 1);
                         $('b#totalCount').text(parseInt($('b#totalCount').text()) - 1);
-                        update_all($('button.btn-frequency.btn-primary').data('frequency'))
+                        update_all($('button.btn-frequency.is-active').data('frequency'))
                     })
                     .fail((xhr, textStatus, errorThrown) => {
                         alert(textStatus + ' - ' + errorThrown)
@@ -395,7 +365,7 @@
                     wordsBody.empty()
                     if (response.words !== undefined) {
                         for (const [word, value] of Object.entries(response.words)) {
-                            wordsBody.append('<tr><td class="text-right">' + word + '</td><td>' + value + '</td></tr>')
+                            wordsBody.append('<tr><td class="ds-text-right">' + word + '</td><td>' + value + '</td></tr>')
                         }
                     } else {
                         wordsBody.append('<tr><td colspan="2">Aucun mots-clef</td></tr>')
@@ -415,17 +385,17 @@
                     // Display a track form and hide all the others
                     $('.displayForm').click(function () {
                         const track = $(this).closest('tr');
-                        $('.track').removeClass('hidden');
-                        track.addClass('hidden');
-                        $('.trackForm').addClass('hidden');
-                        track.next().removeClass('hidden')
+                        $('.track').removeClass('ds-hidden');
+                        track.addClass('ds-hidden');
+                        $('.trackForm').addClass('ds-hidden');
+                        track.next().removeClass('ds-hidden')
                     });
 
                     // Hide a track form
                     $('.cancelBtn').click(function () {
                         const trackForm = $(this).closest('tr');
-                        trackForm.addClass('hidden');
-                        trackForm.prev().removeClass('hidden');
+                        trackForm.addClass('ds-hidden');
+                        trackForm.prev().removeClass('ds-hidden');
                     });
 
                     // Submit a track edit form in AJAX
@@ -444,7 +414,7 @@
                             })
                             .fail(err => {
                                 $.each(err.responseJSON, (name, error) => {
-                                    $(this).find('input[name=' + name + ']').parent().addClass('has-error').append('<div class="errorlist">' + error + '</div>')
+                                    $(this).find('input[name=' + name + ']').parent().append('<div class="errorlist">' + error + '</div>')
                                 })
                             })
                     });
@@ -454,7 +424,7 @@
                         const track = $(this).closest('tr');
                         $('#deleteTrackBtn').data('trackId', track.attr('id')).data('url', $(this).data('targetUrl'));
                         $('#toDeleteTrackDate').text(track.find('td.date').text());
-                        $("#modalConfirmDelete").modal();
+                        document.getElementById('modalConfirmDelete').showModal();
                     });
                 })
                 .fail((xhr, textStatus, errorThrown) => {

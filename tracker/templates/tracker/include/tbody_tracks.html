@@ -12,10 +12,10 @@
         </td>
         {% if not compare %}
             <td>
-                <button type="button" class="btn btn-default displayForm">
+                <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm displayForm">
                     <i class="fa fa-edit" title="Editer ce track"></i>
                 </button>
-                <button type="button" class="btn btn-warning modalConfirmDelete"
+                <button type="button" class="ds-btn ds-btn--warning ds-btn--sm modalConfirmDelete"
                         data-target-url="{% url 'tracker:delete-track' track.id %}">
                     <i class="fa fa-trash" title="Supprimer ce track"></i>
                 </button>
@@ -23,37 +23,29 @@
         {% endif %}
     </tr>
     {% if not compare %}
-        <tr class="trackForm hidden">
+        <tr class="trackForm ds-hidden">
             <td colspan="99">
-                <form class="form" action="{% url 'tracker:update-track' track.id %}">
+                <form class="form ds-cluster" action="{% url 'tracker:update-track' track.id %}">
                     {% csrf_token %}
-                    <div class="col-xs-4">
-                        <input type="datetime-local" name="datetime"
-                               value="{{ track.datetime|date:"Y-m-d" }}T{{ track.datetime|time:"H:i" }}"
-                               class="form-control" required>
-                    </div>
+                    <input type="datetime-local" name="datetime"
+                           value="{{ track.datetime|date:"Y-m-d" }}T{{ track.datetime|time:"H:i" }}"
+                           required style="width: auto">
                     {% if show_valeur %}
-                        <div class="col-xs-2">
-                            {{ track.form.valeur }}
-                        </div>
+                        {{ track.form.valeur }}
                     {% endif %}
-                    <div class="col-xs-{% if show_valeur %}3{% else %}5{% endif %}">
-                        {{ track.form.commentaire }}
-                    </div>
-                    <div class="col-xs-2">
-                        <button type="submit" class="btn btn-primary validateBtn">
-                            <i class="fa fa-check"></i>
-                        </button>
-                        <button type="button" class="btn btn-default cancelBtn">
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+                    {{ track.form.commentaire }}
+                    <button type="submit" class="ds-btn ds-btn--sm validateBtn">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm cancelBtn">
+                        <i class="fa fa-times"></i>
+                    </button>
                 </form>
             </td>
         </tr>
     {% endif %}
 {% empty %}
     <tr>
-    <td colspan="99" class="text-center text-danger">Aucun track pour la période donnée. </td>
+    <td colspan="99" class="ds-text-center ds-text-danger">Aucun track pour la période donnée. </td>
     </tr>
 {% endfor %}

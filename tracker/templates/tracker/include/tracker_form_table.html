@@ -1,14 +1,14 @@
 <form method="post">
     {% csrf_token %}
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
+    <div class="ds-table-wrap">
+        <table class="ds-table ds-table--striped ds-table--bordered">
             {{ form.as_table }}
         </table>
     </div>
-    <div class="text-center">
-        <button type="submit" class="btn btn-primary">Valider</button>
+    <div class="ds-cluster ds-cluster--center">
+        <button type="submit" class="ds-btn">Valider</button>
         {% if object %}
-            <a class="btn btn-default" href="{{ object.get_absolute_url }}">Annuler</a>
+            <a class="ds-btn ds-btn--ghost" href="{{ object.get_absolute_url }}">Annuler</a>
         {% endif %}
     </div>
 </form>

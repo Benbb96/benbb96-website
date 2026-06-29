@@ -70,8 +70,8 @@ const update_track_graph = (frequency = 'D') => {
     $.post(trackerDataUrl, {id: trackerIds, frequency, start, end})
         .done(response => {
             if (response.labels.length > 0) {
-                $('div#noTracks').addClass('hidden')
-                $('div#track_graph').removeClass('hidden')
+                $('div#noTracks').addClass('ds-hidden')
+                $('div#track_graph').removeClass('ds-hidden')
 
                 const chartDatasets = []
                 response.datasets.forEach(dataset => {
@@ -126,11 +126,11 @@ const update_track_graph = (frequency = 'D') => {
                         $('span#valMax').text(avg.max)
                     }
                 }
-                $('.btn-frequency').removeClass('btn-primary')
-                $('.btn-frequency[data-frequency=' + frequency + ']').addClass('btn-primary')
+                $('.btn-frequency').removeClass('is-active')
+                $('.btn-frequency[data-frequency=' + frequency + ']').addClass('is-active')
             } else {
-                $('div#track_graph').addClass('hidden')
-                $('div#noTracks').removeClass('hidden')
+                $('div#track_graph').addClass('ds-hidden')
+                $('div#noTracks').removeClass('ds-hidden')
             }
         })
         .fail((xhr, textStatus, errorThrown) => {
@@ -143,3 +143,27 @@ $(() => {
         update_track_graph($(this).data('frequency'))
     })
 })
+
+// Onglets maison (.ds-tabs) — bascule vanilla des panneaux .ds-tab-panel.
+// Remplace le comportement data-toggle="tab" de Bootstrap.
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.ds-tabs[data-tabs]').forEach(function (tabs) {
+        const items = tabs.querySelectorAll('.ds-tabs__item');
+        items.forEach(function (item) {
+            const link = item.querySelector('a[href^="#"]');
+            if (!link) return;
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const targetId = link.getAttribute('href').slice(1);
+                items.forEach(i => i.classList.remove('is-active'));
+                item.classList.add('is-active');
+                const target = document.getElementById(targetId);
+                if (target) {
+                    const group = target.parentElement;
+                    group.querySelectorAll(':scope > .ds-tab-panel').forEach(p => p.classList.remove('is-active'));
+                    target.classList.add('is-active');
+                }
+            });
+        });
+    });
+});

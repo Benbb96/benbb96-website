@@ -961,3 +961,47 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 
 .ds-text-danger { color: var(--ds-danger); }
 .ds-text-right { text-align: right; }
+.ds-hidden { display: none !important; }
+
+/* Bouton ghost « actif » (sélecteur de fréquence du tracker) */
+.ds-btn--ghost.is-active {
+    --_fg: #fff;
+    background: var(--ds-primary);
+    border-color: var(--ds-primary);
+}
+.ds-btn--ghost.is-active:hover { color: #fff; background: var(--ds-primary-dark); }
+
+/* Onglets — panneaux associés à .ds-tabs (bascule via JS : classe is-active) */
+.ds-tab-panel { display: none; }
+.ds-tab-panel.is-active { display: block; }
+
+/* Modale native <dialog> — remplace .modal Bootstrap */
+.ds-modal {
+    width: min(92vw, 520px);
+    padding: 0;
+    border: 0;
+    border-radius: var(--ds-radius-lg);
+    box-shadow: var(--ds-shadow-lg);
+    color: var(--ds-text);
+}
+.ds-modal::backdrop { background: rgba(15, 23, 42, 0.5); }
+.ds-modal__header,
+.ds-modal__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-3);
+    padding: var(--ds-space-4) var(--ds-space-5);
+}
+.ds-modal__header { border-bottom: 1px solid var(--ds-border); justify-content: space-between; }
+.ds-modal__footer { border-top: 1px solid var(--ds-border); justify-content: flex-end; }
+.ds-modal__title { margin: 0; }
+.ds-modal__body { padding: var(--ds-space-5); }
+.ds-modal__close {
+    border: 0;
+    background: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--ds-text-muted);
+}
+.ds-modal__close:hover { color: var(--ds-text); }
