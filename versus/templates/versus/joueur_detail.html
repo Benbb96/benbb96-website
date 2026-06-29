@@ -5,46 +5,46 @@
 {% block jumbotron_title %}Joueurs{% endblock %}
 
 {% block content %}
-    <div class="col-sm-4 col-xs-12">
-        <div class="panel panel-success">
-            <div class="panel-heading text-center">
+    <div class="ds-grid ds-grid--sidebar">
+        <div class="ds-card">
+            <div class="ds-card__header ds-card__header--success ds-text-center">
                 <h1>{{ joueur.nom }}</h1>
                 {% if joueur.profil %}
                     <h4>Profil : <a href="{{ joueur.profil.get_absolute_url }}">{{ joueur.profil }}</a></h4>
                 {% endif %}
             </div>
-            <div class="panel-body">
+            <div class="ds-card__body">
                 <p>Créé le {{ joueur.date_creation|date }} à {{ joueur.date_creation|time }}</p>
                 {% if joueur.partiejoueur_set.exists %}
                     <h4>Statistiques :</h4>
-                    <div class="well">
+                    <div class="ds-well">
                         <p>Nombre de parties jouées : <b>{{ joueur.partiejoueur_set.count }}</b></p>
                         <p>Nombre de victoire : <b>{{ joueur.nb_victoire }}</b></p>
                         <p>Ratio : <b>{{ joueur.ratio }}%</b></p>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped active progress-bar-{% if joueur.ratio >= 60 %}success{% elif joueur.ratio >= 40 %}warning{% else %}danger{% endif %}"
+                        <div class="ds-progress">
+                            <div class="ds-progress__bar ds-progress__bar--{% if joueur.ratio >= 60 %}success{% elif joueur.ratio >= 40 %}warning{% else %}danger{% endif %}"
                                  style="width: {{ joueur.ratio }}%"></div>
                         </div>
                     </div>
                 {% endif %}
                 {% if request.user.is_staff %}
-                    <div class="text-center">
-                        <a class="btn btn-default" href="{% url 'admin:versus_joueur_change' joueur.id %}">
+                    <div class="ds-text-center">
+                        <a class="ds-btn ds-btn--ghost" href="{% url 'admin:versus_joueur_change' joueur.id %}">
                             Editer le joueur
                         </a>
                     </div>
                 {% endif %}
             </div>
         </div>
-    </div>
-    <div class="col-sm-8 col-xs-12">
-        <h2>Dernières parties jouées</h2>
-        {% for partie in joueur.partie_set.all %}
-            <h3>
-                <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a> -
-                <small>{{ partie.date|date:'l j F Y, H:i' }}</small>
-            </h3>
-            {% include 'versus/partie_table.html' %}
-        {% endfor %}
+        <div>
+            <h2>Dernières parties jouées</h2>
+            {% for partie in joueur.partie_set.all %}
+                <h3>
+                    <a href="{{ partie.jeu.get_absolute_url }}">{{ partie.jeu }}</a> -
+                    <small>{{ partie.date|date:'l j F Y, H:i' }}</small>
+                </h3>
+                {% include 'versus/partie_table.html' %}
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

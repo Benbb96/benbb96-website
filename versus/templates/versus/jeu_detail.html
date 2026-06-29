@@ -1,27 +1,25 @@
 {% extends 'versus/base_jeu.html' %}
 
 {% block jeu_content %}
-    <h2>
-        Dernières parties jouées
+    <div class="ds-cluster" style="justify-content: space-between">
+        <h2 class="ds-mb-0">Dernières parties jouées</h2>
         {% if perms.versus.add_partie %}
-            <div class="pull-right">
-                <a class="btn btn-default" href="{% url 'versus:ajout-partie' jeu.slug %}">
-                    <i class="fa fa-plus"></i>
-                    Nouvelle partie
-                </a>
-            </div>
+            <a class="ds-btn ds-btn--ghost" href="{% url 'versus:ajout-partie' jeu.slug %}">
+                <i class="fa fa-plus"></i>
+                Nouvelle partie
+            </a>
         {% endif %}
-    </h2>
+    </div>
     {% for partie in jeu.parties.all %}
-        <h3>
-            {{ partie.date|date:'l j F Y, H:i'|capfirst }}
+        <h3 class="ds-cluster">
+            <span>{{ partie.date|date:'l j F Y, H:i'|capfirst }}</span>
             {% if perms.versus.change_partie %}
-                <a class="btn btn-default" href="{% url 'versus:edition-partie' jeu.slug partie.id %}">
+                <a class="ds-btn ds-btn--ghost ds-btn--sm" href="{% url 'versus:edition-partie' jeu.slug partie.id %}">
                     <i class="fa fa-edit"></i>
                 </a>
             {% endif %}
             {% if perms.versus.delete_partie %}
-                <a class="btn btn-danger" href="{% url 'versus:suppression-partie' jeu.slug partie.id %}">
+                <a class="ds-btn ds-btn--danger ds-btn--sm" href="{% url 'versus:suppression-partie' jeu.slug partie.id %}">
                     <i class="fa fa-trash"></i>
                 </a>
             {% endif %}

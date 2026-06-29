@@ -1,18 +1,16 @@
 {% load static %}
 
-<div class="thumbnail card">
-    <a href="{{ avis.get_absolute_url }}">
-        <img src="{% if avis.photo %}{{ avis.photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit }}" alt="Photo du produit {{ avis.produit }} prise par {{ avis.auteur }}" style="max-height: 70%"/>
+<div class="ds-card ds-card--hover">
+    <a class="ds-card__media" href="{{ avis.get_absolute_url }}">
+        <img src="{% if avis.photo %}{{ avis.photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit }}" alt="Photo du produit {{ avis.produit }} prise par {{ avis.auteur }}"/>
     </a>
-    <div class="text-center">
-        <a href="{{ avis.auteur.get_absolute_url }}">{{ avis.auteur }}</a>, le {{ avis.date_edition|date:"l d N Y" }}
-    </div>
-    <div class="caption">
+    <div class="ds-card__body ds-text-center">
+        <div class="ds-text-muted">
+            <a href="{{ avis.auteur.get_absolute_url }}">{{ avis.auteur }}</a>, le {{ avis.date_edition|date:"l d N Y" }}
+        </div>
         <h4>
             <a href="{{ avis.get_absolute_url }}">{{ avis.produit.nom }} - {{ avis.produit.structure.nom }}</a>
         </h4>
-    </div>
-    <div class="note">
-        {{ avis.note }}/10
+        <div class="ds-badge ds-badge--primary">{{ avis.note }}/10</div>
     </div>
 </div>

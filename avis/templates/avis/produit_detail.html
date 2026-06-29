@@ -5,13 +5,13 @@
 {% block avis_title %}Produit {{ object.nom }}{% endblock %}
 
 {% block avis_content %}
-     <ul class="breadcrumb">
+     <ul class="ds-breadcrumb">
         <li><a href="{{ object.structure.get_absolute_url }}">{{ object.structure }}</a></li>
         <li>{{ object.nom }}</li>
     </ul>
 
-    <div class="row">
-        <div class="col-md-4 col-xs-12">
+    <div class="ds-grid ds-grid--sidebar">
+        <div>
             <h1>{{ object.nom }}</h1>
             <h3>Créé le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
             {% if object.description %}
@@ -26,53 +26,38 @@
             {% if object.categories.exists %}
                 {% for categorie in object.categories.all %}
                     <a href="{{ categorie.get_absolute_url }}">
-                        <span class="label label-primary">{{ categorie }}</span>
+                        <span class="ds-badge ds-badge--primary">{{ categorie }}</span>
                     </a>
                 {% endfor %}
             {% endif %}
         </div>
-        <div class="col-md-8 col-xs-12">
+        <div>
             <h2>Les avis</h2>
             {% if object.avis_set.exists %}
-            <div id="myCarousel" class="carousel slide" data-ride="carousel" style="width: 100%; margin: auto">
-                <!-- Indicators -->
-                {% if object.avis_set.count > 1 %}
-                <ol class="carousel-indicators">
-                    {% for avis in object.avis_set.all %}
-                    <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active"{% endif %}></li>
-                    {% endfor %}
-                </ol>
-                {% endif %}
-
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner">
-
+            <div class="ds-carousel" style="max-width: 100%">
+                <div class="ds-carousel__track">
                     {% for avis in object.avis_set.all %}
                         {% if request.user.is_authenticated or not avis.prive %}
-                            <div class="item{% if forloop.first %} active{% endif %}">
+                            <div class="ds-carousel__slide" id="avis-slide-{{ forloop.counter }}">
                                 <a href="{{ avis.get_absolute_url }}">
-                                    <img src="{% if avis.photo %}{{ avis.photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit.nom }}" alt="Photo du produit {{ avis.produit.nom }} prise par {{ avis.auteur }}" style="width: auto; height: 225px; max-height: 225px; margin: auto">
+                                    <img src="{% if avis.photo %}{{ avis.photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit.nom }}" alt="Photo du produit {{ avis.produit.nom }} prise par {{ avis.auteur }}" style="height: 225px; object-fit: contain; background: var(--ds-surface-alt)">
                                 </a>
-                                <div class="carousel-caption">
+                                <div class="ds-carousel__caption">
                                     <h3><a href="{{ avis.get_absolute_url }}">{{ avis.auteur }} - {{ avis.note }}/10</a></h3>
                                     <p>{{ avis.date_creation|date:"d/m/y" }}. {{ avis.apercu_avis }}</p>
                                 </div>
                             </div>
                         {% endif %}
                     {% endfor %}
-
                 </div>
-
                 {% if object.avis_set.count > 1 %}
-                <!-- Left and right controls -->
-                <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-                    <span class="glyphicon glyphicon-chevron-left"></span>
-                    <span class="sr-only">Précédent</span>
-                </a>
-                <a class="right carousel-control" href="#myCarousel" data-slide="next">
-                    <span class="glyphicon glyphicon-chevron-right"></span>
-                    <span class="sr-only">Suivant</span>
-                </a>
+                <ul class="ds-carousel__dots">
+                    {% for avis in object.avis_set.all %}
+                        {% if request.user.is_authenticated or not avis.prive %}
+                            <li><a href="#avis-slide-{{ forloop.counter }}" aria-label="Avis {{ forloop.counter }}"></a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
                 {% endif %}
             </div>
             {% else %}

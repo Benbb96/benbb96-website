@@ -811,3 +811,108 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
     transition: background var(--ds-transition);
 }
 .ds-carousel__dots a:hover { background: var(--ds-primary); }
+
+/* Fil d'ariane — remplace .breadcrumb */
+.ds-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-space-2);
+    list-style: none;
+    padding: var(--ds-space-2) var(--ds-space-3);
+    margin: 0 0 var(--ds-space-4);
+    background: var(--ds-surface-alt);
+    border-radius: var(--ds-radius);
+    font-size: var(--ds-fs-sm);
+}
+.ds-breadcrumb li { display: inline-flex; align-items: center; gap: var(--ds-space-2); }
+.ds-breadcrumb li + li::before { content: "/"; color: var(--ds-text-muted); }
+
+/* Tables — remplace .table / .table-striped / .table-hover / .table-bordered */
+.ds-table-wrap { overflow-x: auto; margin-bottom: var(--ds-space-4); }
+.ds-table { width: 100%; border-collapse: collapse; }
+.ds-table th,
+.ds-table td {
+    padding: var(--ds-space-2) var(--ds-space-3);
+    border-bottom: 1px solid var(--ds-border);
+    text-align: left;
+}
+.ds-table thead th { border-bottom: 2px solid var(--ds-border-strong); color: var(--ds-secondary); }
+.ds-table--striped tbody tr:nth-child(odd) { background: var(--ds-surface-alt); }
+.ds-table--hover tbody tr:hover { background: var(--ds-primary-light); }
+.ds-table--bordered th,
+.ds-table--bordered td { border: 1px solid var(--ds-border); }
+.ds-table .is-winner { background: var(--ds-primary-light); font-weight: 600; }
+
+/* Barre de progression — remplace .progress / .progress-bar */
+.ds-progress {
+    height: 1.25rem;
+    background: var(--ds-surface-alt);
+    border-radius: var(--ds-radius-pill);
+    overflow: hidden;
+}
+.ds-progress__bar {
+    --_c: var(--ds-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-width: 2ch;
+    background: var(--_c);
+    color: #fff;
+    font-size: var(--ds-fs-sm);
+    font-weight: 600;
+    white-space: nowrap;
+}
+.ds-progress__bar--success { --_c: var(--ds-success); }
+.ds-progress__bar--info    { --_c: var(--ds-info); }
+.ds-progress__bar--warning { --_c: var(--ds-warning); }
+.ds-progress__bar--danger  { --_c: var(--ds-danger); }
+
+/* Variante info des badges (complète primary/success/warning/danger) */
+.ds-badge--info { background: #e0f2fe; color: #075985; }
+
+/* En-tête de card — remplace .panel-heading (+ contextes panel-*) */
+.ds-card__header {
+    padding: var(--ds-space-3) var(--ds-space-5);
+    border-bottom: 1px solid var(--ds-border);
+    background: var(--ds-surface-alt);
+}
+.ds-card__header > :last-child { margin-bottom: 0; }
+.ds-card__header--primary { background: var(--ds-primary); border-color: var(--ds-primary); }
+.ds-card__header--success { background: var(--ds-success); border-color: var(--ds-success); }
+.ds-card__header--primary,
+.ds-card__header--success { color: #fff; }
+.ds-card__header--primary :is(h1, h2, h3, h4, a),
+.ds-card__header--success :is(h1, h2, h3, h4, a) { color: #fff; }
+
+/* Score coloré — remplace panel panel-{{ note|color }} (affichage de note) */
+.ds-score {
+    --_c: var(--ds-info);
+    display: inline-block;
+    padding: var(--ds-space-3) var(--ds-space-5);
+    border: 1px solid var(--_c);
+    border-top: 4px solid var(--_c);
+    border-radius: var(--ds-radius);
+    text-align: center;
+    background: var(--ds-surface);
+}
+.ds-score--success { --_c: var(--ds-success); }
+.ds-score--info    { --_c: var(--ds-info); }
+.ds-score--warning { --_c: var(--ds-warning); }
+.ds-score--danger  { --_c: var(--ds-danger); }
+
+/* Variantes colorées + état actif des list-group */
+.ds-list-group__item.is-active { background: var(--ds-primary); color: #fff; }
+a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
+.ds-list-group__item--success { border-left: 4px solid var(--ds-success); }
+.ds-list-group__item--info    { border-left: 4px solid var(--ds-info); }
+.ds-list-group__item--warning { border-left: 4px solid var(--ds-warning); }
+.ds-list-group__item--danger  { border-left: 4px solid var(--ds-danger); }
+
+/* Formulaire en ligne — remplace .form-inline (barres de filtre) */
+.ds-form-inline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--ds-space-3); }
+.ds-form-inline .ds-form__group { margin-bottom: 0; }
+
+.ds-text-danger { color: var(--ds-danger); }
+.ds-text-right { text-align: right; }

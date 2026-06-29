@@ -1,6 +1,6 @@
 {% extends 'avis/base_avis.html' %}
 
-{% load custom_tags bootstrap3 %}
+{% load custom_tags %}
 
 {% block avis_title %}Produits{% endblock %}
 
@@ -8,25 +8,25 @@
     <h1>Produits</h1>
     <hr/>
     <div class="filter-bar">
-        <form class="form-inline" method="get">
-            {% bootstrap_form filter.form %}
-            {% buttons submit='Filtrer <i class="fa fa-filter"></i>' %}{% endbuttons %}
+        <form class="ds-form-inline" method="get">
+            {% include 'components/form.html' with form=filter.form %}
+            <button type="submit" class="ds-btn">Filtrer <i class="fa fa-filter"></i></button>
         </form>
     </div>
     <hr/>
     {% include 'components/pagination.html' %}
-    <div class="row">
-        <div class="list-group col-md-8 col-md-offset-2">
+    <div class="ds-narrow ds-narrow--lg">
+        <div class="ds-list-group">
             {% for produit in produits %}
-                <a class="list-group-item{% if produit.moyenne %} list-group-item-{{ produit.moyenne|color }}{% endif %}"
+                <a class="ds-list-group__item{% if produit.moyenne %} ds-list-group__item--{{ produit.moyenne|color }}{% endif %} ds-cluster" style="justify-content: space-between"
                    href="{{ produit.get_absolute_url }}">
-                    {{ produit.nom }} - {{ produit.prix }}€
+                    <span>{{ produit.nom }} - {{ produit.prix }}€</span>
                     {% if produit.moyenne %}
-                        <span class="badge">{{ produit.moyenne|floatformat }}/10</span>
+                        <span class="ds-badge ds-badge--primary">{{ produit.moyenne|floatformat }}/10</span>
                     {% endif %}
                 </a>
             {% empty %}
-                <li>Pas de produit enregistré.</li>
+                <div class="ds-list-group__item">Pas de produit enregistré.</div>
             {% endfor %}
         </div>
     </div>

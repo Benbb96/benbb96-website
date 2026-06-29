@@ -6,8 +6,8 @@
 
 {% block avis_content %}
     <h1>{{ object.nom }}</h1>
-    <div class="row">
-        <div class="col-sm-6 col-xs-12">
+    <div class="ds-grid ds-grid--2">
+        <div>
             <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
             <div>
                 {% if object.informations %}
@@ -23,7 +23,7 @@
             </div>
         </div>
         {% if object.adresse %}
-            <div class="col-sm-6 col-xs-12">
+            <div>
                 <div id="map" style="height: 200px"></div>
             </div>
         {% endif %}
