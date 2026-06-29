@@ -1,26 +1,30 @@
 from django import forms
-from django_select2.forms import ModelSelect2Widget, ModelSelect2MultipleWidget
+from django.urls import reverse_lazy
 
-from music.models import Lien, LienPlaylist, Musique, Artiste, Style, Playlist
+from base.widgets import (
+    TomSelectMultipleWidget, TomSelectRemoteMultipleWidget, TomSelectRemoteWidget,
+)
+from music.models import Lien, LienPlaylist, Musique
 
 
 class MusiqueForm(forms.ModelForm):
     class Meta:
         model = Musique
         fields = ('titre', 'artiste', 'featuring', 'remixed_by', 'styles', 'album', 'label', 'playlists')
+        # Artistes (~1600) : chargement distant via l'endpoint JSON music:artiste-search.
+        # Styles / playlists : petits jeux rendus côté serveur, filtrage client.
         widgets = {
-            'artiste': ModelSelect2Widget(queryset=Artiste.objects.all(), search_fields=['nom_artiste__icontains']),
-            'featuring': ModelSelect2MultipleWidget(
-                queryset=Artiste.objects.all(), search_fields=['nom_artiste__icontains']
+            'artiste': TomSelectRemoteWidget(
+                search_url=reverse_lazy('music:artiste-search'), placeholder='Artiste'
             ),
-            'remixed_by': ModelSelect2Widget(queryset=Artiste.objects.all(), search_fields=['nom_artiste__icontains']),
-            'styles': ModelSelect2MultipleWidget(
-                queryset=Style.objects.all(), search_fields=['nom__startswith']
+            'featuring': TomSelectRemoteMultipleWidget(
+                search_url=reverse_lazy('music:artiste-search'), placeholder='Featuring'
             ),
-            'playlists': ModelSelect2MultipleWidget(
-                queryset=Playlist.objects.all(), search_fields=['nom__icontains'],
-                attrs={'data-minimum-input-length': 0}
+            'remixed_by': TomSelectRemoteWidget(
+                search_url=reverse_lazy('music:artiste-search'), placeholder='Remixé par'
             ),
+            'styles': TomSelectMultipleWidget(placeholder='Styles'),
+            'playlists': TomSelectMultipleWidget(placeholder='Playlists'),
         }
 
 

@@ -1,24 +1,24 @@
 <script type="text/javascript">
-    $(() => {
-        $('#id_url').on('input', function() {
-            const val = $(this).val();
-            const select = $('select#id_plateforme');
-            const plateformes = {
-                {% for plateforme in plateformes %}
-                    {{ plateforme.id }}: '{{ plateforme.nom|lower }}',
-                {% endfor %}
-            }
-            let selected = false;
-            for (const [key, value] of Object.entries((plateformes))) {
-                if (val.indexOf(value) >= 0) {
-                    select.val(key);
+    (function () {
+        var urlInput = document.getElementById('id_url');
+        var select = document.getElementById('id_plateforme');
+        if (!urlInput || !select) return;
+        var plateformes = {
+            {% for plateforme in plateformes %}
+                {{ plateforme.id }}: '{{ plateforme.nom|lower }}',
+            {% endfor %}
+        };
+        urlInput.addEventListener('input', function () {
+            var val = urlInput.value;
+            var selected = false;
+            for (var key in plateformes) {
+                if (val.indexOf(plateformes[key]) >= 0) {
+                    select.value = key;
                     selected = true;
-                    break
+                    break;
                 }
             }
-            if (!selected) {
-                select.val('')
-            }
-        })
-    })
+            if (!selected) select.value = '';
+        });
+    })();
 </script>

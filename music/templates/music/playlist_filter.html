@@ -6,7 +6,12 @@
 
 {% block stylesheet %}
     {{ filter.form.media.css }}
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+    <style>
+        .ds-sortable th[data-sort] { cursor: pointer; user-select: none; white-space: nowrap; }
+        .ds-sortable th[data-sort]::after { content: '\2195'; opacity: .35; margin-left: .35em; font-size: .85em; }
+        .ds-sortable th[aria-sort="ascending"]::after { content: '\2191'; opacity: 1; }
+        .ds-sortable th[aria-sort="descending"]::after { content: '\2193'; opacity: 1; }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -19,15 +24,17 @@
                 {{ filter.form.styles.errors }}
             </form>
         </div>
+        <input type="search" id="search_playlists" class="ds-mt-3" placeholder="{% trans 'Search' %}…"
+               style="max-width: 320px">
         <div class="ds-table-wrap">
-            <table id="table_playlists" class="ds-table ds-table--striped">
+            <table id="table_playlists" class="ds-table ds-table--striped ds-sortable">
                 <thead>
                 <tr>
-                    <th>{% trans "Name" %}</th>
-                    <th>{% trans "Creator" %}</th>
-                    <th>{% blocktrans %}Creation date{% endblocktrans %}</th>
-                    <th data-type="num">{% blocktrans %}Number of musics{% endblocktrans %}</th>
-                    <th data-type="num">{% blocktrans %}Number of views{% endblocktrans %}</th>
+                    <th data-sort="text">{% trans "Name" %}</th>
+                    <th data-sort="text">{% trans "Creator" %}</th>
+                    <th data-sort="num">{% blocktrans %}Creation date{% endblocktrans %}</th>
+                    <th data-sort="num">{% blocktrans %}Number of musics{% endblocktrans %}</th>
+                    <th data-sort="num">{% blocktrans %}Number of views{% endblocktrans %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -70,18 +77,48 @@
 
 {% block javascript %}
     {{ filter.form.media.js }}
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
     <script>
-        $(() => {
-            $('#table_playlists').DataTable({
-                paging: true,
-                {% get_current_language as LANGUAGE_CODE %}
-                {% if LANGUAGE_CODE == 'fr' %}
-                language: {
-                    url: 'https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/fr_fr.json'
-                }
-                {% endif %}
+        // Tri + recherche client (remplace DataTables/jQuery), petit jeu de données.
+        (function () {
+            const table = document.getElementById('table_playlists');
+            if (!table) return;
+            const tbody = table.tBodies[0];
+            const headers = table.tHead.rows[0].cells;
+
+            function cellValue(row, idx, type) {
+                const cell = row.cells[idx];
+                const raw = cell.hasAttribute('data-order') ? cell.getAttribute('data-order') : cell.textContent.trim();
+                return type === 'num' ? parseFloat(raw) || 0 : raw.toLowerCase();
+            }
+
+            Array.from(headers).forEach(function (th, idx) {
+                const type = th.getAttribute('data-sort');
+                if (!type) return;
+                th.addEventListener('click', function () {
+                    const asc = th.getAttribute('aria-sort') !== 'ascending';
+                    Array.from(headers).forEach(h => h.removeAttribute('aria-sort'));
+                    th.setAttribute('aria-sort', asc ? 'ascending' : 'descending');
+                    const rows = Array.from(tbody.rows).filter(r => r.cells.length === headers.length);
+                    rows.sort(function (a, b) {
+                        const va = cellValue(a, idx, type), vb = cellValue(b, idx, type);
+                        if (va < vb) return asc ? -1 : 1;
+                        if (va > vb) return asc ? 1 : -1;
+                        return 0;
+                    });
+                    rows.forEach(r => tbody.appendChild(r));
+                });
             });
-        } );
+
+            const search = document.getElementById('search_playlists');
+            if (search) {
+                search.addEventListener('input', function () {
+                    const q = search.value.trim().toLowerCase();
+                    Array.from(tbody.rows).forEach(function (row) {
+                        if (row.cells.length !== headers.length) return;
+                        row.style.display = row.textContent.toLowerCase().indexOf(q) >= 0 ? '' : 'none';
+                    });
+                });
+            }
+        })();
     </script>
 {% endblock %}
