@@ -1,7 +1,5 @@
 {% extends 'super_moite_moite/base_super_moite_moite.html' %}
 
-{% load bootstrap3 %}
-
 {% block super_moite_moite_title %}Logements{% endblock %}
 
 {% block stylesheet %}
@@ -9,61 +7,57 @@
 {% endblock %}
 
 {% block content %}
-     <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
-            <h2>Mes logements</h2>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Participants</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for logement in logements %}
-                            {% with habitants=logement.habitants.all %}
-                                <tr>
-                                    <td>
-                                        <a href="{{ logement.get_absolute_url }}">
-                                            {{ logement }}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        {% for habitant in habitants %}{{ habitant }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                                    </td>
-                                    <td class="text-center">
-                                        <a class="btn btn-default btn-sm" href="{% url 'super-moite-moite:edition-logement' logement.slug %}"
-                                           title="Editer les informations du logement">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                        <a class="btn btn-info btn-sm" href="{% url 'super-moite-moite:dupliquer-logement' logement.slug %}"
-                                           title="Permet de copier toutes les catégories et les tâches dans un nouveau logement avec les mêmes participants et les mêmes points par défaut">
-                                            <i class="fa fa-copy"></i>
-                                        </a>
-                                        <a class="btn btn-danger btn-sm" href="{% url 'super-moite-moite:suppression-logement' logement.slug %}"
-                                           title="Suppression du logement">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-
-
-                            {% endwith %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <h2>Nouveau logement :</h2>
-            <form method="post">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <div class="text-center">
-                    {% bootstrap_button "Valider" button_type="submit" button_class="btn-primary" %}
-                </div>
-            </form>
+     <div class="ds-narrow ds-narrow--lg">
+        <h2>Mes logements</h2>
+        <div class="ds-table-wrap">
+            <table class="ds-table ds-table--striped">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Participants</th>
+                        <th class="ds-text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for logement in logements %}
+                        {% with habitants=logement.habitants.all %}
+                            <tr>
+                                <td>
+                                    <a href="{{ logement.get_absolute_url }}">
+                                        {{ logement }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% for habitant in habitants %}{{ habitant }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                </td>
+                                <td class="ds-text-center">
+                                    <a class="ds-btn ds-btn--ghost ds-btn--sm" href="{% url 'super-moite-moite:edition-logement' logement.slug %}"
+                                       title="Editer les informations du logement">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a class="ds-btn ds-btn--ghost ds-btn--sm" href="{% url 'super-moite-moite:dupliquer-logement' logement.slug %}"
+                                       title="Permet de copier toutes les catégories et les tâches dans un nouveau logement avec les mêmes participants et les mêmes points par défaut">
+                                        <i class="fa fa-copy"></i>
+                                    </a>
+                                    <a class="ds-btn ds-btn--danger ds-btn--sm" href="{% url 'super-moite-moite:suppression-logement' logement.slug %}"
+                                       title="Suppression du logement">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endwith %}
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+        <h2>Nouveau logement :</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% include 'components/form.html' %}
+            <div class="ds-cluster ds-cluster--center ds-mt-4">
+                <button type="submit" class="ds-btn">Valider</button>
+            </div>
+        </form>
      </div>
 {% endblock %}
 

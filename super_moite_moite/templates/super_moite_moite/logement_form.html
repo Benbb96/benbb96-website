@@ -1,7 +1,5 @@
 {% extends 'super_moite_moite/base_super_moite_moite.html' %}
 
-{% load bootstrap3 %}
-
 {% block super_moite_moite_title %}Edition {{ logement }}{% endblock %}
 
 {% block jumbotron_title %}Edition du logement <br>{{ logement }}{% endblock %}
@@ -12,19 +10,16 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
-            <form method="post">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <div class="text-center">
-                    {% url 'super-moite-moite:suppression-logement' logement.slug as delete_url %}
-                    {% bootstrap_button "Supprimer" button_type="link" button_class="btn-danger" href=delete_url %}
-                    {% bootstrap_button "Annuler" button_type="link" button_class="btn-default" href=logement.get_absolute_url %}
-                    {% bootstrap_button "Valider" button_type="submit" button_class="btn-primary" %}
-                </div>
-            </form>
-        </div>
+    <div class="ds-narrow ds-narrow--lg">
+        <form method="post">
+            {% csrf_token %}
+            {% include 'components/form.html' %}
+            <div class="ds-cluster ds-cluster--center ds-mt-4">
+                <a class="ds-btn ds-btn--danger" href="{% url 'super-moite-moite:suppression-logement' logement.slug %}">Supprimer</a>
+                <a class="ds-btn ds-btn--ghost" href="{{ logement.get_absolute_url }}">Annuler</a>
+                <button type="submit" class="ds-btn">Valider</button>
+            </div>
+        </form>
     </div>
 {% endblock %}
 
