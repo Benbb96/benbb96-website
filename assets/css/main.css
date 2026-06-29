@@ -1005,3 +1005,54 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
     color: var(--ds-text-muted);
 }
 .ds-modal__close:hover { color: var(--ds-text); }
+
+/* 17. ───────────────────── TOM SELECT (selects searchable) ─────────────────
+   Surcharge légère de tom-select.css pour s'aligner sur le design system.
+   Remplace select2 (jQuery). Voir base/widgets.py + assets/js/tomselect-init.js. */
+.ts-wrapper.js-tomselect { display: block; width: 100%; }
+.ts-control {
+    min-height: calc(var(--ds-space-2) * 2 + 1.6em + 2px);
+    padding: calc(var(--ds-space-2) - 1px) var(--ds-space-3);
+    color: var(--ds-text);
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-radius);
+    box-shadow: none;
+    transition: border-color var(--ds-transition), box-shadow var(--ds-transition);
+}
+.ts-wrapper.focus .ts-control,
+.ts-control:focus-within {
+    border-color: var(--ds-primary);
+    box-shadow: 0 0 0 3px var(--ds-primary-light);
+}
+.ts-wrapper.single .ts-control,
+.ts-wrapper.single .ts-control input { cursor: pointer; }
+.ts-wrapper .ts-control > input { color: var(--ds-text); }
+.ts-control input::placeholder { color: var(--ds-text-muted); }
+/* Pastilles (mode multiple) */
+.ts-wrapper.multi .ts-control > div.item {
+    color: #fff;
+    background: var(--ds-primary);
+    border: 0;
+    border-radius: var(--ds-radius-sm);
+}
+.ts-wrapper.multi .ts-control > div.item .remove {
+    border-left-color: rgba(255, 255, 255, 0.4);
+    color: #fff;
+}
+.ts-wrapper.multi .ts-control > div.item .remove:hover { background: var(--ds-primary-dark); }
+/* Menu déroulant */
+.ts-dropdown {
+    margin-top: var(--ds-space-1);
+    color: var(--ds-text);
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-radius);
+    box-shadow: var(--ds-shadow-lg);
+}
+.ts-dropdown .option.active,
+.ts-dropdown .option:hover { background: var(--ds-primary-light); color: var(--ds-text); }
+.ts-dropdown .active { background: var(--ds-primary-light); }
+.ts-dropdown .no-results,
+.ts-dropdown .optgroup-header { color: var(--ds-text-muted); }
+.ts-wrapper.disabled .ts-control { background: var(--ds-surface-alt); }

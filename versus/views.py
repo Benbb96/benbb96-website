@@ -4,8 +4,8 @@ from django.forms import inlineformset_factory, NumberInput
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
-from django_select2.forms import ModelSelect2Widget
 
+from base.widgets import TomSelectWidget
 from versus.models import Jeu, Joueur, Partie, PartieJoueur
 
 
@@ -46,11 +46,7 @@ PartieJoueurFormSet = inlineformset_factory(
     PartieJoueur,
     fields=('joueur', 'score_classement'),
     widgets={
-        'joueur': ModelSelect2Widget(
-            model=Joueur,
-            search_fields=['nom__icontains', 'profil__user__username__icontains'],
-            attrs={'style': 'width: 100%', 'data-minimum-input-length': 0}
-        ),
+        'joueur': TomSelectWidget(placeholder='Choisir un joueur'),
         'score_classement': NumberInput(attrs={'class': 'form-control'})
     },
     can_delete=False

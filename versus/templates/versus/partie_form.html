@@ -68,14 +68,24 @@
 {% block javascript %}
     {{ formset.media.js }}
     <script>
-        let form_count = {{ formset.total_form_count }};
-        $('#add_form').on('click', function() {
-            const joueur = '{{ formset.empty_form.joueur|escapejs }}'.replace(/__prefix__/g, form_count);
-            const score_classement = '{{ formset.empty_form.score_classement|escapejs }}'.replace(/__prefix__/g, form_count);
-            $('#joueurs').append(`<tr><td>${joueur}</td><td>${score_classement}</td></tr>`)
-            $('.django-select2').djangoSelect2();
-            form_count++;
-            $('#id_partiejoueur_set-TOTAL_FORMS').val(form_count);
-        });
+        (function () {
+            let formCount = {{ formset.total_form_count }};
+            const joueurTpl = '{{ formset.empty_form.joueur|escapejs }}';
+            const scoreTpl = '{{ formset.empty_form.score_classement|escapejs }}';
+            const tbody = document.getElementById('joueurs');
+            const totalForms = document.getElementById('id_partiejoueur_set-TOTAL_FORMS');
+
+            document.getElementById('add_form').addEventListener('click', function () {
+                const joueur = joueurTpl.replace(/__prefix__/g, formCount);
+                const score = scoreTpl.replace(/__prefix__/g, formCount);
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${joueur}</td><td>${score}</td>`;
+                tbody.appendChild(row);
+                // (Ré)initialise Tom Select sur le <select> fraîchement ajouté.
+                if (window.tomSelectInit) window.tomSelectInit(row);
+                formCount++;
+                totalForms.value = formCount;
+            });
+        })();
     </script>
 {% endblock %}

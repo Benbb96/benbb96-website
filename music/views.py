@@ -8,7 +8,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -249,6 +249,23 @@ def create_artist(request):
     except IntegrityError as e:
         return JsonResponse({'success': False, 'error': 'Cet artiste a déjà été créé...'})
     return JsonResponse({'success': True, 'name': artiste.nom_artiste, 'id': artiste.id})
+
+
+def artiste_search(request):
+    """Endpoint JSON pour le chargement distant des artistes (Tom Select).
+
+    Renvoie ``[{"id": …, "text": …}, …]`` filtré sur le paramètre ``q``.
+    Remplace l'endpoint AJAX de django-select2 pour le gros jeu « artistes ».
+    """
+    query = request.GET.get('q', '').strip()
+    artistes = Artiste.objects.all()
+    if query:
+        artistes = artistes.filter(
+            Q(nom_artiste__icontains=query) | Q(prenom__icontains=query) |
+            Q(nom__icontains=query) | Q(slug__icontains=query)
+        )
+    artistes = artistes.order_by('nom_artiste')[:30]
+    return JsonResponse([{'id': a.pk, 'text': a.nom_artiste} for a in artistes], safe=False)
 
 
 class MusiqueDetailView(FormMixin, DetailView):

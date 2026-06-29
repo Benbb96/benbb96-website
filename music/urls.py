@@ -15,6 +15,7 @@ urlpatterns = [
     path('create-music-from-url/', views.create_music_from_url, name='create-music-from-url'),
     path('get_music_info_from_link/', views.get_music_info_from_link, name='get_music_info_from_link'),
     path('create_artist/', views.create_artist, name='create_artist'),
+    path('artistes/search/', views.artiste_search, name='artiste-search'),
     path('artists/<slug:slug>', views.ArtisteDetailView.as_view(), name='detail-artiste'),
     path('artists/', views.ArtisteListView.as_view(), name='liste-artiste'),
     path('<slug:slug_artist>/<slug:slug>-<int:pk>', views.MusiqueDetailView.as_view(), name='detail-musique'),
