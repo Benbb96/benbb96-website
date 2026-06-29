@@ -4,31 +4,31 @@
 {% block music_title %}{% trans "Style" %} {{ style.nom }}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-8 col-xs-12">
+    <div class="ds-grid ds-grid--content">
+        <div>
             <h2>{% trans "Musics" %}</h2>
             {% include 'music/components/table_musics.html' with musiques=object_list %}
             {% include 'components/pagination.html' %}
         </div>
-        <div class="col-sm-4 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2 class="text-center">
+        <div>
+            <div class="ds-card">
+                <div class="ds-card__header">
+                    <h2 class="ds-mb-0 ds-text-center">
                         {{ style.nom }}
                         {% if perms.music.change_style %}
-                            <a href="{% url 'admin:music_style_change' style.id %}" class="btn btn-sm btn-default">
+                            <a href="{% url 'admin:music_style_change' style.id %}" class="ds-btn ds-btn--ghost ds-btn--sm">
                                 <i class="fa fa-edit"></i>
                             </a>
                         {% endif %}
                     </h2>
                 </div>
-                <div class="panel-body">
+                <div class="ds-card__body">
                     {% if style.description %}
                         <h3>{% trans "Description" %}</h3>
                         <p>{{ style.description|linebreaksbr }}</p>
                     {% endif %}
                     {% if style.lien_wiki %}
-                        <h4 class="text-right">
+                        <h4 class="ds-text-right">
                             <a href="{{ style.lien_wiki }}" target="_blank">
                                 {% trans "Wiki link" %}
                                 {% fa6_icon 'external-link-alt' %}
@@ -38,18 +38,10 @@
                     {% if style.artistes %}
                         <h3>{% blocktrans %}Artists playing this style{% endblocktrans %}</h3>
                         {% if style.artistes.count > 4 %}
-                        <div class="panel-group">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title text-center">
-                                        <a data-toggle="collapse" href="#collapse1">{% trans "See all..." %}</a>
-                                    </h4>
-                                </div>
-                                <div id="collapse1" class="panel-collapse collapse">
-                                    {% include 'music/playlist_artist_list.html' with artistes=style.artistes.all %}
-                                </div>
-                            </div>
-                        </div>
+                            <details class="ds-details">
+                                <summary>{% trans "See all..." %}</summary>
+                                {% include 'music/playlist_artist_list.html' with artistes=style.artistes.all %}
+                            </details>
                         {% else %}
                             {% include 'music/playlist_artist_list.html' with artistes=style.artistes.all %}
                         {% endif %}

@@ -4,9 +4,9 @@
 {% block music_title %}{{ musique }}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
-            <div class="well text-center">
+    <div class="ds-narrow ds-narrow--lg">
+        <div>
+            <div class="ds-well ds-text-center">
                 <h1>
                     <a href="{{ musique.artiste.get_absolute_url }}" title="{% trans "See artist page" %}">
                         {{ musique.artiste }}
@@ -21,7 +21,7 @@
                         (<a href="{{ musique.remixed_by.get_absolute_url }}">{{ musique.remixed_by }}</a> {% trans "Remix" %})
                     {% endif %}
                     {% if musique.createur.user == request.user %}
-                        <a href="{% url 'admin:music_musique_change' musique.id %}" class="btn btn-sm btn-default">
+                        <a href="{% url 'admin:music_musique_change' musique.id %}" class="ds-btn ds-btn--ghost ds-btn--sm">
                             <i class="fa fa-edit"></i>
                         </a>
                     {% endif %}
@@ -37,7 +37,7 @@
                 {% endif %}
                 {% include 'music/components/style_list_inline.html' with styles=musique.styles.all header_inline=True %}
                 {% if musique.label %}
-                    <div class="text-center">
+                    <div class="ds-text-center">
                         {% trans "Label" %} : <a href="{{ musique.label.get_absolute_url }}">{{ musique.label }}</a>
                     </div>
                 {% endif %}
@@ -45,9 +45,9 @@
             {% if musique.liens.exists %}
                 {% if musique.liens.valide_seulement.exists %}
                     <h2>{% trans "Links" %}</h2>
-                    <div class="row">
+                    <div class="ds-grid ds-grid--4">
                         {% for lien in musique.liens.valide_seulement %}
-                            <div class="col-sm-3 col-xs-12">
+                            <div>
                                 {% include 'music/components/lien.html' %}
                             </div>
                         {% endfor %}
@@ -56,9 +56,9 @@
                 {% if request.user == musique.createur.user or request.user.is_superuser %}
                     {% if musique.liens.a_valider.exists %}
                         <h3>{% trans "Links to validate" %}</h3>
-                        <div class="row">
+                        <div class="ds-grid ds-grid--4">
                             {% for lien in musique.liens.a_valider %}
-                                <div class="col-sm-3 col-xs-12">
+                                <div>
                                     {% include 'music/components/lien.html' with a_valider=True %}
                                 </div>
                             {% endfor %}
@@ -66,15 +66,14 @@
                     {% endif %}
                 {% endif %}
             {% endif %}
-            <div class="clearfix"></div>
-                <h3>{% blocktrans %}Add a link{% endblocktrans %}</h3>
+            <h3>{% blocktrans %}Add a link{% endblocktrans %}</h3>
             {% if request.user.is_authenticated %}
                 <form method="post">
                     {% csrf_token %}
-                    <ul class="list-inline">
+                    <ul class="ds-form-inline" style="list-style: none">
                         {{ form.as_ul }}
                         <li>
-                            <button class="btn btn-primary" type="submit">
+                            <button class="ds-btn" type="submit">
                                 <i class="fa fa-plus"></i>
                                 {% blocktrans %}Add the link{% endblocktrans %}
                             </button>
@@ -87,18 +86,18 @@
                     {% blocktrans %}to be able to add a link{% endblocktrans %}
                 </p>
             {% endif %}
-            <p>
+            <p class="ds-cluster">
                 {% trans "Search on :" %}
-                <a class="btn btn-sm btn-social-icon btn-google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">
+                <a class="ds-social ds-social--filled ds-social--sm ds-social--google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">
                     <i class="fab fa-google"></i>
                 </a>
-                <a class="btn btn-sm btn-social-icon btn-youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="{% trans "Search on YouTube" %}" target="_blank">
+                <a class="ds-social ds-social--filled ds-social--sm ds-social--youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="{% trans "Search on YouTube" %}" target="_blank">
                     <i class="fab fa-youtube"></i>
                 </a>
-                <a class="btn btn-sm btn-social-icon btn-soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
+                <a class="ds-social ds-social--filled ds-social--sm ds-social--soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
                     <i class="fab fa-soundcloud"></i>
                 </a>
-                <a class="btn btn-sm btn-social-icon btn-spotify" href="https://open.spotify.com/search/{{ musique|urlencode }}" title="{% trans "Search on Spotify" %}" target="_blank">
+                <a class="ds-social ds-social--filled ds-social--sm ds-social--spotify" href="https://open.spotify.com/search/{{ musique|urlencode }}" title="{% trans "Search on Spotify" %}" target="_blank">
                     <i class="fab fa-spotify"></i>
                 </a>
             </p>

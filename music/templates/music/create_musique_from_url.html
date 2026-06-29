@@ -1,5 +1,5 @@
 {% extends 'music/base_music.html' %}
-{% load i18n bootstrap3 fontawesome_6 %}
+{% load i18n fontawesome_6 %}
 
 {% block music_title %}Création musique via URL{% endblock %}
 
@@ -8,58 +8,56 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-6 col-sm-offset-3 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2>
-                        Créer une musique depuis un lien
-                        <a href="{{ playlist.get_absolute_url }}">{{ playlist.nom }}</a>
-                    </h2>
-                </div>
-                <div class="panel-body">
-                    <form method="post">
-                        {% csrf_token %}
+    <div class="ds-narrow">
+        <div class="ds-card">
+            <div class="ds-card__header">
+                <h2 class="ds-mb-0">
+                    Créer une musique depuis un lien
+                    <a href="{{ playlist.get_absolute_url }}">{{ playlist.nom }}</a>
+                </h2>
+            </div>
+            <div class="ds-card__body">
+                <form method="post">
+                    {% csrf_token %}
 
-                        <p>
-                            Tu peux pré-remplir certains champs en collant un lien vers la musique dans
-                            l'encart ci-dessous.
-                        </p>
+                    <p>
+                        Tu peux pré-remplir certains champs en collant un lien vers la musique dans
+                        l'encart ci-dessous.
+                    </p>
 
-                        <div class="well">
-                            <ul class="list-inline">
-                                {{ link_form.as_ul }}
-                                <li>
-                                    <button class="btn btn-primary" type="button" id="addLink" style="display: none">
-                                        Rechercher les infos
-                                        {% fa6_icon 'arrow-alt-circle-down' %}
-                                    </button>
-                                </li>
-                            </ul>
-                            <div class="text-muted" id="full-title"></div>
-                        </div>
+                    <div class="ds-well">
+                        <ul class="ds-form-inline" style="list-style: none">
+                            {{ link_form.as_ul }}
+                            <li>
+                                <button class="ds-btn" type="button" id="addLink" style="display: none">
+                                    Rechercher les infos
+                                    {% fa6_icon 'arrow-alt-circle-down' %}
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="ds-text-muted" id="full-title"></div>
+                    </div>
 
-                        {% bootstrap_form form %}
-                        <div class="text-center">
-                            <a href="{% url 'admin:music_artiste_add' %}" class="btn btn-default" target="_blank">
-                                Créer Artiste
-                            </a>
-                            <a href="{% url 'admin:music_style_add' %}" class="btn btn-default" target="_blank">
-                                Créer Style
-                            </a>
-                            <a href="{% url 'admin:music_label_add' %}" class="btn btn-default" target="_blank">
-                                Créer Label
-                            </a>
-                            <a href="{% url 'admin:music_playlist_add' %}" class="btn btn-default" target="_blank">
-                                Créer Playlist
-                            </a>
-                            <button class="btn btn-lg btn-primary">
-                                {% fa6_icon 'check' %}
-                                Valider
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    {% include 'components/form.html' %}
+                    <div class="ds-cluster ds-cluster--center ds-mt-4">
+                        <a href="{% url 'admin:music_artiste_add' %}" class="ds-btn ds-btn--ghost" target="_blank">
+                            Créer Artiste
+                        </a>
+                        <a href="{% url 'admin:music_style_add' %}" class="ds-btn ds-btn--ghost" target="_blank">
+                            Créer Style
+                        </a>
+                        <a href="{% url 'admin:music_label_add' %}" class="ds-btn ds-btn--ghost" target="_blank">
+                            Créer Label
+                        </a>
+                        <a href="{% url 'admin:music_playlist_add' %}" class="ds-btn ds-btn--ghost" target="_blank">
+                            Créer Playlist
+                        </a>
+                        <button class="ds-btn ds-btn--lg">
+                            {% fa6_icon 'check' %}
+                            Valider
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -109,7 +107,7 @@
                                 $('label[for=id_artiste]').after(
                                     `<span style="margin-left: 10px" id="displayFetchedArtist">
                                         Nom récupéré via le lien : <b>${response.artist}</b>
-                                        <button type="button" onclick="createArtist('${response.artist}', 'id_artiste')" class="btn btn-default btn-xs" title="Créer l'artiste">
+                                        <button type="button" onclick="createArtist('${response.artist}', 'id_artiste')" class="ds-btn ds-btn--ghost ds-btn--sm" title="Créer l'artiste">
                                             <i class="fas fa-plus" />
                                         </button>
                                     </span>`
@@ -124,7 +122,7 @@
                                     `<span style="margin-left: 10px" id="displayFetchedRemixedBy">
                                         Nom récupéré via le lien : <b>${response.remixed_by}</b>
                                     </span>
-                                    <button type="button" onclick="createArtist('${response.remixed_by}', 'id_remixed_by')" class="btn btn-default btn-xs" title="Créer l'artiste">
+                                    <button type="button" onclick="createArtist('${response.remixed_by}', 'id_remixed_by')" class="ds-btn ds-btn--ghost ds-btn--sm" title="Créer l'artiste">
                                         <i class="fas fa-plus" />
                                     </button>`
                                 )

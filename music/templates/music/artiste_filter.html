@@ -1,6 +1,6 @@
 {% extends 'music/base_music.html' %}
 
-{% load i18n bootstrap3 %}
+{% load i18n %}
 
 {% block music_title %}{% trans "Artists" %}{% endblock %}
 
@@ -9,55 +9,49 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
-            <h2>
-                {% trans "Artists" %}
-                <span class="pull-right">
-                    <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#filter">
-                        Options de filtre <i class="fa fa-filter"></i>
-                    </button>
-                </span>
-            </h2>
-             <form method="get" id="filter" class="collapse">
-                {% bootstrap_form filter.form %}
-                {% buttons submit='Filtrer <i class="fa fa-filter"></i>' %}{% endbuttons %}
+    <div class="ds-narrow ds-narrow--lg">
+        <h2>{% trans "Artists" %}</h2>
+        <details class="ds-details">
+            <summary>Options de filtre</summary>
+            <form method="get">
+                {% include 'components/form.html' with form=filter.form %}
+                <button type="submit" class="ds-btn ds-mt-4">Filtrer <i class="fa fa-filter"></i></button>
             </form>
+        </details>
 
-            <div class="table-responsive">
-                <table class="table table-striped text-center">
-                    <thead>
+        <div class="ds-table-wrap">
+            <table class="ds-table ds-table--striped ds-text-center">
+                <thead>
+                    <tr>
+                        <th class="ds-text-center">{% blocktrans %}Artist name{% endblocktrans %}</th>
+                        <th class="ds-text-center">{% blocktrans %}First name / Last name{% endblocktrans %}</th>
+                        <th class="ds-text-center">{% blocktrans %}Number of musics{% endblocktrans %}</th>
+                        <th class="ds-text-center">{% blocktrans %}Number of featuring{% endblocktrans %}</th>
+                        <th class="ds-text-center">{% blocktrans %}Number of remixes{% endblocktrans %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for artist in object_list %}
                         <tr>
-                            <th class="text-center">{% blocktrans %}Artist name{% endblocktrans %}</th>
-                            <th class="text-center">{% blocktrans %}First name / Last name{% endblocktrans %}</th>
-                            <th class="text-center">{% blocktrans %}Number of musics{% endblocktrans %}</th>
-                            <th class="text-center">{% blocktrans %}Number of featuring{% endblocktrans %}</th>
-                            <th class="text-center">{% blocktrans %}Number of remixes{% endblocktrans %}</th>
+                            <td>
+                                <a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
+                            </td>
+                            <td>{{ artist.full_name|default:'' }}</td>
+                            <td><span class="ds-badge">{{ artist.musiques.count }}</span></td>
+                            <td><span class="ds-badge">{{ artist.musiques_featuring.count }}</span></td>
+                            <td><span class="ds-badge">{{ artist.remixes.count }}</span></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for artist in object_list %}
-                            <tr>
-                                <td>
-                                    <a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
-                                </td>
-                                <td>{{ artist.full_name|default:'' }}</td>
-                                <td><span class="badge">{{ artist.musiques.count }}</span></td>
-                                <td><span class="badge">{{ artist.musiques_featuring.count }}</span></td>
-                                <td><span class="badge">{{ artist.remixes.count }}</span></td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="5">
-                                    {% blocktrans %}No artist has been created yet...{% endblocktrans %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% include 'components/pagination.html' %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                {% blocktrans %}No artist has been created yet...{% endblocktrans %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% include 'components/pagination.html' %}
     </div>
 {% endblock %}
 

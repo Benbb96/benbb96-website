@@ -3,15 +3,15 @@
 {% if not musiques %}
     <h3>{% trans "No music has been created here." %}</h3>
 {% else %}
-    <div class="table-responsive">
-        <table class="table">
+    <div class="ds-table-wrap">
+        <table class="ds-table">
             <thead>
             <tr>
                 <th>{% trans "Title" %}</th>
                 <th>{% trans "Style" %}</th>
-                <th class="text-center">{% trans "Date add" %}</th>
-                <th class="text-center">{% trans "View count" %}</th>
-                <th class="text-center" style="width: 70px">{% trans "Links" %}</th>
+                <th class="ds-text-center">{% trans "Date add" %}</th>
+                <th class="ds-text-center">{% trans "View count" %}</th>
+                <th class="ds-text-center" style="width: 70px">{% trans "Links" %}</th>
             </tr>
             </thead>
             <tbody>
@@ -24,14 +24,14 @@
                     </td>
                     <td>
                         {% for style in musique.styles.all %}
-                            <a class="label label-default" href="{{ style.get_absolute_url }}">{{ style }}</a>
+                            <a class="ds-badge" href="{{ style.get_absolute_url }}">{{ style }}</a>
                         {% endfor %}
                     </td>
-                    <td class="text-center">{{ musique.date_creation|date:'DATETIME_FORMAT' }}</td>
-                    <td class="text-center">
-                        <span class="badge click_count" id="musique{{ musique.id }}">{{ musique.nb_vue|default:0 }}</span>
+                    <td class="ds-text-center">{{ musique.date_creation|date:'DATETIME_FORMAT' }}</td>
+                    <td class="ds-text-center">
+                        <span class="ds-badge click_count" id="musique{{ musique.id }}">{{ musique.nb_vue|default:0 }}</span>
                     </td>
-                    <td class="text-center">
+                    <td class="ds-text-center">
                         {% if musique.liens %}
                             {% for lien in musique.liens.all %}
                                 <a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"

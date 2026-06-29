@@ -9,7 +9,7 @@
     {% blocktrans %}Added by{% endblocktrans %} {{ lien.createur }} {% trans "on" %} {{ lien.date_creation|date:'d/m/y' }},
     {% trans "seen" %} <span class="click_count" id="lien{{ lien.id }}">{{ lien.click_count }}</span> {% trans "times" %}.
     {% if a_valider %}
-        <a class="btn btn-xs btn-default" href="{% url 'music:valider_lien' lien.id %}">
+        <a class="ds-btn ds-btn--ghost ds-btn--sm" href="{% url 'music:valider_lien' lien.id %}">
             <i class="fa fa-check" title="{% trans "Validate the link" %}"></i>
         </a>
     {% endif %}

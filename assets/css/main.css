@@ -716,7 +716,11 @@ table:not([class]) thead th {
 
 /* Layout « barre latérale + contenu » (remplace col-sm-4 / col-sm-8) */
 .ds-grid--sidebar { grid-template-columns: 1fr 2fr; align-items: start; }
-@media (max-width: 768px) { .ds-grid--sidebar { grid-template-columns: 1fr; } }
+.ds-grid--content { grid-template-columns: 2fr 1fr; align-items: start; }
+@media (max-width: 768px) {
+    .ds-grid--sidebar,
+    .ds-grid--content { grid-template-columns: 1fr; }
+}
 
 /* Encart discret — remplace .well */
 .ds-well {
@@ -881,10 +885,51 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
 .ds-card__header > :last-child { margin-bottom: 0; }
 .ds-card__header--primary { background: var(--ds-primary); border-color: var(--ds-primary); }
 .ds-card__header--success { background: var(--ds-success); border-color: var(--ds-success); }
+.ds-card__header--warning { background: var(--ds-warning); border-color: var(--ds-warning); }
 .ds-card__header--primary,
-.ds-card__header--success { color: #fff; }
+.ds-card__header--success,
+.ds-card__header--warning { color: #fff; }
 .ds-card__header--primary :is(h1, h2, h3, h4, a),
-.ds-card__header--success :is(h1, h2, h3, h4, a) { color: #fff; }
+.ds-card__header--success :is(h1, h2, h3, h4, a),
+.ds-card__header--warning :is(h1, h2, h3, h4, a) { color: #fff; }
+/* Boutons (ghost) lisibles sur un en-tête de card coloré */
+.ds-card__header--primary .ds-btn--ghost,
+.ds-card__header--success .ds-btn--ghost,
+.ds-card__header--warning .ds-btn--ghost {
+    --_fg: #fff;
+    --_bg-hover: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+.ds-card__header--primary .ds-btn--ghost:hover,
+.ds-card__header--success .ds-btn--ghost:hover,
+.ds-card__header--warning .ds-btn--ghost:hover { color: #fff; }
+
+/* Accordéon natif — remplace .panel-group/.collapse (data-toggle Bootstrap) */
+.ds-details { margin-bottom: var(--ds-space-4); }
+.ds-details > summary {
+    cursor: pointer;
+    color: var(--ds-primary);
+    font-weight: 600;
+    padding: var(--ds-space-2) 0;
+    list-style-position: inside;
+}
+.ds-details > summary:hover { color: var(--ds-primary-dark); }
+
+/* Liste inline — remplace .list-inline (suppression des puces, mise en ligne) */
+.ds-inline-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--ds-space-4);
+}
+
+/* Bouton social « plein » (sur fond clair) — couleur de marque en fond */
+.ds-social--filled { background: var(--_brand); color: #fff; }
+.ds-social--sm { width: 2.25rem; height: 2.25rem; font-size: 1rem; }
+.ds-social--google { --_brand: #ea4335; }
 
 /* Score coloré — remplace panel panel-{{ note|color }} (affichage de note) */
 .ds-score {
