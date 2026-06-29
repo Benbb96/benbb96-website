@@ -57,21 +57,39 @@ tests OK, pages home/profil/login/signup/listes d'app servies en 200 avec Bootst
 > `.container`, `.panel`, `.alert`… — préférer des sélecteurs d'éléments + de nouvelles classes, ou
 > un préfixe). Le site doit rester **fonctionnel et déployable** après la Phase 3.
 
-## Phase 4 — Migration des templates app par app (doc 2)
+## Phase 4 — Migration des templates app par app (doc 2) — ✅ FAITE
 
-Ordre conseillé (du plus simple/visible au plus complexe) :
+Tous les groupes sont migrés vers le design system `.ds-*` (1 commit par groupe). Plus aucune
+classe Bootstrap ni `{% bootstrap_* %}` dans les templates des apps (vérifié par grep). Validé après
+chaque groupe : `check` OK, `makemigrations --check` sans changement, 27 smoke tests OK.
 
-1. `registration/` (login, signup) + `base` (home, profils, about, gallery, rallye).
-2. `avis`, `versus`.
-3. `music` (beaucoup de templates + AJAX `.platformLink` à passer en fetch).
-4. `tracker` (Chart.js + AJAX `common.js` + éventuel moment.js à remplacer).
-5. `super_moite_moite` (attention au composant Vue.js embarqué — ne styler que l'enveloppe).
-6. `my_spot` : **conservé, effort minimal** (décision actée). Migration cosmétique a minima pour que
-   les pages restent lisibles + **corriger `request.is_ajax()`** (déprécié, cassé depuis Django 4.1 :
-   remplacer par `request.headers.get('x-requested-with') == 'XMLHttpRequest'`). Pas d'effort de
-   modernisation poussé.
-7. `kendama` : **uniquement** retirer `{% bootstrap_form %}` des templates de formulaire (doc 6).
-   Ne rien changer d'autre.
+1. ✅ `registration/` (login, signup) + `base` (home, profils, about, gallery, rallye, labyrinthe).
+   Carousel galerie Bootstrap → `.ds-carousel` (CSS scroll-snap).
+2. ✅ `avis`, `versus`. Carousel avis, tables, progress, breadcrumb, score → `.ds-*`.
+3. ✅ `music` : tous templates + AJAX `.platformLink`/`.synchronize` `$.post` → **`window.http`**
+   (fetch). Collapses Bootstrap → `<details>`. **select2 / DataTables conservés** (jQuery gardé
+   jusqu'en Phase 5).
+4. ✅ `tracker` : modale Bootstrap → `<dialog>` natif (`.ds-modal`), onglets `nav-tabs` → `.ds-tabs`
+   + contrôleur vanilla dans `common.js`, `.hidden` → `.ds-hidden`, fréquence active `btn-primary`
+   → `is-active`, glyphicons → FA6. **moment.js + bootstrap-daterangepicker + Chart.js v2
+   CONSERVÉS** (remplacement par `Intl`/`Date`/Chart v4 reporté en Phase 5, écran fonctionnel) ;
+   l'AJAX tracks/stats reste en `$.ajax` jQuery pour l'instant.
+5. ✅ `super_moite_moite` : **enveloppe Django uniquement** (list, form, delete, boutons du jumbotron
+   du detail) → `.ds-*`. ⚠️ **Composant Vue.js embarqué** (`<div id="app">` : `progress-bar`,
+   `panel`, `modal`, `nav-pills`, `bootstrapClassColors`, etc.) **laissé tel quel** — il dépend
+   encore de Bootstrap (CSS chargé globalement). À traiter séparément en Phase 5.
+6. ✅ `my_spot` : migration cosmétique (carousels photos → `.ds-carousel`, grilles/tables/badges →
+   `.ds-*`) + **`request.is_ajax()` corrigé** dans `views.py` →
+   `request.headers.get('x-requested-with') == 'XMLHttpRequest'`. JS Google Maps / `$.get` conservé.
+7. ✅ `kendama` : **uniquement** retrait de `{% bootstrap_form %}` / `{% load bootstrap3 %}` des 4
+   formulaires (doc 6), via le nouveau partial `kendama/components/paper_form.html` (rendu
+   `.form-group` paper, à l'identique visuellement). Thème paper, JS fetch, modales, formsets intacts.
+
+**Reste à faire avant/pendant la Phase 5** (Bootstrap/jQuery encore chargés via `base.html`) :
+- Composant Vue de `super_moite_moite` (dépend de Bootstrap CSS).
+- `tracker` : remplacement moment.js + daterangepicker → `Intl`/`Date` + `<input date>`, Chart.js → v4,
+  et conversion de l'AJAX jQuery restant en `window.http`.
+- `music` : select2 (charge son propre jQuery) et DataTables (plugin jQuery) à arbitrer.
 
 ## Phase 5 — Suppression de Bootstrap & jQuery (doc 2)
 

@@ -15,7 +15,20 @@
   - `templates/components/pagination.html` restylé en `.ds-pagination`.
   - `templates/components/form.html` : rendu de formulaire maison (remplace `{% bootstrap_form %}`),
     **prêt pour la Phase 4** (pas encore branché sur les templates des apps).
-- **Phases 4 et 5 — à venir** (migration des templates des apps, puis retrait de Bootstrap/jQuery).
+- **Phase 4 — FAITE** (migration des templates des apps vers le design system `.ds-*`). Tous les
+  groupes migrés (registration+base, avis, versus, music, tracker, super_moite_moite, my_spot,
+  kendama). Plus aucune classe Bootstrap ni `{% bootstrap_* %}` dans les templates des apps. Le
+  composant `.ds-*` a été étendu au fil de l'eau (`assets/css/main.css`, section 16) : `.ds-narrow`,
+  `.ds-tabs`/`.ds-tab-panel`, `.ds-well`, `.ds-carousel`, `.ds-table(-wrap)`, `.ds-progress`,
+  `.ds-breadcrumb`, `.ds-score`, `.ds-card__header(--primary/success/warning)`, `.ds-list-group`,
+  `.ds-modal`, `.ds-details`, `.ds-inline-list`, `.ds-social--filled`, `.ds-hidden`, `.ds-form-inline`,
+  `.ds-grid--sidebar/--content`… Les AJAX `$.post`/`$.ajax` de `music` (`.platformLink`,
+  `.synchronize`) sont passés en `window.http`. Détail et exceptions (Vue smm, moment/daterangepicker
+  tracker) : voir Phase 4 de `05-roadmap.md`.
+- **Phase 5 — à venir** (retrait de Bootstrap/jQuery + moment/daterangepicker, Chart.js v4).
+  `base.html` charge encore le CDN Bootstrap + `{% bootstrap_javascript jquery='full' %}` (jQuery)
+  pour les usages résiduels : composant Vue de `super_moite_moite`, select2/DataTables de `music`,
+  daterangepicker/AJAX de `tracker`. Ces dépendances doivent être levées avant le retrait définitif.
 
 ## Objectif
 
