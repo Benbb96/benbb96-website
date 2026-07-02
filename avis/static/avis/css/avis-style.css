@@ -1,5 +1,16 @@
-.card {
-    height: 300px;
+/* Vignettes d'avis (grille de la liste) : hauteur d'image fixe (recadrée) et
+   cartes de hauteur égale. Remplace l'ancien `.card { height: 300px }` devenu
+   orphelin après la migration `.card` -> `.ds-card` (Phase 4). */
+.avis .ds-grid > div { display: flex; }
+.avis-thumb {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.avis-thumb .ds-card__body { flex: 1 1 auto; }
+.avis-thumb .ds-card__media img {
+    height: 200px;
+    object-fit: cover;
 }
 
 .note {

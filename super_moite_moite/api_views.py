@@ -31,10 +31,10 @@ class CategorieView(ModelViewSet):
 
     def perform_create(self, serializer):
         # Attribue une couleur auto (cyclique par logement) si le client n'en
-        # fournit pas ou laisse le blanc par défaut, pour éviter deux créations
-        # consécutives de la même couleur et des donuts blancs sur blanc.
+        # fournit pas, pour éviter deux créations consécutives de la même couleur
+        # et des donuts blancs sur blanc.
         couleur = serializer.validated_data.get('couleur')
-        if not couleur or couleur.upper() == '#FFFFFF':
+        if not couleur:
             logement = serializer.validated_data.get('logement')
             index = logement.categories.count() if logement else 0
             couleur = CATEGORIE_PALETTE[index % len(CATEGORIE_PALETTE)]

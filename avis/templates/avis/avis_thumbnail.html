@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="ds-card ds-card--hover">
+<div class="ds-card ds-card--hover avis-thumb">
     <a class="ds-card__media" href="{{ avis.get_absolute_url }}">
         <img src="{% if avis.photo %}{{ avis.photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit }}" alt="Photo du produit {{ avis.produit }} prise par {{ avis.auteur }}"/>
     </a>
