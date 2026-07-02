@@ -800,6 +800,9 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
 }
 .ds-carousel__caption h3 { color: #fff; margin-bottom: var(--ds-space-1); }
 .ds-carousel__caption p { margin: 0; color: rgba(255, 255, 255, 0.9); }
+/* Liens lisibles sur le dégradé sombre du caption (sinon bleu peu visible) */
+.ds-carousel__caption a { color: #fff; text-decoration: underline; }
+.ds-carousel__caption a:hover { color: rgba(255, 255, 255, 0.85); }
 .ds-carousel__dots {
     display: flex;
     justify-content: center;
