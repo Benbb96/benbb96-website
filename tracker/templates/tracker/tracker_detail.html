@@ -8,6 +8,8 @@
     {{ block.super }}
 {% endblock %}
 
+{% block content_class %}content--wide{% endblock %}
+
 {% block content %}
     <!-- Confirm Track delete modal -->
     <dialog id="modalConfirmDelete" class="ds-modal">
@@ -24,7 +26,7 @@
         </div>
     </dialog>
 
-    <div class="ds-narrow ds-narrow--lg">
+    <div>
         <div class="ds-text-center">
             <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
                 {{ tracker.nom }} {% fa6_icon tracker.icone.name tracker.icone.style_prefix %}

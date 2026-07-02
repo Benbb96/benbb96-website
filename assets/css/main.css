@@ -94,6 +94,7 @@
 
     /* Divers */
     --ds-container: 1140px;
+    --ds-container-wide: 1280px;   /* pages/chrome qui gagnent à respirer (navbar, détail tracker…) */
     --ds-transition: 150ms ease;
     --ds-nav-h: 80px;
 }
@@ -130,6 +131,9 @@ body {
     margin-inline: auto;
     padding-inline: var(--ds-space-4);
 }
+/* Variante « large » : pour les pages dont le corps gagne à s'étaler (tableaux,
+   graphes…). Activée via {% block content_class %}content--wide{% endblock %}. */
+.content--wide { max-width: var(--ds-container-wide); }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--ds-font-heading);
@@ -410,7 +414,7 @@ textarea { min-height: 6rem; resize: vertical; }
     align-items: center;
     gap: var(--ds-space-4);
     min-height: var(--ds-nav-h);
-    max-width: var(--ds-container);
+    max-width: var(--ds-container-wide);
     margin-inline: auto;
     padding: 0 var(--ds-space-4);
     flex-wrap: wrap;
