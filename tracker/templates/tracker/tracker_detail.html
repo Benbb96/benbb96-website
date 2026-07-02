@@ -57,7 +57,7 @@
             {% if tracker.type == 'mesure' %}
                 <div class="ds-form__group">
                     <label class="ds-form__label" for="{{ form.valeur.id_for_label }}">Valeur</label>
-                    <div class="ds-cluster">
+                    <div class="ds-input-group">
                         {{ form.valeur }}
                         <button class="ds-btn" type="submit">
                             <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
@@ -76,7 +76,7 @@
             {% else %}
                 <div class="ds-form__group">
                     {{ form.commentaire.label_tag }}
-                    <div class="ds-cluster">
+                    <div class="ds-input-group">
                         {{ form.commentaire }}
                         <button class="ds-btn" type="submit">
                             <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
