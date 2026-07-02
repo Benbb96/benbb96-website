@@ -15,11 +15,32 @@ class LogementView(ModelViewSet):
         return self.request.user.profil.logements.all()
 
 
+# Palette de couleurs distinctes attribuées automatiquement aux nouvelles
+# catégories (le défaut modèle est blanc = invisible sur les graphes/donuts).
+CATEGORIE_PALETTE = [
+    '#2563eb', '#16a34a', '#dc2626', '#d97706', '#7c3aed',
+    '#0ea5e9', '#db2777', '#65a30d', '#0d9488', '#f59e0b',
+]
+
+
 class CategorieView(ModelViewSet):
     serializer_class = CategorieSerializer
 
     def get_queryset(self):
         return Categorie.objects.filter(logement__habitants=self.request.user.profil)
+
+    def perform_create(self, serializer):
+        # Attribue une couleur auto (cyclique par logement) si le client n'en
+        # fournit pas ou laisse le blanc par défaut, pour éviter deux créations
+        # consécutives de la même couleur et des donuts blancs sur blanc.
+        couleur = serializer.validated_data.get('couleur')
+        if not couleur or couleur.upper() == '#FFFFFF':
+            logement = serializer.validated_data.get('logement')
+            index = logement.categories.count() if logement else 0
+            couleur = CATEGORIE_PALETTE[index % len(CATEGORIE_PALETTE)]
+            serializer.save(couleur=couleur)
+        else:
+            serializer.save()
 
 
 class TacheView(ModelViewSet):
