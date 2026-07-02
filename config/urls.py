@@ -18,7 +18,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('select2/', include('django_select2.urls')),
     path('sitemap.xml', sitemap, sitemaps, name='django.contrib.sitemaps.views.sitemap'),
     path(
         'robots.txt',

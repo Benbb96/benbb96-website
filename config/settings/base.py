@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'my_spot.apps.MySpotConfig',
     'super_moite_moite.apps.SuperMoiteMoiteConfig',
     'kendama.apps.KendamaConfig',
-    'bootstrap3',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
@@ -58,7 +57,6 @@ INSTALLED_APPS = [
     'django_filters',
     'colorfield',
     'adminsortable',
-    'django_select2',
     'simple_history',
     'anymail',
     'corsheaders'

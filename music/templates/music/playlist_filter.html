@@ -78,7 +78,7 @@
 {% block javascript %}
     {{ filter.form.media.js }}
     <script>
-        // Tri + recherche client (remplace DataTables/jQuery), petit jeu de données.
+        // Tri + recherche client en vanilla, petit jeu de données.
         (function () {
             const table = document.getElementById('table_playlists');
             if (!table) return;

@@ -3,14 +3,12 @@ Django==5.2.14
 git+https://github.com/LEAGUEDORA/django-admin-sortable.git#egg=django-admin-sortable
 django-anymail==13.0
 django-autoslug==1.9.9
-django-bootstrap3==25.1
 django-colorfield==0.14.0
 django-cors-headers==4.7.0
 django-filter==25.1
 django-fontawesome-6==1.0.0.0
 django-geoposition-2==0.4.0
 django-pandas==0.6.7
-django-select2==8.4.1
 django-simple-history==3.8.0
 djangorestframework==3.16.0
 djangorestframework-simplejwt==5.5.1
