@@ -2,6 +2,15 @@
    Tracker — styles spécifiques
    ============================================================================= */
 
+/* ── Zone de contrôles (détail & comparaison) ───────────────────────────────
+   Formulaire d'ajout + filtre de dates : colonne centrée et resserrée (pas
+   d'encadré, pour ne pas concurrencer le bandeau titre) au-dessus des données
+   qui, elles, s'étalent en pleine largeur. */
+.tracker-controls {
+    max-width: 720px;
+    margin: 1.5rem auto 2.5rem;
+}
+
 /* ── Liste des trackers : grille de cartes modernes ─────────────────────────
    La couleur du tracker est passée en inline-style via --tc (fond) et
    --tc-fg (contraste), puis utilisée comme ACCENT (liseré + pastille d'icône)
