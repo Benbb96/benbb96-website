@@ -31,6 +31,17 @@
     height: 30px;
 }
 
+/* Barres « une par habitant » du haut : le libellé (nom + points) doit rester
+   lisible même à 0 % (logement neuf). On force donc la largeur mini au contenu
+   et on aligne le texte à gauche. Les barres empilées multi-segments
+   (catégories / onglet Statistiques) ne portent pas cette classe et restent
+   proportionnelles. */
+.smm-habitant-bars .ds-progress__bar {
+    min-width: max-content;
+    justify-content: flex-start;
+    padding-inline: var(--ds-space-3);
+}
+
 .showOnHover i {
     opacity: 0;
 }

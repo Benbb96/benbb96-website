@@ -27,7 +27,7 @@
 {% block content %}
     <div id="app">
         <div class="ds-container">
-            <div v-for="(habitant, index) in logement.habitants" class="ds-progress ds-mb-2">
+            <div v-for="(habitant, index) in logement.habitants" class="ds-progress ds-mb-2 smm-habitant-bars">
                 <div :class="'ds-progress__bar ds-progress__bar--' + bootstrapClassColors[index] + (habitant.id === idProfilConnecte ? ' ds-progress__bar--striped' : '')"
                      :title="pourcentagePointProfil(habitant) | round(2) + '%'"
                      :style="'width:' + pourcentagePointProfil(habitant) + '%'">
