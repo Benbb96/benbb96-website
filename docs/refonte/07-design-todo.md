@@ -9,6 +9,20 @@
 > Convention : une entrée = **page/zone concernée** + **ce qui cloche** + (éventuellement) piste.
 > Cocher quand fait.
 
+## ⚠️ Échelle globale : root 16px depuis la 5b (à re-QA sur TOUT le site)
+
+Découvert pendant la QA 5b : Bootstrap 3 imposait `html { font-size: 10px }`. Comme `main.css` est
+entièrement en `rem`, **tout le site était rendu à ~62,5 % de la taille nominale** pendant les phases
+3→5a (body « 1.0625rem » = 10,6px, etc.). Le retrait de Bootstrap (5b) rétablit le root navigateur
+(**16px**) : le site retrouve sa taille prévue (body 17px…), plus lisible — c'est le comportement
+**voulu** (décision actée avec le propriétaire : « adopter le 16px nominal »). La navbar a été
+corrigée dans la foulée (commit dédié).
+
+**Conséquence** : toutes les pages sont désormais ~1,6× plus grandes que ce qui avait été validé
+visuellement en 3→5a. Il faut **refaire une passe de QA visuelle sur l'ensemble des apps** à cette
+échelle : espaces/marges, tailles de titres, éléments à largeur fixe, tableaux, cartes, graphes…
+Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvelle échelle.
+
 ## base (chrome & pages vitrines)
 
 - [ ] **Page d'accueil (`home.html`)** : retravailler le design (priorité haute).
