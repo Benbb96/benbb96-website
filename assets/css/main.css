@@ -420,7 +420,7 @@ textarea { min-height: 6rem; resize: vertical; }
     align-items: center;
     min-height: var(--ds-nav-h);   /* fige la hauteur de la ligne marque/burger */
     font-weight: 800;
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     color: #fff;
     letter-spacing: 0.5px;
 }
@@ -479,8 +479,9 @@ textarea { min-height: 6rem; resize: vertical; }
     display: inline-flex;
     align-items: center;
     gap: var(--ds-space-2);
-    padding: var(--ds-space-2) var(--ds-space-4);
-    font-size: var(--ds-fs-lg);
+    padding: var(--ds-space-2);
+    font-size: var(--ds-fs-sm);
+    white-space: nowrap;   /* jamais de libellé coupé en plein milieu (« A / propos ») */
     color: rgba(255, 255, 255, 0.85);
     border-radius: var(--ds-radius);
     transition: background var(--ds-transition), color var(--ds-transition);
@@ -496,7 +497,10 @@ textarea { min-height: 6rem; resize: vertical; }
     font-size: var(--ds-fs-sm);
 }
 
-@media (max-width: 860px) {
+/* La navbar horizontale (marque + 7 rubriques + langue + compte) réclame ~1130px
+   à la taille nominale (root 16px). En dessous de la largeur du contenu on bascule
+   sur le menu mobile empilé plutôt que de laisser les libellés déborder. */
+@media (max-width: 1140px) {
     .ds-nav__burger { display: inline-flex; }
     .ds-nav__inner { align-items: center; }
     /* Menu mobile : panneau plein écran qui s'empile sous la barre quand la case est cochée */
