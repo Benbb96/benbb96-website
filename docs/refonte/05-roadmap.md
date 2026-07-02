@@ -133,17 +133,27 @@ Validé après chaque app : `check` OK, `makemigrations --check` sans changement
   Bootstrap CSS + jQuery + `django-bootstrap3` + `bootstrap-social.css` + le CDN restent **chargés
   mais inutilisés**.
 
-> ⚠️ Le fichier `assets/js/moment-with-locales.js` existe encore sur disque mais **n'est plus
-> chargé par aucun template** (il apparaît seulement dans l'inventaire de la debug toolbar) ;
-> sa suppression sèche est faite en Phase 5b.
+> Le fichier `assets/js/moment-with-locales.js` n'était plus chargé par aucun template à l'issue de
+> la 5a ; il a été **supprimé** en Phase 5b (voir ci-dessous).
 
-### Phase 5b — Retrait sec (à venir)
+### Phase 5b — Retrait sec — ✅ FAITE
 
-- Une fois **tous** les `{% bootstrap_* %}` éliminés (apps + kendama, fait en Phase 4) **et** la
-  Phase 5a terminée : retirer `django-bootstrap3` de `INSTALLED_APPS` + requirements, supprimer le
-  CDN Bootstrap, `bootstrap-social.css`, `assets/js/moment-with-locales.js`, le jQuery global, et
-  `django_select2` (`INSTALLED_APPS` + l'URL `select2/` + requirement). `collectstatic` + tests visuels.
-- Pas de Temporal (non fiable en natif début 2026).
+Tous les chargements devenus inertes après la Phase 5a ont été supprimés (1 commit cohérent) :
+- `base.html` : retrait du `{% load bootstrap3 %}`, du CDN Bootstrap CSS, de
+  `{% bootstrap_javascript jquery='full' %}` (jQuery global) et du `<link>` `bootstrap-social.css`.
+- `INSTALLED_APPS` : retrait de `'bootstrap3'` et `'django_select2'`.
+- `config/urls.py` : retrait de `path('select2/', include('django_select2.urls'))`.
+- `requirements/base.txt` : retrait de `django-bootstrap3` et `django-select2`.
+- Fichiers morts supprimés (`git rm`) : `assets/css/bootstrap-social.css`,
+  `assets/js/moment-with-locales.js` (541 Ko).
+
+Validé : `check` OK, `makemigrations --check --dry-run` sans changement, 27 smoke tests OK,
+`collectstatic` OK (aucun asset supprimé référencé), QA HTTP des pages publiques (200 + plus aucune
+référence jQuery/Bootstrap/moment/select2/daterangepicker dans le HTML servi ; `main.css` + `http.js`
+bien chargés). **kendama et l'admin Django (django.jQuery privé) strictement inchangés.**
+
+> Note : pas de Temporal (non fiable en natif début 2026) — le formatage de dates reste en `Intl`.
+> Reste pour la Phase 6 : mettre à jour `README.md` / `techstack.*` (mentionnent encore Bootstrap).
 
 ## Phase 6 — Finitions
 

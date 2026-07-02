@@ -36,9 +36,16 @@
   `base.html` (devenu mort) est retiré. **kendama non touché** (autonome, son Chart.js 2.9.3 préservé).
   Détail app par app en Phase 5a de `05-roadmap.md`. Validé : `check` OK, `makemigrations --check`
   sans changement, 27 smoke tests OK, endpoints AJAX tracker/smm/music re-testés.
-- **Phase 5b — à venir** (retrait sec). Bootstrap CSS (CDN), `{% bootstrap_javascript jquery='full' %}`
-  (jQuery), `django-bootstrap3`, `django_select2` (+ URL `select2/`), `bootstrap-social.css` et
-  `assets/js/moment-with-locales.js` restent **chargés/présents mais inutilisés** → à supprimer.
+- **Phase 5b — FAITE** (retrait sec). Supprimés : le CDN Bootstrap CSS et
+  `{% bootstrap_javascript jquery='full' %}` (jQuery) de `base.html`, `bootstrap3` + `django_select2`
+  de `INSTALLED_APPS`, l'URL `select2/`, `django-bootstrap3` + `django-select2` des requirements, le
+  `<link>` `bootstrap-social.css` ; fichiers morts `assets/css/bootstrap-social.css` et
+  `assets/js/moment-with-locales.js` supprimés (`git rm`). Validé : `check` OK, `makemigrations
+  --check` sans changement, 27 smoke tests OK, `collectstatic` OK (aucun asset manquant), QA HTTP des
+  pages publiques (home, login, avis, versus, music/playlists avec Tom Select, tracker, kendama,
+  my_spot, about) : 200 et **plus aucune référence** à jQuery / Bootstrap / moment / select2 /
+  daterangepicker dans le HTML servi. **kendama et l'admin Django intacts.** README/techstack (qui
+  mentionnent encore Bootstrap) restent à mettre à jour en Phase 6.
 
 ## Objectif
 
