@@ -9,6 +9,26 @@
 > Convention : une entrée = **page/zone concernée** + **ce qui cloche** + (éventuellement) piste.
 > Cocher quand fait.
 
+## 🎯 Passe UI/design dédiée à prévoir (souhait propriétaire)
+
+Le propriétaire estime que **l'interface peut être nettement améliorée** (« il y a mieux comme
+interface »). Une **passe design/UI dédiée** est prévue plus tard, potentiellement pilotée par un
+**skill front-end / UI / design** spécialisé. Les corrections faites au fil de l'eau (ci-dessous et
+dans les commits) sont des ajustements ponctuels, **pas** cette refonte visuelle d'ensemble.
+
+## Décisions/ajustements faits pendant la QA post-5b (contexte pour la passe design)
+
+- **Conteneur large** : token `--ds-container-wide` (1280px) + modificateur `.content--wide`
+  (activable par page via `{% block content_class %}content--wide{% endblock %}`). Appliqué à la
+  **navbar** (plus large que les 1140px du contenu) et aux pages **tracker** (liste, détail,
+  comparaison) pour que grilles/tableaux/graphes respirent.
+- **Navbar** : compactée pour tenir à l'échelle 16px (liens `--ds-fs-sm`, padding réduit,
+  `white-space:nowrap`) ; bascule menu burger relevée 860→1140px.
+- **Contrôles tracker (détail & comparaison)** : formulaire d'ajout + filtre de dates regroupés dans
+  une **colonne centrée `.tracker-controls` (720px, sans encadré)** au-dessus des données pleine
+  largeur. (Un encadré avait été essayé puis retiré : il jurait avec le bandeau titre plus large et
+  bridait les noms de trackers longs.) → à ré-évaluer lors de la passe design.
+
 ## ⚠️ Échelle globale : root 16px depuis la 5b (à re-QA sur TOUT le site)
 
 Découvert pendant la QA 5b : Bootstrap 3 imposait `html { font-size: 10px }`. Comme `main.css` est
