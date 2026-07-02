@@ -54,6 +54,8 @@
             </div>
         </div>
 
+        <div class="ds-card" style="max-width: 720px; margin: 0 auto;">
+        <div class="ds-card__body">
         <form method="post">
             {% csrf_token %}
             {% if tracker.type == 'mesure' %}
@@ -102,6 +104,8 @@
         <hr>
 
         {% include 'tracker/include/date_range.html' %}
+        </div>
+        </div>
 
         <ul class="ds-tabs ds-tabs--justified" data-tabs>
             <li class="ds-tabs__item is-active"><a href="#historique">Historique</a></li>

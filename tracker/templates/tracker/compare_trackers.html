@@ -9,30 +9,33 @@
     {{ form.media.css }}
 {% endblock %}
 
+{% block content_class %}content--wide{% endblock %}
+
 {% block content %}
-    <div class="ds-narrow ds-narrow--lg">
+    <div>
         <div class="ds-text-center">
             <h1>Comparer des trackers</h1>
         </div>
 
-        <form method="get">
-            <div class="ds-form__group">
-                {{ form.trackers.label_tag }}
-                <div class="ds-cluster">
-                    <div style="flex: 1 1 auto">
-                        {{ form.trackers }}
-                        {{ form.trackers.errors }}
+        <div class="ds-card" style="max-width: 720px; margin: 0 auto;">
+            <div class="ds-card__body">
+                <form method="get">
+                    <div class="ds-form__group">
+                        {{ form.trackers.label_tag }}
+                        <div class="ds-cluster">
+                            <div style="flex: 1 1 auto">
+                                {{ form.trackers }}
+                                {{ form.trackers.errors }}
+                            </div>
+                            <button type="submit" class="ds-btn">
+                                Valider
+                            </button>
+                        </div>
                     </div>
-                    <button type="submit" class="ds-btn">
-                        Valider
-                    </button>
-                </div>
+                </form>
+                {% include 'tracker/include/date_range.html' %}
             </div>
-        </form>
-
-        <hr>
-
-        {% include 'tracker/include/date_range.html' %}
+        </div>
 
         <ul class="ds-tabs ds-tabs--justified" data-tabs>
             <li class="ds-tabs__item is-active"><a href="#statistiques">Statistiques</a></li>

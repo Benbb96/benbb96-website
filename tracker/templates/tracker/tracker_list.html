@@ -9,6 +9,8 @@
     {{ form.media.css }}
 {% endblock %}
 
+{% block content_class %}content--wide{% endblock %}
+
 {% block content %}
     {% if trackers|length > 1 %}
         <div class="ds-cluster" style="justify-content: flex-end;">
