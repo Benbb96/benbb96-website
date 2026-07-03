@@ -1138,6 +1138,13 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 .ds-input-group > :not(:last-child) { border-top-right-radius: 0; border-bottom-right-radius: 0; }
 .ds-input-group > input,
 .ds-input-group > select { flex: 1 1 auto; width: 1%; min-width: 0; }
+/* Tom Select dans un input-group : le champ visible est le .ts-wrapper (le <select>
+   d'origine est masqué). On le fait grandir et on aplatit le coin accolé au bouton. */
+.ds-input-group > .ts-wrapper { flex: 1 1 auto; width: 1%; min-width: 0; }
+.ds-input-group > .ts-wrapper:not(:last-child) .ts-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
 .ds-input-group__addon {
     display: flex;
     align-items: center;

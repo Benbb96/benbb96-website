@@ -4,6 +4,8 @@
 
 {% block music_title %}{% trans "My playlists" %}{% endblock %}
 
+{% block content_class %}content--wide{% endblock %}
+
 {% block stylesheet %}
     {{ filter.form.media.css }}
     <style>
@@ -15,12 +17,14 @@
 {% endblock %}
 
 {% block content %}
-    <div class="ds-narrow ds-narrow--lg">
+    <div>
         <div class="ds-cluster" style="justify-content: space-between">
             <h2 class="ds-mb-0">{% trans "Playlists" %}</h2>
-            <form method="get" class="ds-cluster">
-                {{ filter.form.styles }}
-                <button type="submit" class="ds-btn">Filtrer <i class="fa fa-filter" aria-hidden="true"></i></button>
+            <form method="get">
+                <div class="ds-input-group">
+                    {{ filter.form.styles }}
+                    <button type="submit" class="ds-btn">Filtrer <i class="fa fa-filter" aria-hidden="true"></i></button>
+                </div>
                 {{ filter.form.styles.errors }}
             </form>
         </div>
