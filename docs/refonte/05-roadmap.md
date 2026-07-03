@@ -191,8 +191,11 @@ bien chargés). **kendama et l'admin Django (django.jQuery privé) strictement i
   - **Onglets `.ds-tabs[data-tabs]`** (tracker) : `initTabs` (`common.js`) pose `role=tablist/tab/
     tabpanel`, `aria-selected`, `aria-controls`, `aria-labelledby`, roving tabindex + navigation
     clavier (flèches, Home/End). Les `.ds-tabs` de **navigation** (profil) restent de simples liens.
-- ✅ **Poids des pages** : mesuré (voir « Bilan Phase 6 » ci-dessous). Lighthouse non exécuté
-  (CLI absente de l'environnement) → comparaison du poids/nombre d'assets à la place.
+- ✅ **Poids des pages + Lighthouse** : mesuré (voir « Bilan Phase 6 » ci-dessous). Rapport
+  Lighthouse (home, mobile) exécuté par le propriétaire → scores reportés ci-dessous.
+- ✅ **Hiérarchie des titres (home)** : le titre des cartes projet passe `<h3>` → `<h2>`
+  (le hero est `<h1>`) — corrige l'audit Lighthouse « heading elements not in sequentially-descending
+  order ». `.ds-card__title` se dimensionne selon la balise (usages mixtes h2/h3 ailleurs, non touchés).
 
 **Hors périmètre (décisions propriétaire) :**
 - `soundcloud` : **non évalué/retiré** — la remise en marche de la récupération d'infos via URL
@@ -206,12 +209,19 @@ bien chargés). **kendama et l'admin Django (django.jQuery privé) strictement i
   `super_moite_moite`…). Leur donner un nom accessible (`aria-label` sur le contrôle, `aria-hidden`
   sur l'icône), en réutilisant les `title` FR existants quand ils existent. ⚠️ Beaucoup vivent dans
   le composant Vue de `super_moite_moite` (à traiter avec soin).
+- **Cibles tactiles trop petites** (audit Lighthouse « touch targets do not have sufficient size or
+  spacing ») : agrandir/espacer certains contrôles pour atteindre ~48 px (probablement le sélecteur
+  de langue / la pagination / certaines icônes). Décision de design.
 - **Contrastes** : audit à faire avec un outil dédié sur les tokens de `main.css`
   (texte muté sur fond clair, `.ds-social`, hero) — non mesuré automatiquement ici. Peut impliquer
   d'ajuster des couleurs (impact visuel = décision de design du propriétaire).
-- **Lighthouse** : lancer manuellement (Performance/A11y/Best-Practices/SEO) une fois un
-  environnement avec la CLI disponible (`npm i -g lighthouse`), ou via l'onglet Lighthouse de
-  Chrome/Chromium DevTools.
+
+**Reste à faire (performance) :**
+- **LCP élevé sur la home** (~10 s en test mobile Lighthouse, cf. ci-dessous) : le point de contenu
+  le plus grand est vraisemblablement une **image de carte projet non optimisée** (`projet.image`
+  servie en pleine résolution, `max-height` en CSS seulement). Pistes : `loading="lazy"` +
+  `width`/`height` explicites, servir des images optimisées (l'optimisation Pillow existe pour les
+  `PhotoAbstract` mais `Projet.image` n'en bénéficie pas forcément). À mesurer hors debug-toolbar.
 
 ### Bilan Phase 6 — payoff de la refonte (poids des assets)
 
@@ -232,6 +242,24 @@ hors debug-toolbar (dev only) :
 → Gain net : **~450 Ko de framework CSS/JS retirés de chaque page**, plus jQuery éliminé du front
 public (conservé uniquement le `django.jQuery` privé de l'admin), plus **528 Ko de moment.js**
 supprimés. Le front public ne dépend plus d'aucun framework CSS/JS tiers.
+
+### Bilan Phase 6 — Lighthouse (home, mobile)
+
+Rapport Lighthouse 13.4.0 exécuté par le propriétaire sur `http://localhost:8000/fr/` (form factor
+**mobile**, en dev avec debug-toolbar — à relire hors dev pour la perf) :
+
+| Catégorie | Score |
+|---|---|
+| Performance | **70** |
+| Accessibilité | **94** |
+| Bonnes pratiques | **100** |
+| SEO | **92** |
+
+Métriques : FCP 2,8 s · **LCP 10,4 s** (à optimiser, cf. reste à faire perf) · TBT 0 ms ·
+CLS 0,013 · Speed Index 2,8 s. Les scores Best Practices 100 / TBT 0 ms / CLS ~0 confirment le
+bénéfice de la refonte (plus de framework JS bloquant, layout stable). Les deux seuls audits a11y
+en échec (hiérarchie des titres, cibles tactiles) sont traités/listés ci-dessus — le premier est
+**corrigé** dans cette phase.
 
 ## Phase 7 — Amélioration progressive avec htmx (étape finale)
 
