@@ -10,9 +10,11 @@
     <div>
         <div class="ds-cluster" style="justify-content: space-between">
             <h2 class="ds-mb-0">{% trans "Styles" %}</h2>
-            <form method="get" class="ds-cluster">
-                {{ filter.form.nom }}
-                <button type="submit" class="ds-btn">Filtrer <i class="fa fa-filter" aria-hidden="true"></i></button>
+            <form method="get">
+                <div class="ds-input-group" style="width: 22rem; max-width: 100%">
+                    {{ filter.form.nom }}
+                    <button type="submit" class="ds-btn">Filtrer <i class="fa fa-filter" aria-hidden="true"></i></button>
+                </div>
                 {{ filter.form.nom.errors }}
             </form>
         </div>

@@ -1,4 +1,5 @@
 import django_filters
+from django import forms
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -47,7 +48,12 @@ class MusiqueFilter(django_filters.FilterSet):
 
 
 class StyleFilter(django_filters.FilterSet):
-    nom = django_filters.CharFilter(lookup_expr='icontains', label=_('Name'))
+    # Rendu « nu » (hors components/form.html) → placeholder + aria-label pour
+    # l'UX et l'accessibilité (le champ n'a pas de <label> visible associé).
+    nom = django_filters.CharFilter(
+        lookup_expr='icontains', label=_('Name'),
+        widget=forms.TextInput(attrs={'placeholder': _('Search'), 'aria-label': _('Name')}),
+    )
 
     class Meta:
         model = Style
