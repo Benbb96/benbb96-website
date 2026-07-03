@@ -155,13 +155,67 @@ bien chargés). **kendama et l'admin Django (django.jQuery privé) strictement i
 > Note : pas de Temporal (non fiable en natif début 2026) — le formatage de dates reste en `Intl`.
 > Reste pour la Phase 6 : mettre à jour `README.md` / `techstack.*` (mentionnent encore Bootstrap).
 
-## Phase 6 — Finitions
+## Phase 6 — Finitions — ✅ FAITE (avec reste listé)
 
-- Évaluer `soundcloud` (fork git, API dépréciée) → garder ou retirer (doc 4).
-- Mettre à jour `README.md` et régénérer/supprimer `techstack.md`/`techstack.yml` (obsolètes :
-  mentionnent encore Bootstrap, Redis, etc.).
-- Revue d'accessibilité / Lighthouse / poids des pages.
-- Nettoyer le code mort éventuel des apps abandonnées.
+- ✅ **README.md** : section « Tech Stack » actualisée (retrait Bootstrap/Redis ; ajout du design
+  system CSS maison, Tom Select, Chart.js, django-storages + GCS, DRF + JWT, Pillow, pandas ; DB
+  SQLite). Lien « Full tech stack » vers `techstack.md` conservé. Instructions d'install vérifiées.
+- ✅ **Code mort front retiré** (grep à l'appui, 1 commit) :
+  - `assets/css/style.css` : suppression de `.navbar`, du bloc `footer` (bg/padding + `footer p a`),
+    de `.content` et `.errorlist` (désormais gérés par `main.css`) et des `.flex-row`/`.flex-col`
+    (aucune occurrence). Conservés : `.text-italic`, `.flex-container`, `.spot-tag`, `.platformLink`,
+    `#map` + rallye (`.hotes`/`.hote`/`.number`).
+  - `avis/static/avis/css/avis-style.css` : suppression de `ul.breadcrumb` (migré `.ds-breadcrumb`)
+    et `.carousel-caption` (plus utilisé).
+  - `templates/colorfield/color.html` : retrait de la classe Bootstrap `form-control` (dernière
+    occurrence du projet) ; l'`<input type="text">` reste stylé par les sélecteurs d'éléments de `main.css`.
+  - Vérifié : context processors (3) et template tags (`multiply_10`, `url_quote_plus`, `param_replace`,
+    `contrast_color`, `color`) **tous utilisés** → rien à retirer.
+- ✅ **Accessibilité — quick wins** (1 commit) : lien d'évitement clavier « Skip to content »
+  (`.ds-skip-link` + `id=main-content`), bloc `@media (prefers-reduced-motion: reduce)` global,
+  `<label>` associé (`ds-sr-only`) sur le champ de recherche des playlists. Bases déjà saines :
+  `:focus-visible` présent, pagination/messages avec `aria-*`/`role`, un seul `<img>` sans `alt`
+  (kendama, hors périmètre).
+- ✅ **Poids des pages** : mesuré (voir « Bilan Phase 6 » ci-dessous). Lighthouse non exécuté
+  (CLI absente de l'environnement) → comparaison du poids/nombre d'assets à la place.
+
+**Hors périmètre (décisions propriétaire) :**
+- `soundcloud` : **non évalué/retiré** — la remise en marche de la récupération d'infos via URL
+  SoundCloud est une **tâche future dédiée**. Laissé tel quel.
+- `techstack.md` / `techstack.yml` : **non touchés** — générés par l'app Stack File de GitHub
+  (régénérés côté GitHub par le propriétaire).
+
+**Reste à faire (a11y — demande plus de travail, à planifier) :**
+- **Menu mobile** (checkbox-hack sans JS) : pas d'`aria-expanded`/`aria-controls` sur le burger.
+  Un petit contrôleur JS (ou un `<button>`) exposerait l'état ouvert/fermé aux lecteurs d'écran.
+- **Onglets `.ds-tabs`** (contrôleur `common.js`) : ajouter `role="tablist"/"tab"/"tabpanel"`,
+  `aria-selected`, `aria-controls`, et la navigation clavier (flèches).
+- **Contrastes** : audit à faire avec un outil dédié sur les tokens de `main.css`
+  (texte muté sur fond clair, `.ds-social`, hero) — non mesuré automatiquement ici.
+- **Icônes décoratives** `<i class="fa …">` dans les boutons (« Filtrer ») : ajouter
+  `aria-hidden="true"` (texte déjà présent → nit).
+- **Lighthouse** : lancer manuellement (Performance/A11y/Best-Practices/SEO) une fois un
+  environnement avec la CLI disponible.
+
+### Bilan Phase 6 — payoff de la refonte (poids des assets)
+
+Comparaison des assets **chargés globalement** (via `base.html`), hors FontAwesome (constant) et
+hors debug-toolbar (dev only) :
+
+| | Avant (Bootstrap/jQuery) | Après (design system) |
+|---|---|---|
+| CSS framework | Bootstrap 3.3.7 (CDN) ~121 Ko + `bootstrap-social.css` 31 Ko | `main.css` 41 Ko + `style.css` 1 Ko + `avis-style.css` <1 Ko |
+| JS framework | jQuery « full » (~280 Ko non-min) + Bootstrap JS ~37 Ko | `http.js` 4 Ko (vanilla) |
+| **Total global** | **≈ 470–490 Ko** | **≈ 47 Ko** |
+
+- **`moment-with-locales.js` (528 Ko)** : entièrement supprimé (git rm) — était chargé côté tracker.
+- Plugins jQuery lourds (**select2 / DataTables / bootstrap-daterangepicker**) remplacés par
+  **Tom Select** (~49 Ko CSS+JS) chargé **uniquement** sur les pages qui en ont besoin.
+- **Chart.js** monté en v4 (`chart.umd.min.js` ~201 Ko) chargé **uniquement** sur le tracker.
+
+→ Gain net : **~450 Ko de framework CSS/JS retirés de chaque page**, plus jQuery éliminé du front
+public (conservé uniquement le `django.jQuery` privé de l'admin), plus **528 Ko de moment.js**
+supprimés. Le front public ne dépend plus d'aucun framework CSS/JS tiers.
 
 ## Phase 7 — Amélioration progressive avec htmx (étape finale)
 
