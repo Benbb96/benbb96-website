@@ -8,9 +8,9 @@
         <div class="ds-text-muted">
             <a href="{{ avis.auteur.get_absolute_url }}">{{ avis.auteur }}</a>, le {{ avis.date_edition|date:"l d N Y" }}
         </div>
-        <h4>
+        <h3>
             <a href="{{ avis.get_absolute_url }}">{{ avis.produit.nom }} - {{ avis.produit.structure.nom }}</a>
-        </h4>
+        </h3>
         <div class="ds-badge ds-badge--primary">{{ avis.note }}/10</div>
     </div>
 </div>
