@@ -10,15 +10,15 @@ class TrackerForm(forms.ModelForm):
         model = Tracker
         fields = ('nom', 'icone', 'color', 'type')
         widgets = {
-            'nom': forms.TextInput(attrs={'class': 'form-control'}),
-            'type': forms.Select(attrs={'class': 'form-control'})
+            'nom': forms.TextInput(),
+            'type': forms.Select()
         }
 
 
 class TrackForm(forms.ModelForm):
     valeur = forms.FloatField(
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': 'any', 'placeholder': 'Valeur'})
+        widget=forms.NumberInput(attrs={'step': 'any', 'placeholder': 'Valeur'})
     )
     datetime = forms.DateTimeField(
         required=True,
@@ -37,7 +37,7 @@ class TrackForm(forms.ModelForm):
         fields = ('valeur', 'commentaire', 'datetime')
         widgets = {
             'tracker': forms.HiddenInput(),
-            'commentaire': forms.TextInput(attrs={'placeholder': 'Commentaire facultatif', 'class': 'form-control'})
+            'commentaire': forms.TextInput(attrs={'placeholder': 'Commentaire facultatif'})
         }
         labels = {'commentaire': 'Ajouter un nouveau track'}
 

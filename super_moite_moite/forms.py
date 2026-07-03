@@ -11,7 +11,7 @@ class LogementForm(forms.ModelForm):
         model = Logement
         fields = ('nom', 'habitants')
         widgets = {
-            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'nom': forms.TextInput(),
             'habitants': TomSelectMultipleWidget(placeholder='Habitants')
         }
 

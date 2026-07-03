@@ -32,8 +32,8 @@ class BaseLienForm(forms.ModelForm):
     class Meta:
         fields = ('url', 'plateforme')
         widgets = {
-            'url': forms.TextInput(attrs={'class': 'form-control'}),
-            'plateforme': forms.Select(attrs={'class': 'form-control'})
+            'url': forms.TextInput(),
+            'plateforme': forms.Select()
         }
 
 

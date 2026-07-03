@@ -47,7 +47,7 @@ PartieJoueurFormSet = inlineformset_factory(
     fields=('joueur', 'score_classement'),
     widgets={
         'joueur': TomSelectWidget(placeholder='Choisir un joueur'),
-        'score_classement': NumberInput(attrs={'class': 'form-control'})
+        'score_classement': NumberInput()
     },
     can_delete=False
 )
