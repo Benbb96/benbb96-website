@@ -167,8 +167,13 @@ bien chargés). **kendama et l'admin Django (django.jQuery privé) strictement i
     `#map` + rallye (`.hotes`/`.hote`/`.number`).
   - `avis/static/avis/css/avis-style.css` : suppression de `ul.breadcrumb` (migré `.ds-breadcrumb`)
     et `.carousel-caption` (plus utilisé).
-  - `templates/colorfield/color.html` : retrait de la classe Bootstrap `form-control` (dernière
-    occurrence du projet) ; l'`<input type="text">` reste stylé par les sélecteurs d'éléments de `main.css`.
+  - `templates/colorfield/color.html` : retrait de la classe Bootstrap `form-control`.
+  - **`form-control` dans les widgets Python** (`tracker/forms.py`, `music/forms.py`,
+    `versus/views.py`, `super_moite_moite/forms.py`) : retiré partout (type de widget préservé).
+    → **plus aucune occurrence de `form-control`** dans le projet (templates + Python).
+  - **Consolidation CSS** : `assets/css/style.css` et `avis/static/avis/css/avis-style.css`
+    (tous deux chargés globalement à côté de `main.css`) **fusionnés dans `main.css`** (section
+    « styles hérités »), fichiers supprimés, 2 `<link>` retirés de `base.html` → 2 requêtes en moins.
   - Vérifié : context processors (3) et template tags (`multiply_10`, `url_quote_plus`, `param_replace`,
     `contrast_color`, `color`) **tous utilisés** → rien à retirer.
 - ✅ **Accessibilité — quick wins** (1 commit) : lien d'évitement clavier « Skip to content »
@@ -204,7 +209,7 @@ hors debug-toolbar (dev only) :
 
 | | Avant (Bootstrap/jQuery) | Après (design system) |
 |---|---|---|
-| CSS framework | Bootstrap 3.3.7 (CDN) ~121 Ko + `bootstrap-social.css` 31 Ko | `main.css` 41 Ko + `style.css` 1 Ko + `avis-style.css` <1 Ko |
+| CSS framework | Bootstrap 3.3.7 (CDN) ~121 Ko + `bootstrap-social.css` 31 Ko | `main.css` ~44 Ko (design system + styles hérités fusionnés, 1 seul fichier) |
 | JS framework | jQuery « full » (~280 Ko non-min) + Bootstrap JS ~37 Ko | `http.js` 4 Ko (vanilla) |
 | **Total global** | **≈ 470–490 Ko** | **≈ 47 Ko** |
 
