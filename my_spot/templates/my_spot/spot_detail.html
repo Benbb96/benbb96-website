@@ -19,7 +19,7 @@
                 </h3>
                 <p>
                     Visibilité :
-                    <b>{{ spot.get_visibilite_display }} <i class="fa fa-{{ spot.visibilite|visibilite_icon }}"></i></b>
+                    <b>{{ spot.get_visibilite_display }} <i class="fa fa-{{ spot.visibilite|visibilite_icon }}" aria-hidden="true"></i></b>
                 </p>
                 <p>
                     Description : {{ spot.description|linebreaksbr }}

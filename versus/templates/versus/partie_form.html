@@ -52,12 +52,12 @@
             </table>
         </div>
         <button type="button" class="ds-btn ds-btn--ghost" id="add_form" title="Ajouter un joueur">
-                <i class="fa fa-plus"></i>
+                <i class="fa fa-plus" aria-hidden="true"></i>
                 Ajouter un joueur
             </button>
         <div class="ds-cluster ds-cluster--center ds-mt-4">
             <button type="submit" class="ds-btn">
-                <i class="fa fa-check"></i>
+                <i class="fa fa-check" aria-hidden="true"></i>
                 {% if partie %}Modifier{% else %}Ajouter{% endif %}
             </button>
             <a class="ds-btn ds-btn--ghost" href="{{ jeu.get_absolute_url }}">Annuler</a>

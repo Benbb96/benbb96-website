@@ -39,7 +39,7 @@
                 {% if request.user.id == object.auteur.id %}
                     <div class="ds-text-right">
                         <a href="{% url 'admin:avis_avis_change' object.id %}">
-                            Editer <i class="fa fa-edit" title="Editer cet avis"></i>
+                            Editer <i class="fa fa-edit" title="Editer cet avis" aria-hidden="true"></i>
                         </a>
                     </div>
                 {% endif %}

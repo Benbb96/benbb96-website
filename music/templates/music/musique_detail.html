@@ -89,16 +89,16 @@
             <p class="ds-cluster">
                 {% trans "Search on :" %}
                 <a class="ds-social ds-social--filled ds-social--sm ds-social--google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">
-                    <i class="fab fa-google"></i>
+                    <i class="fab fa-google" aria-hidden="true"></i>
                 </a>
                 <a class="ds-social ds-social--filled ds-social--sm ds-social--youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="{% trans "Search on YouTube" %}" target="_blank">
-                    <i class="fab fa-youtube"></i>
+                    <i class="fab fa-youtube" aria-hidden="true"></i>
                 </a>
                 <a class="ds-social ds-social--filled ds-social--sm ds-social--soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
-                    <i class="fab fa-soundcloud"></i>
+                    <i class="fab fa-soundcloud" aria-hidden="true"></i>
                 </a>
                 <a class="ds-social ds-social--filled ds-social--sm ds-social--spotify" href="https://open.spotify.com/search/{{ musique|urlencode }}" title="{% trans "Search on Spotify" %}" target="_blank">
-                    <i class="fab fa-spotify"></i>
+                    <i class="fab fa-spotify" aria-hidden="true"></i>
                 </a>
             </p>
             {% if musique.playlists.exists %}
