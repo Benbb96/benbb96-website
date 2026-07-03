@@ -1126,3 +1126,71 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
     white-space: nowrap;
 }
 .ds-modal--lg { width: min(94vw, 900px); }
+
+/* 19. ─────────────────── STYLES HÉRITÉS (ex style.css / avis-style.css) ──────
+   Rapatriés dans main.css (Phase 6) : ces deux feuilles étaient chargées
+   globalement à côté de main.css. Regroupement = 2 requêtes en moins.
+   Contenu spécifique à quelques pages (utilitaires + rallye + avis + my_spot). */
+
+.text-italic { font-style: italic; }
+
+/* Grille simple encore utilisée par versus/jeu_list.html */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+/* my_spot : étiquettes de tags */
+.spot-tag { margin-right: 5px; padding: 4px 7px; }
+.spot-tag:hover { opacity: 0.8; transition: opacity 0.3s; }
+
+/* music : liens vers les plateformes */
+a.platformLink:hover { text-decoration: none; }
+a.platformLink:focus, a.platformLink:active { text-decoration: none; color: red; }
+
+/* Rallye des Colocs (base/rallye.html) + cartes Google Maps (#map) */
+#map { height: 400px; width: 100%; }
+.hotes { text-align: center; }
+.hote { width: 70%; margin-left: auto; text-align: left; }
+.number {
+    position: relative;
+    left: -100px;
+    top: 80px;
+    font-size: 2.8em;
+    border: double 6px red;
+    border-radius: 50%;
+    padding: 10px 17px;
+}
+
+/* avis : vignettes de la liste (cartes de hauteur égale, image recadrée) */
+.avis .ds-grid > div { display: flex; }
+.avis-thumb { display: flex; flex-direction: column; width: 100%; }
+.avis-thumb .ds-card__body { flex: 1 1 auto; }
+.avis-thumb .ds-card__media img { height: 200px; object-fit: cover; }
+
+/* avis : pastille de note sur la photo */
+.note {
+    position: absolute;
+    right: 30px;
+    top: 44%;
+    font-size: 18px;
+    border: 2px solid white;
+    color: white;
+    background-color: rgba(44, 44, 44, 0.6);
+    border-radius: 20%;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    transition: all 0.5s;
+}
+.note:hover {
+    border-radius: 30%;
+    background-color: rgba(88, 88, 88, 0.6);
+    transition: all 1s;
+}
+
+/* avis : barre de filtres centrée */
+.filter-bar { text-align: center; padding: 15px; }

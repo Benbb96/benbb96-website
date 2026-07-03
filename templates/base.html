@@ -21,11 +21,9 @@
     <!-- Favicon -->
     {% include 'favicon.html' %}
 
-    {# Design system maison (main.css) chargé en dernier — voir en tête de assets/css/main.css. #}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'avis/css/avis-style.css' %}">
     {% fontawesome_6_static %}
 
+    {# Design system maison + styles hérités, tout dans main.css (Phase 6). #}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 
     {% block stylesheet %}{% endblock %}
