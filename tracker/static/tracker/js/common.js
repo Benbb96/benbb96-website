@@ -212,25 +212,76 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 })
 
-// Onglets maison (.ds-tabs) — bascule vanilla des panneaux .ds-tab-panel.
-// Remplace le comportement data-toggle="tab" de Bootstrap.
+// Onglets maison (.ds-tabs[data-tabs]) — bascule vanilla des panneaux .ds-tab-panel,
+// avec sémantique ARIA (tablist/tab/tabpanel) et navigation clavier (flèches, Home/End).
+// Remplace le comportement data-toggle="tab" de Bootstrap. Sans JS, les onglets
+// restent des ancres pointant vers les panneaux (dégradation propre).
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.ds-tabs[data-tabs]').forEach(function (tabs) {
-        const items = tabs.querySelectorAll('.ds-tabs__item');
-        items.forEach(function (item) {
-            const link = item.querySelector('a[href^="#"]');
-            if (!link) return;
+        const links = Array.from(tabs.querySelectorAll('.ds-tabs__item > a[href^="#"]'));
+        if (!links.length) return;
+
+        tabs.setAttribute('role', 'tablist');
+
+        function panelFor(link) {
+            return document.getElementById(link.getAttribute('href').slice(1));
+        }
+
+        // Rôles ARIA + état initial (roving tabindex : seul l'onglet actif est tabulable).
+        links.forEach(function (link) {
+            const panel = panelFor(link);
+            const selected = link.parentElement.classList.contains('is-active');
+            link.setAttribute('role', 'tab');
+            link.setAttribute('aria-selected', selected ? 'true' : 'false');
+            link.setAttribute('tabindex', selected ? '0' : '-1');
+            if (panel) {
+                if (!link.id) link.id = panel.id + '-tab';
+                panel.setAttribute('role', 'tabpanel');
+                panel.setAttribute('aria-labelledby', link.id);
+                panel.setAttribute('tabindex', '0');
+                link.setAttribute('aria-controls', panel.id);
+            }
+        });
+
+        function activate(link, setFocus) {
+            links.forEach(function (other) {
+                const isActive = other === link;
+                other.parentElement.classList.toggle('is-active', isActive);
+                other.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                other.setAttribute('tabindex', isActive ? '0' : '-1');
+                const panel = panelFor(other);
+                if (panel) panel.classList.toggle('is-active', isActive);
+            });
+            if (setFocus) link.focus();
+        }
+
+        links.forEach(function (link, index) {
             link.addEventListener('click', function (event) {
                 event.preventDefault();
-                const targetId = link.getAttribute('href').slice(1);
-                items.forEach(i => i.classList.remove('is-active'));
-                item.classList.add('is-active');
-                const target = document.getElementById(targetId);
-                if (target) {
-                    const group = target.parentElement;
-                    group.querySelectorAll(':scope > .ds-tab-panel').forEach(p => p.classList.remove('is-active'));
-                    target.classList.add('is-active');
+                activate(link, false);
+            });
+            link.addEventListener('keydown', function (event) {
+                let target = null;
+                switch (event.key) {
+                    case 'ArrowRight':
+                    case 'ArrowDown':
+                        target = links[(index + 1) % links.length];
+                        break;
+                    case 'ArrowLeft':
+                    case 'ArrowUp':
+                        target = links[(index - 1 + links.length) % links.length];
+                        break;
+                    case 'Home':
+                        target = links[0];
+                        break;
+                    case 'End':
+                        target = links[links.length - 1];
+                        break;
+                    default:
+                        return;
                 }
+                event.preventDefault();
+                activate(target, true);
             });
         });
     });
