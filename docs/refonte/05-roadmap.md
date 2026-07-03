@@ -181,6 +181,16 @@ bien chargés). **kendama et l'admin Django (django.jQuery privé) strictement i
   `<label>` associé (`ds-sr-only`) sur le champ de recherche des playlists. Bases déjà saines :
   `:focus-visible` présent, pagination/messages avec `aria-*`/`role`, un seul `<img>` sans `alt`
   (kendama, hors périmètre).
+- ✅ **Accessibilité — 2e passe** (1 commit par sujet) :
+  - **Icônes décoratives** : `aria-hidden="true"` sur les `<i>` FontAwesome accompagnés d'un texte
+    visible ou d'un lien parent titré (boutons Filtrer/Effacer/Ajouter/Éditer, liens de recherche
+    par plateforme…).
+  - **Menu mobile** : burger `role=button` focusable + `aria-controls`/`aria-expanded` ;
+    `assets/js/nav.js` (amélioration progressive) synchronise `aria-expanded` et ouvre le menu au
+    clavier (Entrée/Espace), la case du checkbox-hack étant `hidden`. Fallback souris sans JS conservé.
+  - **Onglets `.ds-tabs[data-tabs]`** (tracker) : `initTabs` (`common.js`) pose `role=tablist/tab/
+    tabpanel`, `aria-selected`, `aria-controls`, `aria-labelledby`, roving tabindex + navigation
+    clavier (flèches, Home/End). Les `.ds-tabs` de **navigation** (profil) restent de simples liens.
 - ✅ **Poids des pages** : mesuré (voir « Bilan Phase 6 » ci-dessous). Lighthouse non exécuté
   (CLI absente de l'environnement) → comparaison du poids/nombre d'assets à la place.
 
@@ -191,16 +201,17 @@ bien chargés). **kendama et l'admin Django (django.jQuery privé) strictement i
   (régénérés côté GitHub par le propriétaire).
 
 **Reste à faire (a11y — demande plus de travail, à planifier) :**
-- **Menu mobile** (checkbox-hack sans JS) : pas d'`aria-expanded`/`aria-controls` sur le burger.
-  Un petit contrôleur JS (ou un `<button>`) exposerait l'état ouvert/fermé aux lecteurs d'écran.
-- **Onglets `.ds-tabs`** (contrôleur `common.js`) : ajouter `role="tablist"/"tab"/"tabpanel"`,
-  `aria-selected`, `aria-controls`, et la navigation clavier (flèches).
+- **Noms accessibles des contrôles icône-seule** : de nombreux boutons/liens ne contiennent qu'une
+  icône FontAwesome sans texte (edit/trash/plus/check nus dans `tracker`, `versus`, `music`,
+  `super_moite_moite`…). Leur donner un nom accessible (`aria-label` sur le contrôle, `aria-hidden`
+  sur l'icône), en réutilisant les `title` FR existants quand ils existent. ⚠️ Beaucoup vivent dans
+  le composant Vue de `super_moite_moite` (à traiter avec soin).
 - **Contrastes** : audit à faire avec un outil dédié sur les tokens de `main.css`
-  (texte muté sur fond clair, `.ds-social`, hero) — non mesuré automatiquement ici.
-- **Icônes décoratives** `<i class="fa …">` dans les boutons (« Filtrer ») : ajouter
-  `aria-hidden="true"` (texte déjà présent → nit).
+  (texte muté sur fond clair, `.ds-social`, hero) — non mesuré automatiquement ici. Peut impliquer
+  d'ajuster des couleurs (impact visuel = décision de design du propriétaire).
 - **Lighthouse** : lancer manuellement (Performance/A11y/Best-Practices/SEO) une fois un
-  environnement avec la CLI disponible.
+  environnement avec la CLI disponible (`npm i -g lighthouse`), ou via l'onglet Lighthouse de
+  Chrome/Chromium DevTools.
 
 ### Bilan Phase 6 — payoff de la refonte (poids des assets)
 
