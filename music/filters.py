@@ -58,7 +58,13 @@ def _styles_filter():
     """Filtre M2M sur les styles (petit jeu) avec Tom Select rendu côté serveur."""
     return django_filters.ModelMultipleChoiceFilter(
         queryset=Style.objects.all(),
-        widget=TomSelectMultipleWidget(placeholder=_('Search via a style')),
+        label=_('Styles'),
+        # aria-label sur le <select> : Tom Select le masque (ts-hidden-accessible,
+        # tabindex=-1), un <label for> n'est pas fiable → nom accessible garanti.
+        widget=TomSelectMultipleWidget(
+            placeholder=_('Search via a style'),
+            attrs={'aria-label': _('Styles')},
+        ),
     )
 
 
