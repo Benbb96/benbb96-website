@@ -1,43 +1,14 @@
-/* Remove the navbar's default margin-bottom and rounded borders */
-.navbar {
-    margin-bottom: 0 !important;
-    border-radius: 0 !important;
-}
-
-/* Add a gray background color and some padding to the footer */
-footer {
-    background-color: #f2f2f2;
-    padding: 25px;
-}
-
-footer p a
-{
-    margin: 0;
-    transition: margin 600ms;
-}
-
-footer p a:hover
-{
-    margin: 0 13px;
-    transition: margin 300ms;
-}
-
-footer p a i:hover {
-    color: white;
-}
-
-.content {
-    margin: 20px;
-}
-
-.errorlist {
-    color: red;
-}
+/* Styles hérités encore utilisés par quelques pages.
+   Le gros du style vit désormais dans main.css (design system .ds-*).
+   Chargé AVANT main.css depuis templates/base.html : ne redéfinit que des
+   utilitaires/classes spécifiques non repris par le design system.
+   (Navbar, footer, .content et .errorlist sont désormais gérés par main.css.) */
 
 .text-italic {
     font-style: italic;
 }
 
+/* Grille simple encore utilisée par versus/jeu_list.html */
 .flex-container {
     display: flex;
     flex-wrap: wrap;
@@ -45,34 +16,7 @@ footer p a i:hover {
     align-items: center;
 }
 
-.flex-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.flex-col {
-    flex: 1 1 calc(33.333% - 20px); /* 3 colonnes avec un espace de 20px */
-    max-width: calc(33.333% - 20px); /* Limite la largeur pour respecter la grille */
-    box-sizing: border-box; /* Inclut le padding dans la largeur */
-}
-
-@media (max-width: 768px) {
-    .flex-col {
-        flex: 1 1 calc(50% - 20px); /* 2 colonnes sur les écrans moyens */
-        max-width: calc(50% - 20px);
-    }
-}
-
-@media (max-width: 576px) {
-    .flex-col {
-        flex: 1 1 100%; /* 1 colonne sur les petits écrans */
-        max-width: 100%;
-    }
-}
-
-
+/* my_spot : étiquettes de tags */
 .spot-tag {
     margin-right: 5px;
     padding: 4px 7px
@@ -83,6 +27,7 @@ footer p a i:hover {
     transition: opacity 0.3s;
 }
 
+/* music : liens vers les plateformes */
 a.platformLink:hover {
     text-decoration: none;
 }
@@ -93,7 +38,7 @@ a.platformLink:focus, a.platformLink:active {
 }
 
 
-/* Rallye des Colocs */
+/* Rallye des Colocs (base/rallye.html) + cartes Google Maps (#map) */
 #map {
     height: 400px;  /* The height is 400 pixels */
     width: 100%;  /* The width is the width of the web page */
@@ -118,4 +63,3 @@ a.platformLink:focus, a.platformLink:active {
     border-radius: 50%;
     padding: 10px 17px;
 }
-/* ----------- */
