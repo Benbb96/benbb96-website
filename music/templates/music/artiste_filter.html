@@ -4,12 +4,14 @@
 
 {% block music_title %}{% trans "Artists" %}{% endblock %}
 
+{% block content_class %}content--wide{% endblock %}
+
 {% block stylesheet %}
     {{ filter.form.media.css }}
 {% endblock %}
 
 {% block content %}
-    <div class="ds-narrow ds-narrow--lg">
+    <div>
         <h2>{% trans "Artists" %}</h2>
         <details class="ds-details">
             <summary>Options de filtre</summary>
