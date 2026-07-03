@@ -209,9 +209,13 @@ bien chargés). **kendama et l'admin Django (django.jQuery privé) strictement i
   `super_moite_moite`…). Leur donner un nom accessible (`aria-label` sur le contrôle, `aria-hidden`
   sur l'icône), en réutilisant les `title` FR existants quand ils existent. ⚠️ Beaucoup vivent dans
   le composant Vue de `super_moite_moite` (à traiter avec soin).
-- **Cibles tactiles trop petites** (audit Lighthouse « touch targets do not have sufficient size or
-  spacing ») : agrandir/espacer certains contrôles pour atteindre ~48 px (probablement le sélecteur
-  de langue / la pagination / certaines icônes). Décision de design.
+- **Liens distinguables autrement que par la couleur** (audit `link-in-text-block`, vu sur avis /
+  music) : les liens dans le corps de texte n'ont pas de soulignement (`a { text-decoration: none }`
+  dans `main.css`). WCAG 1.4.1 demande un indice non-coloré. Piste : souligner les liens **au sein
+  du contenu** (ex. `.content p a`, prose) sans toucher aux liens boutons/cartes/nav. **Décision de
+  design** (le propriétaire prévoit une passe UI dédiée).
+- **Cibles tactiles** : l'audit Lighthouse `target-size` ne remonte **que les cases de la
+  debug-toolbar** (dev) → **rien à corriger sur le site**. À revérifier sur un build sans toolbar.
 - **Contrastes** : audit à faire avec un outil dédié sur les tokens de `main.css`
   (texte muté sur fond clair, `.ds-social`, hero) — non mesuré automatiquement ici. Peut impliquer
   d'ajuster des couleurs (impact visuel = décision de design du propriétaire).
@@ -243,23 +247,36 @@ hors debug-toolbar (dev only) :
 public (conservé uniquement le `django.jQuery` privé de l'admin), plus **528 Ko de moment.js**
 supprimés. Le front public ne dépend plus d'aucun framework CSS/JS tiers.
 
-### Bilan Phase 6 — Lighthouse (home, mobile)
+### Bilan Phase 6 — Lighthouse (mobile) + itération multi-pages
 
-Rapport Lighthouse 13.4.0 exécuté par le propriétaire sur `http://localhost:8000/fr/` (form factor
-**mobile**, en dev avec debug-toolbar — à relire hors dev pour la perf) :
+Lighthouse 13.4.0 (form factor **mobile**, en dev avec debug-toolbar). ⚠️ **La debug-toolbar
+fausse deux audits** : `target-size` (ses ~12 cases à cocher sont les seules « cibles trop
+petites » — **0 sur le site réel**) et la perf. Les scores a11y « après » ci-dessous seraient
+donc **100 en prod** (sans toolbar).
 
-| Catégorie | Score |
-|---|---|
-| Performance | **70** |
-| Accessibilité | **94** |
-| Bonnes pratiques | **100** |
-| SEO | **92** |
+| Page | A11y avant → après | BP | SEO avant → après | Agentic avant → après |
+|---|---|---|---|---|
+| home | 94 → **96** (100 prod) | 100 | 92 → **100** | 50 → **100** |
+| avis (liste) | 90 → **~93** (100 prod) | 100 | 100 | 100 |
+| avis (détail) | 94 → **96** (100 prod) | 100 | 100 | 100 |
+| music (playlists) | 92 → **97** (100 prod) | 100 | 100 | 50 → **100** |
+| versus (jeux) | 96 (100 prod) | 100 | 100 | 100 |
 
-Métriques : FCP 2,8 s · **LCP 10,4 s** (à optimiser, cf. reste à faire perf) · TBT 0 ms ·
-CLS 0,013 · Speed Index 2,8 s. Les scores Best Practices 100 / TBT 0 ms / CLS ~0 confirment le
-bénéfice de la refonte (plus de framework JS bloquant, layout stable). Les deux seuls audits a11y
-en échec (hiérarchie des titres, cibles tactiles) sont traités/listés ci-dessus — le premier est
-**corrigé** dans cette phase.
+**Corrigé pendant l'itération** (1 commit par sujet) :
+- **SEO 92→100** : `<meta name="description">` ajoutée (`base.html`).
+- **Agentic 50→100** : arbre d'accessibilité bien formé — (a) burger sans `role=button` sur
+  `<label>` (voir menu mobile), (b) `aria-label` sur le `<select>` de filtre Styles (Tom Select
+  masque l'élément → un `<label for>` ne suffit pas).
+- **heading-order** : titres de cartes/listes/détails remis en séquence (home, avis liste + détail).
+- **select-name** : filtre Styles nommé (label + aria-label).
+
+Métriques perf home : FCP 2,8 s · **LCP ~10 s** (à optimiser, cf. reste à faire perf) · TBT 0 ms ·
+CLS 0,013. Best Practices 100 / TBT 0 / CLS ~0 confirment le bénéfice de la refonte (plus de
+framework JS bloquant, layout stable).
+
+> **Reproduire** : serveur lancé, puis `CHROME_PATH=/usr/bin/chromium lighthouse
+> http://127.0.0.1:8000/fr/<page> --form-factor=mobile --screenEmulation.mobile --view`.
+> Idéalement en **settings sans debug-toolbar** pour des scores perf/target-size représentatifs.
 
 ## Phase 7 — Amélioration progressive avec htmx (étape finale)
 
