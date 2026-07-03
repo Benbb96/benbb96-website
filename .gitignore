@@ -5,6 +5,13 @@ venv/
 
 media/
 
+# collectstatic output (STATIC_ROOT) — régénéré au déploiement
+/static/
+
+# rapports Lighthouse générés localement
+*.report.html
+*.report.json
+
 db.sqlite3
 secrets.json
 
