@@ -2,11 +2,13 @@
 
 <nav class="ds-nav">
     <div class="ds-nav__inner">
-        {# Checkbox-hack : pilote l'ouverture du menu mobile sans JavaScript #}
-        <input type="checkbox" class="ds-nav__toggle" id="ds-nav-toggle" hidden>
+        {# Checkbox-hack : la case EST le contrôle du menu mobile (focusable, nommée,
+           opérable au clavier nativement via Espace). Le burger visible n'est qu'un
+           label décoratif. Fonctionne sans JavaScript. #}
+        <input type="checkbox" class="ds-nav__toggle" id="ds-nav-toggle"
+               aria-controls="ds-nav-collapse" aria-label="{% trans 'Menu' %}">
         <a class="ds-nav__brand" href="{% url 'base:home' %}">Benbb96</a>
-        <label class="ds-nav__burger" for="ds-nav-toggle" role="button" tabindex="0"
-               aria-controls="ds-nav-collapse" aria-expanded="false" aria-label="{% trans 'Menu' %}">
+        <label class="ds-nav__burger" for="ds-nav-toggle" aria-hidden="true">
             <span class="ds-burger"></span>
         </label>
 

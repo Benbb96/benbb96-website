@@ -421,6 +421,7 @@ textarea { min-height: 6rem; resize: vertical; }
     box-shadow: var(--ds-shadow);
 }
 .ds-nav__inner {
+    position: relative;   /* repère pour la case overlay du menu mobile */
     display: flex;
     align-items: center;
     gap: var(--ds-space-4);
@@ -517,6 +518,26 @@ textarea { min-height: 6rem; resize: vertical; }
    sur le menu mobile empilé plutôt que de laisser les libellés déborder. */
 @media (max-width: 1140px) {
     .ds-nav__burger { display: inline-flex; }
+    /* La case (transparente) recouvre le burger : focusable au clavier, cliquable
+       à la souris, bascule le menu nativement (Espace) — sans JS. */
+    .ds-nav__toggle {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: var(--ds-space-4);
+        width: 3rem;
+        height: var(--ds-nav-h);
+        margin: 0;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+    /* Anneau de focus reporté sur le burger visible (la case est transparente). */
+    .ds-nav__toggle:focus-visible ~ .ds-nav__burger {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+        border-radius: var(--ds-radius);
+    }
     .ds-nav__inner { align-items: center; }
     /* Menu mobile : panneau plein écran qui s'empile sous la barre quand la case est cochée */
     .ds-nav__collapse {
