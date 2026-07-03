@@ -12,12 +12,12 @@
     </ul>
 
     <h2>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit.nom }}</h2>
-    <h4>
+    <h3>
         Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }}
         {% if object.has_been_edited %}
             | Editée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}
         {% endif %}
-    </h4>
+    </h3>
     <p>
     {% if object.produit.categories.exists %}
         {% for categorie in object.produit.categories.all %}
