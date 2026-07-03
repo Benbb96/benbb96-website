@@ -2,9 +2,11 @@
 
 <nav class="ds-nav">
     <div class="ds-nav__inner">
-        {# Checkbox-hack : la case EST le contrôle du menu mobile (focusable, nommée,
+        {% comment %}
+           Checkbox-hack : la case EST le contrôle du menu mobile (focusable, nommée,
            opérable au clavier nativement via Espace). Le burger visible n'est qu'un
-           label décoratif. Fonctionne sans JavaScript. #}
+           label décoratif. Fonctionne sans JavaScript.
+        {% endcomment %}
         <input type="checkbox" class="ds-nav__toggle" id="ds-nav-toggle"
                aria-controls="ds-nav-collapse" aria-label="{% trans 'Menu' %}">
         <a class="ds-nav__brand" href="{% url 'base:home' %}">Benbb96</a>
