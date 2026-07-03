@@ -32,6 +32,8 @@
 </head>
 <body>
 
+<a class="ds-skip-link" href="#main-content">{% trans "Skip to content" %}</a>
+
 {% block navbar %}
     {% include 'navbar.html' %}
 {% endblock %}
@@ -48,7 +50,7 @@
     {% include 'components/messages.html' %}
 </div>
 
-<main class="content {% block content_class %}{% endblock %}">
+<main id="main-content" class="content {% block content_class %}{% endblock %}">
     {% block content %}{% endblock %}
 </main>
 

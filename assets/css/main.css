@@ -189,6 +189,17 @@ blockquote {
     outline-offset: 2px;
 }
 
+/* Respecte le réglage système « réduire les animations » : neutralise
+   animations, transitions et défilement animé (carrousel, menu, hover…). */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /* 4. ────────────────────────────── FORMULAIRES ─────────────────────────── */
 /* Éléments nus uniquement : les widgets Django (sans classe) en profitent.
    Bootstrap .form-control (classe) reste prioritaire sur les pages d'app.
@@ -704,6 +715,19 @@ table:not([class]) thead th {
     white-space: nowrap;
     border: 0;
 }
+/* Lien d'évitement clavier : masqué jusqu'au focus (Tab en début de page). */
+.ds-skip-link {
+    position: absolute;
+    left: var(--ds-space-2);
+    top: -3rem;
+    z-index: 1000;
+    padding: var(--ds-space-2) var(--ds-space-4);
+    background: var(--ds-primary);
+    color: #fff;
+    border-radius: var(--ds-radius);
+    transition: top var(--ds-transition);
+}
+.ds-skip-link:focus { top: var(--ds-space-2); text-decoration: none; }
 .ds-mt-5 { margin-top: var(--ds-space-5); }
 .ds-mb-5 { margin-bottom: var(--ds-space-5); }
 .ds-float-right { float: right; }
