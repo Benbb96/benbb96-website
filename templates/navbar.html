@@ -5,11 +5,12 @@
         {# Checkbox-hack : pilote l'ouverture du menu mobile sans JavaScript #}
         <input type="checkbox" class="ds-nav__toggle" id="ds-nav-toggle" hidden>
         <a class="ds-nav__brand" href="{% url 'base:home' %}">Benbb96</a>
-        <label class="ds-nav__burger" for="ds-nav-toggle" aria-label="{% trans 'Menu' %}">
+        <label class="ds-nav__burger" for="ds-nav-toggle" role="button" tabindex="0"
+               aria-controls="ds-nav-collapse" aria-expanded="false" aria-label="{% trans 'Menu' %}">
             <span class="ds-burger"></span>
         </label>
 
-        <div class="ds-nav__collapse">
+        <div class="ds-nav__collapse" id="ds-nav-collapse">
             <ul class="ds-nav__menu">
                 <li class="ds-nav__item {% if home %}is-active{% endif %}"><a href="{% url 'base:home' %}">{% trans "Home" %}</a></li>
                 <li class="ds-nav__item {% if about %}is-active{% endif %}"><a href="{% url 'base:about' %}">{% trans "About" %}</a></li>
