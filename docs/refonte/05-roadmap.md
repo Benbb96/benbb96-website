@@ -419,6 +419,39 @@ activer le venv.
 tout le reste du chantier bénéficie du lint/format ; les briques optionnelles (types, pytest, djLint,
 bots de MAJ) peuvent suivre. Seul point dur : **adapter le déploiement** (point 1) sans le casser.
 
+## Phase 10 — Remise en marche de l'intégration SoundCloud (feature)
+
+> Tâche **feature**, indépendante du reste. En pause pendant la refonte : le lien SoundCloud (récup
+> des infos d'une musique à partir de son URL) ne fonctionne plus. Objectif : le **remettre en marche**.
+
+**Contexte / état des lieux :**
+- La lib utilisée est un **fork perso** (`git+https://github.com/Benbb96/soundcloud-python.git`), créé
+  parce que la lib d'origine n'était plus maintenue. Utilisée dans :
+  - `config/settings/base.py` : `import soundcloud` + `SOUNDCLOUD_CLIENT = soundcloud.Client(client_id=…)`
+    (secret `SOUNDCLOUD_CLIENT_ID`) ;
+  - `music/views.py` : `get_music_info_from_link` (parse une URL SoundCloud → titre/artiste/remix…) ;
+  - `music/models.py` : `Artiste.soundcloud_followers` (compteur d'abonnés, mis en cache).
+- L'**API SoundCloud** a beaucoup changé (v1 dépréciée ; l'enregistrement de nouvelles apps a longtemps
+  été fermé ; auth désormais en OAuth2 client credentials, quotas). C'est **la** cause probable de la
+  panne, plus que la lib elle-même.
+
+**Travail à faire :**
+1. **Diagnostiquer** précisément la panne : que renvoie l'API aujourd'hui avec le `client_id` actuel
+   (401/403/404 ? endpoint `resolve` ?). Vérifier si le `client_id` est encore valide.
+2. **Vérifier la lib** : la lib officielle (`soundcloud-python`) a-t-elle été mise à jour depuis le
+   fork ? Sinon, envisager un appel direct à l'API HTTP (via `requests`) sans lib, ou une lib
+   maintenue. Décider : garder le fork / repasser sur l'officielle / se passer de lib.
+3. **Auth** : mettre en place le flux d'auth requis par l'API actuelle (client_id/secret, token) et
+   stocker les credentials dans `secrets.json`.
+4. **Rebrancher** `get_music_info_from_link` (endpoint `resolve` sur l'URL) + `soundcloud_followers`,
+   avec une **dégradation propre** si l'API échoue (ne pas casser la page musique/artiste).
+5. **Tester** : récup d'infos à partir d'une vraie URL SoundCloud + affichage des followers.
+
+**Dépendances :** totalement indépendante (peut se faire à tout moment). Recoupe la Phase 9 (si on
+migre les deps vers `uv`, la source git du fork y est déclarée — cf. `[tool.uv.sources]`). Si la
+feature est finalement jugée non récupérable (API trop verrouillée), basculer sur la décision « retrait
+de soundcloud » évoquée en doc 4.
+
 ## Dépendances entre phases
 
 ```
@@ -435,7 +468,8 @@ Les phases 1, 2 et 9 peuvent avancer en parallèle du front (3→4→5). La Phas
 qu'après la fin de la Phase 4 (kendama forms inclus). Les Phases 6 (finitions), 7 (htmx) et
 8 (i18n EN) sont les dernières. La Phase 8 est plus efficace une fois les templates stabilisés
 (après la Phase 4), idéalement après la Phase 7 pour traduire aussi les fragments htmx.
-La Phase 9 (outillage) est indépendante et gagne à être faite **tôt**.
+La Phase 9 (outillage) est indépendante et gagne à être faite **tôt**. La Phase 10 (SoundCloud) est
+une feature indépendante, à faire à tout moment.
 
 ## Rappels opérationnels
 
