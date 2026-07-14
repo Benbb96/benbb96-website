@@ -41,6 +41,8 @@
 | 4 | [04-nettoyage-dependances.md](04-nettoyage-dependances.md) | Audit dépendance par dépendance, ce qui part / reste / se met à jour |
 | 5 | [05-roadmap.md](05-roadmap.md) | Roadmap phasée, ordre des chantiers, dépendances entre eux |
 | 6 | [06-kendama-a-preserver.md](06-kendama-a-preserver.md) | Contrat de préservation du thème « paper » Kendama |
+| 7 | [07-design-todo.md](07-design-todo.md) | Backlog de la passe design sur les templates |
+| 8 | [08-deploiement-uv.md](08-deploiement-uv.md) | Déploiement PythonAnywhere sur uv + prérequis prod manuels (Phase 9) |
 
 ## Résumé exécutif des décisions
 

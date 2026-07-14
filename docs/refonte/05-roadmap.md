@@ -360,11 +360,58 @@ POST classique (full reload) — htmx n'est qu'une surcouche.
 réécrit plus les chaînes) et idéalement **après la Phase 7** si htmx ajoute de nouveaux fragments à
 traduire. Peut se faire en dernier, app par app.
 
-## Phase 9 — Modernisation de l'outillage Python (DX)
+## Phase 9 — Modernisation de l'outillage Python (DX) — ✅ FAITE (avec backlog listé)
 
 > Indépendante du front (comme les Phases 1/2) : peut se faire à tout moment, idéalement **tôt** pour
 > profiter du linter/formatter sur tout le reste du chantier. Objectif : outils **plus rapides et plus
 > modernes** (écosystème Astral) pour la qualité et le confort de dev.
+
+### Bilan Phase 9 — ce qui a été fait (bascule complète sur uv)
+
+Réalisé par lots (1 commit par sujet). Validé après chaque lot : `check` OK,
+`makemigrations --check --dry-run` sans changement, 27 smoke tests OK.
+
+- **LOT 1 — `uv` (source de vérité unique).** `requirements/{base,dev,prod}.txt` (pip) → **`pyproject.toml`
+  + `uv.lock`** (versionné). Deps de prod dans `[project].dependencies` ; deps dev dans
+  `[dependency-groups].dev` (django-debug-toolbar, coverage, pyright, ruff, pre-commit, djlint).
+  Forks git en `[tool.uv.sources]` (django-admin-sortable = LEAGUEDORA, soundcloud = Benbb96).
+  Pins Snyk (zipp, sqlparse, dnspython, urllib3) conservés en `[tool.uv] constraint-dependencies`
+  (contraintes transitives). `package = false` (application). **`.python-version = 3.13`** (aligne le
+  local sur la prod). `git rm requirements/` — bascule propre (filet de secours documenté : `uv export`).
+- **LOT 2 — Déploiement PythonAnywhere sur uv.** Workflow adapté : `uv sync --frozen --no-dev` dans le
+  venv existant du Web tab (`UV_PROJECT_ENVIRONMENT`), `UV_PYTHON_PREFERENCE=only-system`. Procédure +
+  **prérequis prod manuels** documentés dans [08-deploiement-uv.md](08-deploiement-uv.md).
+  ⚠️ **Workflow non validé tant que la prod n'a pas été testée à la main** (installer uv sur PA + jouer
+  la séquence + recharger le Web tab, AVANT de merger sur `master`).
+- **LOT 3 — `ruff` (lint + format).** `[tool.ruff]` target py313, règles E,F,I,UP,B,DJ (migrations
+  exclues). `ruff check --fix` + `ruff format` sur tout le projet (gros diff : imports triés,
+  guillemets doubles, %-format → f-strings). ⚠️ Piège évité : `ruff` avait retiré `import base.signals`
+  (import à effet de bord) de `base/apps.py` → cassait la création auto des Profil ; ré-ajouté avec
+  `# noqa: F401`.
+- **LOT 4 — `pre-commit`.** `.pre-commit-config.yaml` : ruff-check (--fix) + ruff-format + hygiène
+  (end-of-file-fixer, trailing-whitespace, check-yaml, check-added-large-files). Assets vendorisés/
+  minifiés + jeu p5.js exclus ; **templates HTML non reformatés** (passe design). `pre-commit install`,
+  run au vert.
+- **LOT 5 — `djLint` : CONFIGURÉ seulement.** `[tool.djlint]` profil django, T002/T003 ignorés
+  (conventions projet). **Pas de `djlint --reformat`** (conflit avec la passe design en cours).
+  `uv run djlint . --lint` → 105 findings actionnables (voir backlog).
+
+### Backlog Phase 9 (reporté — à traiter en revues dédiées)
+
+- **Règles ruff DJ désactivées** (findings réels mais touchant modèles/formulaires → revue dédiée,
+  à réactiver règle par règle) :
+  - `DJ008` (6) : modèles sans `__str__` (kendama, my_spot, super_moite_moite, versus).
+  - `DJ007` (5) / `DJ006` (3) : `fields = '__all__'` / `exclude` dans des `ModelForm` (avis, kendama,
+    my_spot, super_moite_moite) → passer à des `fields` explicites (revoir l'exposition des champs).
+  - `DJ012` (3) : ordre du corps de modèle (avis, base, music).
+  - `DJ001` (1) : `null=True` sur un `CharField` (`base/models.py`) → **nécessite une migration**.
+- **Findings djLint** (105, à traiter avec la passe design des templates) : `H021` (57, styles inline),
+  `H006` (22, `<img>` sans `width`/`height` → **recoupe le reste-à-faire perf/LCP de la Phase 6**),
+  `H023`/`H030`/`H031`/`H020`/`T001`.
+- **Option `S` (bandit/sécurité) de ruff** : à ajouter au `select` si peu de bruit.
+
+**Optionnel (non fait, à planifier) :** vérification de types (mypy+django-stubs / ty), pytest+
+pytest-django, Dependabot/Renovate, django-upgrade, justfile, `uv run` documenté. Voir liste ci-dessous.
 
 **État des lieux outillage :**
 - Gestion des deps : `requirements/{base,dev,prod}.txt` (pip), dont **2 dépendances git forkées**

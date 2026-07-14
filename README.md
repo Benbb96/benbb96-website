@@ -36,7 +36,11 @@ Benbb96/benbb96-website is built on the following main stack:
 - [FontAwesome 6](https://fontawesome.com/) – Icons
 
 **Tooling**
-- <img width='25' height='25' src='https://img.stackshare.io/service/11563/actions.png' alt='GitHub Actions'/> [GitHub Actions](https://github.com/features/actions) – CI/CD (deploy to PythonAnywhere)
+- [uv](https://docs.astral.sh/uv/) – Dependency & virtualenv management (`pyproject.toml` + `uv.lock`)
+- [Ruff](https://docs.astral.sh/ruff/) – Linter + formatter (lint & format)
+- [pre-commit](https://pre-commit.com/) – Git hooks (ruff + hygiene)
+- [djLint](https://djlint.com/) – Django template linter (`uv run djlint . --lint`)
+- <img width='25' height='25' src='https://img.stackshare.io/service/11563/actions.png' alt='GitHub Actions'/> [GitHub Actions](https://github.com/features/actions) – CI/CD (deploy to PythonAnywhere via uv)
 
 Full tech stack [here](/techstack.md)
 
