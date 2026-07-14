@@ -28,3 +28,10 @@ DATABASES = {
 MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# En dev on garde FileSystemStorage (les uploads vont sur le disque local), mais on
+# fait pointer MEDIA_URL vers le bucket GCS public (publicRead) : `storage.url(name)`
+# renvoie alors l'URL publique et les images de la base de prod s'affichent SANS
+# télécharger les fichiers ni credentials GCS. Lecture seule — un fichier uploadé
+# en dev restera sur le disque local et ne s'affichera pas (son URL pointe vers GCS).
+MEDIA_URL = "https://storage.googleapis.com/eminent-airport-148108.appspot.com/media/"
