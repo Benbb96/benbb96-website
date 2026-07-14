@@ -18,10 +18,13 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             set -e
-            VENV="$HOME/.virtualenvs/benbb96"
             cd "$HOME/benbb96-website"
             git pull
-            "$VENV/bin/python" -m pip install -r requirements/prod.txt
-            "$VENV/bin/python" manage.py migrate
-            "$VENV/bin/python" manage.py collectstatic --noinput
+            # Dépendances gérées par uv (pyproject.toml + uv.lock).
+            # On installe DANS le venv existant du Web tab de PA (non modifié).
+            export UV_PROJECT_ENVIRONMENT="$HOME/.virtualenvs/benbb96"
+            export UV_PYTHON_PREFERENCE=only-system   # réutilise le Python 3.13 de PA, pas de download
+            "$HOME/.local/bin/uv" sync --frozen --no-dev   # installe exactement uv.lock, sans deps dev
+            "$UV_PROJECT_ENVIRONMENT/bin/python" manage.py migrate
+            "$UV_PROJECT_ENVIRONMENT/bin/python" manage.py collectstatic --noinput
             touch /var/www/www_benbb96_com_wsgi.py
