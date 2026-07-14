@@ -7,24 +7,40 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
-from django.forms import inlineformset_factory, Select, NumberInput
-from django.http import JsonResponse, HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404, redirect
+from django.forms import NumberInput, Select, inlineformset_factory
+from django.http import HttpResponseNotFound, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import date
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
-from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 
 from base.models import Profil
-from kendama.filters import KendamaTrickFilter, ComboFilter, KendamaFliter, LadderFilter
-from kendama.forms import TrickPlayerForm, ComboPlayerForm, KendamaTrickForm, ComboForm, KendamaForm, LadderForm
-from kendama.models import KendamaTrick, Combo, TrickPlayer, ComboPlayer, ComboTrick, Kendama, Ladder, LadderCombo
+from kendama.filters import ComboFilter, KendamaFliter, KendamaTrickFilter, LadderFilter
+from kendama.forms import (
+    ComboForm,
+    ComboPlayerForm,
+    KendamaForm,
+    KendamaTrickForm,
+    LadderForm,
+    TrickPlayerForm,
+)
+from kendama.models import (
+    Combo,
+    ComboPlayer,
+    ComboTrick,
+    Kendama,
+    KendamaTrick,
+    Ladder,
+    LadderCombo,
+    TrickPlayer,
+)
 
 
 class KendamaTrickList(FilterView):
     filterset_class = KendamaTrickFilter
-    context_object_name = 'tricks'
+    context_object_name = "tricks"
 
 
 class KendamaTrickDetail(DetailView):
@@ -35,22 +51,28 @@ class KendamaTrickDetail(DetailView):
         # Prépare les statitistiques pour le bar chart
         frequency_count = {}
         for frequency, frequency_name in TrickPlayer.FREQUENCY:
-            frequency_count[frequency_name] = self.get_object().trick_players.filter(frequency=frequency).count()
-        context['frequency_count'] = frequency_count
+            frequency_count[frequency_name] = (
+                self.get_object().trick_players.filter(frequency=frequency).count()
+            )
+        context["frequency_count"] = frequency_count
         if self.request.user.is_authenticated:
             try:
-                authenticated_trick_player = self.request.user.profil.trickplayer_set.get(trick=self.get_object())
+                authenticated_trick_player = (
+                    self.request.user.profil.trickplayer_set.get(
+                        trick=self.get_object()
+                    )
+                )
             except TrickPlayer.DoesNotExist:
                 authenticated_trick_player = None
-            context['authenticated_user_frequency'] = authenticated_trick_player
-            context['form'] = TrickPlayerForm(instance=authenticated_trick_player)
+            context["authenticated_user_frequency"] = authenticated_trick_player
+            context["form"] = TrickPlayerForm(instance=authenticated_trick_player)
         return context
 
 
 class KendamaTrickCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = KendamaTrick
     form_class = KendamaTrickForm
-    success_message = 'Le trick %(name)s a bien été créé.'
+    success_message = "Le trick %(name)s a bien été créé."
 
     def form_valid(self, form):
         kendama_trick = form.save(commit=False)
@@ -64,7 +86,7 @@ class KendamaTrickCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 class KendamaTrickUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = KendamaTrick
     form_class = KendamaTrickForm
-    success_message = 'Le trick %(name)s a bien été mis à jour.'
+    success_message = "Le trick %(name)s a bien été mis à jour."
 
     def get_queryset(self):
         return super().get_queryset().filter(creator=self.request.user.profil)
@@ -72,19 +94,21 @@ class KendamaTrickUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 class KendamaTrickDelete(LoginRequiredMixin, DeleteView):
     model = KendamaTrick
-    success_url = reverse_lazy('kendama:tricks')
+    success_url = reverse_lazy("kendama:tricks")
 
     def get_queryset(self):
         return super().get_queryset().filter(creator=self.request.user.profil)
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Le trick %s a bien été supprimé.' % self.get_object())
+        messages.success(
+            self.request, f"Le trick {self.get_object()} a bien été supprimé."
+        )
         return super().delete(request, *args, **kwargs)
 
 
 class ComboList(FilterView):
     filterset_class = ComboFilter
-    context_object_name = 'combos'
+    context_object_name = "combos"
 
 
 class ComboDetail(DetailView):
@@ -95,45 +119,53 @@ class ComboDetail(DetailView):
         # Prépare les statitistiques pour le bar chart
         frequency_count = {}
         for frequency, frequency_name in ComboPlayer.FREQUENCY:
-            frequency_count[frequency_name] = self.get_object().combo_players.filter(frequency=frequency).count()
-        context['frequency_count'] = frequency_count
+            frequency_count[frequency_name] = (
+                self.get_object().combo_players.filter(frequency=frequency).count()
+            )
+        context["frequency_count"] = frequency_count
         if self.request.user.is_authenticated:
             try:
-                authenticated_combo_player = self.request.user.profil.comboplayer_set.get(combo=self.get_object())
+                authenticated_combo_player = (
+                    self.request.user.profil.comboplayer_set.get(
+                        combo=self.get_object()
+                    )
+                )
             except ComboPlayer.DoesNotExist:
                 authenticated_combo_player = None
-            context['authenticated_user_frequency'] = authenticated_combo_player
-            context['form'] = ComboPlayerForm(instance=authenticated_combo_player)
+            context["authenticated_user_frequency"] = authenticated_combo_player
+            context["form"] = ComboPlayerForm(instance=authenticated_combo_player)
         return context
 
 
 ComboTrickFormSet = inlineformset_factory(
     Combo,
     ComboTrick,
-    fields=('trick', 'order'),
+    fields=("trick", "order"),
     widgets={
-        'trick': Select(attrs={'class': 'trickSelect'}),
-        'order': NumberInput(attrs={'style': 'width: 80px'}),
+        "trick": Select(attrs={"class": "trickSelect"}),
+        "order": NumberInput(attrs={"style": "width: 80px"}),
     },
     min_num=1,
-    validate_min=True
+    validate_min=True,
 )
 
 
 class ComboCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Combo
     form_class = ComboForm
-    success_message = 'Le combo %(name)s a bien été créé.'
+    success_message = "Le combo %(name)s a bien été créé."
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['combo_trick_formset'] = ComboTrickFormSet(self.request.POST or None)
-        context['trick_form'] = KendamaTrickForm(self.request.POST or None, prefix='trick')
+        context["combo_trick_formset"] = ComboTrickFormSet(self.request.POST or None)
+        context["trick_form"] = KendamaTrickForm(
+            self.request.POST or None, prefix="trick"
+        )
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
-        combo_trick_formset = context['combo_trick_formset']
+        combo_trick_formset = context["combo_trick_formset"]
         if combo_trick_formset.is_valid():
             combo = form.save(commit=False)
             combo.creator = self.request.user.profil
@@ -142,7 +174,7 @@ class ComboCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             combo_trick_formset.save()
             # Initialise la première fréquence de réussite à "Jamais" par défaut
             self.request.user.profil.comboplayer_set.create(combo=combo)
-            messages.success(self.request, 'Le combo %s a bien été créé.' % combo)
+            messages.success(self.request, f"Le combo {combo} a bien été créé.")
             return redirect(combo)
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -156,116 +188,132 @@ class ComboUpdate(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['combo_trick_formset'] = ComboTrickFormSet(self.request.POST or None, instance=self.get_object())
-        context['trick_form'] = KendamaTrickForm(self.request.POST or None, prefix='trick')
+        context["combo_trick_formset"] = ComboTrickFormSet(
+            self.request.POST or None, instance=self.get_object()
+        )
+        context["trick_form"] = KendamaTrickForm(
+            self.request.POST or None, prefix="trick"
+        )
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
-        combo_trick_formset = context['combo_trick_formset']
+        combo_trick_formset = context["combo_trick_formset"]
         if combo_trick_formset.is_valid():
             combo = form.save()
             combo_trick_formset.save()
-            messages.success(self.request, 'Le combo %s a bien été mis à jour.' % combo)
+            messages.success(self.request, f"Le combo {combo} a bien été mis à jour.")
             return redirect(combo)
         return self.render_to_response(self.get_context_data(form=form))
 
 
 class ComboDelete(LoginRequiredMixin, DeleteView):
     model = Combo
-    success_url = reverse_lazy('kendama:combos')
+    success_url = reverse_lazy("kendama:combos")
 
     def get_queryset(self):
         return super().get_queryset().filter(creator=self.request.user.profil)
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Le combo %s a bien été supprimé.' % self.get_object())
+        messages.success(
+            self.request, f"Le combo {self.get_object()} a bien été supprimé."
+        )
         return super().delete(request, *args, **kwargs)
 
 
 @login_required
 @require_POST
 def update_player_frequency(request, cls, obj_id):
-    if cls == 'tricks':
+    if cls == "tricks":
         klass = KendamaTrick
-    elif cls == 'combos':
+    elif cls == "combos":
         klass = Combo
     else:
-        raise ValueError('cls est incorrect : %s' % cls)
+        raise ValueError(f"cls est incorrect : {cls}")
     obj = get_object_or_404(klass, id=obj_id)
 
     json_data = json.loads(request.body)
-    frequency = json_data.get('frequency')
+    frequency = json_data.get("frequency")
     if not frequency:
-        return JsonResponse({'message': 'Veuillez renseigner la fréquence'}, status=422)
+        return JsonResponse({"message": "Veuillez renseigner la fréquence"}, status=422)
 
-    params = {'defaults': {'frequency': frequency}}
-    if cls == 'tricks':
+    params = {"defaults": {"frequency": frequency}}
+    if cls == "tricks":
         player_set = request.user.profil.trickplayer_set
-        params['trick'] = obj
+        params["trick"] = obj
     else:
         player_set = request.user.profil.comboplayer_set
-        params['combo'] = obj
+        params["combo"] = obj
 
     obj_player, created = player_set.get_or_create(**params)
     if not created:
         obj_player.frequency = frequency
         obj_player.save()
 
-    return JsonResponse({
-        'message': 'La fréquence a bien été mise à jour.',
-        'date': date(datetime.now(), 'DATETIME_FORMAT')
-    })
+    return JsonResponse(
+        {
+            "message": "La fréquence a bien été mise à jour.",
+            "date": date(datetime.now(), "DATETIME_FORMAT"),
+        }
+    )
 
 
 def frequency_history(request):
-    user_id = request.GET.get('userId')
+    user_id = request.GET.get("userId")
     if not user_id:
-        return HttpResponseNotFound('usedId undefined')
+        return HttpResponseNotFound("usedId undefined")
     user = get_object_or_404(User, id=user_id)
-    cls = request.GET.get('cls')
-    if cls == 'tricks':
+    cls = request.GET.get("cls")
+    if cls == "tricks":
         klass = KendamaTrick
-    elif cls == 'combos':
+    elif cls == "combos":
         klass = Combo
     else:
-        return HttpResponseNotFound('cls parameter incorrect')
-    obj_id = request.GET.get('objId')
+        return HttpResponseNotFound("cls parameter incorrect")
+    obj_id = request.GET.get("objId")
     obj = get_object_or_404(klass, id=obj_id)
 
     params = {}
-    if cls == 'tricks':
+    if cls == "tricks":
         player_set = user.profil.trickplayer_set
-        params['trick'] = obj
+        params["trick"] = obj
     else:
         player_set = user.profil.comboplayer_set
-        params['combo'] = obj
+        params["combo"] = obj
 
     try:
         obj_player = player_set.get(**params)
     except (TrickPlayer.DoesNotExist, ComboPlayer.DoesNotExist):
         obj_player = None
 
-    return render(request, 'kendama/components/frequency_history.html', {'obj': obj_player})
+    return render(
+        request, "kendama/components/frequency_history.html", {"obj": obj_player}
+    )
 
 
 @require_POST
 @login_required
 def create_trick_from_modal(request):
-    form = KendamaTrickForm(request.POST, prefix='trick')
+    form = KendamaTrickForm(request.POST, prefix="trick")
     if form.is_valid():
         trick = form.save(commit=False)
         trick.creator = request.user.profil
         trick.save()
         # Initialise la première fréquence de réussite à "Jamais" par défaut
         request.user.profil.trickplayer_set.create(trick=trick)
-        return JsonResponse({'success': True, 'id': trick.id, 'name': trick.name})
-    return JsonResponse({'success': False, 'message': 'Il y a des erreurs dans le formulaire', 'errors': form.errors})
+        return JsonResponse({"success": True, "id": trick.id, "name": trick.name})
+    return JsonResponse(
+        {
+            "success": False,
+            "message": "Il y a des erreurs dans le formulaire",
+            "errors": form.errors,
+        }
+    )
 
 
 class KendamaList(FilterView):
     filterset_class = KendamaFliter
-    context_object_name = 'kendamas'
+    context_object_name = "kendamas"
 
 
 class KendamaDetail(DetailView):
@@ -275,7 +323,7 @@ class KendamaDetail(DetailView):
 class KendamaCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Kendama
     form_class = KendamaForm
-    success_message = 'Le kendama %(name)s a bien été créé.'
+    success_message = "Le kendama %(name)s a bien été créé."
 
     def form_valid(self, form):
         kendama = form.save(commit=False)
@@ -285,39 +333,41 @@ class KendamaCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields.pop('owner')
+        form.fields.pop("owner")
         return form
 
 
 class KendamaUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Kendama
     form_class = KendamaForm
-    success_message = 'Le kendama %(name)s a bien été mis à jour.'
+    success_message = "Le kendama %(name)s a bien été mis à jour."
 
     def get_queryset(self):
         return super().get_queryset().filter(owner=self.request.user.profil)
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields.pop('owner')
+        form.fields.pop("owner")
         return form
 
 
 class KendamaDelete(LoginRequiredMixin, DeleteView):
     model = Kendama
-    success_url = reverse_lazy('kendama:kendamas')
+    success_url = reverse_lazy("kendama:kendamas")
 
     def get_queryset(self):
         return super().get_queryset().filter(owner=self.request.user.profil)
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Le kendama %s a bien été supprimé.' % self.get_object())
+        messages.success(
+            self.request, f"Le kendama {self.get_object()} a bien été supprimé."
+        )
         return super().delete(request, *args, **kwargs)
 
 
 class LadderList(FilterView):
     filterset_class = LadderFilter
-    context_object_name = 'ladders'
+    context_object_name = "ladders"
 
 
 class LadderDetail(DetailView):
@@ -326,41 +376,45 @@ class LadderDetail(DetailView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return super().get_queryset().public()
-        return super().get_queryset().filter(Q(creator=self.request.user.profil) | Q(private=False))
+        return (
+            super()
+            .get_queryset()
+            .filter(Q(creator=self.request.user.profil) | Q(private=False))
+        )
 
 
 LadderComboFormSet = inlineformset_factory(
     Ladder,
     LadderCombo,
-    fields=('combo', 'order'),
+    fields=("combo", "order"),
     widgets={
-        'order': NumberInput(attrs={'style': 'width: 80px'}),
+        "order": NumberInput(attrs={"style": "width: 80px"}),
     },
     min_num=1,
-    validate_min=True
+    validate_min=True,
 )
 
 
 class LadderCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Ladder
     form_class = LadderForm
-    success_message = 'Le ladder %(name)s a bien été créé.'
+    success_message = "Le ladder %(name)s a bien été créé."
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ladder_combo_formset'] = LadderComboFormSet(self.request.POST or None)
+        context["ladder_combo_formset"] = LadderComboFormSet(self.request.POST or None)
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
-        ladder_combo_formset = context['ladder_combo_formset']
+        ladder_combo_formset = context["ladder_combo_formset"]
         if ladder_combo_formset.is_valid():
             ladder = form.save(commit=False)
             ladder.creator = self.request.user.profil
             ladder.save()
             ladder_combo_formset.instance = ladder
             ladder_combo_formset.save()
-            messages.success(self.request, 'Le ladder %s a bien été créé.' % ladder)
+            messages.success(self.request, f"Le ladder {ladder} a bien été créé.")
             return redirect(ladder)
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -374,29 +428,33 @@ class LadderUpdate(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ladder_combo_formset'] = LadderComboFormSet(self.request.POST or None, instance=self.get_object())
+        context["ladder_combo_formset"] = LadderComboFormSet(
+            self.request.POST or None, instance=self.get_object()
+        )
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
-        ladder_combo_formset = context['ladder_combo_formset']
+        ladder_combo_formset = context["ladder_combo_formset"]
         if ladder_combo_formset.is_valid():
             ladder = form.save()
             ladder_combo_formset.save()
-            messages.success(self.request, 'Le ladder %s a bien été mis à jour.' % ladder)
+            messages.success(self.request, f"Le ladder {ladder} a bien été mis à jour.")
             return redirect(ladder)
         return self.render_to_response(self.get_context_data(form=form))
 
 
 class LadderDelete(LoginRequiredMixin, DeleteView):
     model = Ladder
-    success_url = reverse_lazy('kendama:ladders')
+    success_url = reverse_lazy("kendama:ladders")
 
     def get_queryset(self):
         return super().get_queryset().filter(creator=self.request.user.profil)
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Le ladder %s a bien été supprimé.' % self.get_object())
+        messages.success(
+            self.request, f"Le ladder {self.get_object()} a bien été supprimé."
+        )
         return super().delete(request, *args, **kwargs)
 
 
@@ -404,8 +462,12 @@ def profil_page(request, username):
     profil = get_object_or_404(Profil, user__username=username)
     player_tricks = profil.trickplayer_set.filter(trick__creator=profil)
     player_combos = profil.comboplayer_set.filter(combo__creator=profil)
-    return render(request, 'kendama/profil.html', {
-        'profil': profil,
-        'player_tricks': player_tricks,
-        'player_combos': player_combos
-    })
+    return render(
+        request,
+        "kendama/profil.html",
+        {
+            "profil": profil,
+            "player_tricks": player_tricks,
+            "player_combos": player_combos,
+        },
+    )

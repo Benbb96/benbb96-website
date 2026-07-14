@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
-from django.forms import inlineformset_factory, NumberInput
-from django.shortcuts import render, get_object_or_404, redirect
+from django.forms import NumberInput, inlineformset_factory
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import CreateView, DetailView, ListView
 
 from base.widgets import TomSelectWidget
 from versus.models import Jeu, Joueur, Partie, PartieJoueur
@@ -14,46 +14,52 @@ class JeuListView(ListView):
 
 
 class JoueurListView(CreateView):
-    """ Une ListView avec un formulaire de création """
+    """Une ListView avec un formulaire de création"""
+
     model = Joueur
-    template_name = 'versus/joueur_list.html'
-    fields = '__all__'
-    success_url = reverse_lazy('versus:liste-joueurs')
+    template_name = "versus/joueur_list.html"
+    fields = "__all__"
+    success_url = reverse_lazy("versus:liste-joueurs")
 
     def get_context_data(self, **kwargs):
-        kwargs['object_list'] = Joueur.objects.select_related('profil__user')\
-            .prefetch_related('partiejoueur_set__partie__jeu')
+        kwargs["object_list"] = Joueur.objects.select_related(
+            "profil__user"
+        ).prefetch_related("partiejoueur_set__partie__jeu")
         return super().get_context_data(**kwargs)
 
 
 class JeuDetailView(DetailView):
     model = Jeu
-    slug_field = 'slug'
-    queryset = Jeu.objects.select_related('createur__user').prefetch_related('parties__partiejoueur_set__joueur')
+    slug_field = "slug"
+    queryset = Jeu.objects.select_related("createur__user").prefetch_related(
+        "parties__partiejoueur_set__joueur"
+    )
 
 
 class JoueurDetailView(DetailView):
     model = Joueur
-    slug_field = 'slug'
-    queryset = Joueur.objects.select_related('profil__user').prefetch_related(
-        'partie_set__jeu', 'partie_set__partiejoueur_set__joueur',
-        'partiejoueur_set__partie__jeu', 'partiejoueur_set__partie__partiejoueur_set',
+    slug_field = "slug"
+    queryset = Joueur.objects.select_related("profil__user").prefetch_related(
+        "partie_set__jeu",
+        "partie_set__partiejoueur_set__joueur",
+        "partiejoueur_set__partie__jeu",
+        "partiejoueur_set__partie__partiejoueur_set",
     )
 
 
 PartieJoueurFormSet = inlineformset_factory(
     Partie,
     PartieJoueur,
-    fields=('joueur', 'score_classement'),
+    fields=("joueur", "score_classement"),
     widgets={
-        'joueur': TomSelectWidget(placeholder='Choisir un joueur'),
-        'score_classement': NumberInput()
+        "joueur": TomSelectWidget(placeholder="Choisir un joueur"),
+        "score_classement": NumberInput(),
     },
-    can_delete=False
+    can_delete=False,
 )
 
 
-@permission_required('versus.add_partie')
+@permission_required("versus.add_partie")
 def ajout_partie(request, slug):
     jeu = get_object_or_404(Jeu, slug=slug)
     partie = Partie(jeu=jeu)
@@ -61,31 +67,35 @@ def ajout_partie(request, slug):
     if formset.is_valid():
         partie.save()
         formset.save()
-        messages.success(request, 'La nouvelle partie de %s a bien été ajouté.' % jeu)
+        messages.success(request, f"La nouvelle partie de {jeu} a bien été ajouté.")
         return redirect(jeu)
-    return render(request, 'versus/partie_form.html', {'jeu': jeu, 'formset': formset})
+    return render(request, "versus/partie_form.html", {"jeu": jeu, "formset": formset})
 
 
-@permission_required('versus.change_partie')
+@permission_required("versus.change_partie")
 def edition_partie(request, slug, partie_id):
     jeu = get_object_or_404(Jeu, slug=slug)
     partie = get_object_or_404(Partie, id=partie_id)
     formset = PartieJoueurFormSet(request.POST or None, instance=partie)
     if formset.is_valid():
         formset.save()
-        messages.success(request, 'La partie de %s a bien été mise à jour.' % jeu)
+        messages.success(request, f"La partie de {jeu} a bien été mise à jour.")
         return redirect(jeu)
-    return render(request, 'versus/partie_form.html', {'jeu': jeu, 'partie': partie, 'formset': formset})
+    return render(
+        request,
+        "versus/partie_form.html",
+        {"jeu": jeu, "partie": partie, "formset": formset},
+    )
 
 
-@permission_required('versus.delete_partie')
+@permission_required("versus.delete_partie")
 def suppression_partie(request, slug, partie_id):
     jeu = get_object_or_404(Jeu, slug=slug)
     partie = get_object_or_404(Partie, id=partie_id)
-    if request.method == 'POST':
+    if request.method == "POST":
         partie.delete()
-        messages.success(request, 'La partie de %s a bien été supprimée.' % jeu)
+        messages.success(request, f"La partie de {jeu} a bien été supprimée.")
         return redirect(jeu)
-    return render(request, 'versus/partie_confirm_delete.html', {'jeu': jeu, 'partie': partie})
-
-
+    return render(
+        request, "versus/partie_confirm_delete.html", {"jeu": jeu, "partie": partie}
+    )

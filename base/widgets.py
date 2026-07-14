@@ -13,6 +13,7 @@ L'initialisation JS est faite par ``assets/js/tomselect-init.js`` sur tous les
 ``<select class="js-tomselect">``. Les assets sont déclarés via ``Media`` et donc
 chargés partout où le template rend ``{{ form.media }}``.
 """
+
 from django import forms
 from django.forms.models import ModelChoiceIterator
 
@@ -20,25 +21,25 @@ from django.forms.models import ModelChoiceIterator
 class TomSelectMixin:
     """Marque le ``<select>`` pour l'init Tom Select et porte les assets."""
 
-    css_class = 'js-tomselect'
+    css_class = "js-tomselect"
 
     class Media:
-        css = {'all': ('css/tom-select.css',)}
-        js = ('js/tom-select.complete.min.js', 'js/tomselect-init.js')
+        css = {"all": ("css/tom-select.css",)}
+        js = ("js/tom-select.complete.min.js", "js/tomselect-init.js")
 
     def __init__(self, *args, **kwargs):
-        self.placeholder = kwargs.pop('placeholder', None)
+        self.placeholder = kwargs.pop("placeholder", None)
         super().__init__(*args, **kwargs)
 
     def build_attrs(self, base_attrs, extra_attrs=None):
         attrs = super().build_attrs(base_attrs, extra_attrs)
-        classes = attrs.get('class', '').split()
+        classes = attrs.get("class", "").split()
         if self.css_class not in classes:
             classes.append(self.css_class)
-        attrs['class'] = ' '.join(classes)
-        placeholder = self.placeholder or attrs.pop('data-placeholder', None)
+        attrs["class"] = " ".join(classes)
+        placeholder = self.placeholder or attrs.pop("data-placeholder", None)
         if placeholder:
-            attrs['data-placeholder'] = placeholder
+            attrs["data-placeholder"] = placeholder
         return attrs
 
 
@@ -60,12 +61,12 @@ class TomSelectRemoteMixin(TomSelectMixin):
     def build_attrs(self, base_attrs, extra_attrs=None):
         attrs = super().build_attrs(base_attrs, extra_attrs)
         if self.search_url:
-            attrs['data-ts-url'] = str(self.search_url)
+            attrs["data-ts-url"] = str(self.search_url)
         return attrs
 
     def optgroups(self, name, value, attrs=None):
         # Ne rendre que les options sélectionnées : le reste vient de l'endpoint.
-        selected = [v for v in (value or []) if v not in ('', None)]
+        selected = [v for v in (value or []) if v not in ("", None)]
         original = self.choices
         if not selected:
             self.choices = ()

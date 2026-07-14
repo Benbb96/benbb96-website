@@ -1,19 +1,19 @@
 from rest_framework import serializers
 
 from base.models import Profil
-from super_moite_moite.models import Logement, Categorie, Tache, PointTache, TrackTache
+from super_moite_moite.models import Categorie, Logement, PointTache, Tache, TrackTache
 
 
 class TrackTacheSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrackTache
-        fields = '__all__'
-        read_only_fields = ('id',)
+        fields = "__all__"
+        read_only_fields = ("id",)
 
 
 class TrackTacheSerializerSansProfil(TrackTacheSerializer):
     class Meta(TrackTacheSerializer.Meta):
-        read_only_fields = ('id', 'profil')
+        read_only_fields = ("id", "profil")
 
 
 class ProfilSerializer(serializers.ModelSerializer):
@@ -22,15 +22,15 @@ class ProfilSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profil
-        fields = ('id', 'user', 'avatar', 'get_absolute_url', 'tache_tracks')
+        fields = ("id", "user", "avatar", "get_absolute_url", "tache_tracks")
         read_only_fields = fields
 
 
 class PointTacheSerializer(serializers.ModelSerializer):
     class Meta:
         model = PointTache
-        fields = ('id', 'tache', 'profil', 'point')
-        read_only_fields = ('id',)
+        fields = ("id", "tache", "profil", "point")
+        read_only_fields = ("id",)
 
 
 class TacheSerializer(serializers.ModelSerializer):
@@ -42,9 +42,17 @@ class TacheSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tache
         fields = (
-            'id', 'nom', 'description', 'categorie', 'order', 'tracks', 'point_profils', 'photo', 'photo_url'
+            "id",
+            "nom",
+            "description",
+            "categorie",
+            "order",
+            "tracks",
+            "point_profils",
+            "photo",
+            "photo_url",
         )
-        read_only_fields = ('id',)
+        read_only_fields = ("id",)
 
 
 class CategorieSerializer(serializers.ModelSerializer):
@@ -52,8 +60,8 @@ class CategorieSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categorie
-        fields = '__all__'
-        read_only_fields = ('id',)
+        fields = "__all__"
+        read_only_fields = ("id",)
 
 
 class LogementSerializer(serializers.ModelSerializer):
@@ -62,5 +70,5 @@ class LogementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Logement
-        fields = ('id', 'nom', 'date_creation', 'habitants', 'categories')
-        read_only_fields = ('id', 'date_creation')
+        fields = ("id", "nom", "date_creation", "habitants", "categories")
+        read_only_fields = ("id", "date_creation")

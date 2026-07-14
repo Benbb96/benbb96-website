@@ -9,18 +9,20 @@ from base.models import PhotoOptimizationMixin, Profil
 
 class Joueur(models.Model):
     nom = models.CharField(max_length=100)
-    slug = AutoSlugField(unique=True, populate_from='nom')
-    profil = models.OneToOneField(Profil, on_delete=models.SET_NULL, null=True, blank=True)
+    slug = AutoSlugField(unique=True, populate_from="nom")
+    profil = models.OneToOneField(
+        Profil, on_delete=models.SET_NULL, null=True, blank=True
+    )
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
 
     class Meta:
-        ordering = ('nom',)
+        ordering = ("nom",)
 
     def __str__(self):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse('versus:detail-joueur', kwargs={'slug': self.slug})
+        return reverse("versus:detail-joueur", kwargs={"slug": self.slug})
 
     @cached_property
     def nb_victoire(self):
@@ -38,38 +40,42 @@ class Joueur(models.Model):
 
 
 class Jeu(PhotoOptimizationMixin):
-    OPTIMIZE_IMAGE_FIELD = 'image'
+    OPTIMIZE_IMAGE_FIELD = "image"
 
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
-    createur = models.ForeignKey(Profil, on_delete=models.SET_NULL, null=True, blank=True)
+    createur = models.ForeignKey(
+        Profil, on_delete=models.SET_NULL, null=True, blank=True
+    )
     date_creation = models.DateTimeField(verbose_name="date d'ajout", auto_now_add=True)
     image = models.ImageField(
         help_text="Une image/photo pour identifier le jeu",
-        null=True, blank=True, upload_to="jeux/"
+        null=True,
+        blank=True,
+        upload_to="jeux/",
     )
     SCORE = 1
     SCORE_INVERSE = 2
     CLASSEMENT = 3
     TYPES = (
-        (SCORE, 'Score'),
-        (SCORE_INVERSE, 'Score inverse'),
-        (CLASSEMENT, 'Classement'),
+        (SCORE, "Score"),
+        (SCORE_INVERSE, "Score inverse"),
+        (CLASSEMENT, "Classement"),
     )
     type = models.PositiveSmallIntegerField(
         choices=TYPES,
         default=SCORE,
-        help_text="Sélectionner le type de jeu qui déterminera la façon de choisir le gagnant."
+        help_text="Sélectionner le type de jeu qui déterminera la façon de choisir le gagnant.",
     )
 
     class Meta:
-        verbose_name_plural = 'jeux'
+        verbose_name_plural = "jeux"
 
     def __str__(self):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse('versus:detail-jeu', kwargs={'slug': self.slug})
+        return reverse("versus:detail-jeu", kwargs={"slug": self.slug})
 
     def top_players(self):
         player_scores = {}
@@ -80,7 +86,12 @@ class Jeu(PhotoOptimizationMixin):
                 else:
                     player_scores[joueur] += 1
         # Tri des joueurspar nombre de parties gagnées
-        player_scores = {k: v for k, v in sorted(player_scores.items(), key=lambda item: item[1], reverse=True)}
+        player_scores = {
+            k: v
+            for k, v in sorted(
+                player_scores.items(), key=lambda item: item[1], reverse=True
+            )
+        }
 
         top_players = []
         i = 1
@@ -96,43 +107,53 @@ class Jeu(PhotoOptimizationMixin):
 
 
 class Partie(models.Model):
-    jeu = models.ForeignKey(Jeu, on_delete=models.CASCADE, related_name='parties')
+    jeu = models.ForeignKey(Jeu, on_delete=models.CASCADE, related_name="parties")
     date = models.DateTimeField(default=timezone.now)
-    joueurs = models.ManyToManyField(Joueur, through='PartieJoueur')
+    joueurs = models.ManyToManyField(Joueur, through="PartieJoueur")
 
     class Meta:
-        ordering = ('-date',)
+        ordering = ("-date",)
 
     def __str__(self):
-        return '%s (%s)' % (self.jeu, self.date)
+        return f"{self.jeu} ({self.date})"
 
     def classement_joueur(self):
-        """ Retourne la liste des joueurs dans l'ordre de leur classement"""
+        """Retourne la liste des joueurs dans l'ordre de leur classement"""
         if self.jeu.type == Jeu.SCORE:
-            return self.partiejoueur_set.order_by('-score_classement')
-        return self.partiejoueur_set.order_by('score_classement')
+            return self.partiejoueur_set.order_by("-score_classement")
+        return self.partiejoueur_set.order_by("score_classement")
 
     @cached_property
     def winners(self):
-        """ Retourne le ou les gagnants de cette partie """
+        """Retourne le ou les gagnants de cette partie"""
         if self.jeu.type == self.jeu.CLASSEMENT:
             # On veut la ou les personnes arrivées en première place
-            return Joueur.objects.filter(partiejoueur__partie=self, partiejoueur__score_classement=1)
+            return Joueur.objects.filter(
+                partiejoueur__partie=self, partiejoueur__score_classement=1
+            )
         else:
             if self.jeu.type == self.jeu.SCORE:
                 # On cherche le score maximum
-                valeur = max(partiejoueur.score_classement for partiejoueur in self.partiejoueur_set.all())
+                valeur = max(
+                    partiejoueur.score_classement
+                    for partiejoueur in self.partiejoueur_set.all()
+                )
             else:
                 # On cherche le score minimum
-                valeur = min(partiejoueur.score_classement for partiejoueur in self.partiejoueur_set.all())
+                valeur = min(
+                    partiejoueur.score_classement
+                    for partiejoueur in self.partiejoueur_set.all()
+                )
             # Puis on retourne tous les joueurs ayant ce score
-            return Joueur.objects.filter(partiejoueur__partie=self, partiejoueur__score_classement=valeur)
+            return Joueur.objects.filter(
+                partiejoueur__partie=self, partiejoueur__score_classement=valeur
+            )
 
 
 class PartieJoueur(models.Model):
     partie = models.ForeignKey(Partie, on_delete=models.CASCADE)
     joueur = models.ForeignKey(Joueur, on_delete=models.CASCADE)
-    score_classement = models.PositiveSmallIntegerField('score ou classement')
+    score_classement = models.PositiveSmallIntegerField("score ou classement")
 
     class Meta:
-        unique_together = (('partie', 'joueur'),)
+        unique_together = (("partie", "joueur"),)

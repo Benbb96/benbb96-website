@@ -4,17 +4,17 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
-from base.models import Profil, PhotoAbstract
+from base.models import PhotoAbstract, Profil
 
 
 class Logement(models.Model):
     nom = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
-    date_creation = models.DateTimeField('date de création', auto_now_add=True)
-    habitants = models.ManyToManyField(Profil, related_name='logements')
+    date_creation = models.DateTimeField("date de création", auto_now_add=True)
+    habitants = models.ManyToManyField(Profil, related_name="logements")
 
     class Meta:
-        ordering = ('nom',)
+        ordering = ("nom",)
 
     def __str__(self):
         return self.nom
@@ -26,17 +26,17 @@ class Logement(models.Model):
             # Vérification si ce slug existe déjà
             if Logement.objects.filter(slug=slug).exists():
                 counter = 2
-                slug_proposition = f'{slug}-{counter}'
+                slug_proposition = f"{slug}-{counter}"
                 while Logement.objects.filter(slug=slug_proposition).exists():
                     counter += 1
-                    slug_proposition = f'{slug}-{counter}'
+                    slug_proposition = f"{slug}-{counter}"
                 slug = slug_proposition
             # Sauvegarde su slug unique
             self.slug = slug
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('super-moite-moite:detail-logement', kwargs={'slug': self.slug})
+        return reverse("super-moite-moite:detail-logement", kwargs={"slug": self.slug})
 
     def points_par_profil(self, profil):
         if profil not in self.habitants.all():
@@ -55,50 +55,60 @@ class Logement(models.Model):
 
 class Categorie(models.Model):
     nom = models.CharField(max_length=100)
-    logement = models.ForeignKey(Logement, on_delete=models.CASCADE, related_name='categories')
+    logement = models.ForeignKey(
+        Logement, on_delete=models.CASCADE, related_name="categories"
+    )
     order = models.PositiveIntegerField(default=0, db_index=True)
-    couleur = ColorField(default='#FFFFFF')
+    couleur = ColorField(default="#FFFFFF")
 
     class Meta:
-        ordering = ['order']
+        ordering = ["order"]
 
     def __str__(self):
         return self.nom
 
 
 class Tache(PhotoAbstract):
-    PHOTO_FOLDER = 'taches'
+    PHOTO_FOLDER = "taches"
 
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name='taches')
+    categorie = models.ForeignKey(
+        Categorie, on_delete=models.CASCADE, related_name="taches"
+    )
     order = models.PositiveIntegerField(default=0, db_index=True)
 
     def __str__(self):
         return self.nom
 
     class Meta:
-        ordering = ['order']
+        ordering = ["order"]
 
 
 class PointTache(models.Model):
     point = models.PositiveSmallIntegerField(default=1)
-    tache = models.ForeignKey(Tache, on_delete=models.CASCADE, related_name='point_profils')
-    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='point_taches')
-
-    class Meta:
-        unique_together = ('tache', 'profil')
-
-
-class TrackTache(models.Model):
-    profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='tache_tracks')
-    tache = models.ForeignKey(Tache, on_delete=models.CASCADE, related_name='tracks')
-    datetime = models.DateTimeField('date et heure', default=timezone.now)
-    commentaire = models.CharField(
-        max_length=255, help_text='Un texte pour donner une explication sur ce track.', blank=True
+    tache = models.ForeignKey(
+        Tache, on_delete=models.CASCADE, related_name="point_profils"
+    )
+    profil = models.ForeignKey(
+        Profil, on_delete=models.CASCADE, related_name="point_taches"
     )
 
     class Meta:
-        ordering = ('-datetime',)
+        unique_together = ("tache", "profil")
 
 
+class TrackTache(models.Model):
+    profil = models.ForeignKey(
+        Profil, on_delete=models.CASCADE, related_name="tache_tracks"
+    )
+    tache = models.ForeignKey(Tache, on_delete=models.CASCADE, related_name="tracks")
+    datetime = models.DateTimeField("date et heure", default=timezone.now)
+    commentaire = models.CharField(
+        max_length=255,
+        help_text="Un texte pour donner une explication sur ce track.",
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ("-datetime",)
