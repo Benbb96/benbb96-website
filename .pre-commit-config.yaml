@@ -1,0 +1,31 @@
+# Hooks pré-commit. Installer avec : uv run pre-commit install
+# Lancer manuellement sur tout le dépôt : uv run pre-commit run --all-files
+#
+# Les assets vendorisés/minifiés et le jeu p5.js (code tiers) sont exclus des
+# hooks d'hygiène. Les templates HTML ne sont volontairement PAS reformatés ici
+# (une passe design est en cours — voir docs/refonte/07-design-todo.md ; djLint
+# est configuré mais pas branché en auto-reformatage, cf. Phase 9 / LOT 5).
+exclude: |
+  (?x)^(
+    .*\.min\.(js|css)|
+    assets/js/(tom-select\.complete\.min\.js|chart\.umd\.min\.js)|
+    base/static/base/js/(p5.*\.js|labyrinthe_game/.*)
+  )$
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.21
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+        exclude: '\.html$'
+      - id: trailing-whitespace
+        exclude: '\.html$'
+      - id: check-yaml
+      - id: check-added-large-files

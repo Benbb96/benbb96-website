@@ -49,7 +49,7 @@ git clone https://github.com/Benbb96/benbb96-website.git
 cd benbb96
 ```
 
-Create a file here which will store all secrets settings : `secrets.json`.  
+Create a file here which will store all secrets settings : `secrets.json`.
 You can configure it like this :
 
 ```
@@ -112,10 +112,10 @@ environment without activating it. To add or bump a dependency, edit `pyproject.
 
 You can then create projects in [127.0.0.1:8000/admin/base/projet/](http://127.0.0.1:8000/admin/base/projet/) that will be displayed on the homepage.
 
-## Contact 
+## Contact
 
 If you want to contact me you can reach me at <benbb96@gmail.com>.
 
-## License 
+## License
 
 This project uses the following license: [MIT License](LICENSE).
