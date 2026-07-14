@@ -2,6 +2,7 @@
 
 bin/
 venv/
+.venv/
 
 media/
 

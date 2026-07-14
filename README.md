@@ -91,17 +91,24 @@ management commands help maintain the bucket:
 `optimize_existing_photos` (batch resize/WebP of existing images) and `clean_orphan_media`
 (remove files no longer referenced in the database — dry-run by default, `--apply` to delete).
 
-Then, you should create a virtual environement, load the migration to build the database (`db.sqlite3`), create a superuser to be able to access the administration module, and finally run the server :
+Dependencies are managed with [uv](https://docs.astral.sh/uv/) (single source of truth:
+`pyproject.toml` + `uv.lock`; Python version in `.python-version`). Install uv, then let it build
+the virtual environment (`.venv`), load the migrations to build the database (`db.sqlite3`), create a
+superuser to access the administration module, and finally run the server:
 
 ```
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements/dev.txt
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py collectstatic --noinput
-python manage.py runserver
+# install uv (once): https://docs.astral.sh/uv/getting-started/installation/
+uv sync                       # creates .venv from uv.lock (prod + dev deps)
+uv run manage.py migrate
+uv run manage.py createsuperuser
+uv run manage.py collectstatic --noinput
+uv run manage.py runserver
 ```
+
+`uv sync` installs the dev group too (django-debug-toolbar, coverage, ruff, pre-commit, pyright,
+djlint); add `--no-dev` for a production-only environment. `uv run <cmd>` runs a command inside the
+environment without activating it. To add or bump a dependency, edit `pyproject.toml` then run
+`uv lock` (and commit the updated `uv.lock`).
 
 You can then create projects in [127.0.0.1:8000/admin/base/projet/](http://127.0.0.1:8000/admin/base/projet/) that will be displayed on the homepage.
 

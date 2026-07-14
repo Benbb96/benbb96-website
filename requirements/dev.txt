@@ -1,5 +1,0 @@
--r base.txt
-
-coverage==7.9.1
-django-debug-toolbar==5.2.0
-pyright
