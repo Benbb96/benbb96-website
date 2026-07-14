@@ -80,3 +80,17 @@ ignore = ["E501", "DJ001", "DJ006", "DJ007", "DJ008", "DJ012"]
 [tool.ruff.lint.per-file-ignores]
 # settings : imports * (re-export) et F403/F405 tolérés dans les settings éclatés.
 "config/settings/*" = ["F403", "F405"]
+
+[tool.djlint]
+profile = "django"
+# ⚠️ CONFIGURATION SEULEMENT — ne PAS lancer `djlint --reformat` : une passe design
+# est en cours sur les templates (docs/refonte/07-design-todo.md), un reformatage
+# global entrerait en conflit. Usage prévu : `uv run djlint . --lint` (rapport).
+#
+# Règles ignorées car en conflit avec les conventions établies du projet (les
+# imposer ne ferait que du bruit / voudrait dire tout reformater) :
+#   T002 = guillemets doubles dans les tags (le projet utilise des guillemets simples)
+#   T003 = {% endblock %} nommés (le projet utilise des endblock nus)
+# Restent signalés : H021 (styles inline), H006 (img sans width/height → CLS/LCP),
+# H023/H030/H031/H020/T001… à traiter avec la passe design.
+ignore = "T002,T003"
