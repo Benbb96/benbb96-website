@@ -104,3 +104,10 @@ class ProjetListView(ListView):
         elif not self.request.user.is_staff:
             qs = qs.exclude(staff_only=True)
         return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["projets_actifs_count"] = (
+            context["object_list"].filter(actif=True).count()
+        )
+        return context

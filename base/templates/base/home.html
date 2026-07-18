@@ -1,17 +1,44 @@
 {% extends 'base.html' %}
 
-{% load static i18n %}
+{% load static i18n fontawesome_6 %}
 
 {% block navbar %}
     {% include 'navbar.html' with home=True %}
 {% endblock %}
 
 {% block title %}{% trans "Home" %}{% endblock %}
-{% block jumbotron_title %}{% trans "My projects" %}{% endblock %}
-{% block jumbotron_description %}{% trans "Here is the list of the projects I make public for the moment." %}{% endblock %}
+
+{% block hero %}
+    <header class="ds-hero ds-hero--split">
+        <div class="ds-hero__inner">
+            <div class="ds-hero__text">
+                <span class="ds-hero__eyebrow">📍 {% trans "Lyon, France" %} 🇫🇷</span>
+                <h1>{% blocktrans %}Hi, I'm Benbb96{% endblocktrans %} 👋</h1>
+                <p class="ds-hero__tagline">{% trans "Full-Stack Lead Developer" %}</p>
+                <p>
+                    {% blocktrans %}I code in Python/Django on my free time, often to solve a small everyday
+                    problem — always keeping an eye on environmental impact (GreenIT). This site hosts most
+                    of my personal projects.{% endblocktrans %}
+                </p>
+                <div class="ds-hero__actions">
+                    <a class="ds-btn ds-btn--primary" href="#projets">{% trans "See my projects" %}</a>
+                    <a class="ds-btn ds-btn--ghost" href="https://github.com/Benbb96" target="_blank" rel="noopener">
+                        {% fa6_icon 'github' 'fab' %} GitHub
+                    </a>
+                    <a class="ds-btn ds-btn--link" href="{% url 'base:about' %}">{% trans "Learn more about me" %} →</a>
+                </div>
+            </div>
+            <img class="ds-avatar ds-avatar--lg" src="{% static 'img/bbb.jpg' %}" alt="{% trans "Picture of me" %}">
+        </div>
+    </header>
+{% endblock %}
 
 {% block content %}
-    <div class="ds-grid">
+    <div class="ds-section__head">
+        <h2 class="ds-mb-0">{% trans "My projects" %}</h2>
+        <span class="ds-section__count">{{ projets_actifs_count }} {% trans "online" %}</span>
+    </div>
+    <div class="ds-grid" id="projets">
         {% for projet in object_list %}
             {% if projet.actif %}
                 <a class="ds-card ds-card--hover" href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
