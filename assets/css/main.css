@@ -410,23 +410,32 @@ textarea { min-height: 6rem; resize: vertical; }
     --_bg-hover: var(--ds-primary-light);
     border-color: var(--ds-border-strong);
 }
+/* Soulignement en balayage gauche→droite au survol — même principe que
+   l'indicateur d'onglet actif de la navbar et le voyant des cartes projet
+   (pseudo-élément + scaleX depuis la gauche), plutôt qu'un text-decoration
+   (qui ne peut que faire un fondu de couleur, pas un balayage directionnel). */
 .ds-btn--link {
     --_fg: var(--ds-text);
     --_bg: transparent;
     --_bg-hover: transparent;
+    position: relative;
     padding-inline: 0;
-    /* Toujours "souligné", mais couleur transparente au repos : le trait
-       apparaît en fondu au survol (transition de couleur) plutôt qu'en
-       basculant net d'un état à l'autre. */
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    transition: background-color var(--ds-transition), text-decoration-color var(--ds-transition);
+    text-decoration: none;
 }
-/* .ds-btn:hover force "text-decoration: none" (shorthand, pour les variantes
-   primary/ghost) — même spécificité que cette règle, donc il faut aussi
-   réaffirmer text-decoration-line ici, sinon le trait reste "none" pendant
-   le survol et ne "flashe" qu'au relâchement pendant le fondu de couleur. */
-.ds-btn--link:hover { text-decoration-line: underline; text-decoration-color: var(--ds-primary-dark); }
+.ds-btn--link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.1em;
+    height: 1.5px;
+    background: var(--ds-primary-dark);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 220ms ease;
+}
+.ds-btn--link:hover::after,
+.ds-btn--link:focus-visible::after { transform: scaleX(1); }
 .ds-btn--sm { padding: var(--ds-space-1) var(--ds-space-3); font-size: var(--ds-fs-sm); }
 .ds-btn--lg { padding: var(--ds-space-3) var(--ds-space-5); font-size: var(--ds-fs-lg); }
 .ds-btn--block { display: flex; width: 100%; }
@@ -459,6 +468,33 @@ textarea { min-height: 6rem; resize: vertical; }
 .ds-card--hover:focus-within::before { transform: scaleX(1); }
 .ds-card__media { display: block; width: 100%; }
 .ds-card__media img { display: block; width: 100%; object-fit: cover; }
+/* Variante vignette générée (icône + étiquette) — remplace une photo
+   uploadée par un aplat qui reste toujours dans le thème (voir
+   base/templatetags/custom_tags.py:project_icon_meta + components/icons.html). */
+.ds-card__media--tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: var(--ds-secondary);
+    color: rgba(255, 255, 255, 0.9);
+}
+.ds-card__media--tile .ds-card__icon { width: 2.6rem; height: 2.6rem; }
+.ds-card__media--tile .ds-card__tag {
+    position: absolute;
+    top: 0.65rem;
+    left: 0.65rem;
+    font-family: var(--ds-font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ds-primary-ink);
+    background: var(--ds-primary);
+    padding: 0.2rem 0.45rem;
+    border-radius: 3px;
+}
 .ds-card__body { padding: var(--ds-space-5); }
 .ds-card__title { margin-top: 0; }
 .ds-card__footer {
