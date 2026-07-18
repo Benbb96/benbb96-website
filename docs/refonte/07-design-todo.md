@@ -16,6 +16,24 @@ interface »). Une **passe design/UI dédiée** est prévue plus tard, potentiel
 **skill front-end / UI / design** spécialisé. Les corrections faites au fil de l'eau (ci-dessous et
 dans les commits) sont des ajustements ponctuels, **pas** cette refonte visuelle d'ensemble.
 
+## Direction visuelle (décidée avec le propriétaire)
+
+- **Couleur signature : le JAUNE.** Le propriétaire aime beaucoup le jaune → couleur de marque /
+  accent principal. ⚠️ À manier avec méthode : le jaune pur a un **contraste insuffisant** sur blanc
+  → l'utiliser comme **accent** (fonds/boutons/highlights avec **texte foncé** dessus), **pas** pour du
+  texte ou des liens fins. Construire une **rampe** complète (tints/shades du jaune) + des **neutres**
+  (gris légèrement chauds pour s'harmoniser) + des couleurs **sémantiques** ; attention à **différencier
+  le jaune de marque du « warning »** (souvent jaune/ambre aussi → décaler le warning vers l'orange/ambre).
+  Valider les **contrastes WCAG** dans les deux thèmes (utiliser la méthodo couleur du skill design/dataviz).
+- **Dark mode requis.** Prévoir un **thème sombre** complet, via les custom properties existantes
+  (deux jeux de tokens : clair par défaut + sombre). **Toggle utilisateur** dans la navbar
+  (clair / sombre / auto), **persisté** (localStorage), **défaut = préférence système**
+  (`prefers-color-scheme`), en **vanilla JS** (pas de framework) avec un **petit script inline en
+  `<head>`** pour éviter le flash de mauvais thème (FOUC). En sombre, **adoucir le jaune** (un peu
+  désaturé) pour éviter l'éblouissement. **kendama exclu** (thème paper autonome — ne pas lui imposer
+  le dark mode ; le toggle ne doit rien casser sur ses pages). Les maquettes Artifact doivent montrer
+  **les deux thèmes**.
+
 ## Décisions/ajustements faits pendant la QA post-5b (contexte pour la passe design)
 
 - **Conteneur large** : token `--ds-container-wide` (1280px) + modificateur `.content--wide`
