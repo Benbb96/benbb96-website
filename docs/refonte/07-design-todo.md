@@ -67,8 +67,12 @@ Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvell
   passée en pitch perso (photo, tagline, CTA) + grille de projets. Design system
   (tokens, hero, navbar, boutons…) mis à jour en même temps (sitewide).
 - [x] **« À propos » (`about.html`)** : parcours condensé (frise), compétences
-  (pills), centres d'intérêt (chips), lien CV. ⚠️ CV PDF pas encore déposé dans
-  `assets/files/` — lien en place mais fichier manquant.
+  (pills), centres d'intérêt (chips), lien CV (PDF déposé dans `assets/files/`, fonctionnel).
+- [ ] **Images des projets (home)** : remplacer les photos/stock-arts qui juraient avec la
+  direction jaune + dark mode par des illustrations générées par IA. Détail complet (méthode,
+  prompts, état par projet) dans [09-images-projets-ia.md](09-images-projets-ia.md) — reste à
+  terminer Super Moite Moite/Kendama/Labyrinthe Game, uploader les images validées, puis ajouter
+  `Projet.description_fr`/`description_en` (différé, cf. même doc).
 
 ## avis
 
