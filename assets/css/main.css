@@ -422,7 +422,11 @@ textarea { min-height: 6rem; resize: vertical; }
     text-decoration-color: transparent;
     transition: background-color var(--ds-transition), text-decoration-color var(--ds-transition);
 }
-.ds-btn--link:hover { text-decoration-color: var(--ds-primary-dark); }
+/* .ds-btn:hover force "text-decoration: none" (shorthand, pour les variantes
+   primary/ghost) — même spécificité que cette règle, donc il faut aussi
+   réaffirmer text-decoration-line ici, sinon le trait reste "none" pendant
+   le survol et ne "flashe" qu'au relâchement pendant le fondu de couleur. */
+.ds-btn--link:hover { text-decoration-line: underline; text-decoration-color: var(--ds-primary-dark); }
 .ds-btn--sm { padding: var(--ds-space-1) var(--ds-space-3); font-size: var(--ds-fs-sm); }
 .ds-btn--lg { padding: var(--ds-space-3) var(--ds-space-5); font-size: var(--ds-fs-lg); }
 .ds-btn--block { display: flex; width: 100%; }
