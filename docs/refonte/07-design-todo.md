@@ -63,8 +63,12 @@ Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvell
 
 ## base (chrome & pages vitrines)
 
-- [ ] **Page d'accueil (`home.html`)** : retravailler le design (priorité haute).
-- [ ] **« À propos » (`about.html`)** : retravailler le design.
+- [x] **Page d'accueil (`home.html`)** : direction jaune + dark mode appliquée, home
+  passée en pitch perso (photo, tagline, CTA) + grille de projets. Design system
+  (tokens, hero, navbar, boutons…) mis à jour en même temps (sitewide).
+- [x] **« À propos » (`about.html`)** : parcours condensé (frise), compétences
+  (pills), centres d'intérêt (chips), lien CV. ⚠️ CV PDF pas encore déposé dans
+  `assets/files/` — lien en place mais fichier manquant.
 
 ## avis
 
