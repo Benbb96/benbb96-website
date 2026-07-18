@@ -391,6 +391,9 @@ textarea { min-height: 6rem; resize: vertical; }
 .ds-btn:hover { background-color: var(--_bg-hover); color: var(--_fg); text-decoration: none; }
 .ds-btn:active { transform: translateY(1px); }
 .ds-btn:disabled, .ds-btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+/* Icônes SVG inline dans un bouton : sans ça, un <svg> sans width/height
+   prend sa taille de remplacement par défaut (300×150px) — bouton énorme. */
+.ds-btn svg { width: 1.1em; height: 1.1em; flex: none; }
 
 /* Ces variantes gardent du texte blanc (fonds saturés/sombres, non jaunes) —
    la base .ds-btn ne peut plus le supposer par défaut puisque son propre
@@ -412,8 +415,14 @@ textarea { min-height: 6rem; resize: vertical; }
     --_bg: transparent;
     --_bg-hover: transparent;
     padding-inline: 0;
+    /* Toujours "souligné", mais couleur transparente au repos : le trait
+       apparaît en fondu au survol (transition de couleur) plutôt qu'en
+       basculant net d'un état à l'autre. */
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: background-color var(--ds-transition), text-decoration-color var(--ds-transition);
 }
-.ds-btn--link:hover { text-decoration: underline; text-decoration-color: var(--ds-primary-dark); }
+.ds-btn--link:hover { text-decoration-color: var(--ds-primary-dark); }
 .ds-btn--sm { padding: var(--ds-space-1) var(--ds-space-3); font-size: var(--ds-fs-sm); }
 .ds-btn--lg { padding: var(--ds-space-3) var(--ds-space-5); font-size: var(--ds-fs-lg); }
 .ds-btn--block { display: flex; width: 100%; }
@@ -656,13 +665,23 @@ textarea { min-height: 6rem; resize: vertical; }
 .ds-theme-toggle__opt:hover { color: #fff; }
 .ds-theme-toggle__opt.is-active { background: var(--ds-primary); color: var(--ds-primary-ink); }
 
-/* Sélecteur de langue intégré */
+/* Sélecteur de langue intégré — bascule directe au choix (voir onchange dans
+   navbar.html), plus de bouton de confirmation dans le cas normal. */
 .ds-nav__lang { display: flex; align-items: center; gap: var(--ds-space-2); }
 .ds-nav__lang select {
     width: auto;
     padding: var(--ds-space-1) var(--ds-space-2);
     font-size: var(--ds-fs-sm);
 }
+/* Repli <noscript> (JS désactivé) : un .ds-btn--ghost normal suit --ds-text,
+   qui s'inverse par thème — invisible ici car la navbar reste TOUJOURS
+   sombre, quel que soit le thème choisi. On fixe donc un texte clair fixe. */
+.ds-nav__lang .ds-btn--ghost {
+    --_fg: rgba(255, 255, 255, 0.85);
+    --_bg-hover: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+.ds-nav__lang .ds-btn--ghost:hover { color: #fff; }
 
 /* La navbar horizontale (marque + 7 rubriques + langue + compte) réclame ~1130px
    à la taille nominale (root 16px). En dessous de la largeur du contenu on bascule
@@ -825,8 +844,11 @@ textarea { min-height: 6rem; resize: vertical; }
 .ds-hero__inner { position: relative; max-width: var(--ds-container); margin-inline: auto; }
 .ds-hero h1 { color: var(--ds-text); margin-bottom: var(--ds-space-3); font-size: clamp(2.25rem, 5vw, 3.5rem); }
 .ds-hero p { color: var(--ds-text-muted); font-size: clamp(1.125rem, 2vw, 1.375rem); margin: 0; }
-.ds-hero a { color: var(--ds-text); text-decoration: underline; }
-.ds-hero a:hover { text-decoration-color: var(--ds-primary-dark); }
+/* :not(.ds-btn) : sans ça, cette règle (0,1,1) bat le text-decoration:none
+   de .ds-btn (0,1,0) et souligne les boutons CTA du hero split (home) — on
+   ne vise ici que les liens de prose « nus » (ex. jumbotron_description). */
+.ds-hero a:not(.ds-btn) { color: var(--ds-text); text-decoration: underline; }
+.ds-hero a:not(.ds-btn):hover { text-decoration-color: var(--ds-primary-dark); }
 
 /* Variante « split » (home) : pitch perso + CTA + photo, alignés à gauche sur
    deux colonnes ; passe en une colonne sur mobile. Les autres pages gardent

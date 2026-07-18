@@ -40,24 +40,30 @@
                     <div class="ds-theme-toggle" data-theme-toggle role="group" aria-label="{% trans 'Theme' %}">
                         <button type="button" class="ds-theme-toggle__opt" data-mode="light" aria-label="{% trans 'Light theme' %}" title="{% trans 'Light' %}">{% fa6_icon 'sun' %}</button>
                         <button type="button" class="ds-theme-toggle__opt" data-mode="dark" aria-label="{% trans 'Dark theme' %}" title="{% trans 'Dark' %}">{% fa6_icon 'moon' %}</button>
-                        <button type="button" class="ds-theme-toggle__opt" data-mode="auto" aria-label="{% trans 'Follow system theme' %}" title="{% trans 'Auto' %}">{% fa6_icon 'display' %}</button>
+                        <button type="button" class="ds-theme-toggle__opt" data-mode="auto" aria-label="{% trans 'Follow system theme' %}" title="{% trans 'Auto' %}">{% fa6_icon 'desktop' %}</button>
                     </div>
                 </li>
                 <li class="ds-nav__item">
+                    {% comment %}
+                       Bascule directe au choix (onchange soumet le formulaire) —
+                       plus besoin d'un bouton de confirmation séparé. Le
+                       <noscript> ci-dessous couvre le cas JS désactivé.
+                    {% endcomment %}
                     <form class="ds-nav__lang" action="{% url 'set_language' %}" method="post">{% csrf_token %}
                         <input name="next" type="hidden" value="{{ redirect_to }}">
                         <label class="ds-sr-only" for="ds-lang-select">{% trans "Language" %}</label>
-                        <select name="language" id="ds-lang-select">
+                        <select name="language" id="ds-lang-select" onchange="this.form.submit()">
                             {% get_current_language as LANGUAGE_CODE %}
                             {% get_available_languages as LANGUAGES %}
                             {% get_language_info_list for LANGUAGES as languages %}
                             {% for language in languages %}
                                 <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                    {% if language.code == 'fr' %}🇫🇷{% elif language.code == 'en' %}🇬🇧{% endif %}
                                     {{ language.name_local|capfirst }}
                                 </option>
                             {% endfor %}
                         </select>
-                        <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">{% trans "OK" %}</button>
+                        <noscript><button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">{% trans "OK" %}</button></noscript>
                     </form>
                 </li>
                 {% if not request.user.is_authenticated %}
