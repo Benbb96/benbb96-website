@@ -33,35 +33,53 @@
    4. Formulaires (éléments + .ds-form) 9. Badges (.ds-badge)
    5. Layout (.ds-container, .ds-grid) 10. Navbar (.ds-nav)
                                        11. Footer + réseaux (.ds-footer/.ds-social)
-                                       12. Hero (.ds-hero)
+                                       12. Hero (.ds-hero) + avatar (.ds-avatar)
                                        13. Pagination (.ds-pagination)
                                        14. Tables nues
                                        15. Utilitaires (.ds-*)
+                                       16-19. Composants apps / hérités
+                                       20. Home + About (parcours, pills, chips)
+
+   ── DIRECTION VISUELLE (passe design) ─────────────────────────────────────
+   Jaune de marque = --ds-primary (accent uniquement : fonds/badges/traits
+   avec du texte foncé --ds-primary-ink dessus — jamais de texte/lien jaune).
+   Neutres légèrement chauds. Dark mode complet via [data-theme] (toggle
+   navbar, assets/js/theme.js) + @media (prefers-color-scheme). kendama a son
+   propre base.html/paper.css : ce fichier n'y est pas chargé, non concerné.
    ============================================================================ */
 
 /* 1. ─────────────────────────────── TOKENS ─────────────────────────────── */
+/* Direction visuelle (passe design, validée en maquette Artifact) : le JAUNE
+   devient la couleur de marque/accent (--ds-primary). Il ne sert QUE de fond/
+   accent avec du texte foncé dessus (--ds-primary-ink) — jamais de texte ni de
+   lien fin en jaune brut (contraste insuffisant). Les liens/texte interactif
+   utilisent --ds-text (+ soulignement), jamais --ds-primary comme couleur de
+   texte. --ds-warning est volontairement un ambre/orange distinct du jaune de
+   marque pour ne jamais s'y confondre. Neutres légèrement chauds (pas de gris
+   pur). Thème sombre : voir plus bas (@media + [data-theme]). */
 :root {
-    /* Couleurs de marque */
-    --ds-primary: #2563eb;
-    --ds-primary-dark: #1d4ed8;
-    --ds-primary-light: #dbeafe;
-    --ds-secondary: #0f172a;
+    /* Couleurs de marque — jaune signature, en ACCENT uniquement */
+    --ds-primary: #f2c200;
+    --ds-primary-dark: #caa100;     /* hover/pressed des fonds jaunes, et soulignements de liens */
+    --ds-primary-light: #fdf1c7;    /* teinte pâle (fonds badges/hover), jamais utilisée comme texte */
+    --ds-primary-ink: #201a08;      /* texte À POSER SUR un fond --ds-primary/-dark */
+    --ds-secondary: #1c1912;        /* encre : navbar/footer/hero sombre */
     --ds-accent: #f59e0b;
 
     /* Couleurs sémantiques */
-    --ds-success: #16a34a;
-    --ds-info: #0ea5e9;
-    --ds-warning: #d97706;
-    --ds-danger: #dc2626;
+    --ds-success: #3f7d4a;
+    --ds-info: #2f6f8f;
+    --ds-warning: #d9660b;
+    --ds-danger: #c1432c;
 
-    /* Surfaces & texte */
-    --ds-bg: #f8fafc;
+    /* Surfaces & texte — neutres chauds */
+    --ds-bg: #f7f5ef;
     --ds-surface: #ffffff;
-    --ds-surface-alt: #f1f5f9;
-    --ds-text: #1e293b;
-    --ds-text-muted: #64748b;
-    --ds-border: #e2e8f0;
-    --ds-border-strong: #cbd5e1;
+    --ds-surface-alt: #efece1;
+    --ds-text: #1c1912;
+    --ds-text-muted: #5c5646;
+    --ds-border: #e3ddc9;
+    --ds-border-strong: #cabf9e;
 
     /* Typographie */
     --ds-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -88,9 +106,9 @@
     --ds-radius-pill: 999px;
 
     /* Ombres */
-    --ds-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-    --ds-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
-    --ds-shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
+    --ds-shadow-sm: 0 1px 2px rgba(28, 25, 18, 0.06);
+    --ds-shadow: 0 1px 3px rgba(28, 25, 18, 0.1), 0 1px 2px rgba(28, 25, 18, 0.06);
+    --ds-shadow-lg: 0 10px 25px rgba(28, 25, 18, 0.12);
 
     /* Divers */
     --ds-container: 1140px;
@@ -99,10 +117,64 @@
     --ds-nav-h: 80px;
 }
 
+/* Thème sombre : préférence système par défaut, puis le toggle utilisateur
+   (assets/js/theme.js) gagne dans les deux sens via [data-theme] sur <html>.
+   Le jaune est adouci/désaturé (évite l'éblouissement sur fond sombre), le
+   texte posé dessus reste sombre (--ds-primary-ink). kendama n'est pas
+   concerné : il a son propre base.html/paper.css, ce fichier n'y est pas chargé. */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ds-primary: #e0ab2c;
+        --ds-primary-dark: #f0c04a;
+        --ds-primary-light: #332a12;
+        --ds-primary-ink: #17130a;
+        --ds-secondary: #0f0d09;
+
+        --ds-success: #63a86f;
+        --ds-info: #5da0c4;
+        --ds-warning: #e2883f;
+        --ds-danger: #e0715a;
+
+        --ds-bg: #15130e;
+        --ds-surface: #1d1a13;
+        --ds-surface-alt: #262218;
+        --ds-text: #f3efe3;
+        --ds-text-muted: #b5ad97;
+        --ds-border: #35301f;
+        --ds-border-strong: #4a4328;
+
+        --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+        --ds-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.3);
+        --ds-shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.55);
+    }
+}
+:root[data-theme="dark"] {
+    --ds-primary: #e0ab2c; --ds-primary-dark: #f0c04a; --ds-primary-light: #332a12; --ds-primary-ink: #17130a;
+    --ds-secondary: #0f0d09;
+    --ds-success: #63a86f; --ds-info: #5da0c4; --ds-warning: #e2883f; --ds-danger: #e0715a;
+    --ds-bg: #15130e; --ds-surface: #1d1a13; --ds-surface-alt: #262218;
+    --ds-text: #f3efe3; --ds-text-muted: #b5ad97; --ds-border: #35301f; --ds-border-strong: #4a4328;
+    --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --ds-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --ds-shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.55);
+}
+:root[data-theme="light"] {
+    --ds-primary: #f2c200; --ds-primary-dark: #caa100; --ds-primary-light: #fdf1c7; --ds-primary-ink: #201a08;
+    --ds-secondary: #1c1912;
+    --ds-success: #3f7d4a; --ds-info: #2f6f8f; --ds-warning: #d9660b; --ds-danger: #c1432c;
+    --ds-bg: #f7f5ef; --ds-surface: #ffffff; --ds-surface-alt: #efece1;
+    --ds-text: #1c1912; --ds-text-muted: #5c5646; --ds-border: #e3ddc9; --ds-border-strong: #cabf9e;
+    --ds-shadow-sm: 0 1px 2px rgba(28, 25, 18, 0.06);
+    --ds-shadow: 0 1px 3px rgba(28, 25, 18, 0.1), 0 1px 2px rgba(28, 25, 18, 0.06);
+    --ds-shadow-lg: 0 10px 25px rgba(28, 25, 18, 0.12);
+}
+
 /* 2. ──────────────────────────── RESET LÉGER ───────────────────────────── */
 /* box-sizing: border-box est déjà posé par Bootstrap 3 sur * — on l'aligne au
    cas où Bootstrap serait retiré (Phase 5). Inoffensif tant qu'il est chargé. */
 *, *::before, *::after { box-sizing: border-box; }
+
+html { color-scheme: light dark; }
 
 img, picture, svg, video { max-width: 100%; height: auto; }
 
@@ -138,7 +210,10 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--ds-font-heading);
     line-height: 1.25;
-    color: var(--ds-secondary);
+    /* --ds-text (pas --ds-secondary) : --ds-secondary est le fond du chrome
+       sombre (navbar/footer/hero-split), pas une couleur de texte — en dark
+       mode il reste très sombre, alors que --ds-text s'inverse bien. */
+    color: var(--ds-text);
     margin: 0 0 var(--ds-space-3);
     font-weight: 700;
 }
@@ -151,12 +226,16 @@ h6 { font-size: 0.875rem; }
 
 p { margin: 0 0 var(--ds-space-4); }
 
+/* Le jaune de marque ne sert jamais de couleur de texte (contraste
+   insuffisant) : les liens restent en --ds-text (comportement inchangé —
+   pas de soulignement par défaut, apparaît au survol) ; seule la couleur du
+   soulignement au survol reprend l'accent jaune, à la place du bleu. */
 a {
-    color: var(--ds-primary);
+    color: var(--ds-text);
     text-decoration: none;
-    transition: color var(--ds-transition);
+    transition: text-decoration-color var(--ds-transition);
 }
-a:hover { color: var(--ds-primary-dark); text-decoration: underline; }
+a:hover { text-decoration: underline; text-decoration-color: var(--ds-primary-dark); }
 
 hr {
     border: 0;
@@ -185,7 +264,7 @@ blockquote {
 }
 
 :focus-visible {
-    outline: 2px solid var(--ds-primary);
+    outline: 2px solid var(--ds-primary-dark);
     outline-offset: 2px;
 }
 
@@ -220,7 +299,7 @@ textarea {
 input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]):not([type=reset]):not([type=file]):not([type=range]):not([type=color]):focus,
 select:focus,
 textarea:focus {
-    border-color: var(--ds-primary);
+    border-color: var(--ds-primary-dark);
     box-shadow: 0 0 0 3px var(--ds-primary-light);
     outline: none;
 }
@@ -232,7 +311,7 @@ textarea { min-height: 6rem; resize: vertical; }
     display: inline-block;
     margin-bottom: var(--ds-space-1);
     font-weight: 600;
-    color: var(--ds-secondary);
+    color: var(--ds-text);
 }
 .ds-form__label .ds-form__required { color: var(--ds-danger); }
 .ds-form__help {
@@ -288,8 +367,10 @@ textarea { min-height: 6rem; resize: vertical; }
 
 /* 6. ─────────────────────────────── BOUTONS ────────────────────────────── */
 .ds-btn {
+    /* Fond jaune de marque : le texte DOIT être foncé (--ds-primary-ink),
+       jamais blanc, pour rester lisible (cf. direction visuelle). */
     --_bg: var(--ds-primary);
-    --_fg: #fff;
+    --_fg: var(--ds-primary-ink);
     --_bg-hover: var(--ds-primary-dark);
     display: inline-flex;
     align-items: center;
@@ -311,38 +392,58 @@ textarea { min-height: 6rem; resize: vertical; }
 .ds-btn:active { transform: translateY(1px); }
 .ds-btn:disabled, .ds-btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 
-.ds-btn--secondary { --_bg: var(--ds-secondary); --_bg-hover: #020617; }
-.ds-btn--success   { --_bg: var(--ds-success); --_bg-hover: #15803d; }
-.ds-btn--danger    { --_bg: var(--ds-danger); --_bg-hover: #b91c1c; }
-.ds-btn--warning   { --_bg: var(--ds-warning); --_bg-hover: #b45309; }
+/* Ces variantes gardent du texte blanc (fonds saturés/sombres, non jaunes) —
+   la base .ds-btn ne peut plus le supposer par défaut puisque son propre
+   fond par défaut est le jaune de marque (texte foncé, cf. plus haut). */
+.ds-btn--secondary { --_bg: var(--ds-secondary); --_bg-hover: #0d0b07; --_fg: #fff; }
+.ds-btn--success   { --_bg: var(--ds-success); --_bg-hover: #15803d; --_fg: #fff; }
+.ds-btn--danger    { --_bg: var(--ds-danger); --_bg-hover: #b91c1c; --_fg: #fff; }
+.ds-btn--warning   { --_bg: var(--ds-warning); --_bg-hover: #b45309; --_fg: #fff; }
 .ds-btn--ghost {
-    --_fg: var(--ds-primary);
+    /* Texte réel sur fond clair : reste en --ds-text (le jaune n'est que le
+       fond de hover, une teinte pâle, jamais la couleur du texte). */
+    --_fg: var(--ds-text);
     --_bg: transparent;
     --_bg-hover: var(--ds-primary-light);
     border-color: var(--ds-border-strong);
 }
-.ds-btn--ghost:hover { color: var(--ds-primary-dark); }
 .ds-btn--link {
-    --_fg: var(--ds-primary);
+    --_fg: var(--ds-text);
     --_bg: transparent;
     --_bg-hover: transparent;
     padding-inline: 0;
 }
-.ds-btn--link:hover { color: var(--ds-primary-dark); text-decoration: underline; }
+.ds-btn--link:hover { text-decoration: underline; text-decoration-color: var(--ds-primary-dark); }
 .ds-btn--sm { padding: var(--ds-space-1) var(--ds-space-3); font-size: var(--ds-fs-sm); }
 .ds-btn--lg { padding: var(--ds-space-3) var(--ds-space-5); font-size: var(--ds-fs-lg); }
 .ds-btn--block { display: flex; width: 100%; }
 
 /* 7. ──────────────────────────────── CARDS ─────────────────────────────── */
 .ds-card {
+    position: relative;
     background: var(--ds-surface);
     border: 1px solid var(--ds-border);
     border-radius: var(--ds-radius-lg);
     box-shadow: var(--ds-shadow-sm);
     overflow: hidden;
-    transition: box-shadow var(--ds-transition), transform var(--ds-transition);
+    transition: box-shadow var(--ds-transition), transform var(--ds-transition), border-color var(--ds-transition);
 }
-.ds-card--hover:hover { box-shadow: var(--ds-shadow-lg); transform: translateY(-2px); }
+/* Signature reprise : le bord supérieur « s'allume » en jaune au survol,
+   comme un voyant — cohérent avec le curseur du logo et l'indicateur de nav. */
+.ds-card--hover::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--ds-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 220ms ease;
+}
+.ds-card--hover:hover,
+.ds-card--hover:focus-within { box-shadow: var(--ds-shadow-lg); transform: translateY(-2px); border-color: var(--ds-border-strong); }
+.ds-card--hover:hover::before,
+.ds-card--hover:focus-within::before { transform: scaleX(1); }
 .ds-card__media { display: block; width: 100%; }
 .ds-card__media img { display: block; width: 100%; object-fit: cover; }
 .ds-card__body { padding: var(--ds-space-5); }
@@ -406,7 +507,7 @@ textarea { min-height: 6rem; resize: vertical; }
     background: var(--ds-surface-alt);
     color: var(--ds-text);
 }
-.ds-badge--primary { background: var(--ds-primary-light); color: var(--ds-primary-dark); }
+.ds-badge--primary { background: var(--ds-primary-light); color: var(--ds-text); }
 .ds-badge--success { background: #dcfce7; color: #15803d; }
 .ds-badge--warning { background: #fef3c7; color: #b45309; }
 .ds-badge--danger  { background: #fee2e2; color: #b91c1c; }
@@ -434,6 +535,7 @@ textarea { min-height: 6rem; resize: vertical; }
 .ds-nav__brand {
     display: inline-flex;
     align-items: center;
+    gap: 0.4rem;
     min-height: var(--ds-nav-h);   /* fige la hauteur de la ligne marque/burger */
     font-weight: 800;
     font-size: 1.375rem;
@@ -441,6 +543,16 @@ textarea { min-height: 6rem; resize: vertical; }
     letter-spacing: 0.5px;
 }
 .ds-nav__brand:hover { color: #fff; text-decoration: none; opacity: 0.9; }
+/* Signature : le curseur jaune — repris comme indicateur d'onglet actif
+   (ci-dessous) et comme accent au survol des cartes projet. */
+.ds-nav__brand-mark {
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    background: var(--ds-primary);
+    border-radius: 2px;
+    flex: 0 0 auto;
+}
 
 /* Bouton hamburger (mobile) — checkbox-hack, sans JS */
 .ds-nav__toggle { display: none; }
@@ -500,10 +612,49 @@ textarea { min-height: 6rem; resize: vertical; }
     white-space: nowrap;   /* jamais de libellé coupé en plein milieu (« A / propos ») */
     color: rgba(255, 255, 255, 0.85);
     border-radius: var(--ds-radius);
+    position: relative;
     transition: background var(--ds-transition), color var(--ds-transition);
 }
 .ds-nav__item > a:hover { color: #fff; background: rgba(255, 255, 255, 0.1); text-decoration: none; }
-.ds-nav__item.is-active > a { color: #fff; background: rgba(255, 255, 255, 0.16); }
+/* Indicateur actif : trait jaune signature (pas un fond plein — le jaune
+   reste un accent ponctuel, pas une masse de couleur). */
+.ds-nav__item.is-active > a { color: #fff; }
+.ds-nav__item.is-active > a::after {
+    content: "";
+    position: absolute;
+    left: var(--ds-space-2);
+    right: var(--ds-space-2);
+    bottom: 0.35rem;
+    height: 2px;
+    background: var(--ds-primary);
+    border-radius: 2px;
+}
+
+/* Toggle de thème clair/sombre/auto — 3 boutons, JS vanilla (assets/js/theme.js) */
+.ds-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--ds-radius-pill);
+    padding: 0.2rem;
+}
+.ds-theme-toggle__opt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    transition: background var(--ds-transition), color var(--ds-transition);
+}
+.ds-theme-toggle__opt:hover { color: #fff; }
+.ds-theme-toggle__opt.is-active { background: var(--ds-primary); color: var(--ds-primary-ink); }
 
 /* Sélecteur de langue intégré */
 .ds-nav__lang { display: flex; align-items: center; gap: var(--ds-space-2); }
@@ -611,9 +762,10 @@ textarea { min-height: 6rem; resize: vertical; }
     list-style: none;
 }
 /* Bouton réseau social rond — remplace bootstrap-social.css.
-   Couleur de marque via --_brand, défaut = primaire. */
+   Couleur de marque via --_brand ; défaut = un neutre (pas le jaune de
+   marque, qui rendrait le texte/icône blanc illisible dessus au survol). */
 .ds-social {
-    --_brand: var(--ds-primary);
+    --_brand: var(--ds-text-muted);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -650,17 +802,77 @@ textarea { min-height: 6rem; resize: vertical; }
 
 /* 12. ───────────────────────────────── HERO ────────────────────────────── */
 .ds-hero {
-    background: linear-gradient(135deg, var(--ds-primary) 0%, var(--ds-secondary) 100%);
-    color: #fff;
+    position: relative;
+    overflow: hidden;
+    background: var(--ds-surface-alt);
+    color: var(--ds-text);
+    border-bottom: 1px solid var(--ds-border);
     padding: var(--ds-space-8) var(--ds-space-4);
     text-align: center;
 }
-.ds-hero__inner { max-width: var(--ds-container); margin-inline: auto; }
-.ds-hero h1 { color: #fff; margin-bottom: var(--ds-space-3); font-size: clamp(2.25rem, 5vw, 3.5rem); }
-.ds-hero p { color: rgba(255, 255, 255, 0.9); font-size: clamp(1.125rem, 2vw, 1.375rem); margin: 0; }
-/* Liens dans le hero : lisibles sur le fond bleu (sinon bleu sur bleu) */
-.ds-hero a { color: #fff; text-decoration: underline; }
-.ds-hero a:hover { color: #fff; opacity: 0.8; }
+/* Texture pegboard très discrète (nod à l'atelier du bricoleur plutôt qu'un
+   dégradé générique) — une texture, pas un motif qui parle. */
+.ds-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(var(--ds-border-strong) 1px, transparent 1px);
+    background-size: 22px 22px;
+    opacity: 0.35;
+    mask-image: linear-gradient(to bottom, black, transparent 85%);
+    pointer-events: none;
+}
+.ds-hero__inner { position: relative; max-width: var(--ds-container); margin-inline: auto; }
+.ds-hero h1 { color: var(--ds-text); margin-bottom: var(--ds-space-3); font-size: clamp(2.25rem, 5vw, 3.5rem); }
+.ds-hero p { color: var(--ds-text-muted); font-size: clamp(1.125rem, 2vw, 1.375rem); margin: 0; }
+.ds-hero a { color: var(--ds-text); text-decoration: underline; }
+.ds-hero a:hover { text-decoration-color: var(--ds-primary-dark); }
+
+/* Variante « split » (home) : pitch perso + CTA + photo, alignés à gauche sur
+   deux colonnes ; passe en une colonne sur mobile. Les autres pages gardent
+   le hero centré ci-dessus (jumbotron_title/description, inchangé). */
+.ds-hero--split { text-align: left; }
+.ds-hero--split .ds-hero__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-8);
+    flex-wrap: wrap;
+}
+.ds-hero__text { flex: 1 1 380px; min-width: 0; }
+.ds-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--ds-font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ds-primary-ink);
+    background: var(--ds-primary);
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--ds-radius-sm);
+    margin-bottom: var(--ds-space-4);
+}
+.ds-hero--split h1 { font-size: clamp(2.25rem, 4vw, 3.35rem); max-width: 22ch; text-wrap: balance; }
+.ds-hero__tagline { font-size: 1.1rem; font-weight: 700; color: var(--ds-text); margin: 0 0 var(--ds-space-3); }
+.ds-hero--split .ds-hero__text > p:not(.ds-hero__tagline) { max-width: 46ch; margin: 0 0 var(--ds-space-5); text-align: left; }
+.ds-hero__actions { display: flex; flex-wrap: wrap; gap: var(--ds-space-3); }
+
+/* Avatar rond signature — anneau jaune, utilisé dans le hero split (home) et
+   la barre latérale de /about. Toujours une vraie <img> (object-fit: cover). */
+.ds-avatar {
+    display: block;
+    border-radius: 999px;
+    object-fit: cover;
+    flex: 0 0 auto;
+    box-shadow: 0 0 0 4px var(--ds-surface), 0 0 0 6px var(--ds-primary), var(--ds-shadow-lg);
+}
+.ds-avatar--lg { width: 9.5rem; height: 9.5rem; }
+.ds-avatar--sm {
+    width: 6.5rem;
+    height: 6.5rem;
+    box-shadow: 0 0 0 3px var(--ds-surface), 0 0 0 5px var(--ds-primary);
+}
 
 /* 13. ───────────────────────────── PAGINATION ──────────────────────────── */
 .ds-pagination {
@@ -682,7 +894,7 @@ textarea { min-height: 6rem; resize: vertical; }
     padding: 0 var(--ds-space-2);
     border: 1px solid var(--ds-border);
     border-radius: var(--ds-radius);
-    color: var(--ds-primary);
+    color: var(--ds-text);
     background: var(--ds-surface);
     text-decoration: none;
     transition: background var(--ds-transition), color var(--ds-transition);
@@ -691,7 +903,7 @@ textarea { min-height: 6rem; resize: vertical; }
 .ds-pagination li.is-active > span {
     background: var(--ds-primary);
     border-color: var(--ds-primary);
-    color: #fff;
+    color: var(--ds-primary-ink);
     font-weight: 700;
 }
 .ds-pagination__summary {
@@ -715,7 +927,7 @@ table:not([class]) td {
 }
 table:not([class]) thead th {
     border-bottom: 2px solid var(--ds-border-strong);
-    color: var(--ds-secondary);
+    color: var(--ds-text);
 }
 
 /* 15. ─────────────────────────────── UTILITAIRES ───────────────────────── */
@@ -744,7 +956,7 @@ table:not([class]) thead th {
     z-index: 1000;
     padding: var(--ds-space-2) var(--ds-space-4);
     background: var(--ds-primary);
-    color: #fff;
+    color: var(--ds-primary-ink);
     border-radius: var(--ds-radius);
     transition: top var(--ds-transition);
 }
@@ -802,12 +1014,12 @@ table:not([class]) thead th {
     text-align: center;
     padding: var(--ds-space-2) var(--ds-space-4);
     border-radius: var(--ds-radius);
-    color: var(--ds-primary);
+    color: var(--ds-text);
     font-weight: 600;
     transition: background var(--ds-transition), color var(--ds-transition);
 }
 .ds-tabs__item > a:hover { background: var(--ds-primary-light); text-decoration: none; }
-.ds-tabs__item.is-active > a { background: var(--ds-primary); color: #fff; }
+.ds-tabs__item.is-active > a { background: var(--ds-primary); color: var(--ds-primary-ink); }
 
 /* Liste cliquable — remplace .list-group / .list-group-item */
 .ds-list-group {
@@ -899,7 +1111,7 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
     border-bottom: 1px solid var(--ds-border);
     text-align: left;
 }
-.ds-table thead th { border-bottom: 2px solid var(--ds-border-strong); color: var(--ds-secondary); }
+.ds-table thead th { border-bottom: 2px solid var(--ds-border-strong); color: var(--ds-text); }
 .ds-table--striped tbody tr:nth-child(odd) { background: var(--ds-surface-alt); }
 .ds-table--hover tbody tr:hover { background: var(--ds-primary-light); }
 .ds-table--bordered th,
@@ -929,15 +1141,17 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
     height: 100%;
     min-width: 2ch;
     background: var(--_c);
-    color: #fff;
+    /* Fond jaune par défaut : texte foncé. Les variantes ci-dessous (fonds
+       plus saturés, non jaunes) repassent en blanc. */
+    color: var(--ds-primary-ink);
     font-size: var(--ds-fs-sm);
     font-weight: 600;
     white-space: nowrap;
 }
-.ds-progress__bar--success { --_c: var(--ds-success); }
-.ds-progress__bar--info    { --_c: var(--ds-info); }
-.ds-progress__bar--warning { --_c: var(--ds-warning); }
-.ds-progress__bar--danger  { --_c: var(--ds-danger); }
+.ds-progress__bar--success { --_c: var(--ds-success); color: #fff; }
+.ds-progress__bar--info    { --_c: var(--ds-info); color: #fff; }
+.ds-progress__bar--warning { --_c: var(--ds-warning); color: #fff; }
+.ds-progress__bar--danger  { --_c: var(--ds-danger); color: #fff; }
 
 /* Variante info des badges (complète primary/success/warning/danger) */
 .ds-badge--info { background: #e0f2fe; color: #075985; }
@@ -964,6 +1178,10 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
 .ds-card__header--warning :is(h1, h2, h3, h4, a),
 .ds-card__header--info :is(h1, h2, h3, h4, a),
 .ds-card__header--danger :is(h1, h2, h3, h4, a) { color: #fff; }
+/* Fond jaune (--primary) : reprend l'ordre ci-dessus pour repasser en texte
+   foncé (le blanc n'y est pas lisible). */
+.ds-card__header--primary,
+.ds-card__header--primary :is(h1, h2, h3, h4, a) { color: var(--ds-primary-ink); }
 /* Boutons (ghost) lisibles sur un en-tête de card coloré */
 .ds-card__header--primary .ds-btn--ghost,
 .ds-card__header--success .ds-btn--ghost,
@@ -975,17 +1193,23 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
 .ds-card__header--primary .ds-btn--ghost:hover,
 .ds-card__header--success .ds-btn--ghost:hover,
 .ds-card__header--warning .ds-btn--ghost:hover { color: #fff; }
+.ds-card__header--primary .ds-btn--ghost {
+    --_fg: var(--ds-primary-ink);
+    --_bg-hover: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.35);
+}
+.ds-card__header--primary .ds-btn--ghost:hover { color: var(--ds-primary-ink); }
 
 /* Accordéon natif — remplace .panel-group/.collapse (data-toggle Bootstrap) */
 .ds-details { margin-bottom: var(--ds-space-4); }
 .ds-details > summary {
     cursor: pointer;
-    color: var(--ds-primary);
+    color: var(--ds-text);
     font-weight: 600;
     padding: var(--ds-space-2) 0;
     list-style-position: inside;
 }
-.ds-details > summary:hover { color: var(--ds-primary-dark); }
+.ds-details > summary:hover { text-decoration: underline; text-decoration-color: var(--ds-primary-dark); }
 
 /* Liste inline — remplace .list-inline (suppression des puces, mise en ligne) */
 .ds-inline-list {
@@ -1020,7 +1244,7 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
 .ds-score--danger  { --_c: var(--ds-danger); }
 
 /* Variantes colorées + état actif des list-group */
-.ds-list-group__item.is-active { background: var(--ds-primary); color: #fff; }
+.ds-list-group__item.is-active { background: var(--ds-primary); color: var(--ds-primary-ink); }
 a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 .ds-list-group__item--success { border-left: 4px solid var(--ds-success); }
 .ds-list-group__item--info    { border-left: 4px solid var(--ds-info); }
@@ -1037,11 +1261,11 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 
 /* Bouton ghost « actif » (sélecteur de fréquence du tracker) */
 .ds-btn--ghost.is-active {
-    --_fg: #fff;
+    --_fg: var(--ds-primary-ink);
     background: var(--ds-primary);
     border-color: var(--ds-primary);
 }
-.ds-btn--ghost.is-active:hover { color: #fff; background: var(--ds-primary-dark); }
+.ds-btn--ghost.is-active:hover { color: var(--ds-primary-ink); background: var(--ds-primary-dark); }
 
 /* Onglets — panneaux associés à .ds-tabs (bascule via JS : classe is-active) */
 .ds-tab-panel { display: none; }
@@ -1094,23 +1318,23 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 }
 .ts-wrapper.focus .ts-control,
 .ts-control:focus-within {
-    border-color: var(--ds-primary);
+    border-color: var(--ds-primary-dark);
     box-shadow: 0 0 0 3px var(--ds-primary-light);
 }
 .ts-wrapper.single .ts-control,
 .ts-wrapper.single .ts-control input { cursor: pointer; }
 .ts-wrapper .ts-control > input { color: var(--ds-text); }
 .ts-control input::placeholder { color: var(--ds-text-muted); }
-/* Pastilles (mode multiple) */
+/* Pastilles (mode multiple) : fond jaune, texte foncé (jamais blanc dessus) */
 .ts-wrapper.multi .ts-control > div.item {
-    color: #fff;
+    color: var(--ds-primary-ink);
     background: var(--ds-primary);
     border: 0;
     border-radius: var(--ds-radius-sm);
 }
 .ts-wrapper.multi .ts-control > div.item .remove {
-    border-left-color: rgba(255, 255, 255, 0.4);
-    color: #fff;
+    border-left-color: rgba(0, 0, 0, 0.25);
+    color: var(--ds-primary-ink);
 }
 .ts-wrapper.multi .ts-control > div.item .remove:hover { background: var(--ds-primary-dark); }
 /* Menu déroulant */
@@ -1222,3 +1446,63 @@ a.platformLink:focus, a.platformLink:active { text-decoration: none; color: red;
 
 /* avis : barre de filtres centrée */
 .filter-bar { text-align: center; padding: 15px; }
+
+/* 20. ───────────────── HOME / ABOUT (passe design, jaune + dark mode) ────────
+   Composants dédiés à la home façon portfolio (pitch perso + CTA) et à la
+   page /about (parcours condensé, compétences, centres d'intérêt). */
+
+/* En-tête de section avec compteur (« Mes projets · 8 en ligne ») */
+.ds-section__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ds-space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--ds-space-5);
+}
+.ds-section__count { font-family: var(--ds-font-mono); font-size: var(--ds-fs-sm); color: var(--ds-text-muted); }
+
+/* /about : deux colonnes (photo + repères | bio + parcours + compétences) */
+.ds-about-grid { display: grid; grid-template-columns: 260px 1fr; gap: var(--ds-space-8); align-items: start; }
+@media (max-width: 760px) { .ds-about-grid { grid-template-columns: 1fr; } }
+.ds-about-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ds-space-4);
+    text-align: center;
+    position: sticky;
+    top: calc(var(--ds-nav-h) + var(--ds-space-4));
+}
+.ds-about-side__facts { display: flex; flex-direction: column; gap: var(--ds-space-2); margin: 0; padding: 0; font-size: var(--ds-fs-sm); color: var(--ds-text-muted); }
+.ds-about-side__facts li { display: flex; align-items: center; justify-content: center; gap: var(--ds-space-2); list-style: none; }
+.ds-about-side__facts svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
+.ds-about-body h2 { font-size: 1.05rem; margin: var(--ds-space-6) 0 var(--ds-space-3); }
+.ds-about-body h2:first-child { margin-top: 0; }
+.ds-about-body .ds-bio { font-size: 1.05rem; color: var(--ds-text-muted); max-width: 62ch; margin: 0; }
+
+/* Frise « Parcours » — puce jaune sur une ligne verticale (reprend la
+   signature du curseur de marque / de l'indicateur d'onglet actif). */
+.ds-timeline { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--ds-border); }
+.ds-timeline li { position: relative; padding: 0 0 var(--ds-space-4) var(--ds-space-5); }
+.ds-timeline li:last-child { padding-bottom: 0; }
+.ds-timeline li::before {
+    content: "";
+    position: absolute;
+    left: -0.4rem;
+    top: 0.35rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    background: var(--ds-primary);
+    box-shadow: 0 0 0 3px var(--ds-surface);
+}
+.ds-timeline__period { font-family: var(--ds-font-mono); font-size: 0.76rem; color: var(--ds-text-muted); display: block; margin-bottom: 0.2rem; letter-spacing: 0.02em; }
+.ds-timeline__role { font-weight: 700; }
+.ds-timeline__org { color: var(--ds-text-muted); }
+
+/* Compétences (pills) + centres d'intérêt (chips) */
+.ds-pills { display: flex; flex-wrap: wrap; gap: var(--ds-space-2); list-style: none; margin: 0; padding: 0; }
+.ds-pill { font-size: var(--ds-fs-sm); font-weight: 600; padding: 0.35rem 0.75rem; border-radius: var(--ds-radius-pill); background: var(--ds-surface-alt); border: 1px solid var(--ds-border); color: var(--ds-text); }
+.ds-chips { display: flex; flex-wrap: wrap; gap: var(--ds-space-3); list-style: none; margin: 0; padding: 0; }
+.ds-chip { display: inline-flex; align-items: center; gap: var(--ds-space-2); font-size: 0.88rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: var(--ds-radius); background: var(--ds-surface); border: 1px solid var(--ds-border); }
+.ds-chip svg { width: 1.05rem; height: 1.05rem; color: var(--ds-primary-dark); flex: 0 0 auto; }

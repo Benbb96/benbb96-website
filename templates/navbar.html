@@ -9,7 +9,7 @@
         {% endcomment %}
         <input type="checkbox" class="ds-nav__toggle" id="ds-nav-toggle"
                aria-controls="ds-nav-collapse" aria-label="{% trans 'Menu' %}">
-        <a class="ds-nav__brand" href="{% url 'base:home' %}">Benbb96</a>
+        <a class="ds-nav__brand" href="{% url 'base:home' %}"><span class="ds-nav__brand-mark" aria-hidden="true"></span>Benbb96</a>
         <label class="ds-nav__burger" for="ds-nav-toggle" aria-hidden="true">
             <span class="ds-burger"></span>
         </label>
@@ -30,6 +30,19 @@
             </ul>
 
             <ul class="ds-nav__menu ds-nav__menu--right">
+                <li class="ds-nav__item">
+                    {% comment %}
+                       Toggle clair/sombre/auto : 3 boutons, JS vanilla dans
+                       assets/js/theme.js. Fonctionne sans JS pendant le
+                       chargement grâce au script anti-FOUC de base.html
+                       (état déjà posé sur <html data-theme-mode>).
+                    {% endcomment %}
+                    <div class="ds-theme-toggle" data-theme-toggle role="group" aria-label="{% trans 'Theme' %}">
+                        <button type="button" class="ds-theme-toggle__opt" data-mode="light" aria-label="{% trans 'Light theme' %}" title="{% trans 'Light' %}">{% fa6_icon 'sun' %}</button>
+                        <button type="button" class="ds-theme-toggle__opt" data-mode="dark" aria-label="{% trans 'Dark theme' %}" title="{% trans 'Dark' %}">{% fa6_icon 'moon' %}</button>
+                        <button type="button" class="ds-theme-toggle__opt" data-mode="auto" aria-label="{% trans 'Follow system theme' %}" title="{% trans 'Auto' %}">{% fa6_icon 'display' %}</button>
+                    </div>
+                </li>
                 <li class="ds-nav__item">
                     <form class="ds-nav__lang" action="{% url 'set_language' %}" method="post">{% csrf_token %}
                         <input name="next" type="hidden" value="{{ redirect_to }}">

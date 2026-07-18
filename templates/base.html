@@ -19,6 +19,25 @@
     <title>{% block title %}Benbb96{% endblock %} | Benbb96</title>
     <meta name="description" content="{% block meta_description %}{% trans "Personal website of Benbb96: projects, reviews, music, trackers and Django experiments." %}{% endblock %}">
 
+    {% comment %}
+       Anti-FOUC : posé avant le CSS, applique le thème (localStorage puis
+       préférence système) sur <html> avant le premier paint. Doit rester
+       inline et synchrone. Voir assets/js/theme.js pour le reste (toggle).
+    {% endcomment %}
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('benbb96-theme');
+                var mode = stored || 'auto';
+                var resolved = mode === 'auto'
+                    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                    : mode;
+                document.documentElement.setAttribute('data-theme', resolved);
+                document.documentElement.setAttribute('data-theme-mode', mode);
+            } catch (e) {}
+        })();
+    </script>
+
     <!-- Favicon -->
     {% include 'favicon.html' %}
 
@@ -37,12 +56,14 @@
     {% include 'navbar.html' %}
 {% endblock %}
 
+{% block hero %}
 <header class="ds-hero">
     <div class="ds-hero__inner">
         <h1>{% block jumbotron_title %}Benbb96{% endblock %}</h1>
         <p>{% block jumbotron_description %}Juste une interface pour experimenter mon code...{% endblock %}</p>
     </div>
 </header>
+{% endblock %}
 
 <div class="ds-container ds-mt-4">
     {# Messages django.contrib.messages rendus en alertes maison (remplace l'ancien bootstrap_messages) #}
@@ -58,10 +79,12 @@
 {% comment %}
    ── JavaScript ──
    http.js : helper fetch + CSRF vanilla (window.http) pour tout le code public.
+   theme.js : toggle clair/sombre/auto de la navbar (persistance localStorage).
    Plus aucune dépendance à jQuery / Bootstrap-JS / select2 / moment (Phase 5).
 {% endcomment %}
 <script src="{% static 'js/http.js' %}"></script>
 {# http.js expose aussi un shim window.Cookies (remplace la lib js-cookie du CDN, souvent bloquée) utilisé par super_moite_moite/js/vue.js. #}
+<script src="{% static 'js/theme.js' %}"></script>
 {% block javascript %}{% endblock %}
 </body>
 </html>
