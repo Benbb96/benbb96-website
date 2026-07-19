@@ -1,46 +1,50 @@
 {% load custom_tags %}
-
 <div class="ds-table-wrap">
     <table class="ds-table ds-table--striped">
         <thead>
-        <tr>
-            <th class="ds-text-center">Photo</th>
-            <th>Nom</th>
-            <th>Catégories</th>
-            <th>Date d'ajout</th>
-            <th class="ds-text-center">Prix</th>
-            <th class="ds-text-center">Nombre d'avis</th>
-        </tr>
+            <tr>
+                <th class="ds-text-center">Photo</th>
+                <th>Nom</th>
+                <th>Catégories</th>
+                <th>Date d'ajout</th>
+                <th class="ds-text-center">Prix</th>
+                <th class="ds-text-center">Nombre d'avis</th>
+            </tr>
         </thead>
         <tbody>
-        {% for produit in object.produit_set.all %}
-        <tr>
-            <td class="ds-text-center">
-                {% if produit.avis_set.exists %}
-                    <a href="{{ produit.get_absolute_url }}">
-                        <img src="{{ produit.avis_set.first.photo_url }}" height="100px" alt="Photo du produit {{ produit.nom }}">
-                    </a>
-                    <div class="ds-progress" style="margin: 5px 10px 0 10px" title="Note moyenne">
-                        <div class="ds-progress__bar ds-progress__bar--{{ produit.moyenne|color }}"
-                             style="width:{{ produit.moyenne|multiply_10 }}%">
-                            {{ produit.moyenne|floatformat }}/10
-                        </div>
-                    </div>
-                {% endif %}
-            </td>
-            <td><a href="{{ produit.get_absolute_url }}">{{ produit.nom }}</a></td>
-            <td>
-                {% if produit.categories.exists %}
-                    {% for categorie in produit.categories.all %}
-                        <span class="ds-badge ds-badge--primary">{{ categorie }}</span>
-                    {% endfor %}
-                {% endif %}
-            </td>
-            <td>{{ produit.date_creation }}</td>
-            <td class="ds-text-center">{{ produit.prix}}€</td>
-            <td class="ds-text-center">{{ produit.avis_set.count}}</td>
-        </tr>
-        {% endfor %}
+            {% for produit in object.produit_set.all %}
+                <tr>
+                    <td class="ds-text-center">
+                        {% if produit.avis_set.exists %}
+                            <a href="{{ produit.get_absolute_url }}">
+                                <img class="ds-rounded"
+                                     src="{{ produit.avis_set.first.photo_url }}"
+                                     style="height: 6.25rem;
+                                            width: 6.25rem;
+                                            object-fit: cover"
+                                     alt="Photo du produit {{ produit.nom }}">
+                            </a>
+                            <div class="ds-progress ds-mt-2" title="Note moyenne">
+                                <div class="ds-progress__bar ds-progress__bar--{{ produit.moyenne|color }}"
+                                     style="width:{{ produit.moyenne|multiply_10 }}%">
+                                    {{ produit.moyenne|floatformat }}/10
+                                </div>
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ produit.get_absolute_url }}">{{ produit.nom }}</a></td>
+                    <td>
+                        {% if produit.categories.exists %}
+                            {% for categorie in produit.categories.all %}
+                                <span class="ds-badge ds-badge--primary">{{ categorie }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td>{{ produit.date_creation }}</td>
+                    <td class="ds-text-center">{{ produit.prix }}€</td>
+                    <td class="ds-text-center">{{ produit.avis_set.count }}</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>

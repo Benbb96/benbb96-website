@@ -1,65 +1,75 @@
 {% extends 'avis/base_avis.html' %}
-
-{% load static %}
-
+{% load static custom_tags %}
 {% block avis_title %}Produit {{ object.nom }}{% endblock %}
-
 {% block avis_content %}
-     <ul class="ds-breadcrumb">
+    <ul class="ds-breadcrumb">
         <li><a href="{{ object.structure.get_absolute_url }}">{{ object.structure }}</a></li>
         <li>{{ object.nom }}</li>
     </ul>
-
     <div class="ds-grid ds-grid--sidebar">
-        <div>
-            <h1>{{ object.nom }}</h1>
-            <h3>Créé le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
-            {% if object.description %}
-                <h4>{{ object.description|linebreaks }}</h4>
-            {% endif %}
-            {% if object.prix %}
-                <h3>Prix : <strong>{{ object.prix }}€</strong></h3>
-            {% endif %}
-            {% if object.avis_set.exists %}
-                <h3>Note moyenne : <strong>{{ object.moyenne|floatformat }}/10</strong></h3>
-            {% endif %}
-            {% if object.categories.exists %}
-                {% for categorie in object.categories.all %}
-                    <a href="{{ categorie.get_absolute_url }}">
-                        <span class="ds-badge ds-badge--primary">{{ categorie }}</span>
-                    </a>
-                {% endfor %}
-            {% endif %}
-        </div>
-        <div>
-            <h2>Les avis</h2>
-            {% if object.avis_set.exists %}
-            <div class="ds-carousel" style="max-width: 100%">
-                <div class="ds-carousel__track">
-                    {% for avis in object.avis_set.all %}
-                        {% if request.user.is_authenticated or not avis.prive %}
-                            <div class="ds-carousel__slide" id="avis-slide-{{ forloop.counter }}">
-                                <a href="{{ avis.get_absolute_url }}">
-                                    <img src="{% if avis.photo %}{{ avis.photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}" title="Photo du produit {{ avis.produit.nom }}" alt="Photo du produit {{ avis.produit.nom }} prise par {{ avis.auteur }}" style="height: 225px; object-fit: contain; background: var(--ds-surface-alt)">
-                                </a>
-                                <div class="ds-carousel__caption">
-                                    <h3><a href="{{ avis.get_absolute_url }}">{{ avis.auteur }} - {{ avis.note }}/10</a></h3>
-                                    <p>{{ avis.date_creation|date:"d/m/y" }}. {{ avis.apercu_avis }}</p>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                {% if object.avis_set.count > 1 %}
-                <ul class="ds-carousel__dots">
-                    {% for avis in object.avis_set.all %}
-                        {% if request.user.is_authenticated or not avis.prive %}
-                            <li><a href="#avis-slide-{{ forloop.counter }}" aria-label="Avis {{ forloop.counter }}"></a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+        <div class="ds-card">
+            <div class="ds-card__body">
+                <h1 class="ds-mb-0">{{ object.nom }}</h1>
+                <p class="ds-text-muted">Créé le {{ object.date_creation|date }} à {{ object.date_creation|time }}</p>
+                {% if object.description %}
+                    <p>{{ object.description|linebreaks }}</p>
+                {% endif %}
+                {% if object.prix %}
+                    <p>Prix : <strong>{{ object.prix }}€</strong></p>
+                {% endif %}
+                {% if object.avis_set.exists %}
+                    <p class="ds-mb-2"><small class="ds-text-muted">Note moyenne</small></p>
+                    <div class="ds-progress ds-mb-4">
+                        <div class="ds-progress__bar ds-progress__bar--{{ object.moyenne|color }}"
+                             style="width:{{ object.moyenne|multiply_10 }}%">{{ object.moyenne|floatformat }}/10</div>
+                    </div>
+                {% endif %}
+                {% if object.categories.exists %}
+                    <div class="ds-cluster">
+                        {% for categorie in object.categories.all %}
+                            <a href="{{ categorie.get_absolute_url }}"><span class="ds-badge ds-badge--primary">{{ categorie }}</span></a>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             </div>
+        </div>
+        <div>
+            <h2 class="ds-mt-0">Les avis <small class="ds-text-muted">({{ object.avis_set.count }})</small></h2>
+            {% if object.avis_set.exists %}
+                <div class="ds-carousel" style="max-width: 100%">
+                    <div class="ds-carousel__track">
+                        {% for avis in object.avis_set.all %}
+                            {% if request.user.is_authenticated or not avis.prive %}
+                                <div class="ds-carousel__slide" id="avis-slide-{{ forloop.counter }}">
+                                    <a href="{{ avis.get_absolute_url }}">
+                                        <img src="{% if avis.photo %}{{ avis.photo_url }}{% else %}{% static 'img/default_picture.png' %}{% endif %}"
+                                             title="Photo du produit {{ avis.produit.nom }}"
+                                             alt="Photo du produit {{ avis.produit.nom }} prise par {{ avis.auteur }}"
+                                             style="height: 225px;
+                                                    object-fit: contain;
+                                                    background: var(--ds-surface-alt)">
+                                    </a>
+                                    <div class="ds-carousel__caption">
+                                        <h3><a href="{{ avis.get_absolute_url }}">{{ avis.auteur }} - {{ avis.note }}/10</a></h3>
+                                        <p>{{ avis.date_creation|date:"d/m/y" }}. {{ avis.apercu_avis }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% if object.avis_set.count > 1 %}
+                        <ul class="ds-carousel__dots">
+                            {% for avis in object.avis_set.all %}
+                                {% if request.user.is_authenticated or not avis.prive %}
+                                    <li>
+                                        <a href="#avis-slide-{{ forloop.counter }}"
+                                           aria-label="Avis {{ forloop.counter }}"></a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
             {% else %}
                 <p>Aucun avis n'a été laissé sur ce produit.</p>
             {% endif %}

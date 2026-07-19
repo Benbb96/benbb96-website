@@ -1,27 +1,22 @@
 {% extends 'avis/base_avis.html' %}
-
 {% load custom_tags %}
-
 {% block avis_title %}Structures{% endblock %}
-
 {% block avis_content %}
-    <h1>Structures</h1>
-    <hr />
+    <h1 class="ds-text-center ds-mb-4">Structures</h1>
     <div class="filter-bar">
         <form class="ds-form-inline" method="get">
             {% include 'components/form.html' with form=filter.form %}
             <button type="submit" class="ds-btn">Filtrer <i class="fa fa-filter" aria-hidden="true"></i></button>
         </form>
     </div>
-    <hr />
     {% include 'components/pagination.html' %}
-
     {% for structure in structures %}
         <div class="ds-card ds-mb-4">
-            <div class="ds-card__header ds-cluster" style="justify-content: space-between">
+            <div class="ds-card__header ds-cluster"
+                 style="justify-content: space-between">
                 <h3 class="ds-mb-0">
                     <a href="{{ structure.get_absolute_url }}">{{ structure.nom }}</a>
-                    <small>{{ structure.type }}</small>
+                    <small class="ds-text-muted">{{ structure.type }}</small>
                 </h3>
                 {% if structure.moyenne %}
                     <div class="ds-progress" style="flex: 0 0 20%; min-width: 120px">
@@ -33,21 +28,22 @@
                 {% endif %}
             </div>
             <div class="ds-card__body">
-                <p>Ajouté le {{ structure.date_creation|date }}</p>
+                <p class="ds-text-muted ds-mb-3">Ajouté le {{ structure.date_creation|date }}</p>
                 {% if structure.informations %}
-                    <div>{{ structure.informations }}</div>
+                    <p>{{ structure.informations }}</p>
                 {% endif %}
-                <h4>Ses produits</h4>
-                <div class="ds-grid ds-grid--4">
-                    {% for produit in structure.produit_set.all %}
-                        <h5 class="ds-mb-0"><a href="{{ produit.get_absolute_url }}">{{ produit.nom }}</a></h5>
-                    {% endfor %}
-                </div>
+                {% if structure.produit_set.exists %}
+                    <p class="ds-text-muted ds-mb-2"><small>Ses produits</small></p>
+                    <div class="ds-cluster">
+                        {% for produit in structure.produit_set.all %}
+                            <a href="{{ produit.get_absolute_url }}"><span class="ds-badge ds-badge--primary">{{ produit.nom }}</span></a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     {% empty %}
-        <div>Pas de structure enregistré.</div>
+        <div class="ds-well ds-text-center">Pas de structure enregistrée.</div>
     {% endfor %}
-
     {% include 'components/pagination.html' %}
 {% endblock %}

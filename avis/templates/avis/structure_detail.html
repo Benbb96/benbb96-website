@@ -1,17 +1,17 @@
 {% extends 'avis/base_avis.html' %}
-
-{% load l10n %}
-
+{% load l10n custom_tags %}
 {% block avis_title %}{{ object.type }} {{ object.nom }}{% endblock %}
-
 {% block avis_content %}
-    <h1>{{ object.nom }}</h1>
-    <div class="ds-grid ds-grid--2">
-        <div>
-            <h3>Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</h3>
-            <div>
+    <div class="ds-text-center ds-mb-4">
+        <h1 class="ds-mb-0">{{ object.nom }}</h1>
+        <p class="ds-text-muted ds-mb-0">{{ object.type }}</p>
+    </div>
+    <div class="{% if object.adresse %}ds-grid ds-grid--2{% else %}ds-narrow ds-narrow--lg{% endif %}">
+        <div class="ds-card">
+            <div class="ds-card__body">
+                <p class="ds-text-muted">Ajouté le {{ object.date_creation|date }} à {{ object.date_creation|time }}</p>
                 {% if object.informations %}
-                    <h4>{{ object.informations|linebreaksbr }}</h4>
+                    <p>{{ object.informations|linebreaksbr }}</p>
                 {% endif %}
                 {% if object.telephone %}
                     <p>Téléphone : {{ object.telephone }}</p>
@@ -19,19 +19,24 @@
                 {% if object.lien %}
                     <p>Lien du site web : <a href="{{ object.lien }}" target="_blank">{{ object.lien }}</a></p>
                 {% endif %}
-                <p>Moyenne général : <strong>{{ object.moyenne|floatformat }}/10</strong></p>
+                {% if object.moyenne %}
+                    <p class="ds-mb-2 ds-mt-4"><small class="ds-text-muted">Moyenne générale</small></p>
+                    <div class="ds-progress">
+                        <div class="ds-progress__bar ds-progress__bar--{{ object.moyenne|color }}"
+                             style="width:{{ object.moyenne|multiply_10 }}%">{{ object.moyenne|floatformat }}/10</div>
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% if object.adresse %}
-            <div>
-                <div id="map" style="height: 200px"></div>
+            <div class="ds-card" style="overflow: hidden">
+                <div id="map" style="height: 100%; min-height: 220px"></div>
             </div>
         {% endif %}
     </div>
-    <h2>Les produits <small>({{ object.produit_count }})</small></h2>
+    <h2 class="ds-mt-5">Les produits <small class="ds-text-muted">({{ object.produit_count }})</small></h2>
     {% include 'avis/produit_table.html' %}
 {% endblock %}
-
 {% block javascript %}
     <script>
         function initMap() {
@@ -47,7 +52,6 @@
             );
         }
     </script>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key={{ GEOPOSITION_GOOGLE_MAPS_API_KEY }}&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GEOPOSITION_GOOGLE_MAPS_API_KEY }}&callback=initMap">
     </script>
 {% endblock %}

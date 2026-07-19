@@ -1,26 +1,22 @@
 {% extends 'avis/base_avis.html' %}
-
 {% load custom_tags %}
-
 {% block avis_title %}Produits{% endblock %}
-
 {% block avis_content %}
-    <h1>Produits</h1>
-    <hr/>
+    <h1 class="ds-text-center ds-mb-4">Produits</h1>
     <div class="filter-bar">
         <form class="ds-form-inline" method="get">
             {% include 'components/form.html' with form=filter.form %}
             <button type="submit" class="ds-btn">Filtrer <i class="fa fa-filter" aria-hidden="true"></i></button>
         </form>
     </div>
-    <hr/>
     {% include 'components/pagination.html' %}
     <div class="ds-narrow ds-narrow--lg">
         <div class="ds-list-group">
             {% for produit in produits %}
-                <a class="ds-list-group__item{% if produit.moyenne %} ds-list-group__item--{{ produit.moyenne|color }}{% endif %} ds-cluster" style="justify-content: space-between"
+                <a class="ds-list-group__item{% if produit.moyenne %} ds-list-group__item--{{ produit.moyenne|color }}{% endif %} ds-cluster"
+                   style="justify-content: space-between"
                    href="{{ produit.get_absolute_url }}">
-                    <span>{{ produit.nom }} - {{ produit.prix }}€</span>
+                    <span>{{ produit.nom }} — {{ produit.prix }}€</span>
                     {% if produit.moyenne %}
                         <span class="ds-badge ds-badge--primary">{{ produit.moyenne|floatformat }}/10</span>
                     {% endif %}

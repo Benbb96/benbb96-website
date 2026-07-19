@@ -1,38 +1,45 @@
 {% extends 'avis/base_avis.html' %}
-
 {% load custom_tags %}
-
 {% block avis_title %}Avis {{ object.produit }}{% endblock %}
-
 {% block avis_content %}
     <ul class="ds-breadcrumb">
         <li><a href="{{ object.produit.structure.get_absolute_url }}">{{ object.produit.structure }}</a></li>
         <li><a href="{{ object.produit.get_absolute_url }}">{{ object.produit.nom }}</a></li>
         <li>Avis n°{{ object.id }}</li>
     </ul>
-
-    <h2>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit.nom }}</h2>
-    <h3>
-        Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }}
-        {% if object.has_been_edited %}
-            | Editée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}
-        {% endif %}
-    </h3>
-    <p>
-    {% if object.produit.categories.exists %}
-        {% for categorie in object.produit.categories.all %}
-            <a href="{{ categorie.get_absolute_url }}">
-                <span class="ds-badge ds-badge--primary">{{ categorie }}</span>
-            </a>
-        {% endfor %}
-    {% endif %}
-    </p>
-    <div class="ds-grid ds-grid--2">
+    <div class="ds-cluster"
+         style="justify-content: space-between;
+                align-items: flex-start">
         <div>
-            {% if object.photo %}
-            <img src="{{ object.photo_url }}" width="100%" title="Photo du produit {{ object.produit }}" alt="Photo du produit {{ object.produit }} prise par {{ object.auteur }}" />
-            {% endif %}
+            <h2 class="ds-mb-0">Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit.nom }}</h2>
+            <p class="ds-text-muted ds-mb-0">
+                Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }}
+                {% if object.has_been_edited %}
+                    · Éditée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}
+                {% endif %}
+            </p>
         </div>
+        <div class="ds-score ds-score--{{ object.note|color }}">
+            <h2 class="ds-mb-0">{{ object.note }}/10</h2>
+        </div>
+    </div>
+    {% if object.produit.categories.exists %}
+        <div class="ds-cluster ds-mt-3">
+            {% for categorie in object.produit.categories.all %}
+                <a href="{{ categorie.get_absolute_url }}"><span class="ds-badge ds-badge--primary">{{ categorie }}</span></a>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="{% if object.photo %}ds-grid ds-grid--2{% endif %} ds-mt-4">
+        {% if object.photo %}
+            <div>
+                <img class="ds-rounded"
+                     src="{{ object.photo_url }}"
+                     width="100%"
+                     title="Photo du produit {{ object.produit }}"
+                     alt="Photo du produit {{ object.produit }} prise par {{ object.auteur }}" />
+            </div>
+        {% endif %}
         <div>
             <div class="ds-well">
                 {{ object.avis|linebreaks }}
@@ -48,15 +55,13 @@
                 <a href="{{ object.auteur.get_absolute_url }}">
                     {{ object.auteur }}
                     {% if object.auteur.avatar %}
-                        <img class="ds-rounded" src="{{ object.auteur.avatar.url }}" alt="Avatar de {{ object.auteur }}" style="max-height: 30px"/>
+                        <img class="ds-rounded"
+                             src="{{ object.auteur.avatar.url }}"
+                             alt="Avatar de {{ object.auteur }}"
+                             style="max-height: 30px" />
                     {% endif %}
                 </a>
             </div>
-        </div>
-    </div>
-    <div class="ds-text-center ds-mt-5">
-        <div class="ds-score ds-score--{{ object.note|color }}">
-            <h2 class="ds-mb-0">{{ object.note }}/10</h2>
         </div>
     </div>
 {% endblock %}

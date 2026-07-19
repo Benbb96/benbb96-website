@@ -1010,6 +1010,8 @@ table:not([class]) thead th {
 .ds-text-muted { color: var(--ds-text-muted); }
 .ds-mt-0 { margin-top: 0; }
 .ds-mb-0 { margin-bottom: 0; }
+.ds-mt-2 { margin-top: var(--ds-space-2); }
+.ds-mt-3 { margin-top: var(--ds-space-3); }
 .ds-mt-4 { margin-top: var(--ds-space-4); }
 .ds-mb-2 { margin-bottom: var(--ds-space-2); }
 .ds-mb-3 { margin-bottom: var(--ds-space-3); }
@@ -1522,8 +1524,15 @@ a.platformLink:focus, a.platformLink:active { text-decoration: none; color: red;
     transition: all 1s;
 }
 
-/* avis : barre de filtres centrée */
-.filter-bar { text-align: center; padding: 15px; }
+/* avis : barre de filtres, encart discret au-dessus des résultats */
+.filter-bar {
+    padding: var(--ds-space-4) var(--ds-space-5);
+    margin: var(--ds-space-4) 0 var(--ds-space-5);
+    background: var(--ds-surface-alt);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-radius-lg);
+}
+.filter-bar .ds-form-inline { justify-content: center; }
 
 /* 20. ───────────────── HOME / ABOUT (passe design, jaune + dark mode) ────────
    Composants dédiés à la home façon portfolio (pitch perso + CTA) et à la

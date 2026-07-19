@@ -1,21 +1,15 @@
 {% extends 'avis/base_avis.html' %}
-
 {% load static %}
-
 {% block avis_title %}Liste{% endblock %}
-
 {% block content %}
     <div class="avis">
-        <h2>Les derniers avis</h2>
+        <h2 class="ds-text-center ds-mb-4">Les derniers avis</h2>
         <div class="ds-grid ds-grid--3">
-        {% for avis in object_list|slice:"12" %}
-            <div>
-                {% include 'avis/avis_thumbnail.html' %}
-            </div>
-        {% empty %}
-            <div>Pas d'avis enregistré.</div>
-        {% endfor %}
+            {% for avis in object_list|slice:"12" %}
+                <div>{% include 'avis/avis_thumbnail.html' %}</div>
+            {% empty %}
+                <div class="ds-well ds-text-center">Pas d'avis enregistré.</div>
+            {% endfor %}
         </div>
     </div>
-
 {% endblock %}
