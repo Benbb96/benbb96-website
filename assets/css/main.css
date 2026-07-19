@@ -175,6 +175,12 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html { color-scheme: light dark; }
+/* Le toggle clair/sombre/auto de la navbar pose data-theme sur <html> : sans
+   ceci, les contrôles natifs (menu déroulant de <select>, scrollbars…)
+   suivent uniquement la préférence OS et peuvent rester clairs alors que le
+   site est basculé en sombre manuellement (et inversement). */
+:root[data-theme="dark"] { color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
 
 img, picture, svg, video { max-width: 100%; height: auto; }
 
@@ -304,6 +310,13 @@ textarea:focus {
     outline: none;
 }
 textarea { min-height: 6rem; resize: vertical; }
+/* <select> natif (sans Tom Select) : le menu déroulant reste un composant OS
+   qu'on ne peut pas entièrement retheme en CSS (le surlignage de l'option
+   survolée suit l'accent système), mais fond/texte des <option> et l'accent
+   suivent le design system sur les navigateurs qui les respectent (Chromium,
+   Firefox). Un select avec recherche → Tom Select (cf. section 17). */
+select { accent-color: var(--ds-primary); }
+select option { color: var(--ds-text); background-color: var(--ds-surface); }
 
 /* Composant de formulaire maison (templates/components/form.html) */
 .ds-form__group { margin-bottom: var(--ds-space-4); }
@@ -1368,7 +1381,10 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
    Surcharge légère de tom-select.css pour s'aligner sur le design system.
    Remplace select2 (jQuery). Voir base/widgets.py + assets/js/tomselect-init.js. */
 .ts-wrapper.js-tomselect { display: block; width: 100%; }
-.ts-control {
+.ts-control,
+/* tom-select.css impose un fond blanc en dur sur `.full .ts-control` (plugin
+   "full") ; plus spécifique que la règle ci-dessous, on la neutralise ici. */
+.full .ts-control {
     min-height: calc(var(--ds-space-2) * 2 + 1.6em + 2px);
     padding: calc(var(--ds-space-2) - 1px) var(--ds-space-3);
     color: var(--ds-text);

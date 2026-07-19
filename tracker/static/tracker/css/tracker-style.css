@@ -72,7 +72,7 @@
     font-size: 1.625rem;
     font-weight: 700;
     line-height: 1.2;
-    color: var(--ds-secondary, #0f172a);
+    color: var(--ds-text, #1e293b);
 }
 
 .tracker-card__count {
