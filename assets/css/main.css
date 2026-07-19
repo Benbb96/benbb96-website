@@ -1329,8 +1329,12 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 .ds-list-group__item--danger  { border-left: 4px solid var(--ds-danger); }
 
 /* Formulaire en ligne — remplace .form-inline (barres de filtre) */
-.ds-form-inline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--ds-space-3); }
+.ds-form-inline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--ds-space-3); list-style: none; }
 .ds-form-inline .ds-form__group { margin-bottom: 0; }
+
+/* Cluster « éclaté » — élément à gauche, élément(s) à droite (remplace le
+   style="justify-content: space-between" répété sur .ds-cluster/.ds-list-group__item) */
+.ds-cluster--split { justify-content: space-between; }
 
 .ds-text-danger { color: var(--ds-danger); }
 .ds-text-right { text-align: right; }

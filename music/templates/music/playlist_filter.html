@@ -1,11 +1,9 @@
 {% extends 'music/base_music.html' %}
-
 {% load i18n %}
-
-{% block music_title %}{% trans "My playlists" %}{% endblock %}
-
+{% block music_title %}
+    {% trans "My playlists" %}
+{% endblock %}
 {% block content_class %}content--wide{% endblock %}
-
 {% block stylesheet %}
     {{ filter.form.media.css }}
     <style>
@@ -15,10 +13,9 @@
         .ds-sortable th[aria-sort="descending"]::after { content: '\2193'; opacity: 1; }
     </style>
 {% endblock %}
-
 {% block content %}
     <div>
-        <div class="ds-cluster" style="justify-content: space-between">
+        <div class="ds-cluster ds-cluster--split">
             <h2 class="ds-mb-0">{% trans "Playlists" %}</h2>
             <form method="get">
                 <div class="ds-input-group" style="width: 22rem; max-width: 100%">
@@ -29,57 +26,49 @@
             </form>
         </div>
         <label class="ds-sr-only" for="search_playlists">{% trans "Search" %}</label>
-        <input type="search" id="search_playlists" class="ds-mt-3" placeholder="{% trans 'Search' %}…"
+        <input type="search"
+               id="search_playlists"
+               class="ds-mt-3"
+               placeholder="{% trans 'Search' %}…"
                style="max-width: 320px">
         <div class="ds-table-wrap">
             <table id="table_playlists" class="ds-table ds-table--striped ds-sortable">
                 <thead>
-                <tr>
-                    <th data-sort="text">{% trans "Name" %}</th>
-                    <th data-sort="text">{% trans "Creator" %}</th>
-                    <th data-sort="num">{% blocktrans %}Creation date{% endblocktrans %}</th>
-                    <th data-sort="num">{% blocktrans %}Number of musics{% endblocktrans %}</th>
-                    <th data-sort="num">{% blocktrans %}Number of views{% endblocktrans %}</th>
-                </tr>
+                    <tr>
+                        <th data-sort="text">{% trans "Name" %}</th>
+                        <th data-sort="text">{% trans "Creator" %}</th>
+                        <th data-sort="num">{% blocktrans %}Creation date{% endblocktrans %}</th>
+                        <th data-sort="num">{% blocktrans %}Number of musics{% endblocktrans %}</th>
+                        <th data-sort="num">{% blocktrans %}Number of views{% endblocktrans %}</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% for playlist in object_list %}
-                    <tr>
-                        <td>
-                            <a href="{{ playlist.get_absolute_url }}">
-                                {{ playlist }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ playlist.createur.get_absolute_url }}">
-                                {{ playlist.createur }}
-                            </a>
-                        </td>
-                        <td data-order="{{ playlist.date_creation|date:"U" }}">{{ playlist.date_creation|date:"d/m/y" }}</td>
-                        <td data-order="{{ playlist.musiqueplaylist_set.count }}">
-                            <span class="ds-badge">
-                                {{ playlist.musiqueplaylist_set.count }}
-                            </span>
-                        </td>
-                        <td data-order="{{ playlist.total_vue|default_if_none:0 }}">
-                            <span class="ds-badge">
-                                {{ playlist.total_vue|default_if_none:0 }}
-                            </span>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="5">
-                            {% blocktrans %}No playlist has been created yet...{% endblocktrans %}
-                        </td>
-                    </tr>
-                {% endfor %}
+                    {% for playlist in object_list %}
+                        <tr>
+                            <td>
+                                <a href="{{ playlist.get_absolute_url }}">{{ playlist }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ playlist.createur.get_absolute_url }}">{{ playlist.createur }}</a>
+                            </td>
+                            <td data-order="{{ playlist.date_creation|date:"U" }}">{{ playlist.date_creation|date:"d/m/y" }}</td>
+                            <td data-order="{{ playlist.musiqueplaylist_set.count }}">
+                                <span class="ds-badge">{{ playlist.musiqueplaylist_set.count }}</span>
+                            </td>
+                            <td data-order="{{ playlist.total_vue|default_if_none:0 }}">
+                                <span class="ds-badge">{{ playlist.total_vue|default_if_none:0 }}</span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">{% blocktrans %}No playlist has been created yet...{% endblocktrans %}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 {% endblock %}
-
 {% block javascript %}
     {{ filter.form.media.js }}
     <script>

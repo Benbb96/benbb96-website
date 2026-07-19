@@ -17,8 +17,7 @@
     <div class="ds-narrow ds-narrow--lg">
         <div class="ds-list-group">
             {% for produit in produits %}
-                <a class="ds-list-group__item{% if produit.moyenne %} ds-list-group__item--{{ produit.moyenne|color }}{% endif %} ds-cluster"
-                   style="justify-content: space-between"
+                <a class="ds-list-group__item{% if produit.moyenne %} ds-list-group__item--{{ produit.moyenne|color }}{% endif %} ds-cluster ds-cluster--split"
                    href="{{ produit.get_absolute_url }}">
                     <span>{{ produit.nom }} — {{ produit.prix }}€</span>
                     {% if produit.moyenne %}

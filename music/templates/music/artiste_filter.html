@@ -1,32 +1,28 @@
 {% extends 'music/base_music.html' %}
-
 {% load i18n %}
-
-{% block music_title %}{% trans "Artists" %}{% endblock %}
-
+{% block music_title %}
+    {% trans "Artists" %}
+{% endblock %}
 {% block content_class %}content--wide{% endblock %}
-
 {% block stylesheet %}
     {{ filter.form.media.css }}
 {% endblock %}
-
 {% block content %}
     <div>
         <h2>{% trans "Artists" %}</h2>
         <details class="ds-details">
-            <summary>Options de filtre</summary>
+            <summary>{% blocktrans %}Filter options{% endblocktrans %}</summary>
             <form method="get">
                 {% include 'components/form.html' with form=filter.form %}
                 <button type="submit" class="ds-btn ds-mt-4">Filtrer <i class="fa fa-filter" aria-hidden="true"></i></button>
             </form>
         </details>
-
         <div class="ds-table-wrap">
-            <table class="ds-table ds-table--striped ds-text-center">
+            <table class="ds-table ds-table--striped">
                 <thead>
                     <tr>
-                        <th class="ds-text-center">{% blocktrans %}Artist name{% endblocktrans %}</th>
-                        <th class="ds-text-center">{% blocktrans %}First name / Last name{% endblocktrans %}</th>
+                        <th>{% blocktrans %}Artist name{% endblocktrans %}</th>
+                        <th>{% blocktrans %}First name / Last name{% endblocktrans %}</th>
                         <th class="ds-text-center">{% blocktrans %}Number of musics{% endblocktrans %}</th>
                         <th class="ds-text-center">{% blocktrans %}Number of featuring{% endblocktrans %}</th>
                         <th class="ds-text-center">{% blocktrans %}Number of remixes{% endblocktrans %}</th>
@@ -39,15 +35,13 @@
                                 <a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
                             </td>
                             <td>{{ artist.full_name|default:'' }}</td>
-                            <td><span class="ds-badge">{{ artist.musiques.count }}</span></td>
-                            <td><span class="ds-badge">{{ artist.musiques_featuring.count }}</span></td>
-                            <td><span class="ds-badge">{{ artist.remixes.count }}</span></td>
+                            <td class="ds-text-center"><span class="ds-badge">{{ artist.musiques.count }}</span></td>
+                            <td class="ds-text-center"><span class="ds-badge">{{ artist.musiques_featuring.count }}</span></td>
+                            <td class="ds-text-center"><span class="ds-badge">{{ artist.remixes.count }}</span></td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="5">
-                                {% blocktrans %}No artist has been created yet...{% endblocktrans %}
-                            </td>
+                            <td colspan="5">{% blocktrans %}No artist has been created yet...{% endblocktrans %}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -56,7 +50,6 @@
         {% include 'components/pagination.html' %}
     </div>
 {% endblock %}
-
 {% block javascript %}
     {{ filter.form.media.js }}
 {% endblock %}

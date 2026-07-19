@@ -1,5 +1,4 @@
 {% load i18n %}
-
 {% if styles %}
     {% if not header_inline %}
         <h3>{% trans "Styles" %}</h3>
@@ -8,9 +7,7 @@
         {% if header_inline %}<li>{% trans "Styles" %} :</li>{% endif %}
         {% for style in styles.all %}
             <li>
-                <a class="ds-badge" href="{{ style.get_absolute_url }}">
-                    {{ style }}
-                </a>
+                <a class="ds-badge" href="{{ style.get_absolute_url }}">{{ style }}</a>
             </li>
         {% endfor %}
     </ul>

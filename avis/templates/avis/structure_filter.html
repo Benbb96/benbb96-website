@@ -12,8 +12,7 @@
     {% include 'components/pagination.html' %}
     {% for structure in structures %}
         <div class="ds-card ds-mb-4">
-            <div class="ds-card__header ds-cluster"
-                 style="justify-content: space-between">
+            <div class="ds-card__header ds-cluster ds-cluster--split">
                 <h3 class="ds-mb-0">
                     <a href="{{ structure.get_absolute_url }}">{{ structure.nom }}</a>
                     <small class="ds-text-muted">{{ structure.type }}</small>

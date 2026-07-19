@@ -1,15 +1,12 @@
 {% extends 'music/base_music.html' %}
-
 {% load i18n %}
-
-{% block music_title %}{% trans "Labels" %}{% endblock %}
-
+{% block music_title %}
+    {% trans "Labels" %}
+{% endblock %}
 {% block content_class %}content--wide{% endblock %}
-
 {% block stylesheet %}
     {{ filter.form.media.css }}
 {% endblock %}
-
 {% block content %}
     <div>
         <h2>{% trans "Labels" %}</h2>
@@ -22,22 +19,19 @@
         </details>
         <div class="ds-list-group">
             {% for label in object_list %}
-                <a class="ds-list-group__item ds-cluster" style="justify-content: space-between" href="{{ label.get_absolute_url }}">
+                <a class="ds-list-group__item ds-cluster ds-cluster--split"
+                   href="{{ label.get_absolute_url }}">
                     <b>{{ label.nom }}</b>
-                    <span class="ds-badge" title="{% trans "Nomber of music from this label" %}">
-                        {{ label.musiques.count }}
-                    </span>
+                    <span class="ds-badge"
+                          title="{% trans "Number of musics from this label" %}">{{ label.musiques.count }}</span>
                 </a>
             {% empty %}
-                <div class="ds-list-group__item">
-                    {% blocktrans %}No labels has been created yet...{% endblocktrans %}
-                </div>
+                <div class="ds-list-group__item">{% blocktrans %}No labels has been created yet...{% endblocktrans %}</div>
             {% endfor %}
         </div>
         {% include 'components/pagination.html' %}
     </div>
 {% endblock %}
-
 {% block javascript %}
     {{ filter.form.media.js }}
 {% endblock %}

@@ -1,14 +1,12 @@
 {% extends 'music/base_music.html' %}
-
 {% load i18n %}
-
-{% block music_title %}{% trans "Styles" %}{% endblock %}
-
+{% block music_title %}
+    {% trans "Styles" %}
+{% endblock %}
 {% block content_class %}content--wide{% endblock %}
-
 {% block content %}
     <div>
-        <div class="ds-cluster" style="justify-content: space-between">
+        <div class="ds-cluster ds-cluster--split">
             <h2 class="ds-mb-0">{% trans "Styles" %}</h2>
             <form method="get">
                 <div class="ds-input-group" style="width: 22rem; max-width: 100%">
@@ -20,16 +18,14 @@
         </div>
         <div class="ds-list-group">
             {% for style in object_list %}
-                <a class="ds-list-group__item ds-cluster" style="justify-content: space-between" href="{{ style.get_absolute_url }}">
+                <a class="ds-list-group__item ds-cluster ds-cluster--split"
+                   href="{{ style.get_absolute_url }}">
                     <b>{{ style.nom }}</b>
-                    <span class="ds-badge" title="{% trans "Nomber of music from this style" %}">
-                        {{ style.musiques.count }}
-                    </span>
+                    <span class="ds-badge"
+                          title="{% trans "Number of musics from this style" %}">{{ style.musiques.count }}</span>
                 </a>
             {% empty %}
-                <div class="ds-list-group__item">
-                    {% blocktrans %}No styles has been created yet...{% endblocktrans %}
-                </div>
+                <div class="ds-list-group__item">{% blocktrans %}No styles has been created yet...{% endblocktrans %}</div>
             {% endfor %}
         </div>
         {% include 'components/pagination.html' %}

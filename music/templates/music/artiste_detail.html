@@ -1,22 +1,21 @@
 {% extends 'music/base_music.html' %}
 {% load i18n humanize fontawesome_6 %}
-
 {% block music_title %}{% trans "Artist" %} {{ artiste.nom }}{% endblock %}
-
 {% block content %}
+    <div class="ds-text-center ds-mb-4">
+        <h1 class="ds-mb-0">
+            {{ artiste.nom_artiste }}
+            {% if artiste.createur.user == request.user %}
+                <a href="{% url 'admin:music_artiste_change' artiste.id %}"
+                   class="ds-btn ds-btn--ghost ds-btn--sm">
+                    <i class="fa fa-edit"></i>
+                </a>
+            {% endif %}
+        </h1>
+    </div>
     <div class="ds-grid ds-grid--sidebar">
         <div>
             <div class="ds-card">
-                <div class="ds-card__header ds-card__header--primary">
-                    <h2 class="ds-mb-0 ds-text-center">
-                        {{ artiste.nom_artiste }}
-                        {% if artiste.createur.user == request.user %}
-                            <a href="{% url 'admin:music_artiste_change' artiste.id %}" class="ds-btn ds-btn--ghost ds-btn--sm">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        {% endif %}
-                    </h2>
-                </div>
                 <div class="ds-card__body">
                     <div>
                         {% if artiste.full_name %}
@@ -38,7 +37,7 @@
                             </p>
                         {% endif %}
                         {% if artiste.mail_contact %}
-                            <p>{% trans "Mail contact"%} :
+                            <p>{% trans "Mail contact" %} :
                                 <a href="mailto: {{ artiste.mail_contact }}">{{ artiste.mail_contact }}</a>
                             </p>
                         {% endif %}
@@ -55,13 +54,10 @@
                         {# TODO Ajouter liens réseaux sociaux #}
                     </div>
                     {% if artiste.labels.exists %}
-                        <h3>{% trans "Labels" %}</h3>
-                        <ul>
+                        <p class="ds-mb-2"><small class="ds-text-muted">{% trans "Labels" %}</small></p>
+                        <ul class="ds-inline-list">
                             {% for label in artiste.labels.all %}
-                                <li>
-                                    <a href="{{ label.get_absolute_url }}">{{ label.nom }}
-                                    </a>
-                                </li>
+                                <li><a class="ds-badge" href="{{ label.get_absolute_url }}">{{ label.nom }}</a></li>
                             {% endfor %}
                         </ul>
                     {% endif %}
@@ -75,17 +71,20 @@
                         {% blocktrans with artiste_createur_url=artiste.createur.get_absolute_url artiste_createur=artiste.createur %}
                             by <a href="{{ artiste_createur_url }}">{{ artiste_createur }}</a>.
                         {% endblocktrans %}
-                    {%endif%}
+                    {% endif %}
                 </div>
             </div>
         </div>
         <div>
-            <h2>{% trans "Musics" %}</h2>
+            <h2>
+                {% trans "Musics" %}
+                <small><span class="ds-badge">{{ artiste.all_musics.count }}</span></small>
+            </h2>
             {% include 'music/components/table_musics.html' with musiques=artiste.all_musics %}
             {% if artiste.playlists.exists %}
-                <h3>
-                    {% blocktrans with artiste_name=artiste.nom_artiste %}Playlists with {{ artiste_name }}{% endblocktrans %} :
-                </h3>
+                <p class="ds-mt-4 ds-mb-2">
+                    <small class="ds-text-muted">{% blocktrans with artiste_name=artiste.nom_artiste %}Playlists with {{ artiste_name }}{% endblocktrans %}</small>
+                </p>
                 {% include 'music/components/list_group_playlist.html' with playlists=artiste.playlists.all %}
             {% endif %}
         </div>

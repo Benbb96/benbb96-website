@@ -1,44 +1,44 @@
 {% extends 'music/base_music.html' %}
 {% load i18n %}
-
 {% block music_title %}{% trans "Label" %} {{ label.nom }}{% endblock %}
-
 {% block content %}
+    <div class="ds-text-center ds-mb-4">
+        <h1 class="ds-mb-0">
+            {{ label.nom }}
+            {% if perms.music.change_label %}
+                <a href="{% url 'admin:music_label_change' label.id %}"
+                   class="ds-btn ds-btn--ghost ds-btn--sm">
+                    <i class="fa fa-edit"></i>
+                </a>
+            {% endif %}
+        </h1>
+    </div>
     <div class="ds-grid ds-grid--content">
         <div>
-            <h2>{% trans "Musics" %}</h2>
+            <h2>
+                {% trans "Musics" %}
+                <small><span class="ds-badge">{{ label.musiques.count }}</span></small>
+            </h2>
             {% include 'music/components/table_musics.html' with musiques=label.musiques.all %}
         </div>
-        <div>
-            <div class="ds-card">
-                <div class="ds-card__header ds-card__header--warning">
-                    <h2 class="ds-mb-0 ds-text-center">
-                        {{ label.nom }}
-                        {% if perms.music.change_label %}
-                            <a href="{% url 'admin:music_label_change' label.id %}" class="ds-btn ds-btn--ghost ds-btn--sm">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        {% endif %}
-                    </h2>
-                </div>
-                <div class="ds-card__body">
-                    {% if label.description %}
-                        <h3>{% trans "Description" %}</h3>
-                        <p>{{ label.description|linebreaksbr }}</p>
-                    {% endif %}
-                    {% include 'music/components/style_list_inline.html' with styles=label.styles.all %}
-                    {% if label.artistes %}
-                        <h3>{% blocktrans %}Artists from this label{% endblocktrans %}</h3>
-                        {% if label.artistes.count > 4 %}
-                            <details class="ds-details">
-                                <summary>{% trans "See all..." %}</summary>
-                                {% include 'music/playlist_artist_list.html' with artistes=label.artistes.all %}
-                            </details>
-                        {% else %}
+        <div class="ds-card">
+            <div class="ds-card__body">
+                {% if label.description %}
+                    <p class="ds-mb-2"><small class="ds-text-muted">{% trans "Description" %}</small></p>
+                    <p>{{ label.description|linebreaksbr }}</p>
+                {% endif %}
+                {% include 'music/components/style_list_inline.html' with styles=label.styles.all %}
+                {% if label.artistes.exists %}
+                    <p class="ds-mb-2"><small class="ds-text-muted">{% blocktrans %}Artists from this label{% endblocktrans %}</small></p>
+                    {% if label.artistes.count > 4 %}
+                        <details class="ds-details">
+                            <summary>{% trans "See all..." %}</summary>
                             {% include 'music/playlist_artist_list.html' with artistes=label.artistes.all %}
-                        {% endif %}
+                        </details>
+                    {% else %}
+                        {% include 'music/playlist_artist_list.html' with artistes=label.artistes.all %}
                     {% endif %}
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>

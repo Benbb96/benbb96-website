@@ -1,16 +1,13 @@
 {% extends 'music/base_music.html' %}
 {% load i18n custom_tags %}
-
 {% block music_title %}{{ musique }}{% endblock %}
-
 {% block content %}
     <div class="ds-narrow ds-narrow--lg">
         <div>
             <div class="ds-well ds-text-center">
                 <h1>
-                    <a href="{{ musique.artiste.get_absolute_url }}" title="{% trans "See artist page" %}">
-                        {{ musique.artiste }}
-                    </a>
+                    <a href="{{ musique.artiste.get_absolute_url }}"
+                       title="{% trans "See artist page" %}">{{ musique.artiste }}</a>
                     {% if musique.featuring.exists %}
                         {% for featuring_artist in musique.featuring.all %}
                             & <a href="{{ featuring_artist.get_absolute_url }}">{{ featuring_artist }}</a>
@@ -21,7 +18,8 @@
                         (<a href="{{ musique.remixed_by.get_absolute_url }}">{{ musique.remixed_by }}</a> {% trans "Remix" %})
                     {% endif %}
                     {% if musique.createur.user == request.user %}
-                        <a href="{% url 'admin:music_musique_change' musique.id %}" class="ds-btn ds-btn--ghost ds-btn--sm">
+                        <a href="{% url 'admin:music_musique_change' musique.id %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm">
                             <i class="fa fa-edit"></i>
                         </a>
                     {% endif %}
@@ -47,30 +45,28 @@
                     <h2>{% trans "Links" %}</h2>
                     <div class="ds-grid ds-grid--4">
                         {% for lien in musique.liens.valide_seulement %}
-                            <div>
-                                {% include 'music/components/lien.html' %}
-                            </div>
+                            <div>{% include 'music/components/lien.html' %}</div>
                         {% endfor %}
                     </div>
                 {% endif %}
                 {% if request.user == musique.createur.user or request.user.is_superuser %}
                     {% if musique.liens.a_valider.exists %}
-                        <h3>{% trans "Links to validate" %}</h3>
-                        <div class="ds-grid ds-grid--4">
-                            {% for lien in musique.liens.a_valider %}
-                                <div>
-                                    {% include 'music/components/lien.html' with a_valider=True %}
-                                </div>
-                            {% endfor %}
+                        <div class="ds-well ds-mt-4">
+                            <p class="ds-mb-2"><small class="ds-text-muted">{% trans "Links to validate" %}</small></p>
+                            <div class="ds-grid ds-grid--4">
+                                {% for lien in musique.liens.a_valider %}
+                                    <div>{% include 'music/components/lien.html' with a_valider=True %}</div>
+                                {% endfor %}
+                            </div>
                         </div>
                     {% endif %}
                 {% endif %}
             {% endif %}
-            <h3>{% blocktrans %}Add a link{% endblocktrans %}</h3>
+            <p class="ds-mt-4 ds-mb-2"><small class="ds-text-muted">{% blocktrans %}Add a link{% endblocktrans %}</small></p>
             {% if request.user.is_authenticated %}
                 <form method="post">
                     {% csrf_token %}
-                    <ul class="ds-form-inline" style="list-style: none">
+                    <ul class="ds-form-inline">
                         {{ form.as_ul }}
                         <li>
                             <button class="ds-btn" type="submit">
@@ -88,31 +84,38 @@
             {% endif %}
             <p class="ds-cluster">
                 {% trans "Search on :" %}
-                <a class="ds-social ds-social--filled ds-social--sm ds-social--google" href="https://www.google.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Google" %}" target="_blank">
+                <a class="ds-social ds-social--filled ds-social--sm ds-social--google"
+                   href="https://www.google.com/search?q={{ musique|url_quote_plus }}"
+                   title="{% trans "Search on Google" %}"
+                   target="_blank">
                     <i class="fab fa-google" aria-hidden="true"></i>
                 </a>
-                <a class="ds-social ds-social--filled ds-social--sm ds-social--youtube" href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}" title="{% trans "Search on YouTube" %}" target="_blank">
+                <a class="ds-social ds-social--filled ds-social--sm ds-social--youtube"
+                   href="https://www.youtube.com/results?search_query={{ musique|url_quote_plus }}"
+                   title="{% trans "Search on YouTube" %}"
+                   target="_blank">
                     <i class="fab fa-youtube" aria-hidden="true"></i>
                 </a>
-                <a class="ds-social ds-social--filled ds-social--sm ds-social--soundcloud" href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}" title="{% trans "Search on Soundcloud" %}" target="_blank">
+                <a class="ds-social ds-social--filled ds-social--sm ds-social--soundcloud"
+                   href="https://soundcloud.com/search?q={{ musique|url_quote_plus }}"
+                   title="{% trans "Search on Soundcloud" %}"
+                   target="_blank">
                     <i class="fab fa-soundcloud" aria-hidden="true"></i>
                 </a>
-                <a class="ds-social ds-social--filled ds-social--sm ds-social--spotify" href="https://open.spotify.com/search/{{ musique|urlencode }}" title="{% trans "Search on Spotify" %}" target="_blank">
+                <a class="ds-social ds-social--filled ds-social--sm ds-social--spotify"
+                   href="https://open.spotify.com/search/{{ musique|urlencode }}"
+                   title="{% trans "Search on Spotify" %}"
+                   target="_blank">
                     <i class="fab fa-spotify" aria-hidden="true"></i>
                 </a>
             </p>
             {% if musique.playlists.exists %}
-                <hr>
-                <h3>
-                    {% blocktrans %}This music is present in these playlists{% endblocktrans %} :
-                </h3>
+                <p class="ds-mt-5 ds-mb-2"><small class="ds-text-muted">{% blocktrans %}This music is present in these playlists{% endblocktrans %}</small></p>
                 {% include 'music/components/list_group_playlist.html' with playlists=musique.playlists.all %}
             {% endif %}
         </div>
     </div>
-    {% csrf_token %}
 {% endblock %}
-
 {% block javascript %}
     {{ block.super }}
     {% include 'music/components/auto_select_plateforme_script.html' %}

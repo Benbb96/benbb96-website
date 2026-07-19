@@ -1,12 +1,9 @@
 {% extends 'music/base_music.html' %}
 {% load i18n fontawesome_6 %}
-
 {% block music_title %}Création musique via URL{% endblock %}
-
 {% block stylesheet %}
     {{ form.media.css }}
 {% endblock %}
-
 {% block content %}
     <div class="ds-narrow">
         <div class="ds-card">
@@ -19,14 +16,12 @@
             <div class="ds-card__body">
                 <form method="post">
                     {% csrf_token %}
-
                     <p>
                         Tu peux pré-remplir certains champs en collant un lien vers la musique dans
                         l'encart ci-dessous.
                     </p>
-
                     <div class="ds-well">
-                        <ul class="ds-form-inline" style="list-style: none">
+                        <ul class="ds-form-inline">
                             {{ link_form.as_ul }}
                             <li>
                                 <button class="ds-btn" type="button" id="addLink" style="display: none">
@@ -37,21 +32,23 @@
                         </ul>
                         <div class="ds-text-muted" id="full-title"></div>
                     </div>
-
                     {% include 'components/form.html' %}
-                    <div class="ds-cluster ds-cluster--center ds-mt-4">
-                        <a href="{% url 'admin:music_artiste_add' %}" class="ds-btn ds-btn--ghost" target="_blank">
-                            Créer Artiste
-                        </a>
-                        <a href="{% url 'admin:music_style_add' %}" class="ds-btn ds-btn--ghost" target="_blank">
-                            Créer Style
-                        </a>
-                        <a href="{% url 'admin:music_label_add' %}" class="ds-btn ds-btn--ghost" target="_blank">
-                            Créer Label
-                        </a>
-                        <a href="{% url 'admin:music_playlist_add' %}" class="ds-btn ds-btn--ghost" target="_blank">
-                            Créer Playlist
-                        </a>
+                    <p class="ds-mt-4 ds-mb-2"><small class="ds-text-muted">Créer un élément manquant</small></p>
+                    <div class="ds-cluster ds-cluster--center">
+                        <a href="{% url 'admin:music_artiste_add' %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm"
+                           target="_blank">Créer Artiste</a>
+                        <a href="{% url 'admin:music_style_add' %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm"
+                           target="_blank">Créer Style</a>
+                        <a href="{% url 'admin:music_label_add' %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm"
+                           target="_blank">Créer Label</a>
+                        <a href="{% url 'admin:music_playlist_add' %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm"
+                           target="_blank">Créer Playlist</a>
+                    </div>
+                    <div class="ds-cluster ds-cluster--center ds-mt-5">
                         <button class="ds-btn ds-btn--lg">
                             {% fa6_icon 'check' %}
                             Valider
@@ -62,7 +59,6 @@
         </div>
     </div>
 {% endblock %}
-
 {% block javascript %}
     {{ block.super }}
     {{ form.media.js }}

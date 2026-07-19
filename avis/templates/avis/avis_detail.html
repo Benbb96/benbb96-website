@@ -7,9 +7,7 @@
         <li><a href="{{ object.produit.get_absolute_url }}">{{ object.produit.nom }}</a></li>
         <li>Avis n°{{ object.id }}</li>
     </ul>
-    <div class="ds-cluster"
-         style="justify-content: space-between;
-                align-items: flex-start">
+    <div class="ds-cluster ds-cluster--split" style="align-items: flex-start">
         <div>
             <h2 class="ds-mb-0">Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit.nom }}</h2>
             <p class="ds-text-muted ds-mb-0">

@@ -1,8 +1,8 @@
 {% load i18n %}
-
 <div class="ds-list-group">
     {% for playlist in playlists %}
-        <a class="ds-list-group__item ds-cluster" style="justify-content: space-between" href="{{ playlist.get_absolute_url }}"
+        <a class="ds-list-group__item ds-cluster ds-cluster--split"
+           href="{{ playlist.get_absolute_url }}"
            title="{% blocktrans with playlist_createur=playlist.createur playlist_date=playlist.date_creation|date:"d/m/y" %}Created by {{ playlist_createur }} on {{ playlist_date }}{% endblocktrans %}">
             <span>{{ playlist.nom }}</span>
             <span class="ds-badge" title="{% trans "Playlist music count" %}">{{ playlist.musiqueplaylist_set.count }}</span>
