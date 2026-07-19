@@ -1383,6 +1383,12 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
    Surcharge légère de tom-select.css pour s'aligner sur le design system.
    Remplace select2 (jQuery). Voir base/widgets.py + assets/js/tomselect-init.js. */
 .ts-wrapper.js-tomselect { display: block; width: 100%; }
+/* Multi : sans largeur bornée, le champ se réduit à la largeur du placeholder
+   quand il est vide et s'étire à celle de tous les tags quand il est plein
+   (visible dans un .ds-form-inline où le groupe se dimensionne au contenu) —
+   une largeur stable laisse les tags s'empiler dans la boîte au lieu de la
+   faire grandir/rétrécir. */
+.ts-wrapper.multi { min-width: 16rem; max-width: 30rem; }
 .ts-control,
 /* tom-select.css impose un fond blanc en dur sur `.full .ts-control` (plugin
    "full") ; plus spécifique que la règle ci-dessous, on la neutralise ici. */
