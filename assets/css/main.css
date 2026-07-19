@@ -1389,14 +1389,17 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
    une largeur stable laisse les tags s'empiler dans la boîte au lieu de la
    faire grandir/rétrécir. */
 .ts-wrapper.multi { min-width: 16rem; max-width: 30rem; }
-.ts-control,
-/* tom-select.css impose un fond blanc en dur sur `.full .ts-control` (plugin
-   "full") ; plus spécifique que la règle ci-dessous, on la neutralise ici. */
-.full .ts-control {
+/* tom-select.css est chargé APRÈS main.css (voir templates/base.html : le
+   <link main.css> est câblé en dur avant {% block stylesheet %}, où
+   {{ form.media.css }} vient ensuite). Ses propres règles à spécificité égale
+   (`.ts-control` tout court, `.full .ts-control`…) gagnent donc la cascade
+   par ordre malgré notre surcharge ci-dessous → fond/texte forcés en
+   !important plutôt que de courir après chaque variante de sélecteur. */
+.ts-control {
     min-height: calc(var(--ds-space-2) * 2 + 1.6em + 2px);
     padding: calc(var(--ds-space-2) - 1px) var(--ds-space-3);
-    color: var(--ds-text);
-    background: var(--ds-surface);
+    color: var(--ds-text) !important;
+    background: var(--ds-surface) !important;
     border: 1px solid var(--ds-border-strong);
     border-radius: var(--ds-radius);
     box-shadow: none;
@@ -1426,8 +1429,8 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 /* Menu déroulant */
 .ts-dropdown {
     margin-top: var(--ds-space-1);
-    color: var(--ds-text);
-    background: var(--ds-surface);
+    color: var(--ds-text) !important;
+    background: var(--ds-surface) !important;
     border: 1px solid var(--ds-border);
     border-radius: var(--ds-radius);
     box-shadow: var(--ds-shadow-lg);
@@ -1436,8 +1439,11 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 .ts-dropdown .option:hover { background: var(--ds-primary-light); color: var(--ds-text); }
 .ts-dropdown .active { background: var(--ds-primary-light); }
 .ts-dropdown .no-results,
-.ts-dropdown .optgroup-header { color: var(--ds-text-muted); }
-.ts-wrapper.disabled .ts-control { background: var(--ds-surface-alt); }
+.ts-dropdown .optgroup-header {
+    color: var(--ds-text-muted) !important;
+    background: var(--ds-surface) !important;
+}
+.ts-wrapper.disabled .ts-control { background: var(--ds-surface-alt) !important; }
 
 /* 18. ─────────────────── INPUT GROUP + MODALE large ────────────────────────
    .ds-input-group : champ + bouton accolés (remplace .input-group Bootstrap).
