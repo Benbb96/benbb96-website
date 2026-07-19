@@ -1,6 +1,10 @@
 {% extends 'avis/base_avis.html' %}
 {% load custom_tags %}
 {% block avis_title %}Produits{% endblock %}
+{% block stylesheet %}
+    {{ block.super }}
+    {{ filter.form.media.css }}
+{% endblock %}
 {% block avis_content %}
     <h1 class="ds-text-center ds-mb-4">Produits</h1>
     <div class="filter-bar">
@@ -27,4 +31,8 @@
         </div>
     </div>
     {% include 'components/pagination.html' %}
+{% endblock %}
+{% block javascript %}
+    {{ block.super }}
+    {{ filter.form.media.js }}
 {% endblock %}
