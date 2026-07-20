@@ -102,11 +102,13 @@ Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvell
 - [ ] **`logement_detail.html` (onglet Statistiques)** : les cartes des donuts ApexCharts sont très
   hautes (beaucoup de vide vertical) — revoir la hauteur / le dimensionnement des graphes.
 
-## tracker (optionnel, basse priorité)
+## tracker
 
-- [ ] **Filtre de plage de dates** : le natif (deux `<input type="date">` + presets) fonctionne bien
-  et sans dépendance. Un vrai « date-range picker » serait un confort marginal — à ne faire qu'en
-  vanilla, si vraiment souhaité (ne pas ajouter de lib juste pour ça).
+- [x] **Filtre de plage de dates** : les deux `<input type="date">` regroupés visuellement
+  (`.ds-input-group` + séparateur), bornés à la plage réelle de données, fin/début non inversables.
+- [x] **Graphes Statistiques (Chart.js)** : couleurs de grille/axes/légende thémées clair/sombre
+  (`applyChartTheme()`), palette catégorielle validée pour le donut « par jour de la semaine »,
+  couleur du tracker reprise pour le bar chart « par heure ».
 
 <!--
 Gabarit d'entrée à copier :
