@@ -78,18 +78,24 @@ Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvell
 
 ## avis
 
-- [ ] **Liste des structures (`structure_filter.html`)** : retravailler le design.
-- [ ] **Détail d'une structure (`structure_detail.html`)** : retravailler le design.
-- [ ] **Liste des produits (`produit_filter.html` / `produit_table.html`)** : retravailler le design.
-- [ ] **Détail d'un produit (`produit_detail.html`)** : réorganiser la page / mieux harmoniser les
-  espaces (hiérarchie entre le bloc d'infos produit à gauche et « Les avis » à droite, marges,
-  alignements).
-- [ ] Revoir globalement la cohérence visuelle des pages avis (liste avis, détails…).
+- [x] **Liste des structures (`structure_filter.html`)** : titre centré, filter-bar en encart,
+  produits d'une structure en badges cliquables.
+- [x] **Détail d'une structure (`structure_detail.html`)** : hiérarchie typographique nettoyée,
+  bloc infos en `.ds-card`, grille infos/carte à une colonne si pas d'adresse.
+- [x] **Liste des produits (`produit_filter.html` / `produit_table.html`)** : titre centré,
+  filter-bar en encart ; filtre catégories en Tom Select multiple, prix en min/max avec
+  placeholders (`avis/filters.py`).
+- [x] **Détail d'un produit (`produit_detail.html`)** : bloc infos produit en `.ds-card`, section
+  avis avec compteur, harmonisé avec structure_detail.
+- [x] Cohérence visuelle des pages avis (liste avis, détail avis, catégorie) : titres/notes/badges
+  harmonisés, note (`.ds-score`) remontée à côté du titre sur avis_detail.
 
 ## music
 
-- [ ] **Module musique** (listes musiques/artistes/styles/labels/playlists + détails) : passe de
-  design d'ensemble à prévoir.
+- [x] **Module musique** (listes musiques/artistes/styles/labels/playlists + détails) : passe de
+  design d'ensemble faite — en-tête des 4 pages détail (artiste/label/style/playlist) uniformisé
+  sur le pattern h1 centré, titres-labels de métadonnées démotés en `<small>`, listes polish
+  (`.ds-cluster--split`, i18n, alignement tableau artistes).
 
 ## super_moite_moite
 
