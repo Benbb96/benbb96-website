@@ -25,6 +25,9 @@
             btn.classList.toggle("is-active", active);
             btn.setAttribute("aria-pressed", String(active));
         });
+        // Permet aux composants qui dessinent hors CSS (canvas Chart.js…) de se
+        // re-thémer sans rechargement de page. Voir tracker/static/tracker/js/common.js.
+        window.dispatchEvent(new CustomEvent("benbb96:themechange", { detail: { theme: resolve(mode) } }));
     }
 
     document.addEventListener("DOMContentLoaded", function () {

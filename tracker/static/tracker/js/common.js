@@ -23,6 +23,40 @@ let allTracks = undefined
 let trackByHourChart = undefined
 let trackByDayChart = undefined
 
+// ── Theming Chart.js (suit le toggle clair/sombre/auto, sans dépendance) ────
+// Chart.js dessine sur <canvas> : ses couleurs par défaut (texte des axes,
+// grille, légende) ne suivent pas le CSS. On les recale sur les tokens du
+// design system à l'init, puis à chaque changement de thème (voir
+// assets/js/theme.js, événement "benbb96:themechange").
+// Palette catégorielle (répartition par jour de la semaine, 7 tranches) :
+// ordre fixe validé (séparation daltonisme + contraste), cf. skill dataviz.
+const DAY_COLORS = {
+    light: ['#2a78d6', '#008300', '#e87ba4', '#eda100', '#1baf7a', '#eb6834', '#4a3aa7'],
+    dark: ['#3987e5', '#008300', '#d55181', '#c98500', '#199e70', '#d95926', '#9085e9'],
+}
+function currentTheme() {
+    return document.documentElement.getAttribute('data-theme') || 'light'
+}
+function applyChartTheme() {
+    if (typeof Chart === 'undefined') return
+    const css = getComputedStyle(document.documentElement)
+    const text = css.getPropertyValue('--ds-text-muted').trim()
+    const grid = css.getPropertyValue('--ds-border').trim()
+
+    Chart.defaults.color = text
+    Chart.defaults.scale.grid.color = grid
+    Chart.defaults.scale.border.color = grid
+    Chart.defaults.scale.ticks.color = text
+    Chart.defaults.plugins.legend.labels.color = text
+
+    if (trackByDayChart) {
+        trackByDayChart.data.datasets[0].backgroundColor = DAY_COLORS[currentTheme()]
+    }
+    ;[allTracks, trackByHourChart, trackByDayChart].forEach(chart => { if (chart) chart.update() })
+}
+applyChartTheme()
+window.addEventListener('benbb96:themechange', applyChartTheme)
+
 // Bornes de dates « start »/« end » envoyées au serveur, au format attendu
 // par get_tracks_from_request : '%y-%m-%d %H:%M:%S' (année sur 2 chiffres).
 let start = undefined
@@ -83,9 +117,17 @@ function initTrackerDateRange(minIso, maxIso) {
     const preset = document.getElementById('dateRangePreset')
     if (!startInput || !endInput) return
 
+    // Bornes = plage réelle des données trackées, pour éviter de choisir une
+    // date hors historique (le navigateur grise les jours interdits).
+    if (rangeMin) startInput.min = toInputDate(rangeMin)
+    if (rangeMax) endInput.max = toInputDate(rangeMax)
+
     function syncFromInputs() {
         if (startInput.value) start = toServerDate(new Date(startInput.value + 'T00:00:00'))
         if (endInput.value) end = toServerDate(new Date(endInput.value + 'T23:59:59'))
+        // Empêche une fin avant le début (et inversement).
+        if (startInput.value) endInput.min = startInput.value
+        if (endInput.value) startInput.max = endInput.value
     }
     function setRange(s, e) {
         startInput.value = toInputDate(s)

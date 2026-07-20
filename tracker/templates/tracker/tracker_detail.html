@@ -1,51 +1,52 @@
 {% extends 'tracker/base_tracker.html' %}
-
 {% load custom_tags fontawesome_6 admin_urls static i18n %}
-
 {% block tracker_title %}Tracker {{ tracker.nom }}{% endblock %}
-
 {% block stylesheet %}
     {{ block.super }}
 {% endblock %}
-
 {% block content_class %}content--wide{% endblock %}
-
 {% block content %}
     <!-- Confirm Track delete modal -->
     <dialog id="modalConfirmDelete" class="ds-modal">
         <div class="ds-modal__header">
             <h4 class="ds-modal__title">Supprimer un track</h4>
-            <button type="button" class="ds-modal__close" onclick="this.closest('dialog').close()">&times;</button>
+            <button type="button"
+                    class="ds-modal__close"
+                    onclick="this.closest('dialog').close()">&times;</button>
         </div>
         <div class="ds-modal__body">
             <p>Êtes-vous sûr de vouloir supprimer le track datant du <span id="toDeleteTrackDate"></span> ?</p>
         </div>
         <div class="ds-modal__footer">
             <button type="button" class="ds-btn ds-btn--danger" id="deleteTrackBtn">Oui</button>
-            <button type="button" class="ds-btn ds-btn--ghost" onclick="this.closest('dialog').close()">Annuler</button>
+            <button type="button"
+                    class="ds-btn ds-btn--ghost"
+                    onclick="this.closest('dialog').close()">Annuler</button>
         </div>
     </dialog>
-
     <div>
         <div class="ds-text-center">
-            <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
+            <h1 class="tracker-title"
+                style="background-color: {{ tracker.color }};
+                       color: {{ tracker.color|contrast_color }}">
                 {{ tracker.nom }} {% fa6_icon tracker.icone.name tracker.icone.style_prefix %}
-                <a class="ds-btn ds-btn--secondary ds-btn--sm" href="{% url 'tracker:update-tracker' tracker.id %}">
+                <a class="ds-btn ds-btn--secondary ds-btn--sm"
+                   href="{% url 'tracker:update-tracker' tracker.id %}">
                     <i class="fa fa-edit"></i>
                 </a>
-                <a class="ds-btn ds-btn--danger ds-btn--sm" href="{% url 'tracker:delete-tracker' tracker.id %}">
+                <a class="ds-btn ds-btn--danger ds-btn--sm"
+                   href="{% url 'tracker:delete-tracker' tracker.id %}">
                     <i class="fa fa-trash"></i>
                 </a>
             </h1>
             <div>
                 {% with tracks_count=tracker.tracks.count %}
                     Créé il y a
-                    <span class="text-italic" title="{{ tracker.date_creation }}">
-                        {{ tracker.date_creation|timesince }}
-                    </span>,
+                    <span class="text-italic" title="{{ tracker.date_creation }}">{{ tracker.date_creation|timesince }}</span>,
                     <b id="totalCount" class="ds-badge">{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
                     {% if tracks_count %}
-                        <br>Tracké pour la dernière fois il y a
+                        <br>
+                        Tracké pour la dernière fois il y a
                         <span class="text-italic" title="{{ tracker.tracks.first.datetime }}">
                             {{ tracker.tracks.first.datetime|timesince }}
                         </span>.
@@ -53,88 +54,84 @@
                 {% endwith %}
             </div>
         </div>
-
         <div class="tracker-controls">
-        <form method="post">
-            {% csrf_token %}
-            {% if tracker.type == 'mesure' %}
-                <div class="ds-form__group">
-                    <label class="ds-form__label" for="{{ form.valeur.id_for_label }}">Valeur</label>
-                    <div class="ds-input-group">
-                        {{ form.valeur }}
-                        <button class="ds-btn" type="submit">
-                            <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
-                        </button>
-                        <button class="ds-btn ds-btn--ghost" type="button" id="toggleDatetime">
-                            <i class="fa fa-clock" title="Changer la date et l'heure"></i>
-                        </button>
+            <form method="post">
+                {% csrf_token %}
+                {% if tracker.type == 'mesure' %}
+                    <div class="ds-form__group">
+                        <label class="ds-form__label" for="{{ form.valeur.id_for_label }}">Valeur</label>
+                        <div class="ds-input-group">
+                            {{ form.valeur }}
+                            <button class="ds-btn" type="submit">
+                                <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
+                            </button>
+                            <button class="ds-btn ds-btn--ghost" type="button" id="toggleDatetime">
+                                <i class="fa fa-clock" title="Changer la date et l'heure"></i>
+                            </button>
+                        </div>
+                        {{ form.valeur.errors }}
                     </div>
-                    {{ form.valeur.errors }}
-                </div>
-                <div class="ds-form__group">
-                    <label class="ds-form__label" for="{{ form.commentaire.id_for_label }}">Commentaire (facultatif)</label>
-                    {{ form.commentaire }}
-                    {{ form.commentaire.errors }}
-                </div>
-            {% else %}
-                <div class="ds-form__group">
-                    {{ form.commentaire.label_tag }}
-                    <div class="ds-input-group">
+                    <div class="ds-form__group">
+                        <label class="ds-form__label" for="{{ form.commentaire.id_for_label }}">Commentaire (facultatif)</label>
                         {{ form.commentaire }}
-                        <button class="ds-btn" type="submit">
-                            <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
-                        </button>
-                        <button class="ds-btn ds-btn--ghost" type="button" id="toggleDatetime">
-                            <i class="fa fa-clock" title="Changer la date et l'heure"></i>
-                        </button>
+                        {{ form.commentaire.errors }}
                     </div>
-                    {{ form.commentaire.errors }}
+                {% else %}
+                    <div class="ds-form__group">
+                        {{ form.commentaire.label_tag }}
+                        <div class="ds-input-group">
+                            {{ form.commentaire }}
+                            <button class="ds-btn" type="submit">
+                                <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
+                            </button>
+                            <button class="ds-btn ds-btn--ghost" type="button" id="toggleDatetime">
+                                <i class="fa fa-clock" title="Changer la date et l'heure"></i>
+                            </button>
+                        </div>
+                        {{ form.commentaire.errors }}
+                    </div>
+                {% endif %}
+                <div class="ds-form__group" id="datetime" style="display: none">
+                    <label class="ds-form__label" for="id_datetime">Changer la date et l'heure :</label>
+                    <input type="datetime-local"
+                           name="datetime"
+                           value="{{ form.datetime.value|date:"Y-m-d" }}T{{ form.datetime.value|time:"H:i" }}"
+                           required=""
+                           id="id_datetime">
                 </div>
-            {% endif %}
-            <div class="ds-form__group" id="datetime" style="display: none">
-                <label class="ds-form__label" for="id_datetime">Changer la date et l'heure :</label>
-                <input type="datetime-local" name="datetime" value="{{ form.datetime.value|date:"Y-m-d" }}T{{ form.datetime.value|time:"H:i" }}" required="" id="id_datetime">
-            </div>
-            <div class="ds-form__group">
-                {{ form.datetime.errors }}
-            </div>
-        </form>
-
-        <hr>
-
-        {% include 'tracker/include/date_range.html' %}
+                <div class="ds-form__group">{{ form.datetime.errors }}</div>
+            </form>
+            <hr>
+            {% include 'tracker/include/date_range.html' %}
         </div>
-
         <ul class="ds-tabs ds-tabs--justified" data-tabs>
             <li class="ds-tabs__item is-active"><a href="#historique">Historique</a></li>
             <li class="ds-tabs__item"><a href="#statistiques">Statistiques</a></li>
         </ul>
-
         <div>
             <div id="historique" class="ds-tab-panel is-active">
                 <h2>Historique <small><span id="trackCount"></span> {{ tracker.nom|lower }}s</small></h2>
                 <div class="ds-table-wrap">
                     <table class="ds-table ds-table--striped">
                         <thead>
-                        <tr>
-                            <th>Date</th>
-                            {% if tracker.type == 'mesure' %}<th>Valeur</th>{% endif %}
-                            <th>Commentaire</th>
-                            <th>Actions</th>
-                        </tr>
+                            <tr>
+                                <th>Date</th>
+                                {% if tracker.type == 'mesure' %}<th>Valeur</th>{% endif %}
+                                <th>Commentaire</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody id="tracks">
-                        {# Will be filled in AJAX #}
+                            {# Will be filled in AJAX #}
                         </tbody>
                     </table>
                 </div>
             </div>
             <div id="statistiques" class="ds-tab-panel">
                 <h2>Statistiques</h2>
-                {% if not tracker.tracks.exists %}
-                    <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
-                {% endif %}
-                <div id="track_graph"{% if not tracker.tracks.exists %} class="ds-hidden" {% endif %}>
+                {% if not tracker.tracks.exists %}<p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>{% endif %}
+                <div id="track_graph"
+                     {% if not tracker.tracks.exists %} class="ds-hidden" {% endif %}>
                     <p>
                         {% if tracker.type == 'mesure' %}
                             Moyenne : <strong id="avg"></strong>
@@ -189,14 +186,11 @@
                         </table>
                     </div>
                 </div>
-                <div class="ds-well ds-hidden ds-text-danger ds-text-center" id="noTracks">
-                    Aucun track pour la période donnée.
-                </div>
+                <div class="ds-well ds-hidden ds-text-danger ds-text-center" id="noTracks">Aucun track pour la période donnée.</div>
             </div>
         </div>
     </div>
 {% endblock %}
-
 {% block javascript %}
     <script src="{% static 'js/chart.umd.min.js' %}"></script>
     <script>
@@ -204,6 +198,7 @@
         const maxDate = "{{ tracker.tracks.last_track.datetime|date:"c" }}";
         const trackerDataUrl = '{% url 'tracker:tracker-data' %}';
         const trackerType = '{{ tracker.type }}';
+        const trackerColor = '{{ tracker.color }}';
     </script>
     <script src="{% static 'tracker/js/common.js' %}"></script>
     <script>
@@ -223,7 +218,7 @@
 
             trackByHourChart = new Chart(document.getElementById("trackByHourChart"), {
                 type: 'bar',
-                data: { labels: [], datasets: [{ label: 'Total', backgroundColor: '#337ab7', data: [] }] },
+                data: { labels: [], datasets: [{ label: 'Total', backgroundColor: trackerColor, data: [] }] },
                 options: {
                     plugins: { legend: { display: false } },
                     scales: { y: { beginAtZero: true } }
@@ -236,15 +231,7 @@
                     labels: [],
                     datasets: [{
                         label: 'Total',
-                        backgroundColor: [
-                            'rgba(255, 0, 0, 0.5)',
-                            'rgba(0, 255, 0, 0.5)',
-                            'rgba(0, 0, 255, 0.5)',
-                            'rgba(255, 255, 0, 0.5)',
-                            'rgba(255, 0, 255, 0.5)',
-                            'rgba(0, 255, 255, 0.5)',
-                            'rgba(0, 0, 0, 0.5)'
-                        ],
+                        backgroundColor: DAY_COLORS[currentTheme()],
                         data: []
                     }]
                 },

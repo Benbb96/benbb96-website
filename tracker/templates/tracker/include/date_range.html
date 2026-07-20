@@ -14,7 +14,13 @@
             <option value="all">Tous</option>
             <option value="">Personnalisé</option>
         </select>
-        <input type="date" id="dateStart" style="flex: 0 0 auto; width: auto" aria-label="Date de début">
-        <input type="date" id="dateEnd" style="flex: 0 0 auto; width: auto" aria-label="Date de fin">
+        <div class="ds-input-group" style="flex: 0 0 auto; width: auto">
+            <input type="date"
+                   id="dateStart"
+                   style="width: auto"
+                   aria-label="Date de début">
+            <span class="ds-input-group__addon" aria-hidden="true">→</span>
+            <input type="date" id="dateEnd" style="width: auto" aria-label="Date de fin">
+        </div>
     </div>
 </div>
