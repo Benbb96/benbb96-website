@@ -16,53 +16,55 @@
     <div class="ds-grid ds-grid--sidebar">
         <div>
             <div class="ds-card">
-                <div class="ds-card__body">
-                    <div>
-                        {% if artiste.full_name %}
-                            <p>{{ artiste.full_name }}</p>
+                {% if artiste.full_name or artiste.pays or artiste.ville or artiste.site_web or artiste.mail_contact or artiste.telephone_contact or artiste.soundcloud_followers or artiste.labels.exists or artiste.styles.exists %}
+                    <div class="ds-card__body">
+                        <div>
+                            {% if artiste.full_name %}
+                                <p>{{ artiste.full_name }}</p>
+                            {% endif %}
+                            {% if artiste.pays %}
+                                <p>{% trans "Country" %} : {{ artiste.pays }}</p>
+                            {% endif %}
+                            {% if artiste.ville %}
+                                <p>{% trans "City" %} : {{ artiste.ville }}</p>
+                            {% endif %}
+                            {% if artiste.site_web %}
+                                <p>
+                                    {% trans "Website" %} :
+                                    <a href="{{ artiste.site_web }}" target="_blank">
+                                        {{ artiste.site_web }}
+                                        {% fa6_icon 'external-link-alt' %}
+                                    </a>
+                                </p>
+                            {% endif %}
+                            {% if artiste.mail_contact %}
+                                <p>{% trans "Mail contact" %} :
+                                    <a href="mailto: {{ artiste.mail_contact }}">{{ artiste.mail_contact }}</a>
+                                </p>
+                            {% endif %}
+                            {% if artiste.telephone_contact %}
+                                <p>{% trans "Contact phone number" %} :
+                                    <a href="tel: {{ artiste.telephone_contact }}">{{ artiste.telephone_contact }}</a>
+                                </p>
+                            {% endif %}
+                            {% if artiste.soundcloud_followers %}
+                                <p>{% trans "Followers on Soundcloud" %} :
+                                    <span class="ds-badge">{{ artiste.soundcloud_followers|intcomma }}</span>
+                                </p>
+                            {% endif %}
+                            {# TODO Ajouter liens réseaux sociaux #}
+                        </div>
+                        {% if artiste.labels.exists %}
+                            <p class="ds-mb-2"><small class="ds-text-muted">{% trans "Labels" %}</small></p>
+                            <ul class="ds-inline-list">
+                                {% for label in artiste.labels.all %}
+                                    <li><a class="ds-badge" href="{{ label.get_absolute_url }}">{{ label.nom }}</a></li>
+                                {% endfor %}
+                            </ul>
                         {% endif %}
-                        {% if artiste.pays %}
-                            <p>{% trans "Country" %} : {{ artiste.pays }}</p>
-                        {% endif %}
-                        {% if artiste.ville %}
-                            <p>{% trans "City" %} : {{ artiste.ville }}</p>
-                        {% endif %}
-                        {% if artiste.site_web %}
-                            <p>
-                                {% trans "Website" %} :
-                                <a href="{{ artiste.site_web }}" target="_blank">
-                                    {{ artiste.site_web }}
-                                    {% fa6_icon 'external-link-alt' %}
-                                </a>
-                            </p>
-                        {% endif %}
-                        {% if artiste.mail_contact %}
-                            <p>{% trans "Mail contact" %} :
-                                <a href="mailto: {{ artiste.mail_contact }}">{{ artiste.mail_contact }}</a>
-                            </p>
-                        {% endif %}
-                        {% if artiste.telephone_contact %}
-                            <p>{% trans "Contact phone number" %} :
-                                <a href="tel: {{ artiste.telephone_contact }}">{{ artiste.telephone_contact }}</a>
-                            </p>
-                        {% endif %}
-                        {% if artiste.soundcloud_followers %}
-                            <p>{% trans "Followers on Soundcloud" %} :
-                                <span class="ds-badge">{{ artiste.soundcloud_followers|intcomma }}</span>
-                            </p>
-                        {% endif %}
-                        {# TODO Ajouter liens réseaux sociaux #}
+                        {% include 'music/components/style_list_inline.html' with styles=artiste.styles.all %}
                     </div>
-                    {% if artiste.labels.exists %}
-                        <p class="ds-mb-2"><small class="ds-text-muted">{% trans "Labels" %}</small></p>
-                        <ul class="ds-inline-list">
-                            {% for label in artiste.labels.all %}
-                                <li><a class="ds-badge" href="{{ label.get_absolute_url }}">{{ label.nom }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    {% include 'music/components/style_list_inline.html' with styles=artiste.styles.all %}
-                </div>
+                {% endif %}
                 <div class="ds-card__footer">
                     {% blocktrans with artiste_date=artiste.date_creation|date artiste_time=artiste.date_creation|time %}
                         Created on {{ artiste_date }} at {{ artiste_time }}
