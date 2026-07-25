@@ -21,7 +21,7 @@ django-storages[google]==1.14.6
 python-slugify==8.0.0
 redis==4.5.4 # required by spotipy (cache_handler imports redis at module load)
 requests==2.33.0
-setuptools==80.9.0
+setuptools==83.0.0
 git+https://github.com/Benbb96/soundcloud-python.git#egg=soundcloud
 spotipy==2.25.2
 zipp>=3.21.0 # not directly required, pinned by Snyk to avoid a vulnerability
