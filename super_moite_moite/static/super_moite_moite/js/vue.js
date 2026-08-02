@@ -123,6 +123,10 @@ let app = new Vue({
                     // défaut quelle que soit la largeur réelle du donut -> beaucoup
                     // de vide vertical dans la carte (repéré en QA design).
                     height: 280,
+                    // Le fond par défaut du thème ApexCharts (clair ou sombre) ne
+                    // correspond pas exactement à --ds-surface : transparent laisse
+                    // apparaître le fond de la .ds-card, plus cohérent visuellement.
+                    background: 'transparent',
                 },
                 theme: {
                     mode: this.theme
