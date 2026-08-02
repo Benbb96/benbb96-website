@@ -37,7 +37,7 @@ msgstr "Lyon, France"
 #: base/templates/base/about.html:24 base/templates/base/about.html:54
 #: base/templates/base/home.html:17
 msgid "Full-Stack Lead Developer"
-msgstr "Lead Développeur Full-Stack"
+msgstr "Lead Dev Full-Stack"
 
 #: base/templates/base/about.html:34
 msgid "Download my CV"
@@ -146,7 +146,7 @@ msgid ""
 "                    of my personal projects."
 msgstr ""
 "Je code en Python/Django sur mon temps libre, souvent pour résoudre un "
-"petit problème du quotidien — avec toujours un œil sur l'impact "
+"petit problème du quotidien, tout en gardant un œil sur l'impact "
 "environnemental (GreenIT). Ce site héberge la plupart de mes projets perso."
 
 #: base/templates/base/home.html:24
