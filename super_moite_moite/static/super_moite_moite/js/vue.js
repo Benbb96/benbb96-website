@@ -99,7 +99,10 @@ let app = new Vue({
         },
         bootstrapClassColors: [
             'success', 'info', 'danger', 'warning', 'primary'
-        ]
+        ],
+        // Suit le toggle clair/sombre/auto de la navbar (voir assets/js/theme.js,
+        // événement "benbb96:themechange") pour re-thémer les donuts ApexCharts.
+        theme: document.documentElement.getAttribute('data-theme') || 'light'
     },
     computed: {
         categoriesFiltrees: function() {
@@ -116,11 +119,18 @@ let app = new Vue({
             return  {
                 chart: {
                     type: 'donut',
+                    // Sans hauteur explicite, ApexCharts retombe sur ~380-400px par
+                    // défaut quelle que soit la largeur réelle du donut -> beaucoup
+                    // de vide vertical dans la carte (repéré en QA design).
+                    height: 280,
+                },
+                theme: {
+                    mode: this.theme
                 },
                 labels: this.logement.categories.map(categorie => categorie.nom),
                 colors: this.logement.categories.map(categorie => categorie.couleur),
                 tooltip: {
-                    theme: 'dark',
+                    theme: this.theme,
                     fillSeriesColor: false,
                     y: {
                         formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
@@ -132,7 +142,8 @@ let app = new Vue({
                     breakpoint: 480,
                     options: {
                         chart: {
-                            width: 300
+                            width: 300,
+                            height: 280
                         },
                         legend: {
                             position: 'bottom'
@@ -618,3 +629,8 @@ let app = new Vue({
         }
     }
 });
+
+// Re-thème les donuts ApexCharts sans recharger la page (voir data.theme ci-dessus).
+window.addEventListener('benbb96:themechange', function (event) {
+    app.theme = event.detail.theme
+})
