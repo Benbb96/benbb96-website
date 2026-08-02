@@ -318,6 +318,7 @@ textarea { min-height: 6rem; resize: vertical; }
    s'appliquer. */
 input[type="search"] {
     -webkit-appearance: none;
+    -moz-appearance: textfield;
     appearance: none;
 }
 /* Idem pour les décorations internes (loupe/croix) que Chrome/Safari
