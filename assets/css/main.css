@@ -1473,8 +1473,14 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
    .ds-modal--lg   : variante large de la modale <dialog> (remplace .modal-lg). */
 .ds-input-group { display: flex; align-items: stretch; }
 .ds-input-group > * { margin-bottom: 0; }
-.ds-input-group > :not(:first-child) { border-top-left-radius: 0; border-bottom-left-radius: 0; }
-.ds-input-group > :not(:last-child) { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+/* !important : la règle générique de formulaire (section 4 ci-dessus, longue
+   chaîne de input:not([type=...])) a une bien plus forte spécificité que ce
+   sélecteur (8 :not([type=...]) valent 8 classes) et impose son border-radius
+   sur les 4 coins — l'aplatissement voulu ici (icône/bouton accolé à un
+   <input>) ne s'appliquait donc jamais, laissant chaque élément avec ses 4
+   coins arrondis et sa propre bordure = lecture "deux boîtes séparées". */
+.ds-input-group > :not(:first-child) { border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; }
+.ds-input-group > :not(:last-child) { border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; }
 .ds-input-group > input,
 .ds-input-group > select { flex: 1 1 auto; width: 1%; min-width: 0; }
 /* Tom Select dans un input-group : le champ visible est le .ts-wrapper (le <select>
