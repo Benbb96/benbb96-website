@@ -70,7 +70,11 @@ table.tableTracks tbody {
 
 .stickyToolbar {
     position: sticky;
-    top: 0;
+    /* top:0 collait la barre derrière la navbar elle-même sticky (z-index:100,
+       cf. .ds-nav dans main.css) : les deux se figent au même endroit à l'écran
+       en scrollant, et la navbar passe au-dessus. On la colle juste sous elle
+       (même formule que .ds-about-side dans main.css). */
+    top: var(--ds-nav-h);
     z-index: 10;
     padding: 10px 5px;
     margin-bottom: var(--ds-space-3);
