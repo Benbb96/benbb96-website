@@ -12,18 +12,27 @@
     max-width: 360px;
 }
 
-/* Grille des catégories.
+/* Grille des catégories, en colonnes façon masonry.
+   Une grille CSS classique (grid-template-columns) aligne les catégories en
+   rangées : la hauteur de rangée est celle du plus grand élément, donc une
+   catégorie courte (peu de tâches) laisse un grand vide sous elle avant que
+   la rangée suivante démarre — repéré en QA (catégorie « Alimentation » très
+   courte, grand vide, « Hygiène »/« Santé » repoussées loin en dessous). Les
+   colonnes CSS (`columns`) empilent chaque élément dans la colonne la moins
+   remplie, comme un masonry, sans JS.
    La draggable (.smm-categories) est en display:contents pour que ses enfants
    (les catégories) ET la carte « nouvelle catégorie » soient des items de la
-   même grille responsive. */
+   même mise en page. */
 .smm-categories-wrap {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: var(--ds-space-4);
-    align-items: start;
+    columns: 260px 3;
+    column-gap: var(--ds-space-4);
 }
 .smm-categories {
     display: contents;
+}
+.smm-categorie-item {
+    break-inside: avoid;
+    margin-bottom: var(--ds-space-4);
 }
 
 /* Barres de progression un peu plus hautes sur ce tableau de bord */
@@ -65,7 +74,11 @@ table.tableTracks tbody {
     z-index: 10;
     padding: 10px 5px;
     margin-bottom: var(--ds-space-3);
-    background-color: rgba(255, 255, 255, 0.88);
+    /* Fond blanc en dur : reste clair même en dark mode (le champ de recherche
+       lui, suit le thème) -> boîte claire contenant des contrôles sombres,
+       lecture "pas intégré". color-mix() reprend --ds-surface (donc le thème
+       courant) tout en gardant l'effet légèrement translucide au scroll. */
+    background-color: color-mix(in srgb, var(--ds-surface) 88%, transparent);
 }
 
 /* Animate Increment */

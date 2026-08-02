@@ -1,33 +1,32 @@
 {% extends 'super_moite_moite/base_super_moite_moite.html' %}
-
 {% load static i18n %}
-
 {% block super_moite_moite_title %}{{ logement }}{% endblock %}
-
 {% block jumbotron_title %}{{ logement }}{% endblock %}
 {% block jumbotron_description %}
     Habitants :
     {% for habitant in logement.habitants.all %}
         <a href="{{ habitant.get_absolute_url }}">{{ habitant }}</a>{% if not forloop.last %}{% if logement.habitants.count != 2 %}, {% else %} & {% endif %}{% endif %}
     {% endfor %}
-    <a href="{% url 'super-moite-moite:edition-logement' logement.slug %}" class="ds-btn ds-btn--ghost ds-btn--sm"
+    <a href="{% url 'super-moite-moite:edition-logement' logement.slug %}"
+       class="ds-btn ds-btn--ghost ds-btn--sm"
        title="Editer les informations du logement">
         <i class="fa fa-edit"></i>
     </a>
-    <a href="{% url 'super-moite-moite:suppression-logement' logement.slug %}" class="ds-btn ds-btn--danger ds-btn--sm"
+    <a href="{% url 'super-moite-moite:suppression-logement' logement.slug %}"
+       class="ds-btn ds-btn--danger ds-btn--sm"
        title="Supprimer le logement">
         <i class="fa fa-trash"></i>
     </a>
 {% endblock %}
-
 {% block stylesheet %}
-    <link rel="stylesheet" href="{% static 'super_moite_moite/css/style.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'super_moite_moite/css/style.css' %}">
 {% endblock %}
-
 {% block content %}
     <div id="app">
         <div class="ds-container">
-            <div v-for="(habitant, index) in logement.habitants" class="ds-progress ds-mb-2 smm-habitant-bars">
+            <div v-for="(habitant, index) in logement.habitants"
+                 class="ds-progress ds-mb-2 smm-habitant-bars">
                 <div :class="'ds-progress__bar ds-progress__bar--' + bootstrapClassColors[index] + (habitant.id === idProfilConnecte ? ' ds-progress__bar--striped' : '')"
                      :title="pourcentagePointProfil(habitant) | round(2) + '%'"
                      :style="'width:' + pourcentagePointProfil(habitant) + '%'">
@@ -38,7 +37,8 @@
                 <li class="ds-tabs__item" :class="{'is-active': mainTab === 'home'}">
                     <a href="#" @click.prevent="mainTab = 'home'">Tâches</a>
                 </li>
-                <li class="ds-tabs__item" :class="{'is-active': mainTab === 'statistiques'}">
+                <li class="ds-tabs__item"
+                    :class="{'is-active': mainTab === 'statistiques'}">
                     <a href="#" @click.prevent="mainTab = 'statistiques'">Statistiques</a>
                 </li>
             </ul>
@@ -46,167 +46,200 @@
             <div>
                 <div v-show="mainTab === 'home'">
                     <div class="stickyToolbar">
-                        <div class="ds-input-group smm-search" title="Effectuer une recherche à travers les noms des catégories et des tâches">
+                        <div class="ds-input-group smm-search"
+                             title="Effectuer une recherche à travers les noms des catégories et des tâches">
                             <span class="ds-input-group__addon">
                                 <label for="searchText" class="ds-mb-0">
                                     <i class="fa fa-search"></i>
                                 </label>
                             </span>
-                            <input v-model="searchText" id="searchText" type="search" placeholder="Rechercher...">
+                            <input v-model="searchText"
+                                   id="searchText"
+                                   type="search"
+                                   placeholder="Rechercher...">
                         </div>
                     </div>
                     <div class="smm-categories-wrap">
                         <draggable v-model="logement.categories" @end="orderCategories" handle=".handleCategorie" class="smm-categories">
-                            <div v-for="categorie in categoriesFiltrees"
-                                 ref="categories" :data-id="categorie.id">
-                                <div class="ds-well" :style="{backgroundColor: categorieEnEdition === categorie.id && couleurCategorieEdition !== ''? couleurCategorieEdition : categorie.couleur}">
-                                    <div class="ds-float-right">
-                                        <i class="fa fa-arrows handleCategorie" title="Changer l'ordre de la catégorie"></i>
+                        <div v-for="categorie in categoriesFiltrees"
+                             class="smm-categorie-item"
+                             ref="categories"
+                             :data-id="categorie.id">
+                            <div class="ds-well"
+                                 :style="{backgroundColor: categorieEnEdition === categorie.id && couleurCategorieEdition !== ''? couleurCategorieEdition : categorie.couleur}">
+                                <div class="ds-float-right">
+                                    <i class="fa fa-arrows handleCategorie"
+                                       title="Changer l'ordre de la catégorie"></i>
+                                </div>
+                                <h4 class="ds-text-center showOnHover"
+                                    @click="editionCategorie(categorie)"
+                                    v-if="categorieEnEdition !== categorie.id"
+                                    title="Cliquer pour éditer la catégorie">
+                                    [[ categorie.nom ]]
+                                    <i class="fa fa-pencil"></i>
+                                </h4>
+                                <div class="ds-progress" v-if="categorieEnEdition !== categorie.id">
+                                    <div v-for="(habitant, index) in logement.habitants"
+                                         :title="[[ habitant.user ]] + ' : ' + [[ pointsCategorieProfil(categorie, habitant) ]] + ' points'"
+                                         :class="'ds-progress__bar ds-progress__bar--' + bootstrapClassColors[index] + (habitant.id === idProfilConnecte ? ' ds-progress__bar--striped' : '')"
+                                         :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'">
+                                        [[ pourcentagePointProfilCategorie(habitant, categorie) | round(0) ]]%
                                     </div>
-                                    <h4 class="ds-text-center showOnHover" @click="editionCategorie(categorie)"
-                                        v-if="categorieEnEdition !== categorie.id"
-                                        title="Cliquer pour éditer la catégorie">
-                                        [[ categorie.nom ]]
-                                        <i class="fa fa-pencil"></i>
-                                    </h4>
-                                    <div class="ds-progress" v-if="categorieEnEdition !== categorie.id">
-                                        <div v-for="(habitant, index) in logement.habitants"
-                                             :title="[[ habitant.user ]] + ' : ' + [[ pointsCategorieProfil(categorie, habitant) ]] + ' points'"
-                                             :class="'ds-progress__bar ds-progress__bar--' + bootstrapClassColors[index] + (habitant.id === idProfilConnecte ? ' ds-progress__bar--striped' : '')"
-                                             :style="'width:' + pourcentagePointProfilCategorie(habitant, categorie) + '%'">
-                                            [[ pourcentagePointProfilCategorie(habitant, categorie) | round(0) ]]%
-                                        </div>
+                                </div>
+                                <div v-else>
+                                    <div class="ds-form__group">
+                                        <input v-model="nomCategorieEdition"
+                                               @keyup.enter="enregistreEditionCategorie(categorie)">
+                                        <ul v-if="erreursNomCategorieEdition.length" class="errorlist">
+                                            <li v-for="erreur in erreursNomCategorieEdition">[[ erreur ]]</li>
+                                        </ul>
                                     </div>
-                                    <div v-else>
-                                        <div class="ds-form__group">
-                                            <input v-model="nomCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)">
-                                            <ul v-if="erreursNomCategorieEdition.length" class="errorlist">
-                                                <li v-for="erreur in erreursNomCategorieEdition">[[ erreur ]]</li>
-                                            </ul>
+                                    <div class="ds-form__group">
+                                        <div class="ds-cluster" style="flex-wrap: nowrap">
+                                            <input v-model="couleurCategorieEdition"
+                                                   @keyup.enter="enregistreEditionCategorie(categorie)"
+                                                   style="flex: 1 1 auto">
+                                            <input v-model="couleurCategorieEdition"
+                                                   type="color"
+                                                   style="flex: 0 0 auto;
+                                                          width: 3rem">
                                         </div>
-                                        <div class="ds-form__group">
-                                            <div class="ds-cluster" style="flex-wrap: nowrap">
-                                                <input v-model="couleurCategorieEdition" @keyup.enter="enregistreEditionCategorie(categorie)" style="flex: 1 1 auto">
-                                                <input v-model="couleurCategorieEdition" type="color" style="flex: 0 0 auto; width: 3rem">
-                                            </div>
-                                            <ul v-if="erreursCouleurCategorieEdition.length" class="errorlist">
-                                                <li v-for="erreur in erreursCouleurCategorieEdition">[[ erreur ]]</li>
-                                            </ul>
-                                        </div>
-                                        <div class="ds-cluster ds-cluster--center">
-                                            <button type="button" class="ds-btn ds-btn--success" @click="enregistreEditionCategorie(categorie)"
-                                                    title="Sauvegarder les modifications">
-                                                <i class="fa fa-save"></i>
-                                            </button>
-                                            <button type="button" class="ds-btn ds-btn--danger" @click="supprimerCategorie(categorie)"
-                                                    title="Supprimer la catégorie">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                            <button type="button" class="ds-btn ds-btn--ghost" @click="categorieEnEdition = null"
-                                                    title="Annuler les modifications">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
+                                        <ul v-if="erreursCouleurCategorieEdition.length" class="errorlist">
+                                            <li v-for="erreur in erreursCouleurCategorieEdition">[[ erreur ]]</li>
+                                        </ul>
                                     </div>
-                                    <hr>
-                                    <draggable v-model="categorie.taches" @end="orderTaches(categorie)" handle=".handleTache">
-                                        <div class="ds-card ds-mb-3" v-for="tache in categorieTachesFiltrees(categorie)"
-                                             :ref="'taches' + categorie.id" :data-id="tache.id">
-                                            <div class="ds-card__header ds-cluster" style="justify-content: space-between">
-                                                <a @click="detailTache(tache)" style="cursor: pointer">
-                                                    [[ tache.nom ]]
-                                                </a>
-                                                <i class="fa fa-arrows-v handleTache" title="Déplacer la tâche au sein de la catégorie"></i>
-                                            </div>
-                                            <div class="ds-card__body">
-                                                <div v-if="tache.photo_url">
-                                                    <img :src="tache.photo_url" :alt="'Photo de la tâche ' + tache.nom" :style="{width: '100%'}">
-                                                </div>
-                                                <p v-if="tache.description">[[ tache.description ]]</p>
-                                                <div class="ds-table-wrap">
-                                                    <table class="ds-table ds-table--striped tableTracks">
-                                                        <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                            <th class="ds-text-center">Tracks</th>
-                                                            <th class="ds-text-center">Pts défaut</th>
-                                                            <th class="ds-text-center">Points</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr v-for="(habitant, index) in logement.habitants">
-                                                            <td>[[ habitant.user ]]</td>
-                                                            <td>
-                                                                <transition name="slide" mode="out-in">
-                                                                    <span v-if="nombreProfilTracks(habitant, tache) % 2 === 0"
-                                                                    key="x" style="position:relative;">
-                                                                        [[ nombreProfilTracks(habitant, tache) ]]
-                                                                    </span>
-                                                                    <span v-else key="y" style="position:relative;">
-                                                                        [[ nombreProfilTracks(habitant, tache) ]]
-                                                                    </span>
-                                                                </transition>
-                                                            </td>
-                                                            <td>
-                                                                [[ pointParDefautProfil(tache, habitant) ]]
-                                                            </td>
-                                                            <td>[[ pointsTacheProfil(tache, habitant) ]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Total</td>
-                                                            <td>
-                                                                <transition name="slide" mode="out-in">
-                                                                    <span v-if="tache.tracks.length % 2 === 0"
-                                                                    key="x" style="position:relative;">
-                                                                        [[ tache.tracks.length ]]
-                                                                    </span>
-                                                                    <span v-else key="y" style="position:relative;">
-                                                                        [[ tache.tracks.length ]]
-                                                                    </span>
-                                                                </transition>
-                                                            </td>
-                                                            <td></td>
-                                                            <td>[[ totalPointsTache(tache) ]]</td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div v-if="tache.tracks.length">
-                                                    Date dernier track :<br>
-                                                    <b>[[ tache.tracks[0].datetime | moment('L') ]] à [[ tache.tracks[0].datetime | moment('LT') ]]</b>
-                                                    ([[ tache.tracks[0].datetime | fromNow ]])
-                                                </div>
-                                            </div>
-                                            <div class="ds-card__footer ds-text-center">
-                                                <button @click="detailTache(tache, 'detail')" type="button" class="ds-btn ds-btn--ghost ds-btn--sm"
-                                                        title="Régler les points par défaut de la tâche">
-                                                    <i class="fa fa-cog"></i>
-                                                </button>
-                                                <button @click="ajoutTrack(tache)" type="button" class="ds-btn" style="border-radius: 50%"
-                                                        title="Ajouter un track rapidement">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                                <button @click="detailTache(tache, 'edition')" type="button" class="ds-btn ds-btn--ghost ds-btn--sm"
-                                                        title="Editer les informations de la tâche">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </draggable>
-                                    <div class="ds-input-group">
-                                        <input v-model="nomsNouvelleTache[categorie.id]" @keyup.enter="nouvelleTache(categorie)"
-                                               placeholder="Nouvelle tâche">
-                                        <button @click="nouvelleTache(categorie)" type="button" class="ds-btn ds-btn--ghost">
-                                            <i class="fa fa-check"></i>
+                                    <div class="ds-cluster ds-cluster--center">
+                                        <button type="button"
+                                                class="ds-btn ds-btn--success"
+                                                @click="enregistreEditionCategorie(categorie)"
+                                                title="Sauvegarder les modifications">
+                                            <i class="fa fa-save"></i>
+                                        </button>
+                                        <button type="button"
+                                                class="ds-btn ds-btn--danger"
+                                                @click="supprimerCategorie(categorie)"
+                                                title="Supprimer la catégorie">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                        <button type="button"
+                                                class="ds-btn ds-btn--ghost"
+                                                @click="categorieEnEdition = null"
+                                                title="Annuler les modifications">
+                                            <i class="fa fa-times"></i>
                                         </button>
                                     </div>
                                 </div>
+                                <hr>
+                                <draggable v-model="categorie.taches" @end="orderTaches(categorie)" handle=".handleTache">
+                                <div class="ds-card ds-mb-3"
+                                     v-for="tache in categorieTachesFiltrees(categorie)"
+                                     :ref="'taches' + categorie.id"
+                                     :data-id="tache.id">
+                                    <div class="ds-card__header ds-cluster"
+                                         style="justify-content: space-between">
+                                        <a @click="detailTache(tache)" style="cursor: pointer">[[ tache.nom ]]</a>
+                                        <i class="fa fa-arrows-v handleTache"
+                                           title="Déplacer la tâche au sein de la catégorie"></i>
+                                    </div>
+                                    <div class="ds-card__body">
+                                        <div v-if="tache.photo_url">
+                                            <img :src="tache.photo_url"
+                                                 :alt="'Photo de la tâche ' + tache.nom"
+                                                 :style="{width: '100%'}">
+                                        </div>
+                                        <p v-if="tache.description">[[ tache.description ]]</p>
+                                        <div class="ds-table-wrap">
+                                            <table class="ds-table ds-table--striped tableTracks">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th class="ds-text-center">Tracks</th>
+                                                        <th class="ds-text-center">Pts défaut</th>
+                                                        <th class="ds-text-center">Points</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(habitant, index) in logement.habitants">
+                                                        <td>[[ habitant.user ]]</td>
+                                                        <td>
+                                                            <transition name="slide" mode="out-in">
+                                                            <span v-if="nombreProfilTracks(habitant, tache) % 2 === 0"
+                                                                  key="x"
+                                                                  style="position:relative">
+                                                                [[ nombreProfilTracks(habitant, tache) ]]
+                                                            </span>
+                                                            <span v-else key="y" style="position:relative;">[[ nombreProfilTracks(habitant, tache) ]]</span>
+                                                            </transition>
+                                                        </td>
+                                                        <td>[[ pointParDefautProfil(tache, habitant) ]]</td>
+                                                        <td>[[ pointsTacheProfil(tache, habitant) ]]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Total</td>
+                                                        <td>
+                                                            <transition name="slide" mode="out-in">
+                                                            <span v-if="tache.tracks.length % 2 === 0"
+                                                                  key="x"
+                                                                  style="position:relative">
+                                                                [[ tache.tracks.length ]]
+                                                            </span>
+                                                            <span v-else key="y" style="position:relative;">[[ tache.tracks.length ]]</span>
+                                                            </transition>
+                                                        </td>
+                                                        <td></td>
+                                                        <td>[[ totalPointsTache(tache) ]]</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div v-if="tache.tracks.length">
+                                            Date dernier track :
+                                            <br>
+                                            <b>[[ tache.tracks[0].datetime | moment('L') ]] à [[ tache.tracks[0].datetime | moment('LT') ]]</b>
+                                            ([[ tache.tracks[0].datetime | fromNow ]])
+                                        </div>
+                                    </div>
+                                    <div class="ds-card__footer ds-text-center">
+                                        <button @click="detailTache(tache, 'detail')"
+                                                type="button"
+                                                class="ds-btn ds-btn--ghost ds-btn--sm"
+                                                title="Régler les points par défaut de la tâche">
+                                            <i class="fa fa-cog"></i>
+                                        </button>
+                                        <button @click="ajoutTrack(tache)"
+                                                type="button"
+                                                class="ds-btn"
+                                                style="border-radius: 50%"
+                                                title="Ajouter un track rapidement">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <button @click="detailTache(tache, 'edition')"
+                                                type="button"
+                                                class="ds-btn ds-btn--ghost ds-btn--sm"
+                                                title="Editer les informations de la tâche">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                </draggable>
+                                <div class="ds-input-group">
+                                    <input v-model="nomsNouvelleTache[categorie.id]"
+                                           @keyup.enter="nouvelleTache(categorie)"
+                                           placeholder="Nouvelle tâche">
+                                    <button @click="nouvelleTache(categorie)"
+                                            type="button"
+                                            class="ds-btn ds-btn--ghost">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                </div>
                             </div>
+                        </div>
                         </draggable>
-                        <div class="smm-new-categorie">
+                        <div class="smm-new-categorie smm-categorie-item">
                             <div class="ds-well">
                                 <div class="ds-input-group">
-                                    <input v-model="nomNouvelleCategorie" @keyup.enter="nouvelleCategorie"
+                                    <input v-model="nomNouvelleCategorie"
+                                           @keyup.enter="nouvelleCategorie"
                                            placeholder="Nouvelle catégorie">
                                     <button @click="nouvelleCategorie" type="button" class="ds-btn">
                                         <i class="fa fa-plus"></i>
@@ -218,7 +251,8 @@
                 </div>
                 <div v-show="mainTab === 'statistiques'">
                     <div class="ds-progress ds-mb-4">
-                        <div v-for="(habitant, index) in logement.habitants" :class="'ds-progress__bar ds-progress__bar--' + bootstrapClassColors[index] + (habitant.id === idProfilConnecte ? ' ds-progress__bar--striped' : '')"
+                        <div v-for="(habitant, index) in logement.habitants"
+                             :class="'ds-progress__bar ds-progress__bar--' + bootstrapClassColors[index] + (habitant.id === idProfilConnecte ? ' ds-progress__bar--striped' : '')"
                              :style="'width:' + pourcentagePointProfil(habitant) + '%'">
                             [[ habitant.user ]] ([[ pourcentagePointProfil(habitant) | round(2) ]]%)
                         </div>
@@ -255,196 +289,203 @@
                 </div>
             </div>
         </div>
-
         <!-- Modale Détail Tâche (dialog natif, remplace .modal Bootstrap) -->
         <dialog id="modalDetailTache" class="ds-modal ds-modal--lg">
             <div class="ds-modal__header">
                 <h4 class="ds-modal__title">[[ tacheEditee.nom ]]</h4>
-                <button type="button" class="ds-modal__close" @click="fermerModal" aria-label="Fermer">&times;</button>
+                <button type="button"
+                        class="ds-modal__close"
+                        @click="fermerModal"
+                        aria-label="Fermer">&times;</button>
             </div>
             <div class="ds-modal__body">
-                        <ul class="ds-tabs">
-                            <li class="ds-tabs__item" :class="{'is-active': modalTab === 'tracks'}">
-                                <a href="#" @click.prevent="modalTab = 'tracks'">
-                                    Tracks
-                                    <span class="ds-badge">[[ tacheEditee.tracks.length ]]</span>
-                                </a>
-                            </li>
-                            <li class="ds-tabs__item" :class="{'is-active': modalTab === 'detail'}">
-                                <a href="#" @click.prevent="modalTab = 'detail'">Détail</a>
-                            </li>
-                            <li class="ds-tabs__item" :class="{'is-active': modalTab === 'edition'}">
-                                <a href="#" @click.prevent="modalTab = 'edition'">Edition</a>
-                            </li>
-                        </ul>
-
-                        <div>
-                            <div v-show="modalTab === 'tracks'">
-                                <h4>Historique des tracks</h4>
-                                <div class="ds-form__group">
-                                    <label for="commentaire">Ajout d'un nouveau track :</label>
-                                    <div class="ds-input-group">
-                                        <input @keyup.enter="ajoutTrack(tacheEditee)" v-model="commentaireTrack"
-                                               id="commentaire" placeholder="Commentaire facultatif">
-                                        <button @click="ajoutTrack(tacheEditee)" type="button" class="ds-btn">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="ds-table-wrap">
-                                    <table class="ds-table ds-table--striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Profil</th>
-                                                <th>Commentaire</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="track in tacheEditee.tracks">
-                                                <td v-if="trackEditee.id !== track.id">
-                                                    [[ track.datetime | moment ]]
-                                                </td>
-                                                <td v-else>
-                                                    <input v-model="trackEditee.datetime" type="datetime-local">
-                                                </td>
-                                                <td v-if="trackEditee.id !== track.id">
-                                                    [[ logement.habitants.find(habitant => habitant.id === track.profil).user ]]
-                                                </td>
-                                                <td v-else>
-                                                    <select v-model="trackEditee.profil">
-                                                        <option v-for="habitant in logement.habitants" :value="habitant.id">
-                                                            [[ habitant.user ]]
-                                                        </option>
-                                                    </select>
-                                                </td>
-                                                <td v-if="trackEditee.id !== track.id">
-                                                    [[ track.commentaire ]]
-                                                </td>
-                                                <td v-else>
-                                                    <input v-model="trackEditee.commentaire" @keyup.enter="enregistreEditionTrack(track)">
-                                                </td>
-                                                <td v-if="trackEditee.id !== track.id">
-                                                    <button @click="editerTrack(track)" type="button" class="ds-btn ds-btn--ghost ds-btn--sm">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button @click="supprimerTrack(track)" type="button" class="ds-btn ds-btn--danger ds-btn--sm">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                                <td v-else>
-                                                    <button @click="enregistreEditionTrack(track)" type="button" class="ds-btn ds-btn--success ds-btn--sm">
-                                                        <i class="fa fa-save"></i>
-                                                    </button>
-                                                    <button @click="trackEditee.id = null" type="button" class="ds-btn ds-btn--ghost ds-btn--sm">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div v-show="modalTab === 'detail'">
-                                <h4>Informations sur la tâche</h4>
-                                <div class="ds-narrow">
-                                    <img v-if="tacheEditee.photo_url" :src="tacheEditee.photo_url" :alt="'Photo de la tâche ' + tacheEditee.nom" :style="{width: '100%'}">
-                                </div>
-                                <p v-if="tacheEditee.description">
-                                    Description : [[ tacheEditee.description ]]
-                                </p>
-                                <table class="ds-table">
-                                    <thead>
-                                        <tr>
-                                            <th class="ds-text-right">Habitant</th>
-                                            <th class="ds-text-center">Points attribués</th>
-                                            <th class="ds-text-center">Points gagnés</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="habitant in logement.habitants">
-                                            <td class="ds-text-right">
-                                                <label :for="habitant.id">[[ habitant.user ]] :</label>
-                                            </td>
-                                            <td class="ds-text-center">
-                                                <input type="number" min="0" :id="habitant.id"
-                                               :value="pointParDefautProfil(tacheEditee, habitant)"
-                                                @input="changePointParDefautProfil(tacheEditee, habitant, $event.target.value)">
-                                            </td>
-                                            <td class="ds-text-center">
-                                                [[ pointsTacheProfil(tacheEditee, habitant) ]]
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div v-show="modalTab === 'edition'">
-                                <h4>Modification des informations de la tâche</h4>
-                                <div class="ds-form__group">
-                                    <label for="nomInput">
-                                        Nom :
-                                    </label>
-                                    <input v-model="tacheEditee.nom" id="nomInput">
-                                </div>
-                                <div class="ds-form__group">
-                                    <label for="descriptionTextarea">
-                                        Description :
-                                    </label>
-                                    <textarea v-model="tacheEditee.description" id="descriptionTextarea" :style="{resize: 'vertical'}"></textarea>
-                                </div>
-                                <div class="ds-form__group">
-                                    <label for="imageInput">
-                                        Illustration :
-                                    </label>
-                                    <div>
-                                        <input v-model="tacheEditee.photo" @input="updatePhotoUrl($event.target.value)" id="imageInput" placeholder="URL de l'image (optionnel)">
-                                        <br>
-                                        <input type="file" id="photoFileInput" accept="image/*" :style="{display: 'inline'}">
-                                        <button @click="uploadPhoto(tacheEditee)" type="button" class="ds-btn ds-btn--ghost">
-                                            Uploader
-                                        </button>
-                                        <br>
-                                        <img v-if="tacheEditee.photo_url" :src="tacheEditee.photo_url" width="340px" alt="Illustration de la tâche"/>
-                                    </div>
-                                </div>
+                <ul class="ds-tabs">
+                    <li class="ds-tabs__item" :class="{'is-active': modalTab === 'tracks'}">
+                        <a href="#" @click.prevent="modalTab = 'tracks'">
+                            Tracks
+                            <span class="ds-badge">[[ tacheEditee.tracks.length ]]</span>
+                        </a>
+                    </li>
+                    <li class="ds-tabs__item" :class="{'is-active': modalTab === 'detail'}">
+                        <a href="#" @click.prevent="modalTab = 'detail'">Détail</a>
+                    </li>
+                    <li class="ds-tabs__item" :class="{'is-active': modalTab === 'edition'}">
+                        <a href="#" @click.prevent="modalTab = 'edition'">Edition</a>
+                    </li>
+                </ul>
+                <div>
+                    <div v-show="modalTab === 'tracks'">
+                        <h4>Historique des tracks</h4>
+                        <div class="ds-form__group">
+                            <label for="commentaire">Ajout d'un nouveau track :</label>
+                            <div class="ds-input-group">
+                                <input @keyup.enter="ajoutTrack(tacheEditee)"
+                                       v-model="commentaireTrack"
+                                       id="commentaire"
+                                       placeholder="Commentaire facultatif">
+                                <button @click="ajoutTrack(tacheEditee)" type="button" class="ds-btn">
+                                    <i class="fa fa-plus"></i>
+                                </button>
                             </div>
                         </div>
+                        <div class="ds-table-wrap">
+                            <table class="ds-table ds-table--striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Profil</th>
+                                        <th>Commentaire</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="track in tacheEditee.tracks">
+                                        <td v-if="trackEditee.id !== track.id">[[ track.datetime | moment ]]</td>
+                                        <td v-else>
+                                            <input v-model="trackEditee.datetime" type="datetime-local">
+                                        </td>
+                                        <td v-if="trackEditee.id !== track.id">
+                                            [[ logement.habitants.find(habitant => habitant.id === track.profil).user ]]
+                                        </td>
+                                        <td v-else>
+                                            <select v-model="trackEditee.profil">
+                                                <option v-for="habitant in logement.habitants" :value="habitant.id">[[ habitant.user ]]</option>
+                                            </select>
+                                        </td>
+                                        <td v-if="trackEditee.id !== track.id">[[ track.commentaire ]]</td>
+                                        <td v-else>
+                                            <input v-model="trackEditee.commentaire"
+                                                   @keyup.enter="enregistreEditionTrack(track)">
+                                        </td>
+                                        <td v-if="trackEditee.id !== track.id">
+                                            <button @click="editerTrack(track)"
+                                                    type="button"
+                                                    class="ds-btn ds-btn--ghost ds-btn--sm">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button @click="supprimerTrack(track)"
+                                                    type="button"
+                                                    class="ds-btn ds-btn--danger ds-btn--sm">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                        <td v-else>
+                                            <button @click="enregistreEditionTrack(track)"
+                                                    type="button"
+                                                    class="ds-btn ds-btn--success ds-btn--sm">
+                                                <i class="fa fa-save"></i>
+                                            </button>
+                                            <button @click="trackEditee.id = null"
+                                                    type="button"
+                                                    class="ds-btn ds-btn--ghost ds-btn--sm">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div v-show="modalTab === 'detail'">
+                        <h4>Informations sur la tâche</h4>
+                        <div class="ds-narrow">
+                            <img v-if="tacheEditee.photo_url"
+                                 :src="tacheEditee.photo_url"
+                                 :alt="'Photo de la tâche ' + tacheEditee.nom"
+                                 :style="{width: '100%'}">
+                        </div>
+                        <p v-if="tacheEditee.description">Description : [[ tacheEditee.description ]]</p>
+                        <table class="ds-table">
+                            <thead>
+                                <tr>
+                                    <th class="ds-text-right">Habitant</th>
+                                    <th class="ds-text-center">Points attribués</th>
+                                    <th class="ds-text-center">Points gagnés</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="habitant in logement.habitants">
+                                    <td class="ds-text-right">
+                                        <label :for="habitant.id">[[ habitant.user ]] :</label>
+                                    </td>
+                                    <td class="ds-text-center">
+                                        <input type="number"
+                                               min="0"
+                                               :id="habitant.id"
+                                               :value="pointParDefautProfil(tacheEditee, habitant)"
+                                               @input="changePointParDefautProfil(tacheEditee, habitant, $event.target.value)">
+                                    </td>
+                                    <td class="ds-text-center">[[ pointsTacheProfil(tacheEditee, habitant) ]]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-show="modalTab === 'edition'">
+                        <h4>Modification des informations de la tâche</h4>
+                        <div class="ds-form__group">
+                            <label for="nomInput">Nom :</label>
+                            <input v-model="tacheEditee.nom" id="nomInput">
+                        </div>
+                        <div class="ds-form__group">
+                            <label for="descriptionTextarea">Description :</label>
+                            <textarea v-model="tacheEditee.description"
+                                      id="descriptionTextarea"
+                                      :style="{resize: 'vertical'}"></textarea>
+                        </div>
+                        <div class="ds-form__group">
+                            <label for="imageInput">Illustration :</label>
+                            <div>
+                                <input v-model="tacheEditee.photo"
+                                       @input="updatePhotoUrl($event.target.value)"
+                                       id="imageInput"
+                                       placeholder="URL de l'image (optionnel)">
+                                <br>
+                                <input type="file"
+                                       id="photoFileInput"
+                                       accept="image/*"
+                                       :style="{display: 'inline'}">
+                                <button @click="uploadPhoto(tacheEditee)"
+                                        type="button"
+                                        class="ds-btn ds-btn--ghost">Uploader</button>
+                                <br>
+                                <img v-if="tacheEditee.photo_url"
+                                     :src="tacheEditee.photo_url"
+                                     width="340px"
+                                     alt="Illustration de la tâche" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="ds-modal__footer">
-                <button @click="enregistrerModifTache(tacheEditee)" type="button" class="ds-btn ds-btn--success">
-                    Enregistrer les modifications
-                </button>
-                <button @click="supprimerTache(tacheEditee)" type="button" class="ds-btn ds-btn--danger">
-                    Supprimer la tâche
-                </button>
+                <button @click="enregistrerModifTache(tacheEditee)"
+                        type="button"
+                        class="ds-btn ds-btn--success">Enregistrer les modifications</button>
+                <button @click="supprimerTache(tacheEditee)"
+                        type="button"
+                        class="ds-btn ds-btn--danger">Supprimer la tâche</button>
                 <button type="button" class="ds-btn ds-btn--ghost" @click="fermerModal">Fermer</button>
             </div>
         </dialog>
     </div>
 {% endblock %}
-
 {% block javascript %}
     {{ json|json_script:'logement' }}
     {{ request.user.profil.id|json_script:'idProfilConnecte' }}
-
     {% if debug %}
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     {% else %}
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
     {% endif %}
-
     <!-- Lodash sert à faire des deep copy d'objets -->
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
     {# Le formatage des dates utilise désormais Intl natif (plus de moment.js) #}
     <!-- Librairie pour les graphs -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-apexcharts"></script>
-
     <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
     <script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
     <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
-
     <script src="{% static 'super_moite_moite/js/vue.js' %}"></script>
 {% endblock %}
