@@ -310,6 +310,24 @@ textarea:focus {
     outline: none;
 }
 textarea { min-height: 6rem; resize: vertical; }
+/* <input type="search"> : Chrome/Safari lui appliquent une apparence native
+   (-webkit-appearance: searchfield) qui garde des coins arrondis même quand
+   on essaie de les aplatir (ex. dans un .ds-input-group avec une icône en
+   addon) — le champ ne fusionne jamais visuellement avec le reste du groupe.
+   On revient à l'apparence "normale" pour laisser nos propres border/radius
+   s'appliquer. */
+input[type="search"] {
+    -webkit-appearance: none;
+    appearance: none;
+}
+/* Idem pour les décorations internes (loupe/croix) que Chrome/Safari
+   ajoutent malgré tout. */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+}
 /* <select> natif (sans Tom Select) : le menu déroulant reste un composant OS
    qu'on ne peut pas entièrement retheme en CSS (le surlignage de l'option
    survolée suit l'accent système), mais fond/texte des <option> et l'accent
