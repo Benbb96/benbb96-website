@@ -99,8 +99,9 @@ Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvell
 
 ## super_moite_moite
 
-- [ ] **`logement_detail.html` (onglet Statistiques)** : les cartes des donuts ApexCharts sont très
-  hautes (beaucoup de vide vertical) — revoir la hauteur / le dimensionnement des graphes.
+- [x] **`logement_detail.html` (onglet Statistiques)** : hauteur des donuts ApexCharts fixée
+  (280px, au lieu du défaut ~400px sans rapport avec la largeur réelle) ; thème clair/sombre
+  synchronisé (`theme.mode` + tooltip) via `data.theme` (`vue.js`).
 
 ## tracker
 
