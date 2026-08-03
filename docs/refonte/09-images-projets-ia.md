@@ -73,15 +73,15 @@ le moment venu.
 | Projet | Fonction réelle (vérifiée dans le code) | Concept retenu | Statut |
 |---|---|---|---|
 | **Musique** | Rassemble ses morceaux favoris dans des playlists, alimentées depuis plusieurs plateformes de streaming. | Liste de lecture empilée (3 barres) + badge étoile (favoris) + lignes convergentes venant de la gauche (plusieurs plateformes) + note de musique au point de convergence. | ✅ Uploadée en local (régénération GPT, lignes lissées). |
-| **Mes avis** | Journal personnel et subjectif : le propriétaire teste des lieux (restos/cafés) et des produits, leur donne une note sur 10 selon son propre ressenti — pas un agrégateur public d'avis. | Une loupe qui examine une étoile. | ✅ Uploadée en local (Gemini, « Not bad »). ⚠️ Porte le petit filigrane « sparkle » que Gemini appose sur ses images générées — **à régénérer via ChatGPT** pour l'enlever. |
-| **Versus** | **Pas du sport** : logue des sessions de jeux (société ET vidéo — `versus/models.py` : `Joueur`, `Jeu`, `Partie`, `PartieJoueur`), calcule classements et ratios de victoire par joueur dans la durée. | Après plusieurs refus (podium+trophée = trop sportif ; dé+couronne = pas assez « versus » ; deux pions jumeaux = pas assez compétitif) : une tour d'échecs (jeu de société) et une manette (jeu vidéo), penchées l'une vers l'autre, lignes d'impact façon BD au point de contact. | ✅ Uploadée en local (Gemini, « ok »). Même filigrane « sparkle » que Mes avis — **à régénérer via ChatGPT** (une régénération GPT avait été demandée mais interrompue par le palier de génération gratuit). |
+| **Mes avis** | Journal personnel et subjectif : le propriétaire teste des lieux (restos/cafés) et des produits, leur donne une note sur 10 selon son propre ressenti — pas un agrégateur public d'avis. | Une loupe qui examine une étoile. | ✅ **Régénérée via ChatGPT** (2026-08-03), plus de filigrane. Upload différé : le propriétaire préfère uploader une fois la refonte déployée en prod plutôt qu'en local. |
+| **Versus** | **Pas du sport** : logue des sessions de jeux (société ET vidéo — `versus/models.py` : `Joueur`, `Jeu`, `Partie`, `PartieJoueur`), calcule classements et ratios de victoire par joueur dans la durée. | Après plusieurs refus (podium+trophée = trop sportif ; dé+couronne = pas assez « versus » ; deux pions jumeaux = pas assez compétitif) : une tour d'échecs (jeu de société) et une manette (jeu vidéo), penchées l'une vers l'autre, lignes d'impact façon BD au point de contact. | ✅ **Régénérée via ChatGPT** (2026-08-03), plus de filigrane. Upload différé (même raison que Mes avis). |
 | **Tracker** | Log un indicateur personnel récurrent dans le temps — soit un événement (occurrence), soit une mesure (`tracker/models.py` : `Tracker.type` = `evenement`/`mesure`) — pour en garder un historique consultable (fréquence, graphes). | Courbe ascendante avec quelques points, le dernier point plus gros/mis en avant (dernière entrée). | ✅ Uploadée en local (GPT, « Pas trop mal pour un 1er essai »). |
 | **MySpot** | Carte personnelle : marque des lieux réels découverts, y attache photos et notes, partage possible en privé à des groupes précis plutôt qu'en public (`my_spot/models.py` : `Spot`, `SpotPhoto`, notes, `groupes` M2M vers `SpotGroup`, visibilité public/partagé/caché). | Épingle de carte avec une petite icône photo (montagne + soleil) à la place du point habituel. | ✅ Uploadée en local (GPT, « pourrait être mieux mais ça ira ») — à retenter si le propriétaire veut mieux, pas urgent. |
 | **Super Moite Moite** | Tracker de tâches amélioré pour un couple/coloc : répartir équitablement les tâches ménagères récurrentes entre habitants d'un logement (`super_moite_moite/models.py` : `Logement.habitants` M2M vers `Profil`). | Une planchette/checklist coupée exactement en deux (moitié pleine jaune, moitié contour seul), une coche de chaque côté. | ✅ Uploadée en local (GPT). |
 | **Kendama Tricks** | Suit la pratique de tricks/combos/ladders de kendama, logue les tentatives, permet de revoir l'historique de fréquence de pratique (cf. [[06-kendama-a-preserver]] : `django-simple-history` sur `TrickPlayer`/`ComboPlayer` = cœur de l'UX). Cette vignette vit sur la home avec le thème principal du site — le thème « paper » autonome de kendama, lui, reste intouché. | Un kendama (pique + coupelle + balle sur fil) saisi en plein trick, balle en l'air, trait de trajectoire courbe. | ✅ Uploadée en local (GPT, « il s'en sort plutôt pas mal »). |
 | **Clips visuellement captivants** | Projet **externe** (`Projet.external=True`) — redirige vers un site tiers. | — | ✅ **Garder l'image actuelle** : c'est déjà une capture d'écran du site de destination, cohérent avec ce que l'utilisateur va voir en cliquant. Pas besoin d'y toucher. |
 | **Liste des Fresques** | Projet **externe** (`Projet.external=True`). | — | ✅ **Garder l'image actuelle** (même raison que ci-dessus). |
-| **Labyrinthe Game** | Projet **interne** (`Projet.external=False` — le jeu est servi par ce site, `base/templates/base/labyrinthe_game.html`). | — | ❓ **Pas encore traité.** Contrairement aux deux ci-dessus, ce n'est PAS un projet externe — la raison de « garder l'image actuelle » ne s'applique donc pas ici. Décision à prendre : générer une illustration IA (cohérent avec les autres projets internes) ou laisser tel quel. |
+| **Labyrinthe Game** | Projet **interne** (`Projet.external=False` — le jeu est servi par ce site, `base/templates/base/labyrinthe_game.html`, p5.js). Mécanique distinctive : un labyrinthe qui **se régénère à chaque niveau, toujours plus grand** (pas juste "un labyrinthe" générique). | Motif de labyrinthe carré à angles droits, dense/serré au centre et qui se desserre/s'étend vers les bords (suggère la croissance/régénération), un petit point (le joueur) sur le tracé du chemin. | 🔄 **En cours** (2026-08-03) — concept retenu, prompt rédigé, génération pas encore lancée. |
 
 ### Nuance constatée : fond pas identique entre thèmes clair/sombre
 
@@ -105,11 +105,14 @@ collage » suffit à reconstruire un bon prompt.
 
 - [x] Générer et uploader (en local) les 7 images : Musique, Mes avis, Versus, Tracker, MySpot,
   Super Moite Moite, Kendama Tricks.
-- [ ] Régénérer **Mes avis** et **Versus** via ChatGPT pour enlever le filigrane « sparkle » de
-  Gemini (cf. tableau ci-dessus).
-- [ ] Statuer sur **Labyrinthe Game** (générer une image ou laisser tel quel).
-- [ ] Synchroniser les images retenues côté **prod** (stockage GCS) — pour l'instant seulement en
-  base locale.
+- [x] Régénérer **Mes avis** et **Versus** via ChatGPT pour enlever le filigrane « sparkle » de
+  Gemini (cf. tableau ci-dessus). Upload en local différé (voir ci-dessous).
+- [ ] **Labyrinthe Game** : concept retenu (labyrinthe qui se régénère/s'étend), prompt prêt (cf.
+  tableau) — génération à lancer.
+- [ ] Uploader (en local) les images retenues **Mes avis**/**Versus** (et Labyrinthe Game une fois
+  générée) : décision du propriétaire de tout uploader **après le déploiement de la refonte**
+  plutôt qu'en local d'abord.
+- [ ] Synchroniser les images retenues côté **prod** (stockage GCS).
 - [ ] **Champ description par projet** (discuté mais différé) : ajouter `Projet.description_fr`
   / `Projet.description_en` (deux champs texte simples, PAS `django-modeltranslation` — le
   projet évite les dépendances neuves pour un besoin d'une dizaine de lignes) + une méthode de
