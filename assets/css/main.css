@@ -481,33 +481,6 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 .ds-card--hover:focus-within::before { transform: scaleX(1); }
 .ds-card__media { display: block; width: 100%; }
 .ds-card__media img { display: block; width: 100%; object-fit: cover; }
-/* Variante vignette générée (icône + étiquette) — remplace une photo
-   uploadée par un aplat qui reste toujours dans le thème (voir
-   base/templatetags/custom_tags.py:project_icon_meta + components/icons.html). */
-.ds-card__media--tile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    aspect-ratio: 16 / 10;
-    background: var(--ds-secondary);
-    color: rgba(255, 255, 255, 0.9);
-}
-.ds-card__media--tile .ds-card__icon { width: 2.6rem; height: 2.6rem; }
-.ds-card__media--tile .ds-card__tag {
-    position: absolute;
-    top: 0.65rem;
-    left: 0.65rem;
-    font-family: var(--ds-font-mono);
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--ds-primary-ink);
-    background: var(--ds-primary);
-    padding: 0.2rem 0.45rem;
-    border-radius: 3px;
-}
 .ds-card__body { padding: var(--ds-space-5); }
 .ds-card__title { margin-top: 0; }
 .ds-card__footer {

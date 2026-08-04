@@ -14,6 +14,10 @@
   (sticker) était un peu mieux mais restait nettement moins abouti que les illustrations IA.
   **Commit revert** (`git revert` du commit `feat(home): teste des vignettes SVG générées à
   la place des photos`) — ne pas relancer cette piste telle quelle sans nouvelle idée.
+  Le revert avait laissé le CSS orphelin dans `main.css` (`.ds-card__media--tile`,
+  `.ds-card__icon`, `.ds-card__tag`) avec un commentaire renvoyant à
+  `project_icon_meta` / `components/icons.html`, tous deux supprimés : **nettoyé le
+  2026-08-04**. Ces classes n'existent donc plus.
 - **Décision actée** : on reste sur de vraies images en base (`Projet.image`), générées par IA
   puis uploadées manuellement par le propriétaire via l'admin Django (je n'ai pas d'accès
   fichier aux images générées dans le chat — seulement une vision de l'image partagée).
