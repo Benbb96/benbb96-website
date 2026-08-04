@@ -85,7 +85,7 @@ le moment venu.
 | **Kendama Tricks** | Suit la pratique de tricks/combos/ladders de kendama, logue les tentatives, permet de revoir l'historique de fréquence de pratique (cf. [[06-kendama-a-preserver]] : `django-simple-history` sur `TrickPlayer`/`ComboPlayer` = cœur de l'UX). Cette vignette vit sur la home avec le thème principal du site — le thème « paper » autonome de kendama, lui, reste intouché. | Un kendama (pique + coupelle + balle sur fil) saisi en plein trick, balle en l'air, trait de trajectoire courbe. | ✅ Uploadée en local (GPT, « il s'en sort plutôt pas mal »). |
 | **Clips visuellement captivants** | Projet **externe** (`Projet.external=True`) — redirige vers un site tiers. | — | ✅ **Garder l'image actuelle** : c'est déjà une capture d'écran du site de destination, cohérent avec ce que l'utilisateur va voir en cliquant. Pas besoin d'y toucher. |
 | **Liste des Fresques** | Projet **externe** (`Projet.external=True`). | — | ✅ **Garder l'image actuelle** (même raison que ci-dessus). |
-| **Labyrinthe Game** | Projet **interne** (`Projet.external=False` — le jeu est servi par ce site, `base/templates/base/labyrinthe_game.html`, p5.js). Mécanique distinctive : un labyrinthe qui **se régénère à chaque niveau, toujours plus grand** (pas juste "un labyrinthe" générique). | Génération IA testée (motif de labyrinthe carré, dense au centre, qui se desserre vers les bords, un point pour le joueur) — correcte mais jugée moins parlante qu'un vrai aperçu du jeu. | ✅ **Décidé (2026-08-03) : garder le vrai screenshot du jeu**, pas d'illustration IA — plus parlant pour un jeu réellement jouable qu'une icône abstraite. Voir chantier séparé ci-dessous (palette du jeu) si le rendu doit un jour matcher la charte. |
+| **Labyrinthe Game** | Projet **interne** (`Projet.external=False` — le jeu est servi par ce site, `base/templates/base/labyrinthe_game.html`, p5.js). Mécanique distinctive : un labyrinthe qui **se régénère à chaque niveau, toujours plus grand** (pas juste "un labyrinthe" générique). | Génération IA testée (motif de labyrinthe carré, dense au centre, qui se desserre vers les bords, un point pour le joueur) — correcte mais jugée moins parlante qu'un vrai aperçu du jeu. | ✅ **Décidé (2026-08-03) : garder le vrai screenshot du jeu**, pas d'illustration IA — plus parlant pour un jeu réellement jouable qu'une icône abstraite. Screenshot **regénéré le 2026-08-03** après la reprise de la palette du jeu ([[10-labyrinthe-game]]) : il montre maintenant les couleurs de la charte. Reste à synchroniser côté prod (GCS). |
 
 ### Nuance constatée : fond pas identique entre thèmes clair/sombre
 
@@ -116,15 +116,14 @@ collage » suffit à reconstruire un bon prompt.
 - [ ] Uploader (en local ou directement en prod) les images retenues **Mes avis**/**Versus** :
   décision du propriétaire de tout uploader **après le déploiement de la refonte**.
 - [ ] Synchroniser les images retenues côté **prod** (stockage GCS).
-- [ ] **Chantier séparé (hors passe design, basse priorité) : palette du jeu Labyrinthe Game.**
-  Le jeu (`base/static/base/js/labyrinthe_game/*.js`, p5.js) a ses couleurs codées en dur et
-  éparpillées sur plusieurs fichiers (`Wall.js`, `Player.js`, `Labyrinthe.js`,
-  `LabyrintheGame.js` : mur/fond, marqueurs départ/arrivée en bleu/vert/rouge, flash rouge,
-  panneaux blancs...). Un vrai retouchage de palette (jaune/dark mode) demanderait de revoir
-  toutes ces valeurs en faisant attention à ne pas casser la lisibilité du gameplay (contraste
-  mur/chemin/joueur fonctionnel, pas que cosmétique) — pas un simple swap de variable CSS. À
-  faire uniquement si le propriétaire veut vraiment retravailler le jeu lui-même ; si fait un
-  jour, prendre un nouveau screenshot pour remplacer celui utilisé sur la home.
+- [x] **Chantier séparé : palette du jeu Labyrinthe Game — ✅ fait le 2026-08-03.**
+  Détail complet dans [[10-labyrinthe-game]]. En résumé : les couleurs codées en dur sur
+  5 fichiers passent par les tokens `--ds-*` (nouveau `Palette.js`, branché sur l'événement
+  `benbb96:themechange` comme `tracker/.../common.js` pour Chart.js), donc le jeu suit le
+  thème clair/sombre. Le joueur porte le jaune de marque en aplat ; départ/arrivée se
+  distinguent désormais **par la forme** (carré évidé vs cible) et pas seulement par la teinte
+  (vert/rouge sont confondus en daltonisme rouge-vert). Nouveau screenshot de la home généré
+  (`media/projet/Labyrinthe_Game.png`, 800×500, cadrage 16/10 comme les vignettes générées).
 - [ ] **Champ description par projet** (discuté mais différé) : ajouter `Projet.description_fr`
   / `Projet.description_en` (deux champs texte simples, PAS `django-modeltranslation` — le
   projet évite les dépendances neuves pour un besoin d'une dizaine de lignes) + une méthode de
