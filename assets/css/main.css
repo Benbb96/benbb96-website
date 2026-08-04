@@ -40,6 +40,11 @@
                                        16-19. Composants apps / hérités
                                        20. Home + About (parcours, pills, chips)
 
+   Feuilles hors de ce fichier, chargées par une seule page via
+   {% block stylesheet %} : base/static/base/css/labyrinthe.css (jeu Labyrinthe),
+   tracker/static/tracker/css/tracker-style.css. Ce qui ne sert qu'à UNE page
+   n'a pas à être téléchargé sur tout le site.
+
    ── DIRECTION VISUELLE (passe design) ─────────────────────────────────────
    Jaune de marque = --ds-primary (accent uniquement : fonds/badges/traits
    avec du texte foncé --ds-primary-ink dessus — jamais de texte/lien jaune).

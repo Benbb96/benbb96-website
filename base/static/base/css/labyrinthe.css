@@ -1,0 +1,99 @@
+/* =============================================================================
+   Jeu Labyrinthe — habillage de la page (base/templates/base/labyrinthe_game.html)
+   =============================================================================
+
+   Chargé UNIQUEMENT par la page du jeu, via {% block stylesheet %} — même
+   convention que tracker/static/tracker/css/tracker-style.css. Ces classes ne
+   servent nulle part ailleurs, elles n'ont donc rien à faire dans le CSS global.
+   Les tokens --ds-* viennent de assets/css/main.css, chargé avant celui-ci.
+
+   Le jeu lui-même est dessiné dans un <canvas> par p5.js et lit les tokens
+   --ds-* en JS (base/static/base/js/labyrinthe_game/Palette.js) : il suit donc
+   le thème clair/sombre comme le reste du site. Ce fichier ne style que ce qui
+   l'entoure — cadre du terrain, HUD (niveau/chrono/record) et pavé directionnel
+   tactile, tous en HTML pour rester thémés et accessibles.
+   ============================================================================ */
+
+.ds-laby {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-3);
+    /* Doit rester aligné sur le plafond de canvasSize() (600 px) : c'est la
+       largeur de ce conteneur que le JS mesure pour dimensionner le terrain. */
+    max-width: 600px;
+    margin: 0 auto var(--ds-space-6);
+}
+
+/* Bandeau d'état au-dessus du terrain */
+.ds-laby__hud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ds-space-3);
+    padding: var(--ds-space-3) var(--ds-space-4);
+    background: var(--ds-surface-alt);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-radius);
+}
+.ds-laby__stats { display: flex; flex-wrap: wrap; gap: var(--ds-space-4); margin: 0; }
+.ds-laby__stat dt {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ds-text-muted);
+}
+.ds-laby__stat dd {
+    margin: 0;
+    font-family: var(--ds-font-mono);
+    font-weight: 700;
+    /* Chiffres à largeur fixe + réserve sur le chrono : il se réécrit ~60 fois
+       par seconde et ferait sautiller tout le bandeau à chaque changement. */
+    font-variant-numeric: tabular-nums;
+}
+.ds-laby__stat dd[data-laby-time] { min-width: 9ch; }
+.ds-laby__actions { display: flex; gap: var(--ds-space-2); }
+/* Bouton « Son » désactivé : on garde le texte lisible, juste atténué */
+.ds-laby__actions [data-laby-sound].is-off { color: var(--ds-text-muted); text-decoration: line-through; }
+
+/* Cadre du terrain de jeu — le canvas p5 y est injecté par canvas.parent() */
+.ds-laby__stage {
+    display: flex;
+    justify-content: center;
+    /* Pas de padding : canvasSize() lit clientWidth, qui l'inclurait, et le
+       terrain déborderait alors de son cadre. */
+    padding: 0;
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-radius);
+    box-shadow: var(--ds-shadow-sm);
+    overflow: hidden;
+    min-height: 240px;
+}
+/* Sans ceci, le canvas reste inline et traîne un espace de descendante en bas */
+.ds-laby__stage canvas { display: block; }
+.ds-laby__noscript { margin: var(--ds-space-6) auto; color: var(--ds-text-muted); }
+
+/* Pavé directionnel (3×3) — indispensable au tactile, utilisable à la souris */
+.ds-laby__pad {
+    display: grid;
+    grid-template-columns: repeat(3, 3.25rem);
+    grid-template-rows: repeat(3, 3.25rem);
+    gap: var(--ds-space-2);
+    justify-content: center;
+    user-select: none;
+}
+.ds-laby__key {
+    padding: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+    /* Coupe le zoom au double-appui : les appuis répétés d'un joueur pressé
+       seraient sinon interprétés comme un geste de zoom par le navigateur. */
+    touch-action: manipulation;
+}
+.ds-laby__key--up { grid-area: 1 / 2; }
+.ds-laby__key--left { grid-area: 2 / 1; }
+.ds-laby__key--ok { grid-area: 2 / 2; font-size: 0.95rem; }
+.ds-laby__key--right { grid-area: 2 / 3; }
+.ds-laby__key--down { grid-area: 3 / 2; }
