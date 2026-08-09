@@ -75,6 +75,11 @@ Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvell
   sites externes). Reste : régénérer Mes avis/Versus (filigrane Gemini), statuer sur Labyrinthe
   Game, synchroniser en prod, puis ajouter `Projet.description_fr`/`description_en` (différé).
   Détail complet dans [09-images-projets-ia.md](09-images-projets-ia.md).
+- [x] **Tunnel « mot de passe oublié »** : les 4 étapes (`password_reset_form/done/confirm/complete`)
+  n'étaient pas surchargées → Django servait celles de `contrib.admin`, donc thème admin bleu, hors
+  design system et hors dark mode. Templates créés dans `templates/registration/` sur le pattern
+  `login.html`/`signup.html`. Au passage, `password_reset_complete` pointait sur
+  `PasswordResetConfirmView` (500 en fin de parcours) → corrigé en `PasswordResetCompleteView`.
 
 ## avis
 

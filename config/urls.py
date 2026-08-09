@@ -60,7 +60,7 @@ urlpatterns += i18n_patterns(
     ),
     path(
         "reset/done/",
-        auth_views.PasswordResetConfirmView.as_view(),
+        auth_views.PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
 )
