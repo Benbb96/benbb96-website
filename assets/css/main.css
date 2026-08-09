@@ -1484,6 +1484,24 @@ a.platformLink:focus, a.platformLink:active { text-decoration: none; color: red;
 
 /* Rallye des Colocs (base/rallye.html) + cartes Google Maps (#map) */
 #map { height: 400px; width: 100%; }
+
+/* InfoWindow Google Maps (my_spot) : suit le thème du site. Sans ça, la bulle reste
+   blanche (défaut Google) alors que le contenu hérite du texte clair du dark mode →
+   illisible. Les tokens --ds-* basculent déjà avec le thème, donc on peint la bulle avec
+   (identique au blanc Google en thème clair, sombre en thème sombre). `!important` :
+   nécessaire pour écraser le CSS injecté par Google Maps. */
+.gm-style .gm-style-iw-c,
+.gm-style .gm-style-iw-d {
+    background: var(--ds-surface) !important;
+    color: var(--ds-text);
+}
+.gm-style .gm-style-iw-tc::after {
+    background: var(--ds-surface) !important;
+}
+/* Bouton de fermeture (X) : icône = masque coloré → la rendre visible sur fond sombre */
+.gm-style-iw button.gm-ui-hover-effect > span {
+    background-color: var(--ds-text) !important;
+}
 .hotes { text-align: center; }
 .hote { width: 70%; margin-left: auto; text-align: left; }
 .number {
