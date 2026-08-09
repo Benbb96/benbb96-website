@@ -382,7 +382,7 @@ Réalisé par lots (1 commit par sujet). Validé après chaque lot : `check` OK,
   venv existant du Web tab (`UV_PROJECT_ENVIRONMENT`), `UV_PYTHON_PREFERENCE=only-system`. Procédure +
   **prérequis prod manuels** documentés dans [08-deploiement-uv.md](08-deploiement-uv.md).
   ⚠️ **Workflow non validé tant que la prod n'a pas été testée à la main** (installer uv sur PA + jouer
-  la séquence + recharger le Web tab, AVANT de merger sur `master`).
+  la séquence + recharger le Web tab, AVANT de merger sur `main`).
 - **LOT 3 — `ruff` (lint + format).** `[tool.ruff]` target py313, règles E,F,I,UP,B,DJ (migrations
   exclues). `ruff check --fix` + `ruff format` sur tout le projet (gros diff : imports triés,
   guillemets doubles, %-format → f-strings). ⚠️ Piège évité : `ruff` avait retiré `import base.signals`
@@ -520,8 +520,8 @@ une feature indépendante, à faire à tout moment.
 
 ## Rappels opérationnels
 
-- Déploiement : push sur `master` déclenche le déploiement PythonAnywhere. Travailler sur la
-  branche `refonte`, fusionner par incréments testés.
+- Déploiement : push sur `main` déclenche le déploiement PythonAnywhere. Travailler sur une
+  branche dédiée, fusionner par incréments testés via PR.
 - Pas de trailer `Co-Authored-By` dans les commits ; ne pas utiliser le skill `/commit`.
 - Vérifier `makemigrations --check` et `python manage.py check` à chaque phase.
 - **Rejouer la suite de tests de smoke (27 tests, livrés en Phase 0) après chaque phase**, en

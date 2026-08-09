@@ -2,7 +2,7 @@ name: Deploy to PythonAnywhere
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   Deploy-Through-SSH:
     runs-on: ubuntu-latest

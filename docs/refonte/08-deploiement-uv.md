@@ -6,7 +6,7 @@
 
 ## Principe
 
-- Déclencheur inchangé : un `push` sur `master` lance
+- Déclencheur inchangé : un `push` sur `main` lance
   `.github/workflows/deploy-to-pythonanywhere.yml` (SSH via `appleboy/ssh-action`).
 - On installe les dépendances **dans le virtualenv existant** de PythonAnywhere
   (`~/.virtualenvs/benbb96`), celui que pointe le **Web tab** de PA. Le Web tab n'est **pas** modifié.
@@ -41,10 +41,10 @@ touch /var/www/www_benbb96_com_wsgi.py
 > ⚠️ Adapter `$HOME/.local/bin/uv` si l'installateur a placé le binaire ailleurs
 > (vérifier avec `which uv` / `command -v uv` en SSH).
 
-## ⚠️ PRÉREQUIS PROD — actions MANUELLES à faire AVANT de merger sur `master`
+## ⚠️ PRÉREQUIS PROD — actions MANUELLES à faire AVANT de merger sur `main`
 
 Ces étapes ne peuvent pas être exécutées par un agent (pas d'accès prod). **Le propriétaire doit les
-faire à la main en SSH sur PythonAnywhere**, et ne merger sur `master` **qu'une fois le test OK**.
+faire à la main en SSH sur PythonAnywhere**, et ne merger sur `main` **qu'une fois le test OK**.
 
 1. **Installer uv sur PythonAnywhere** (accès réseau sortant requis — OK sur les offres payantes PA) :
    ```bash
@@ -70,7 +70,7 @@ faire à la main en SSH sur PythonAnywhere**, et ne merger sur `master` **qu'une
    "$UV_PROJECT_ENVIRONMENT/bin/python" -c "import adminsortable, soundcloud; print('forks OK')"
    ```
 
-3. **Seulement une fois ce test OK → merger sur `master`.** Le déploiement automatique utilisera uv.
+3. **Seulement une fois ce test OK → merger sur `main`.** Le déploiement automatique utilisera uv.
 
 ## Filet de secours (si installer uv sur PA pose problème)
 

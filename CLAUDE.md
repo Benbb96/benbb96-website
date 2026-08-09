@@ -156,7 +156,7 @@ l'importe au chargement.
 
 ## Déploiement
 
-Push sur `master` → `.github/workflows/deploy-to-pythonanywhere.yml` (SSH) → `git pull`,
+Push sur `main` → `.github/workflows/deploy-to-pythonanywhere.yml` (SSH) → `git pull`,
 `uv sync --frozen --no-dev` dans `~/.virtualenvs/benbb96`, `migrate`, `collectstatic`, `touch wsgi`.
 Aucune étape de build front. Détails et prérequis manuels dans `docs/refonte/08-deploiement-uv.md`.
 

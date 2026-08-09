@@ -18,7 +18,7 @@
 
 ## Contraintes connues
 
-- **Hébergement** : PythonAnywhere, déploiement par SSH sur push `master`
+- **Hébergement** : PythonAnywhere, déploiement par SSH sur push `main`
   (`.github/workflows/deploy-to-pythonanywhere.yml`). `git pull` → `pip install` →
   `migrate` → `collectstatic` → `touch wsgi`.
 - **Base de données** : **SQLite** en prod (`db.sqlite3`) comme en dev.
@@ -44,6 +44,7 @@
 | 7 | [07-design-todo.md](07-design-todo.md) | Backlog de la passe design sur les templates |
 | 8 | [08-deploiement-uv.md](08-deploiement-uv.md) | Déploiement PythonAnywhere sur uv + prérequis prod manuels (Phase 9) |
 | 9 | [09-images-projets-ia.md](09-images-projets-ia.md) | Génération IA des images de projets (home) : méthode, prompts, état par projet |
+| 10 | [10-mise-en-prod.md](10-mise-en-prod.md) | Checklist du 1er déploiement + renommage `master`→`main` |
 | 10 | [10-labyrinthe-game.md](10-labyrinthe-game.md) | Jeu Labyrinthe (p5.js) : palette sur tokens `--ds-*`, dark mode, mobile, bugs corrigés |
 
 ## Résumé exécutif des décisions

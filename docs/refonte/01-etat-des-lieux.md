@@ -11,7 +11,7 @@ autres documents.
 - **Front** : Bootstrap 3.3.7 (CDN) + jQuery (via `django-bootstrap3`), FontAwesome 6, CSS maison.
 - **Pas de build front** (pas de npm/webpack). JS en CDN, en `static/`, ou inline.
 - **API** : Django REST Framework + SimpleJWT (app mobile + frontends Vue externes).
-- **Hébergement** : PythonAnywhere ; CI/CD GitHub Actions (deploy SSH sur push `master`) +
+- **Hébergement** : PythonAnywhere ; CI/CD GitHub Actions (deploy SSH sur push `main`) +
   CodeQL (`.github/workflows/codeql-analysis.yml`).
 
 ## Apps Django et leur état
