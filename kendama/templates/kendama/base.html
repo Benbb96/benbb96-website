@@ -45,9 +45,13 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'logout' %}">
-                                Déconnexion
-                            </a>
+                            {# Django 5.1+ : LogoutView n'accepte que le POST (un GET renvoie 405). #}
+                            <form method="post" action="{% url 'logout' %}" class="nav-logout">
+                                {% csrf_token %}
+                                <button type="submit">
+                                    Déconnexion
+                                </button>
+                            </form>
                         </li>
                     {% else %}
                         <li>

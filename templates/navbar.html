@@ -75,7 +75,11 @@
                         <a href="{% url 'base:profil' request.user.username %}">{% fa6_icon 'user' %} {{ request.user }}</a>
                     </li>
                     <li class="ds-nav__item">
-                        <a href="{% url 'logout' %}">{% fa6_icon 'right-from-bracket' %} {% trans "Logout" %}</a>
+                        {# Django 5.1+ : LogoutView n'accepte que le POST (un GET renvoie 405). #}
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit">{% fa6_icon 'right-from-bracket' %} {% trans "Logout" %}</button>
+                        </form>
                     </li>
                 {% endif %}
             </ul>

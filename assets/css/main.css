@@ -77,6 +77,12 @@
     --ds-warning: #d9660b;
     --ds-danger: #c1432c;
 
+    /* Teintage des alertes : dosage du mélange couleur sémantique → surface
+       (cf. §8). En sombre il faut monter le dosage pour que le fond teinté
+       reste perceptible sur une surface foncée — d'où l'override par thème. */
+    --ds-alert-tint: 7%;
+    --ds-alert-border-tint: 35%;
+
     /* Surfaces & texte — neutres chauds */
     --ds-bg: #f7f5ef;
     --ds-surface: #ffffff;
@@ -140,6 +146,9 @@
         --ds-warning: #e2883f;
         --ds-danger: #e0715a;
 
+        --ds-alert-tint: 18%;
+        --ds-alert-border-tint: 45%;
+
         --ds-bg: #15130e;
         --ds-surface: #1d1a13;
         --ds-surface-alt: #262218;
@@ -157,6 +166,7 @@
     --ds-primary: #e0ab2c; --ds-primary-dark: #f0c04a; --ds-primary-light: #332a12; --ds-primary-ink: #17130a;
     --ds-secondary: #0f0d09;
     --ds-success: #63a86f; --ds-info: #5da0c4; --ds-warning: #e2883f; --ds-danger: #e0715a;
+    --ds-alert-tint: 18%; --ds-alert-border-tint: 45%;
     --ds-bg: #15130e; --ds-surface: #1d1a13; --ds-surface-alt: #262218;
     --ds-text: #f3efe3; --ds-text-muted: #b5ad97; --ds-border: #35301f; --ds-border-strong: #4a4328;
     --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -167,6 +177,7 @@
     --ds-primary: #f2c200; --ds-primary-dark: #caa100; --ds-primary-light: #fdf1c7; --ds-primary-ink: #201a08;
     --ds-secondary: #1c1912;
     --ds-success: #3f7d4a; --ds-info: #2f6f8f; --ds-warning: #d9660b; --ds-danger: #c1432c;
+    --ds-alert-tint: 7%; --ds-alert-border-tint: 35%;
     --ds-bg: #f7f5ef; --ds-surface: #ffffff; --ds-surface-alt: #efece1;
     --ds-text: #1c1912; --ds-text-muted: #5c5646; --ds-border: #e3ddc9; --ds-border-strong: #cabf9e;
     --ds-shadow-sm: 0 1px 2px rgba(28, 25, 18, 0.06);
@@ -495,15 +506,19 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 }
 
 /* 8. ─────────────────────── ALERTS / MESSAGES DJANGO ───────────────────── */
+/* Une variante ne pose QUE --_c : le fond et la bordure sont dérivés de cette
+   couleur et de la surface courante, donc ils suivent le thème tout seuls.
+   Ne PAS remettre de hex clair en dur ici (c'était le bug : pastel clair sur
+   fond sombre). Dosage du mélange : --ds-alert-tint / --ds-alert-border-tint. */
 .ds-alert {
     --_c: var(--ds-info);
-    --_bg: #f0f9ff;
+    --_bg: color-mix(in srgb, var(--_c) var(--ds-alert-tint), var(--ds-surface));
     display: flex;
     align-items: flex-start;
     gap: var(--ds-space-3);
     padding: var(--ds-space-3) var(--ds-space-4);
     margin-bottom: var(--ds-space-4);
-    border: 1px solid color-mix(in srgb, var(--_c) 35%, white);
+    border: 1px solid color-mix(in srgb, var(--_c) var(--ds-alert-border-tint), var(--ds-surface));
     border-left: 4px solid var(--_c);
     border-radius: var(--ds-radius);
     background: var(--_bg);
@@ -511,11 +526,11 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 }
 .ds-alert__icon { color: var(--_c); flex: 0 0 auto; margin-top: 0.15em; }
 .ds-alert__content { flex: 1 1 auto; }
-.ds-alert--success { --_c: var(--ds-success); --_bg: #f0fdf4; }
-.ds-alert--info    { --_c: var(--ds-info);    --_bg: #f0f9ff; }
-.ds-alert--warning { --_c: var(--ds-warning); --_bg: #fffbeb; }
+.ds-alert--success { --_c: var(--ds-success); }
+.ds-alert--info    { --_c: var(--ds-info); }
+.ds-alert--warning { --_c: var(--ds-warning); }
 .ds-alert--danger,
-.ds-alert--error   { --_c: var(--ds-danger);  --_bg: #fef2f2; }
+.ds-alert--error   { --_c: var(--ds-danger); }
 .ds-alert--debug   { --_c: var(--ds-text-muted); --_bg: var(--ds-surface-alt); }
 
 /* Fermeture sans JS : case à cocher cachée + label « × » */
@@ -643,7 +658,11 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
     padding: 0;
 }
 .ds-nav__menu--right { margin-left: auto; }
-.ds-nav__item > a {
+/* La déconnexion est un <form> POST (Django 5.1+) : son bouton doit se
+   présenter exactement comme les autres entrées de menu. */
+.ds-nav__item > form { display: flex; margin: 0; }
+.ds-nav__item > a,
+.ds-nav__item > form > button {
     display: inline-flex;
     align-items: center;
     gap: var(--ds-space-2);
@@ -655,7 +674,15 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
     position: relative;
     transition: background var(--ds-transition), color var(--ds-transition);
 }
-.ds-nav__item > a:hover { color: #fff; background: rgba(255, 255, 255, 0.1); text-decoration: none; }
+.ds-nav__item > form > button {
+    border: 0;
+    background: none;
+    font-family: inherit;
+    line-height: inherit;
+    cursor: pointer;
+}
+.ds-nav__item > a:hover,
+.ds-nav__item > form > button:hover { color: #fff; background: rgba(255, 255, 255, 0.1); text-decoration: none; }
 /* Indicateur actif : trait jaune signature (pas un fond plein — le jaune
    reste un accent ponctuel, pas une masse de couleur). */
 .ds-nav__item.is-active > a { color: #fff; }

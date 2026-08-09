@@ -28,3 +28,40 @@
 .help-block {
     color: #a7342d;
 }
+
+/* Déconnexion : Django 5.1+ n'accepte plus le GET sur LogoutView, le lien du
+   menu est donc devenu un <form> POST. Le <button> doit rester visuellement
+   identique aux autres liens du menu (« nav a » + « nav ul.inline li a » de
+   paper.css) et surtout ne pas hériter du style « bouton paper » (cadre
+   ondulé, ombre portée). Feuille chargée après paper.css → cette règle gagne. */
+nav .nav-logout {
+    display: inline-block;
+    vertical-align: baseline;
+    margin: 0;
+}
+
+nav .nav-logout button {
+    display: inline-block;
+    vertical-align: baseline;
+    appearance: none;
+    -webkit-appearance: none;
+    white-space: nowrap;
+    line-height: inherit;
+    margin: 0;
+    padding: 0 0 .1rem;
+    background: none;
+    border: 0;
+    border-bottom: 5px solid #41403e;
+    border-radius: 0;
+    border-bottom-left-radius: 15px 3px;
+    border-bottom-right-radius: 15px 5px;
+    box-shadow: none;
+    color: #41403e;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1.3rem;
+}
+
+nav .nav-logout button:hover {
+    border-bottom-color: #c1c0bd;
+}

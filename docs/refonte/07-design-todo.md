@@ -80,6 +80,15 @@ Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvell
   design system et hors dark mode. Templates créés dans `templates/registration/` sur le pattern
   `login.html`/`signup.html`. Au passage, `password_reset_complete` pointait sur
   `PasswordResetConfirmView` (500 en fin de parcours) → corrigé en `PasswordResetCompleteView`.
+- [x] **`.ds-alert` en thème sombre (sitewide)** : les fonds des variantes étaient des hex clairs en
+  dur (`#f0fdf4`, `#f0f9ff`…) et la bordure mixée avec `white` → pastel clair sur fond sombre sur
+  *toutes* les alertes du site. Fond et bordure désormais dérivés de `--_c` + `--ds-surface` via
+  `color-mix()`, dosés par `--ds-alert-tint` / `--ds-alert-border-tint` (7 %/35 % en clair,
+  18 %/45 % en sombre). Une variante ne pose plus que `--_c` — ne jamais y remettre de hex en dur.
+- [x] **Déconnexion (405)** : `LogoutView` n'accepte plus le GET depuis Django 5.1, les deux liens
+  du menu (navbar `.ds-*` et kendama) renvoyaient 405. Passés en `<form method="post">` ; le bouton
+  est restylé pour rester indiscernable d'une entrée de menu, côté kendama dans sa feuille propre
+  `style.css` (le `paper.css` vendorisé n'est pas touché, rendu vérifié identique au lien).
 
 ## avis
 
