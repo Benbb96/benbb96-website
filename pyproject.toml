@@ -1,6 +1,6 @@
 [project]
 name = "benbb96-website"
-version = "0.1.0"
+version = "1.0.0"
 description = "Site web personnel de Benbb96 (Django)"
 readme = "README.md"
 requires-python = ">=3.13"

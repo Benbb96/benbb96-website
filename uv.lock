@@ -25,7 +25,7 @@ wheels = [
 
 [[package]]
 name = "benbb96-website"
-version = "0.1.0"
+version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
     { name = "django" },
