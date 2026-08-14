@@ -23,7 +23,7 @@ dependencies = [
     "Pillow==12.3.0",
     "django-storages[google]==1.14.6",
     "python-slugify==8.0.0",
-    "redis==4.5.4",  # requis par spotipy (cache_handler importe redis au chargement du module)
+    "redis==8.1.0",  # requis par spotipy (cache_handler importe redis au chargement du module)
     "requests==2.33.0",
     "setuptools==83.0.0",
     "soundcloud",  # fork Benbb96 — voir [tool.uv.sources]
