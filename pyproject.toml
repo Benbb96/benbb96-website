@@ -83,9 +83,9 @@ ignore = ["E501", "DJ001", "DJ006", "DJ007", "DJ008", "DJ012"]
 
 [tool.djlint]
 profile = "django"
-# ⚠️ CONFIGURATION SEULEMENT — ne PAS lancer `djlint --reformat` : une passe design
-# est en cours sur les templates (docs/refonte/07-design-todo.md), un reformatage
-# global entrerait en conflit. Usage prévu : `uv run djlint . --lint` (rapport).
+# ⚠️ CONFIGURATION SEULEMENT — ne PAS lancer `djlint --reformat` : une passe design a
+# retravaillé les templates, un reformatage global entrerait en conflit avec
+# d'éventuelles retouches restantes. Usage prévu : `uv run djlint . --lint` (rapport).
 #
 # Règles ignorées car en conflit avec les conventions établies du projet (les
 # imposer ne ferait que du bruit / voudrait dire tout reformater) :

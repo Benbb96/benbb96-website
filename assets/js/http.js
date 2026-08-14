@@ -1,9 +1,7 @@
 /* =============================================================================
    benbb96 — Helper HTTP vanilla (fetch + CSRF)
    =============================================================================
-   Remplace progressivement l'usage de jQuery $.ajax pour les requêtes AJAX.
-   Pendant la transition (Phases 3 → 5), jQuery et son $.ajaxSetup restent
-   chargés dans base.html pour les apps non encore migrées (music, tracker).
+   Toutes les requêtes AJAX du site (a remplacé l'ancien jQuery $.ajax / $.ajaxSetup).
 
    API exposée sur window.http :
      - http.getCookie(name)            → valeur du cookie (ou null)
