@@ -25,7 +25,7 @@ dependencies = [
     "python-slugify==8.0.0",
     "redis==4.5.4",  # requis par spotipy (cache_handler importe redis au chargement du module)
     "requests==2.33.0",
-    "setuptools==83.0.0",
+    "setuptools==84.0.0",
     "soundcloud",  # fork Benbb96 — voir [tool.uv.sources]
     "spotipy==2.25.2",
 ]
