@@ -43,7 +43,7 @@
 
     {% fontawesome_6_static %}
 
-    {# Design system maison + styles hérités, tout dans main.css (Phase 6). #}
+    {# Design system maison + styles hérités, tout dans main.css. #}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 
     {% block stylesheet %}{% endblock %}
@@ -80,7 +80,7 @@
    ── JavaScript ──
    http.js : helper fetch + CSRF vanilla (window.http) pour tout le code public.
    theme.js : toggle clair/sombre/auto de la navbar (persistance localStorage).
-   Plus aucune dépendance à jQuery / Bootstrap-JS / select2 / moment (Phase 5).
+   Plus aucune dépendance à jQuery / Bootstrap-JS / select2 / moment.
 {% endcomment %}
 <script src="{% static 'js/http.js' %}"></script>
 {# http.js expose aussi un shim window.Cookies (remplace la lib js-cookie du CDN, souvent bloquée) utilisé par super_moite_moite/js/vue.js. #}

@@ -3,8 +3,7 @@
 #
 # Les assets vendorisés/minifiés et le jeu p5.js (code tiers) sont exclus des
 # hooks d'hygiène. Les templates HTML ne sont volontairement PAS reformatés ici
-# (une passe design est en cours — voir docs/refonte/07-design-todo.md ; djLint
-# est configuré mais pas branché en auto-reformatage, cf. Phase 9 / LOT 5).
+# (djLint est configuré en rapport seul, pas branché en auto-reformatage).
 exclude: |
   (?x)^(
     .*\.min\.(js|css)|

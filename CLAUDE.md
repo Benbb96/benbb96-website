@@ -128,7 +128,7 @@ vendorisé dans `assets/js/` (Tom Select, Chart.js v4, minifiés). `assets/` est
   (sommaire numéroté des sections, direction visuelle).
 - **Namespace `.ds-*` obligatoire** pour tout composant (`.ds-btn`, `.ds-card`, `.ds-alert`,
   `.ds-nav`, `.ds-form`…). Convention héritée de la coexistence avec Bootstrap ; Bootstrap est
-  parti (Phase 5b) mais la convention reste.
+  parti mais la convention reste.
 - **Direction visuelle** : jaune de marque `--ds-primary` **en accent uniquement** (fond + texte
   foncé `--ds-primary-ink` dessus) — jamais de texte ni de lien jaune (contraste). `--ds-warning`
   est volontairement ambre/orange pour ne pas se confondre avec le jaune de marque.

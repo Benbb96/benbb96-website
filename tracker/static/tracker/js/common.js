@@ -1,7 +1,7 @@
 /* =============================================================================
    tracker — Logique commune des graphes & du filtre de dates (vanilla)
    =============================================================================
-   Phase 5a : remplace jQuery / moment.js / bootstrap-daterangepicker / Chart v2.
+   Remplace jQuery / moment.js / bootstrap-daterangepicker / Chart v2 (vanilla + Intl + Chart v4).
    - dates : deux <input type="date"> natifs + presets calculés en Date ;
    - formatage : Intl.DateTimeFormat (plus de moment) ;
    - requêtes : window.http (fetch + CSRF, plus de $.post/$.ajax) ;

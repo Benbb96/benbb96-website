@@ -1,30 +1,17 @@
 /* =============================================================================
-   benbb96 — Design system maison (Phase 3 de la refonte)
+   benbb96 — Design system maison
    =============================================================================
 
-   CSS natif moderne, sans framework ni build. Remplace progressivement
-   Bootstrap 3 sur le « chrome » global du site (base.html, navbar, footer,
-   messages, pagination, formulaires).
+   CSS natif moderne, sans framework ni build : le design system du site —
+   chrome global (base.html, navbar, footer, messages, pagination, formulaires),
+   composants réutilisables et dark mode.
 
-   ── STRATÉGIE DE COEXISTENCE AVEC BOOTSTRAP (lire avant de modifier) ──────────
-   Bootstrap 3 (CDN) + jQuery restent chargés tant que les templates des apps ne
-   sont pas migrés (Phases 4/5). Pour ne RIEN casser :
-
-   1. NAMESPACE `ds-` : tous les composants maison sont préfixés (.ds-btn,
-      .ds-card, .ds-alert, .ds-nav, .ds-footer, .ds-hero, .ds-pagination,
-      .ds-form, .ds-badge, .ds-social…). On ne redéfinit JAMAIS une classe
-      Bootstrap encore utilisée (.btn, .row, .col-*, .container, .panel,
-      .jumbotron, .form-control, .alert, .pagination, .label…).
-
-   2. ORDRE : ce fichier est chargé EN DERNIER (après Bootstrap et style.css).
-      Les sélecteurs d'éléments ci-dessous (body, titres, a, table, input…) ont
-      une spécificité d'élément (0,0,1) : ils gagnent le tie-break par l'ordre
-      et modernisent les éléments « nus » partout. Mais les composants Bootstrap
-      passent par des CLASSES (spécificité supérieure) → ils gagnent toujours sur
-      ces sélecteurs d'éléments. Une page d'app en .form-control / .btn / .panel
-      garde donc son rendu Bootstrap. Pas de !important, pas de classe partagée.
-
-   3. Voir docs/refonte/02-frontend-suppression-bootstrap.md pour le détail.
+   ── CONVENTION `ds-` (lire avant de modifier) ────────────────────────────────
+   Tous les composants maison sont préfixés `.ds-*` (.ds-btn, .ds-card,
+   .ds-alert, .ds-nav, .ds-footer, .ds-hero, .ds-pagination, .ds-form,
+   .ds-badge, .ds-social…) — convention à conserver pour tout nouveau composant.
+   Les sélecteurs d'éléments nus (body, titres, a, table, input…) posent le
+   style de base ; les classes `.ds-*` portent les composants. Pas de !important.
 
    ── SOMMAIRE ──────────────────────────────────────────────────────────────
    1. Tokens (custom properties)        6. Boutons (.ds-btn)
@@ -186,8 +173,7 @@
 }
 
 /* 2. ──────────────────────────── RESET LÉGER ───────────────────────────── */
-/* box-sizing: border-box est déjà posé par Bootstrap 3 sur * — on l'aligne au
-   cas où Bootstrap serait retiré (Phase 5). Inoffensif tant qu'il est chargé. */
+/* box-sizing: border-box partout. */
 *, *::before, *::after { box-sizing: border-box; }
 
 html { color-scheme: light dark; }
@@ -1062,7 +1048,7 @@ table:not([class]) thead th {
 .ds-w-100 { width: 100%; }
 .ds-rounded { border-radius: var(--ds-radius-lg); }
 
-/* 16. ───────────────── COMPOSANTS APPS (migration Phase 4) ──────────────────
+/* 16. ────────────────────────── COMPOSANTS APPS ─────────────────────────────
    Composants/utilitaires maison ajoutés au fil de la migration des templates
    des apps (registration, base, avis, versus, music, tracker, smm, my_spot).
    Toujours namespacés `ds-` (aucune collision avec Bootstrap encore chargé).
@@ -1497,7 +1483,7 @@ a.ds-list-group__item.is-active:hover { background: var(--ds-primary-dark); }
 .ds-modal--lg { width: min(94vw, 900px); }
 
 /* 19. ─────────────────── STYLES HÉRITÉS (ex style.css / avis-style.css) ──────
-   Rapatriés dans main.css (Phase 6) : ces deux feuilles étaient chargées
+   Rapatriés dans main.css : ces deux feuilles étaient chargées
    globalement à côté de main.css. Regroupement = 2 requêtes en moins.
    Contenu spécifique à quelques pages (utilitaires + rallye + avis + my_spot). */
 

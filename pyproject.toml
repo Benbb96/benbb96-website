@@ -73,8 +73,8 @@ select = ["E", "F", "I", "UP", "B", "DJ"]
 # DJ001/006/007/008/012 : findings de design Django existants (null=True sur CharField →
 # migration ; __all__/exclude dans des ModelForm ; modèles sans __str__ ; ordre du corps de
 # modèle). Ce sont de vraies améliorations mais qui touchent modèles/formulaires (revue dédiée,
-# hors passe outillage). Ignorés pour l'instant, à réactiver règle par règle après nettoyage
-# (voir backlog Phase 9 dans docs/refonte/05-roadmap.md). Les autres règles DJ restent actives.
+# hors passe outillage). Ignorés pour l'instant, à réactiver règle par règle après revue dédiée.
+# Les autres règles DJ restent actives.
 ignore = ["E501", "DJ001", "DJ006", "DJ007", "DJ008", "DJ012"]
 
 [tool.ruff.lint.per-file-ignores]

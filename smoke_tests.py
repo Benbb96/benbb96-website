@@ -1,7 +1,7 @@
 """
-Phase 0 — Tests de smoke
-========================
-Filet de sécurité avant la refonte. Couvre :
+Tests de smoke
+==============
+Filet de sécurité de non-régression. Couvre :
   1. Status 200 des vues publiques clés
   2. Redirect (302) des vues login_required sans auth
   3. Non-régression des endpoints API tracker & super_moite_moite
