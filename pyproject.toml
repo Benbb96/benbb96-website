@@ -10,31 +10,31 @@ dependencies = [
     "django-anymail==13.0",
     "django-autoslug==1.9.9",
     "django-colorfield==0.14.0",
-    "django-cors-headers==4.7.0",
+    "django-cors-headers==4.9.0",
     "django-filter==25.1",
     "django-fontawesome-6==1.0.0.0",
     "django-geoposition-2==0.4.0",
     "django-pandas==0.6.7",
-    "django-simple-history==3.8.0",
-    "djangorestframework==3.16.0",
+    "django-simple-history==3.13.0",
+    "djangorestframework==3.18.0",
     "djangorestframework-simplejwt==5.5.1",
-    "google-api-python-client==2.197.0",
+    "google-api-python-client==2.198.0",
     "pandas==2.2.3",
     "Pillow==12.3.0",
     "django-storages[google]==1.14.6",
-    "python-slugify==8.0.0",
+    "python-slugify==8.0.4",
     "redis==4.5.4",  # requis par spotipy (cache_handler importe redis au chargement du module)
-    "requests==2.33.0",
+    "requests==2.34.2",
     "setuptools==83.0.0",
     "soundcloud",  # fork Benbb96 — voir [tool.uv.sources]
-    "spotipy==2.25.2",
+    "spotipy==2.26.0",
 ]
 
 # Dépendances de développement (PEP 735). Exclues en prod via `uv sync --no-dev`.
 [dependency-groups]
 dev = [
     "django-debug-toolbar==5.2.0",
-    "coverage==7.9.1",
+    "coverage==7.15.4",
     "pyright",
     "ruff",
     "pre-commit",
