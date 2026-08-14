@@ -45,8 +45,8 @@ uv run pre-commit run --all-files                   # ruff + hygiène (installé
 uv run djlint . --lint                              # rapport templates — voir avertissement ci-dessous
 ```
 
-⚠️ **Ne jamais lancer `djlint --reformat`.** Une passe design est en cours sur les templates
-(`docs/refonte/07-design-todo.md`) : un reformatage global entrerait en conflit. djLint est
+⚠️ **Ne jamais lancer `djlint --reformat`.** Une passe design a retravaillé les templates ; un
+reformatage global entrerait en conflit avec d'éventuelles retouches restantes. djLint est
 configuré en *rapport seul* (~95 erreurs connues, à traiter avec la passe design).
 
 ### i18n
@@ -145,7 +145,7 @@ vendorisé dans `assets/js/` (Tom Select, Chart.js v4, minifiés). `assets/` est
 (`kendama/templates/kendama/base.html`) et son thème « paper » autonome
 (`kendama/static/kendama/css/paper.css`, polices manuscrites, bordures ondulées, modales en
 checkbox-hack CSS). **Elle doit rester visuellement identique** — pas de dark mode, pas de `.ds-*`,
-pas de réécriture de son JS. Contrat détaillé dans `docs/refonte/06-kendama-a-preserver.md`.
+pas de réécriture de son JS. Contrat détaillé dans `docs/kendama-a-preserver.md`.
 
 ## Dépendances
 
@@ -158,17 +158,20 @@ l'importe au chargement.
 
 Push sur `main` → `.github/workflows/deploy-to-pythonanywhere.yml` (SSH) → `git pull`,
 `uv sync --frozen --no-dev` dans `~/.virtualenvs/benbb96`, `migrate`, `collectstatic`, `touch wsgi`.
-Aucune étape de build front. Détails et prérequis manuels dans `docs/refonte/08-deploiement-uv.md`.
+Aucune étape de build front. Le venv Web tab de PythonAnywhere (`~/.virtualenvs/benbb96`) est ciblé
+via `UV_PROJECT_ENVIRONMENT` ; `uv` doit être installé sur le serveur.
 
-## Documentation de refonte
+## Documentation
 
-`docs/refonte/` contient l'état des lieux, les décisions actées et la roadmap phasée de la refonte
-en cours. **Lire `docs/refonte/README.md` avant tout chantier structurant**, et le document du
-chantier concerné (`07-design-todo.md` pour la passe design en cours, `05-roadmap.md` pour l'état
-d'avancement). Ces documents se cochent au fur et à mesure — les tenir à jour fait partie du travail.
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** : vue d'ensemble (stack, apps, design system, déploiement).
+- **[docs/kendama-a-preserver.md](docs/kendama-a-preserver.md)** : contrat de préservation du thème
+  « paper » de kendama.
+- Les docs détaillées de pilotage de la **refonte 2026** (roadmap, décisions, checklists de mise en
+  prod, backlog design) sont conservées **en local uniquement** sous `docs/refonte/` (gitignoré) —
+  utiles au propriétaire et aux agents, hors dépôt public.
 
 ## Conventions de commit
 
 Conventional commits **en français** : `feat(design): …`, `fix(avis): …`, `docs(refonte): …`.
 Ne **pas** ajouter de trailer `Co-Authored-By`. Ne **pas** utiliser le skill `/commit` sur ce projet
-(préférences du propriétaire, également consignées dans `docs/refonte/README.md`).
+(préférences du propriétaire).
