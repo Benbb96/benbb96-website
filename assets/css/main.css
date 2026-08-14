@@ -427,10 +427,23 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 /* Ces variantes gardent du texte blanc (fonds saturés/sombres, non jaunes) —
    la base .ds-btn ne peut plus le supposer par défaut puisque son propre
    fond par défaut est le jaune de marque (texte foncé, cf. plus haut). */
-.ds-btn--secondary { --_bg: var(--ds-secondary); --_bg-hover: #0d0b07; --_fg: #fff; }
-.ds-btn--success   { --_bg: var(--ds-success); --_bg-hover: #15803d; --_fg: #fff; }
-.ds-btn--danger    { --_bg: var(--ds-danger); --_bg-hover: #b91c1c; --_fg: #fff; }
-.ds-btn--warning   { --_bg: var(--ds-warning); --_bg-hover: #b45309; --_fg: #fff; }
+/* Survol dérivé du fond : un cran vers --ds-text, donc plus foncé en thème
+   clair et plus CLAIR en thème sombre — le sens du contraste s'inverse avec le
+   fond. Les hex figés d'avant (#b91c1c…) restaient calés sur la palette claire
+   et assombrissaient le survol alors que le fond, lui, s'éclaircissait en
+   sombre. Une variante ne pose donc plus que --_bg : ne pas y remettre de hex.
+   Le bouton jaune garde --ds-primary-dark, déjà défini par thème (§1). */
+.ds-btn--secondary,
+.ds-btn--success,
+.ds-btn--danger,
+.ds-btn--warning {
+    --_bg-hover: color-mix(in srgb, var(--_bg) 88%, var(--ds-text));
+    --_fg: #fff;
+}
+.ds-btn--secondary { --_bg: var(--ds-secondary); }
+.ds-btn--success   { --_bg: var(--ds-success); }
+.ds-btn--danger    { --_bg: var(--ds-danger); }
+.ds-btn--warning   { --_bg: var(--ds-warning); }
 .ds-btn--ghost {
     /* Texte réel sur fond clair : reste en --ds-text (le jaune n'est que le
        fond de hover, une teinte pâle, jamais la couleur du texte). */
@@ -563,9 +576,9 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
     color: var(--ds-text);
 }
 .ds-badge--primary { background: var(--ds-primary-light); color: var(--ds-text); }
-.ds-badge--success { background: #dcfce7; color: #15803d; }
-.ds-badge--warning { background: #fef3c7; color: #b45309; }
-.ds-badge--danger  { background: #fee2e2; color: #b91c1c; }
+/* Pas de variantes sémantiques ici : --success/--warning/--danger/--info ont
+   été retirées (aucun usage, et leurs couleurs en dur ignoraient le thème).
+   Si un besoin réapparaît, dériver du token comme .ds-alert (§8), pas de hex. */
 
 /* 10. ──────────────────────────────── NAVBAR ───────────────────────────── */
 .ds-nav {
@@ -1234,9 +1247,6 @@ a.ds-list-group__item:hover { background: var(--ds-surface-alt); text-decoration
 .ds-progress__bar--info    { --_c: var(--ds-info); color: #fff; }
 .ds-progress__bar--warning { --_c: var(--ds-warning); color: #fff; }
 .ds-progress__bar--danger  { --_c: var(--ds-danger); color: #fff; }
-
-/* Variante info des badges (complète primary/success/warning/danger) */
-.ds-badge--info { background: #e0f2fe; color: #075985; }
 
 /* En-tête de card — remplace .panel-heading (+ contextes panel-*) */
 .ds-card__header {

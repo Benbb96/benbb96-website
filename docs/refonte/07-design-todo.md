@@ -89,6 +89,14 @@ Les entrées ci-dessous restent valables mais sont à ré-évaluer à la nouvell
   du menu (navbar `.ds-*` et kendama) renvoyaient 405. Passés en `<form method="post">` ; le bouton
   est restylé pour rester indiscernable d'une entrée de menu, côté kendama dans sa feuille propre
   `style.css` (le `paper.css` vendorisé n'est pas touché, rendu vérifié identique au lien).
+- [x] **Survol des `.ds-btn` sémantiques** : `--_bg-hover` était un hex figé de l'ancienne palette
+  (`#b91c1c`, `#15803d`…), donc le survol s'assombrissait alors que le fond, tokenisé, s'éclaircit
+  en sombre — sens du contraste inversé. Dérivé du fond via `color-mix(--_bg 88%, --ds-text)` :
+  s'assombrit en clair, s'éclaircit en sombre. Les variantes ne posent plus que `--_bg` ; le bouton
+  jaune garde `--ds-primary-dark` (déjà défini par thème).
+- [x] **Badges sémantiques retirés** : `.ds-badge--success/--warning/--danger/--info` avaient des
+  couleurs en dur hors thème **et** zéro usage (seul `--primary`, tokenisé, sert — 6× dans avis).
+  Supprimées plutôt que retokenisées ; `--info` traînait en plus isolé loin de sa section.
 
 ## avis
 
