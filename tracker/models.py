@@ -1,4 +1,4 @@
-from adminsortable.models import SortableMixin, SortableForeignKey
+from adminsortable.models import SortableForeignKey, SortableMixin
 from colorfield.fields import ColorField
 from django.db import models
 from django.urls import reverse
@@ -9,30 +9,37 @@ from base.models import Profil
 
 
 class Tracker(SortableMixin):
-    TYPE_EVENEMENT = 'evenement'
-    TYPE_MESURE = 'mesure'
+    TYPE_EVENEMENT = "evenement"
+    TYPE_MESURE = "mesure"
     TYPE_CHOICES = [
-        (TYPE_EVENEMENT, 'Événement'),
-        (TYPE_MESURE, 'Mesure'),
+        (TYPE_EVENEMENT, "Événement"),
+        (TYPE_MESURE, "Mesure"),
     ]
 
-    createur = SortableForeignKey(Profil, verbose_name='créateur', related_name='trackers', on_delete=models.CASCADE)
+    createur = SortableForeignKey(
+        Profil,
+        verbose_name="créateur",
+        related_name="trackers",
+        on_delete=models.CASCADE,
+    )
     nom = models.CharField(max_length=100)
-    icone = IconField('icône')
-    color = ColorField('couleur', default='#FFFFFF')
-    type = models.CharField('type', max_length=20, choices=TYPE_CHOICES, default=TYPE_EVENEMENT)
-    date_creation = models.DateTimeField('date de création', auto_now_add=True)
+    icone = IconField("icône")
+    color = ColorField("couleur", default="#FFFFFF")
+    type = models.CharField(
+        "type", max_length=20, choices=TYPE_CHOICES, default=TYPE_EVENEMENT
+    )
+    date_creation = models.DateTimeField("date de création", auto_now_add=True)
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
     class Meta:
-        unique_together = (('createur', 'nom'),)
-        ordering = ['order']
+        unique_together = (("createur", "nom"),)
+        ordering = ["order"]
 
     def __str__(self):
         return self.nom
 
     def get_absolute_url(self):
-        return reverse('tracker:detail-tracker', kwargs={'pk': self.id})
+        return reverse("tracker:detail-tracker", kwargs={"pk": self.id})
 
     def track_by_hour(self):
         hours = {}
@@ -46,13 +53,13 @@ class Tracker(SortableMixin):
 
     def track_by_day(self):
         weekdays = {
-            0: 'Lundi',
-            1: 'Mardi',
-            2: 'Mercredi',
-            3: 'Jeudi',
-            4: 'Vendredi',
-            5: 'Samedi',
-            6: 'Dimanche'
+            0: "Lundi",
+            1: "Mardi",
+            2: "Mercredi",
+            3: "Jeudi",
+            4: "Vendredi",
+            5: "Samedi",
+            6: "Dimanche",
         }
         days = {}
         for weekday in weekdays.values():
@@ -69,33 +76,41 @@ class Tracker(SortableMixin):
         Retourne la commande css pour afficher la couleur du tracker avec une opacité diminué afin de voir
         les différentes courbes les unes à travers les autres.
         """
-        opacity = '0.3'
-        return 'rgba(%s,%s)' % (
-            ','.join(tuple(str(int(self.color.lstrip('#')[i:i+2], 16)) for i in (0, 2, 4))),
-            opacity
+        opacity = "0.3"
+        return "rgba({},{})".format(
+            ",".join(
+                tuple(
+                    str(int(self.color.lstrip("#")[i : i + 2], 16)) for i in (0, 2, 4)
+                )
+            ),
+            opacity,
         )
 
 
 class TrackManager(models.Manager):
     def first_track(self):
-        return self.get_queryset().earliest('datetime')
+        return self.get_queryset().earliest("datetime")
 
     def last_track(self):
-        return self.get_queryset().latest('datetime')
+        return self.get_queryset().latest("datetime")
 
 
 class Track(models.Model):
-    tracker = models.ForeignKey(Tracker, related_name='tracks', on_delete=models.CASCADE)
-    datetime = models.DateTimeField('date et heure', default=timezone.now)
-    valeur = models.FloatField('valeur', null=True, blank=True)
+    tracker = models.ForeignKey(
+        Tracker, related_name="tracks", on_delete=models.CASCADE
+    )
+    datetime = models.DateTimeField("date et heure", default=timezone.now)
+    valeur = models.FloatField("valeur", null=True, blank=True)
     commentaire = models.CharField(
-        max_length=255, help_text='Un texte pour donner une explication sur ce track.', blank=True
+        max_length=255,
+        help_text="Un texte pour donner une explication sur ce track.",
+        blank=True,
     )
 
     objects = TrackManager()
 
     class Meta:
-        ordering = ('-datetime',)
+        ordering = ("-datetime",)
 
     def __str__(self):
-        return str(self.tracker) + ' (' + self.datetime.strftime('%d/%m/%y %H:%M') + ')'
+        return str(self.tracker) + " (" + self.datetime.strftime("%d/%m/%y %H:%M") + ")"

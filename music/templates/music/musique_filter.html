@@ -1,49 +1,45 @@
 {% extends 'music/base_music.html' %}
-
-{% load i18n bootstrap3 fontawesome_6 %}
-
-{% block music_title %}{% trans "Musics" %}{% endblock %}
-
+{% load i18n fontawesome_6 %}
+{% block music_title %}
+    {% trans "Musics" %}
+{% endblock %}
+{% block content_class %}content--wide{% endblock %}
 {% block stylesheet %}
     {{ filter.form.media.css }}
 {% endblock %}
-
 {% block content %}
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 col-sm-12">
-            <h2>
-                {% trans "All Musics" %}
-                <span class="pull-right">
-                    {% if request.user.is_superuser %}
-                        <a href="{% url 'music:create-music-from-url' %}" class="btn btn-default">
-                            Ajouter une musique via un lien
-                            {% fa6_icon 'plus' %}
-                        </a>
-                    {% endif %}
-                    <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#filter">
-                        {% blocktrans %}Filter options{% endblocktrans %} <i class="fa fa-filter"></i>
-                    </button>
-                </span>
-            </h2>
-
-            <form method="get" id="filter" class="collapse">
-                {% bootstrap_form filter.form %}
-                <button type="submit" class="btn btn-primary">
-                    {% trans "Filter" %}
-                    <i class="fa fa-filter"></i>
-                </button>
-                <a class="btn btn-default" href="{% url 'music:liste-musiques' %}">
-                    {% trans "Erase" %}
-                    <i class="fa fa-eraser"></i>
+    <div>
+        <div class="ds-cluster ds-cluster--split">
+            <h2 class="ds-mb-0">{% trans "All Musics" %}</h2>
+            {% if request.user.is_superuser %}
+                <a href="{% url 'music:create-music-from-url' %}"
+                   class="ds-btn ds-btn--ghost">
+                    Ajouter une musique via un lien
+                    {% fa6_icon 'plus' %}
                 </a>
-            </form>
-            {% include 'components/pagination.html' %}
-            {% include 'music/components/table_musics.html' with musiques=page_obj%}
-            {% include 'components/pagination.html' %}
+            {% endif %}
         </div>
+        <details class="ds-details">
+            <summary>{% blocktrans %}Filter options{% endblocktrans %}</summary>
+            <form method="get">
+                {% include 'components/form.html' with form=filter.form %}
+                <div class="ds-cluster ds-mt-4">
+                    <button type="submit" class="ds-btn">
+                        {% trans "Filter" %}
+                        <i class="fa fa-filter" aria-hidden="true"></i>
+                    </button>
+                    <a class="ds-btn ds-btn--ghost" href="{% url 'music:liste-musiques' %}">
+                        {% trans "Erase" %}
+                        <i class="fa fa-eraser" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </form>
+        </details>
+        {% include 'components/pagination.html' %}
+        {% include 'music/components/table_musics.html' with musiques=page_obj %}
+        {% include 'components/pagination.html' %}
     </div>
 {% endblock %}
-
 {% block javascript %}
     {{ filter.form.media.js }}
 {% endblock %}

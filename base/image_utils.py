@@ -29,22 +29,22 @@ def optimize_image_to_webp(file_obj, max_width=MAX_WIDTH, quality=WEBP_QUALITY):
     img.load()
     img = ImageOps.exif_transpose(img)
 
-    if img.mode in ('RGBA', 'P', 'LA'):
-        background = Image.new('RGB', img.size, (255, 255, 255))
-        if img.mode in ('RGBA', 'LA'):
+    if img.mode in ("RGBA", "P", "LA"):
+        background = Image.new("RGB", img.size, (255, 255, 255))
+        if img.mode in ("RGBA", "LA"):
             background.paste(img, mask=img.split()[-1])
         else:
-            background.paste(img.convert('RGBA'), mask=img.convert('RGBA').split()[-1])
+            background.paste(img.convert("RGBA"), mask=img.convert("RGBA").split()[-1])
         img = background
-    elif img.mode != 'RGB':
-        img = img.convert('RGB')
+    elif img.mode != "RGB":
+        img = img.convert("RGB")
 
     if img.width > max_width:
         new_height = int(img.height * max_width / img.width)
         img = img.resize((max_width, new_height), Image.LANCZOS)
 
     output = BytesIO()
-    img.save(output, format='WEBP', quality=quality)
+    img.save(output, format="WEBP", quality=quality)
     output.seek(0)
     return output
 
@@ -65,30 +65,30 @@ def get_photo_models():
     from versus.models import Jeu
 
     return [
-        ('Avis', Avis, 'photo'),
-        ('Kendama', Kendama, 'photo'),
-        ('SpotPhoto', SpotPhoto, 'photo'),
-        ('Tache', Tache, 'photo'),
-        ('Projet', Projet, 'image'),
-        ('Jeu', Jeu, 'image'),
-        ('Profil', Profil, 'avatar'),
+        ("Avis", Avis, "photo"),
+        ("Kendama", Kendama, "photo"),
+        ("SpotPhoto", SpotPhoto, "photo"),
+        ("Tache", Tache, "photo"),
+        ("Projet", Projet, "image"),
+        ("Jeu", Jeu, "image"),
+        ("Profil", Profil, "avatar"),
     ]
 
 
-def optimize_uncommitted_fieldfile(fieldfile, field_name='photo'):
+def optimize_uncommitted_fieldfile(fieldfile, field_name="photo"):
     """
     Si `fieldfile` est un nouvel upload non encore committé, retourne un InMemoryUploadedFile
     WebP optimisé à réassigner au champ. Sinon (champ vide, déjà en storage, ou image
     illisible) retourne None — l'appelant ne touche alors pas au champ.
     """
-    if not fieldfile or getattr(fieldfile, '_committed', True):
+    if not fieldfile or getattr(fieldfile, "_committed", True):
         return None
     try:
         output = optimize_image_to_webp(fieldfile.file)
     except Exception:
         return None
     base_name = os.path.splitext(os.path.basename(fieldfile.name))[0]
-    new_name = base_name + '.webp'
+    new_name = base_name + ".webp"
     return InMemoryUploadedFile(
-        output, field_name, new_name, 'image/webp', output.getbuffer().nbytes, None
+        output, field_name, new_name, "image/webp", output.getbuffer().nbytes, None
     )

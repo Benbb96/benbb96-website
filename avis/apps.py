@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class AvisConfig(AppConfig):
-    name = 'avis'
+    name = "avis"
 
     def ready(self):
         pass

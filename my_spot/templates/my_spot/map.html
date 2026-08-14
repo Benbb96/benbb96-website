@@ -1,6 +1,6 @@
 {% extends 'my_spot/base_my_spot.html' %}
 
-{% load custom_tags bootstrap3 %}
+{% load custom_tags fontawesome_6 %}
 
 {% block spot_title %}Carte {% endblock %}
 
@@ -9,13 +9,11 @@
 {% endblock %}
 
 {% block content %}
-    <form class="form-inline text-center">
-        {% bootstrap_form form layout='inline' %}
-        {% buttons %}
-            <button type="submit" class="btn btn-primary" title="Filtrer les spots">
-                OK {% bootstrap_icon "filter" %}
-            </button>
-        {% endbuttons %}
+    <form class="ds-form-inline">
+        {% include 'components/form.html' %}
+        <button type="submit" class="ds-btn" title="Filtrer les spots">
+            OK {% fa6_icon 'filter' %}
+        </button>
     </form>
     <div id="map" style="height: 500px"></div>
 {% endblock %}
@@ -23,13 +21,25 @@
 {% block javascript %}
     {{ form.media.js }}
     <script type="text/javascript">
+        // Valeurs d'un <select multiple> (via Tom Select si présent, sinon DOM natif).
+        function selectedValues(id) {
+            const el = document.getElementById(id);
+            if (!el) return [];
+            if (el.tomselect) return el.tomselect.getValue();
+            return Array.from(el.selectedOptions).map(o => o.value);
+        }
+
         function initMap() {
-            const visibilite = $('#id_visibilite input:checked').val();
-            const perso = $('#id_perso').is(':checked');
-            const tags = $('#id_tags').val();
-            const groupes = $('#id_groupes').val();
-            $.get('{% url 'my_spot:map' %}', {visibilite, perso, tags, groupes})
-                .done(reponse => {
+            const params = new URLSearchParams();
+            const visibilite = document.querySelector('#id_visibilite input:checked');
+            if (visibilite) params.append('visibilite', visibilite.value);
+            const perso = document.getElementById('id_perso');
+            if (perso) params.append('perso', perso.checked);
+            selectedValues('id_tags').forEach(v => params.append('tags', v));
+            selectedValues('id_groupes').forEach(v => params.append('groupes', v));
+
+            window.http.json("{% url 'my_spot:map' %}?" + params.toString())
+                .then(reponse => {
                     if (reponse.spots.length > 0) {
                         let bounds = new google.maps.LatLngBounds();
                         let map = new google.maps.Map(document.getElementById('map'));
@@ -76,17 +86,20 @@
                         alert('Aucun résultat pour cette recherche...')
                     }
                 })
-                .fail((err) => {
+                .catch((err) => {
                     console.log(err)
                 });
         }
 
-        $(() => {
-            $('form').submit(function(e) {
-                e.preventDefault();
-                initMap()
-            })
-        })
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    initMap();
+                });
+            }
+        });
     </script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key={{ GEOPOSITION_GOOGLE_MAPS_API_KEY }}&callback=initMap">

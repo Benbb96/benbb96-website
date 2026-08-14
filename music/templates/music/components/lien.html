@@ -1,16 +1,21 @@
 {% load i18n fontawesome_6 %}
-
-<a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"
-   data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
-    {% fa6_icon lien.plateforme|lower 'fab' %}
-    <b>{{ lien.plateforme }}</b> {% fa6_icon 'external-link-alt' %}
-</a>
-<div>
-    {% blocktrans %}Added by{% endblocktrans %} {{ lien.createur }} {% trans "on" %} {{ lien.date_creation|date:'d/m/y' }},
-    {% trans "seen" %} <span class="click_count" id="lien{{ lien.id }}">{{ lien.click_count }}</span> {% trans "times" %}.
-    {% if a_valider %}
-        <a class="btn btn-xs btn-default" href="{% url 'music:valider_lien' lien.id %}">
-            <i class="fa fa-check" title="{% trans "Validate the link" %}"></i>
-        </a>
-    {% endif %}
+<div class="ds-well">
+    <a class="platformLink"
+       data-link-id="{{ lien.id }}"
+       href="{{ lien.url }}"
+       target="_blank"
+       data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
+        {% fa6_icon lien.plateforme|lower 'fab' %}
+        <b>{{ lien.plateforme }}</b> {% fa6_icon 'external-link-alt' %}
+    </a>
+    <p class="ds-text-muted ds-mb-0">
+        {% blocktrans %}Added by{% endblocktrans %} {{ lien.createur }} {% trans "on" %} {{ lien.date_creation|date:'d/m/y' }},
+        {% trans "seen" %} <span class="click_count" id="lien{{ lien.id }}">{{ lien.click_count }}</span> {% trans "times" %}.
+        {% if a_valider %}
+            <a class="ds-btn ds-btn--ghost ds-btn--sm"
+               href="{% url 'music:valider_lien' lien.id %}">
+                <i class="fa fa-check" title="{% trans "Validate the link" %}"></i>
+            </a>
+        {% endif %}
+    </p>
 </div>

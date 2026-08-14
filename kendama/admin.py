@@ -2,19 +2,28 @@ from django.contrib import admin
 
 from base.admin import PhotoAdminAbtract
 from kendama.forms import KendamaForm
-from kendama.models import KendamaTrick, TrickPlayer, Combo, ComboPlayer, Kendama, ComboTrick, Ladder, LadderCombo
+from kendama.models import (
+    Combo,
+    ComboPlayer,
+    ComboTrick,
+    Kendama,
+    KendamaTrick,
+    Ladder,
+    LadderCombo,
+    TrickPlayer,
+)
 
 
 class BaseKendamaAdmin(admin.ModelAdmin):
-    list_display = ('name', 'creator', 'difficulty', 'created_at')
-    list_filter = ('difficulty',)
-    search_fields = ('name', 'creator__user__username')
-    date_hierarchy = 'created_at'
-    autocomplete_fields = ('creator',)
-    list_select_related = ('creator',)
+    list_display = ("name", "creator", "difficulty", "created_at")
+    list_filter = ("difficulty",)
+    search_fields = ("name", "creator__user__username")
+    date_hierarchy = "created_at"
+    autocomplete_fields = ("creator",)
+    list_select_related = ("creator",)
 
     def get_changeform_initial_data(self, request):
-        return {'creator': request.user.profil}
+        return {"creator": request.user.profil}
 
 
 class TrickPlayerInline(admin.TabularInline):
@@ -42,44 +51,44 @@ class ComboAdmin(BaseKendamaAdmin):
 
 @admin.register(ComboTrick)
 class ComboTrickAdmin(admin.ModelAdmin):
-    list_display = ('combo', 'trick', 'order')
-    list_select_related = ('combo', 'trick')
+    list_display = ("combo", "trick", "order")
+    list_select_related = ("combo", "trick")
 
 
 class BasePlayerFrequencyAdmin(admin.ModelAdmin):
-    list_filter = ('frequency',)
-    search_fields = ('trick__name', 'player__username')
-    date_hierarchy = 'created_at'
-    autocomplete_fields = ('trick', 'player')
+    list_filter = ("frequency",)
+    search_fields = ("trick__name", "player__username")
+    date_hierarchy = "created_at"
+    autocomplete_fields = ("trick", "player")
 
     def get_changeform_initial_data(self, request):
-        return {'player': request.user.profil}
+        return {"player": request.user.profil}
 
 
 @admin.register(TrickPlayer)
 class TrickPlayerAdmin(BasePlayerFrequencyAdmin):
-    list_display = ('id', 'trick', 'player', 'frequency', 'created_at')
-    autocomplete_fields = ('trick', 'player')
-    list_select_related = ('trick', 'player')
+    list_display = ("id", "trick", "player", "frequency", "created_at")
+    autocomplete_fields = ("trick", "player")
+    list_select_related = ("trick", "player")
 
 
 @admin.register(ComboPlayer)
 class ComboPlayerAdmin(BasePlayerFrequencyAdmin):
-    list_display = ('id', 'combo', 'player', 'frequency', 'created_at')
-    autocomplete_fields = ('combo', 'player')
-    list_select_related = ('combo', 'player')
+    list_display = ("id", "combo", "player", "frequency", "created_at")
+    autocomplete_fields = ("combo", "player")
+    list_select_related = ("combo", "player")
 
 
 @admin.register(Kendama)
 class KendamaAdmin(PhotoAdminAbtract):
-    list_display = ('thumbnail', 'name', 'owner', 'created_at')
-    search_fields = ('name', 'owner__username')
-    list_select_related = ('owner',)
+    list_display = ("thumbnail", "name", "owner", "created_at")
+    search_fields = ("name", "owner__username")
+    list_select_related = ("owner",)
 
     form = KendamaForm
 
     def get_changeform_initial_data(self, request):
-        return {'owner': request.user.profil}
+        return {"owner": request.user.profil}
 
 
 class LadderComboInline(admin.TabularInline):
@@ -90,4 +99,3 @@ class LadderComboInline(admin.TabularInline):
 @admin.register(Ladder)
 class LadderAdmin(BaseKendamaAdmin):
     inlines = (LadderComboInline,)
-

@@ -2,36 +2,28 @@
 
 {% block profil_title %}Musiques{% endblock %}
 
-{% block music_active %} class="active"{% endblock %}
+{% block music_active %} is-active{% endblock %}
 
 {% block profil_content %}
     <h1>Dernières musiques</h1>
-    <div class="row">
-        <div class="col-sm-6 col-xs-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h2>Ses playlists</h2>
-                </div>
-                <div class="panel-body">
-                    {% include 'music/components/list_group_playlist.html' with playlists=user.profil.playlists_crees.all %}
-                </div>
+    <div class="ds-grid ds-grid--2">
+        <div class="ds-card">
+            <div class="ds-card__body">
+                <h2 class="ds-card__title">Ses playlists</h2>
+                {% include 'music/components/list_group_playlist.html' with playlists=user.profil.playlists_crees.all %}
             </div>
         </div>
-        <div class="col-sm-6 col-xs-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h2>Les musiques ajoutées</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="list-group">
-                        {% for musique in user.profil.musiques_crees.all|slice:"10" %}
-                            <a class="list-group-item col-sm-6 col-xs-12" href="{{ musique.get_absolute_url }}">
-                                {{ musique }}
-                            </a>
-                        {% empty %}
-                            <div class="list-group-item">Aucune musique créée par {{ user }}</div>
-                        {% endfor %}
-                    </div>
+        <div class="ds-card">
+            <div class="ds-card__body">
+                <h2 class="ds-card__title">Les musiques ajoutées</h2>
+                <div class="ds-list-group">
+                    {% for musique in user.profil.musiques_crees.all|slice:"10" %}
+                        <a class="ds-list-group__item" href="{{ musique.get_absolute_url }}">
+                            {{ musique }}
+                        </a>
+                    {% empty %}
+                        <div class="ds-list-group__item">Aucune musique créée par {{ user }}</div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

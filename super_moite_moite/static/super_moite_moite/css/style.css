@@ -1,5 +1,54 @@
-.well {
-    border-radius: 10px;
+/* Styles spécifiques au tableau de bord super_moite_moite.
+   Le design system (.ds-*) fournit les composants ; ce fichier ne porte que les
+   réglages propres à cette page (grille des catégories, toolbar collante, etc.). */
+
+/* Onglets principaux (Tâches / Statistiques) centrés */
+.smm-main-tabs {
+    max-width: 480px;
+    margin-inline: auto;
+}
+
+.smm-search {
+    max-width: 360px;
+}
+
+/* Grille des catégories, en colonnes façon masonry.
+   Une grille CSS classique (grid-template-columns) aligne les catégories en
+   rangées : la hauteur de rangée est celle du plus grand élément, donc une
+   catégorie courte (peu de tâches) laisse un grand vide sous elle avant que
+   la rangée suivante démarre — repéré en QA (catégorie « Alimentation » très
+   courte, grand vide, « Hygiène »/« Santé » repoussées loin en dessous). Les
+   colonnes CSS (`columns`) empilent chaque élément dans la colonne la moins
+   remplie, comme un masonry, sans JS.
+   La draggable (.smm-categories) est en display:contents pour que ses enfants
+   (les catégories) ET la carte « nouvelle catégorie » soient des items de la
+   même mise en page. */
+.smm-categories-wrap {
+    columns: 260px 3;
+    column-gap: var(--ds-space-4);
+}
+.smm-categories {
+    display: contents;
+}
+.smm-categorie-item {
+    break-inside: avoid;
+    margin-bottom: var(--ds-space-4);
+}
+
+/* Barres de progression un peu plus hautes sur ce tableau de bord */
+#app .ds-progress {
+    height: 30px;
+}
+
+/* Barres « une par habitant » du haut : le libellé (nom + points) doit rester
+   lisible même à 0 % (logement neuf). On force donc la largeur mini au contenu
+   et on aligne le texte à gauche. Les barres empilées multi-segments
+   (catégories / onglet Statistiques) ne portent pas cette classe et restent
+   proportionnelles. */
+.smm-habitant-bars .ds-progress__bar {
+    min-width: max-content;
+    justify-content: flex-start;
+    padding-inline: var(--ds-space-3);
 }
 
 .showOnHover i {
@@ -8,18 +57,6 @@
 
 .showOnHover:hover i {
     opacity: 1;
-}
-
-.progress {
-    height: 30px;
-}
-
-.progress-bar {
-    line-height: 30px;
-}
-
-.panel .panel-heading a {
-    cursor: pointer;
 }
 
 table.tableTracks thead {
@@ -33,10 +70,19 @@ table.tableTracks tbody {
 
 .stickyToolbar {
     position: sticky;
-    top: 0;
+    /* top:0 collait la barre derrière la navbar elle-même sticky (z-index:100,
+       cf. .ds-nav dans main.css) : les deux se figent au même endroit à l'écran
+       en scrollant, et la navbar passe au-dessus. On la colle juste sous elle
+       (même formule que .ds-about-side dans main.css). */
+    top: var(--ds-nav-h);
     z-index: 10;
-    padding: 10px 5px 0 5px;
-    background-color: rgba(255, 255, 255, 0.88);
+    padding: 10px 5px;
+    margin-bottom: var(--ds-space-3);
+    /* Fond blanc en dur : reste clair même en dark mode (le champ de recherche
+       lui, suit le thème) -> boîte claire contenant des contrôles sombres,
+       lecture "pas intégré". color-mix() reprend --ds-surface (donc le thème
+       courant) tout en gardant l'effet légèrement translucide au scroll. */
+    background-color: color-mix(in srgb, var(--ds-surface) 88%, transparent);
 }
 
 /* Animate Increment */

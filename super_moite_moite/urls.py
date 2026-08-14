@@ -1,35 +1,37 @@
-from django.urls import path, include
-from rest_framework import routers
 from django.contrib.auth.decorators import login_required
+from django.urls import include, path
+from rest_framework import routers
 
-from . import views, api_views
+from . import api_views, views
 
-app_name = 'super-moite-moite'
+app_name = "super-moite-moite"
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register('logements', api_views.LogementView, basename='logement')
-router.register('categories', api_views.CategorieView, basename='categorie')
-router.register('taches', api_views.TacheView, basename='tache')
-router.register('point-taches', api_views.PointTacheView, basename='point_tache')
-router.register('track-taches', api_views.TrackTacheView, basename='track_tache')
+router.register("logements", api_views.LogementView, basename="logement")
+router.register("categories", api_views.CategorieView, basename="categorie")
+router.register("taches", api_views.TacheView, basename="tache")
+router.register("point-taches", api_views.PointTacheView, basename="point_tache")
+router.register("track-taches", api_views.TrackTacheView, basename="track_tache")
 
 urlpatterns = [
-    path('', views.liste_logements, name='liste-logements'),
+    path("", views.liste_logements, name="liste-logements"),
     path(
-        'logement/<slug>',
+        "logement/<slug>",
         login_required()(views.LogementDetailView.as_view()),
-        name='detail-logement'
+        name="detail-logement",
     ),
     path(
-        'logement/<slug>/edit',
+        "logement/<slug>/edit",
         login_required()(views.LogementUpdateView.as_view()),
-        name='edition-logement'
+        name="edition-logement",
     ),
     path(
-        'logement/<slug>/delete',
+        "logement/<slug>/delete",
         login_required()(views.LogementDeleteView.as_view()),
-        name='suppression-logement'
+        name="suppression-logement",
     ),
-    path('logement/<slug>/duplicate', views.dupliquer_logement, name='dupliquer-logement'),
-    path('api/', include(router.urls))
+    path(
+        "logement/<slug>/duplicate", views.dupliquer_logement, name="dupliquer-logement"
+    ),
+    path("api/", include(router.urls)),
 ]

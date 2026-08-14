@@ -1,6 +1,6 @@
 {% extends 'tracker/base_tracker.html' %}
 
-{% load fontawesome_6 custom_tags %}
+{% load fontawesome_6 custom_tags humanize %}
 
 {% block tracker_title %}Mes trackers{% endblock %}
 
@@ -9,43 +9,48 @@
     {{ form.media.css }}
 {% endblock %}
 
+{% block content_class %}content--wide{% endblock %}
+
 {% block content %}
     {% if trackers|length > 1 %}
-        <div class="text-right">
-            <a class="btn btn-default" href="{% url 'tracker:compare-trackers' %}">Comparer des trackers</a>
+        <div class="ds-cluster" style="justify-content: flex-end;">
+            <a class="ds-btn ds-btn--ghost" href="{% url 'tracker:compare-trackers' %}">
+                {% fa6_icon 'chart-line' %} Comparer des trackers
+            </a>
         </div>
     {% endif %}
-    <div class="flex-container">
+
+    <div class="tracker-grid">
         {% for tracker in trackers %}
-            <div class="tracker" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
-                <span class="addTrackBtn">
-                    {% if tracker.type != 'mesure' %}
-                        <a href="{% url 'tracker:tracker_quick_add' tracker.id %}" title="Ajouter un nouveau track rapidement">
-                            <i class="fa fa-plus-circle"></i>
-                        </a>
+            <div class="tracker-card" style="--tc: {{ tracker.color }}; --tc-fg: {{ tracker.color|contrast_color }};">
+                {% if tracker.type != 'mesure' %}
+                    <a class="tracker-card__add" href="{% url 'tracker:tracker_quick_add' tracker.id %}"
+                       title="Ajouter un track rapidement" aria-label="Ajouter un track rapidement">
+                        {% fa6_icon 'plus' %}
+                    </a>
+                {% endif %}
+                <a class="tracker-card__link" href="{{ tracker.get_absolute_url }}">
+                    <span class="tracker-card__icon">{% fa6_icon tracker.icone.name tracker.icone.style_prefix %}</span>
+                    <h3 class="tracker-card__name">{{ tracker.nom }}</h3>
+                </a>
+                <span class="tracker-card__count">{{ tracker.tracks_count }} track{{ tracker.tracks_count|pluralize }}</span>
+                <span class="tracker-card__date">
+                    {% if tracker.last_track_date %}
+                        {% fa6_icon 'clock' 'far' %} <span title="{{ tracker.last_track_date }}">{{ tracker.last_track_date|naturaltime }}</span>
+                    {% else %}
+                        {% fa6_icon 'clock' 'far' %} aucun track
                     {% endif %}
                 </span>
-                <a href="{{ tracker.get_absolute_url }}">
-                    <h1>{% fa6_icon tracker.icone.name tracker.icone.style_prefix %}</h1>
-                    <h3>{{ tracker.nom }}</h3>
-                </a>
-                <div>{{ tracker.tracks.count }} tracks</div>
             </div>
         {% empty %}
-            <div>Pas de tracker enregistré.</div>
+            <p class="tracker-empty">Pas de tracker enregistré.</p>
         {% endfor %}
     </div>
-    <hr>
-    <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 col-xs-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3>Créer un nouveau tracker</h3>
-                </div>
-                <div class="panel-body">
-                    {% include 'tracker/include/tracker_form_table.html' %}
-                </div>
-            </div>
+
+    <div class="ds-card" style="max-width: 720px; margin: 2rem auto 0;">
+        <div class="ds-card__body">
+            <h3 class="ds-card__title">{% fa6_icon 'plus-circle' %} Créer un nouveau tracker</h3>
+            {% include 'tracker/include/tracker_form_table.html' %}
         </div>
     </div>
 {% endblock %}

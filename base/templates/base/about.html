@@ -11,18 +11,98 @@
 {% block jumbotron_description %}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-4 text-center">
-            <img src="{% static 'img/bbb.jpg' %}" alt="{% trans "Picture of me" %}" title="{% trans "It's me!" %}" style="width: 80%; margin-bottom: 15px"/>
+    <div class="ds-about-grid">
+        <div class="ds-about-side">
+            <img class="ds-avatar ds-avatar--sm" src="{% static 'img/bbb.jpg' %}" alt="{% trans "Picture of me" %}">
+            <ul class="ds-about-side__facts">
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-7.7 7-12.4a7 7 0 10-14 0C5 13.3 12 21 12 21z"/><circle cx="12" cy="8.6" r="2.4"/></svg>
+                    {% trans "Lyon, France" %} 🇫🇷
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    {% trans "Full-Stack Lead Developer" %}
+                </li>
+            </ul>
+            {% comment %}
+               Le fichier PDF n'existe pas encore dans le repo : à déposer dans
+               assets/files/ (voir STATICFILES_DIRS) avant déploiement.
+            {% endcomment %}
+            <a class="ds-btn ds-btn--ghost ds-w-100" href="{% static 'files/cv-benjamin-bernard-bouissieres.pdf' %}" download>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+                {% trans "Download my CV" %}
+            </a>
         </div>
-        <div class="col-sm-8">
-            {% blocktrans with django_site='https://www.djangoproject.com/' github='https://github.com/Benbb96/benbb96/' %}
-                Hey, it's me, Benjamin, but everybody call me BBB !<br><br>
-                I love to code in Python with the Framework <a href="{{ django_site }}" target="_blank">Django</a>. That's why this website exists !<br>
-                I'd like to host a lot of personal projects which come from simple ideas or needs I have in my daily life.<br><br>
-                You can follow the project flow on my GitHub repository : <a href="{{ github }}" target="_blank">{{github}}</a>.<br>
-                Also find me on numerous social networks displayed on the bottom 😉
-            {% endblocktrans %}
+
+        <div class="ds-about-body">
+            <p class="ds-bio">
+                {% blocktrans with django_site='https://www.djangoproject.com/' %}
+                    Hey, it's me, Benjamin, but everybody calls me BBB — the initials of my full name,
+                    Benjamin Bernard-Bouissières. I'm a huge computer geek: I love that feeling when everything
+                    falls into place after solving a technical problem — that's why this website exists, hosting
+                    personal projects born from everyday ideas or needs, built with
+                    <a href="{{ django_site }}" target="_blank">Django</a>. I also care about the environment and
+                    try to keep that in mind in my work.
+                {% endblocktrans %}
+            </p>
+
+            <h2>{% trans "Background" %}</h2>
+            <ul class="ds-timeline">
+                <li>
+                    <span class="ds-timeline__period">2023 – {% trans "Present" %}</span>
+                    <span class="ds-timeline__role">{% trans "Full-Stack Lead Developer" %}</span> ·
+                    <span class="ds-timeline__org">Koesio, Lyon</span>
+                </li>
+                <li>
+                    <span class="ds-timeline__period">2017 – 2023</span>
+                    <span class="ds-timeline__role">{% trans "Python / PHP Developer" %}</span> ·
+                    <span class="ds-timeline__org">Ipexia, Lyon</span>
+                </li>
+                <li>
+                    <span class="ds-timeline__period">2016 – 2017</span>
+                    <span class="ds-timeline__role">{% trans "CMMS Support Technician" %}</span> ·
+                    <span class="ds-timeline__org">Dimo Software, Limonest</span>
+                </li>
+                <li>
+                    <span class="ds-timeline__period">2016</span>
+                    <span class="ds-timeline__role">{% trans "Video Game Developer" %}</span> ·
+                    <span class="ds-timeline__org">{% trans "University exchange, Wales" %}</span>
+                </li>
+            </ul>
+
+            <h2>{% trans "Skills" %}</h2>
+            <ul class="ds-pills">
+                <li class="ds-pill">Python · Django</li>
+                <li class="ds-pill">TypeScript · Nest.js</li>
+                <li class="ds-pill">React · Vue.js</li>
+                <li class="ds-pill">SQL</li>
+                <li class="ds-pill">Kubernetes · Docker</li>
+                <li class="ds-pill">{% trans "AI" %} · Claude</li>
+            </ul>
+
+            <h2>{% trans "Interests" %}</h2>
+            <ul class="ds-chips">
+                <li class="ds-chip">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 7v10M18 7v10M2 10v4M22 10v4M6 12h12"/></svg>
+                    {% trans "Sport" %}
+                </li>
+                <li class="ds-chip">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="8" width="20" height="9" rx="4"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="16" cy="11" r="1"/><circle cx="18.5" cy="13.5" r="1"/></svg>
+                    {% trans "Video games" %}
+                </li>
+                <li class="ds-chip">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="8.5" cy="8.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.1" fill="currentColor" stroke="none"/></svg>
+                    {% trans "Board games" %}
+                </li>
+                <li class="ds-chip">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17V4.5L19 3v10.8"/><circle cx="9" cy="17" r="2.3"/><circle cx="19" cy="15.3" r="2.3"/></svg>
+                    {% trans "Music" %}
+                </li>
+                <li class="ds-chip">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c9 0 15-6 15-15 0 0-11-2-15 7-2 4-2 8 0 8z"/><path d="M4 20c2-6 6-9 11-11"/></svg>
+                    {% trans "GreenIT & digital sobriety" %}
+                </li>
+            </ul>
         </div>
     </div>
 {% endblock %}

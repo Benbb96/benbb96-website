@@ -1,0 +1,28 @@
+{% comment %}
+    Rendu des messages django.contrib.messages en alertes maison (.ds-alert).
+    Remplace {% bootstrap_messages %}. Fermeture sans JS (checkbox-hack).
+
+    Mapping des tags Django → variante + icône FontAwesome :
+      success → success / circle-check
+      info    → info    / circle-info
+      warning → warning / triangle-exclamation
+      error   → error   / circle-exclamation
+      debug   → debug   / bug
+{% endcomment %}
+{% if messages %}
+    <div class="ds-messages" role="status" aria-live="polite">
+        {% for message in messages %}
+            {% if 'success' in message.tags %}{% with variant='success' icon='circle-check' %}
+                {% include 'components/_message.html' %}
+            {% endwith %}{% elif 'warning' in message.tags %}{% with variant='warning' icon='triangle-exclamation' %}
+                {% include 'components/_message.html' %}
+            {% endwith %}{% elif 'error' in message.tags or 'danger' in message.tags %}{% with variant='error' icon='circle-exclamation' %}
+                {% include 'components/_message.html' %}
+            {% endwith %}{% elif 'debug' in message.tags %}{% with variant='debug' icon='bug' %}
+                {% include 'components/_message.html' %}
+            {% endwith %}{% else %}{% with variant='info' icon='circle-info' %}
+                {% include 'components/_message.html' %}
+            {% endwith %}{% endif %}
+        {% endfor %}
+    </div>
+{% endif %}

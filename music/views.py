@@ -1,5 +1,5 @@
 import re
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import parse_qs, urlparse
 
 from django.conf import settings
 from django.contrib import messages
@@ -8,8 +8,8 @@ from django.contrib.auth.views import redirect_to_login
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Sum
-from django.http import JsonResponse, HttpResponse
+from django.db.models import Q, Sum
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -20,30 +20,37 @@ from django.views.generic.list import MultipleObjectMixin
 from django_filters.views import FilterView
 from googleapiclient import discovery
 from slugify import slugify
-from spotipy import Spotify, SpotifyOAuth, DjangoSessionCacheHandler, SpotifyException
+from spotipy import DjangoSessionCacheHandler, Spotify, SpotifyException, SpotifyOAuth
 
-from music.filters import MusiqueFilter, StyleFilter, LabelFilter, ArtisteFilter, PlaylistFilter
-from music.models import Playlist, Musique, Lien, Artiste, Style, Label, Plateforme
+from music.filters import (
+    ArtisteFilter,
+    LabelFilter,
+    MusiqueFilter,
+    PlaylistFilter,
+    StyleFilter,
+)
 from music.forms import LienForm, LienPlaylistForm, MusiqueForm
+from music.models import Artiste, Label, Lien, Musique, Plateforme, Playlist, Style
 
 
 class MusiqueListView(FilterView):
     filterset_class = MusiqueFilter
     paginate_by = 50
-    queryset = Musique.objects.select_related('artiste', 'remixed_by')\
-        .prefetch_related('featuring', 'liens__plateforme', 'styles')
+    queryset = Musique.objects.select_related("artiste", "remixed_by").prefetch_related(
+        "featuring", "liens__plateforme", "styles"
+    )
 
 
 class StyleListView(FilterView):
     filterset_class = StyleFilter
     paginate_by = 20
-    queryset = Style.objects.prefetch_related('musiques')
+    queryset = Style.objects.prefetch_related("musiques")
 
 
 class StyleDetailView(DetailView, MultipleObjectMixin):
     model = Style
     paginate_by = 20
-    slug_field = 'slug'
+    slug_field = "slug"
 
     def get_context_data(self, **kwargs):
         object_list = self.get_object().musiques.all()
@@ -52,53 +59,63 @@ class StyleDetailView(DetailView, MultipleObjectMixin):
 
     def get_queryset(self):
         return Style.objects.prefetch_related(
-            'musiques__artiste', 'musiques__liens', 'musiques__styles', 'musiques__remixed_by', 'musiques__featuring'
+            "musiques__artiste",
+            "musiques__liens",
+            "musiques__styles",
+            "musiques__remixed_by",
+            "musiques__featuring",
         )
 
 
 class LabelListView(FilterView):
     filterset_class = LabelFilter
     paginate_by = 20
-    queryset = Label.objects.prefetch_related('musiques')
+    queryset = Label.objects.prefetch_related("musiques")
 
 
 class LabelDetailView(DetailView):
     model = Label
-    slug_field = 'slug'
+    slug_field = "slug"
 
     def get_queryset(self):
         return Label.objects.prefetch_related(
-            'artistes', 'styles', 'musiques__artiste', 'musiques__liens',
-            'musiques__styles', 'musiques__remixed_by', 'musiques__featuring'
+            "artistes",
+            "styles",
+            "musiques__artiste",
+            "musiques__liens",
+            "musiques__styles",
+            "musiques__remixed_by",
+            "musiques__featuring",
         )
 
 
 class PlaylistListView(FilterView):
     filterset_class = PlaylistFilter
-    queryset = Playlist.objects\
-        .select_related('createur__user')\
-        .prefetch_related('musiqueplaylist_set')\
-        .annotate(total_vue=Sum('musiqueplaylist__musique__liens__click_count'))
+    queryset = (
+        Playlist.objects.select_related("createur__user")
+        .prefetch_related("musiqueplaylist_set")
+        .annotate(total_vue=Sum("musiqueplaylist__musique__liens__click_count"))
+    )
 
 
 class PlaylistDetailView(FormMixin, DetailView):
     model = Playlist
-    slug_field = 'slug'
+    slug_field = "slug"
     form_class = LienPlaylistForm
 
     def get_queryset(self):
-        return Playlist.objects.select_related('createur__user')
+        return Playlist.objects.select_related("createur__user")
 
     def get_context_data(self, **kwargs):
         # Prépare les musiques de la playslists afin de les avoir dans le bon ordre
-        musiques = self.get_object().musiques\
-            .select_related('artiste', 'remixed_by')\
-            .prefetch_related('styles', 'featuring', 'liens__plateforme')\
-            .order_by('musiqueplaylist__position')
+        musiques = (
+            self.get_object()
+            .musiques.select_related("artiste", "remixed_by")
+            .prefetch_related("styles", "featuring", "liens__plateforme")
+            .order_by("musiqueplaylist__position")
+        )
         context = super().get_context_data(
-            musiques=musiques,
-            plateformes=Plateforme.objects.all(),
-            **kwargs
+            musiques=musiques, plateformes=Plateforme.objects.all(), **kwargs
         )
         return context
 
@@ -114,7 +131,7 @@ class PlaylistDetailView(FormMixin, DetailView):
         lien = form.save(commit=False)
         lien.playlist = self.object
         lien.save()
-        messages.success(self.request, 'Le lien a bien été ajouté.')
+        messages.success(self.request, "Le lien a bien été ajouté.")
         return redirect(self.object.get_absolute_url())
 
 
@@ -132,141 +149,194 @@ def create_music_from_url(request):
         link.createur = request.user.profil
         link.date_validation = timezone.now()
         link.save()
-        messages.success(request, 'La musique a bien été créée et ajoutée à la playlist.')
+        messages.success(
+            request, "La musique a bien été créée et ajoutée à la playlist."
+        )
         return redirect(musique)
 
-    return render(request, 'music/create_musique_from_url.html', {
-        'form': form,
-        'link_form': link_form,
-        'plateformes': Plateforme.objects.all()
-    })
+    return render(
+        request,
+        "music/create_musique_from_url.html",
+        {"form": form, "link_form": link_form, "plateformes": Plateforme.objects.all()},
+    )
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def get_music_info_from_link(request):
-    plateforme_id = request.POST.get('plateforme')
+    plateforme_id = request.POST.get("plateforme")
     if not plateforme_id:
-        return JsonResponse({'success': False, 'error': 'plateforme_id manquant'})
+        return JsonResponse({"success": False, "error": "plateforme_id manquant"})
     plateforme = get_object_or_404(Plateforme, id=plateforme_id)
 
-    url = request.POST.get('url')
+    url = request.POST.get("url")
     if not url:
-        return JsonResponse({'success': False, 'error': 'url manquante'})
+        return JsonResponse({"success": False, "error": "url manquante"})
 
-    full_title = title = artist = remixed_by = ''
+    full_title = title = artist = remixed_by = ""
     featuring = []
     if plateforme.est_youtube():
         o = urlparse(url)
         query = parse_qs(o.query)
-        if 'v' in query:
-            video_id = query['v']
+        if "v" in query:
+            video_id = query["v"]
 
             youtube = discovery.build(
-                'youtube', 'v3', developerKey=settings.GOOGLE_API_KEY, cache_discovery=False
+                "youtube",
+                "v3",
+                developerKey=settings.GOOGLE_API_KEY,
+                cache_discovery=False,
             )
 
-            request = youtube.videos().list(
-                part="snippet",
-                id=video_id
-            )
+            request = youtube.videos().list(part="snippet", id=video_id)
             response = request.execute()
-            if response['items']:
-                full_title = response['items'][0]['snippet'].get('title')
-                if '-' in full_title:
-                    artist, title = map(str.strip, full_title.split('-', 2))
+            if response["items"]:
+                full_title = response["items"][0]["snippet"].get("title")
+                if "-" in full_title:
+                    artist, title = map(str.strip, full_title.split("-", 2))
                 else:
                     title = full_title
-                    artist = full_title = response['items'][0]['snippet'].get('channelTitle')
+                    artist = full_title = response["items"][0]["snippet"].get(
+                        "channelTitle"
+                    )
     elif plateforme.est_soundcloud():
         try:
-            result = settings.SOUNDCLOUD_CLIENT.get(f'/resolve/', url=url)
+            result = settings.SOUNDCLOUD_CLIENT.get("/resolve/", url=url)
         except Exception as e:
-            return JsonResponse({'success': False, 'error': f"Erreur lors de l'appel API vers Soundcloud : {e}"})
-        full_title = result.fields().get('title')
-        if '-' in full_title:
-            artist, title = map(str.strip, full_title.split('-', 1))
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": f"Erreur lors de l'appel API vers Soundcloud : {e}",
+                }
+            )
+        full_title = result.fields().get("title")
+        if "-" in full_title:
+            artist, title = map(str.strip, full_title.split("-", 1))
         else:
             title = full_title
-            artist = result.fields().get('user').get('username')
+            artist = result.fields().get("user").get("username")
     elif plateforme.est_spotify():
         try:
             track = settings.SPOTIFY.track(url)
         except Exception as e:
-            return JsonResponse({'success': False, 'error': f"Erreur lors de l'appel API vers Spotify : {e}"})
-        title = track.get('name')
-        artists = track.get('artists')
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": f"Erreur lors de l'appel API vers Spotify : {e}",
+                }
+            )
+        title = track.get("name")
+        artists = track.get("artists")
         if artists:
-            artist = artists[0].get('name')
+            artist = artists[0].get("name")
             # Add to featuring other artists
             if len(artists) > 1:
                 for a in artists[1:]:
                     try:
-                        artist_obj = Artiste.objects.get(nom_artiste__iexact=a.get('name'))
-                        featuring.append({'name': artist_obj.nom_artiste, 'id': artist_obj.id})
+                        artist_obj = Artiste.objects.get(
+                            nom_artiste__iexact=a.get("name")
+                        )
+                        featuring.append(
+                            {"name": artist_obj.nom_artiste, "id": artist_obj.id}
+                        )
                     except Artiste.DoesNotExist:
                         pass
     else:
-        return JsonResponse({
-            'success': False,
-            'error': f"Le traitement de la plateforme {plateforme} n'a pas été fait..."
-        })
+        return JsonResponse(
+            {
+                "success": False,
+                "error": f"Le traitement de la plateforme {plateforme} n'a pas été fait...",
+            }
+        )
 
     if not title and not artist:
-        return JsonResponse({'success': False, 'error': "Impossible de retrouver des infos via l'url."})
+        return JsonResponse(
+            {"success": False, "error": "Impossible de retrouver des infos via l'url."}
+        )
 
     # Extract a possible artist who remixed the track with a regex
-    remixed = re.findall(r'\((.*) Re?mi?x\)', title, flags=re.IGNORECASE)
+    remixed = re.findall(r"\((.*) Re?mi?x\)", title, flags=re.IGNORECASE)
     if remixed:
         try:
             artist_obj = Artiste.objects.get(nom_artiste__iexact=remixed[0])
-            remixed_by = {'name': artist_obj.nom_artiste, 'id': artist_obj.id}
+            remixed_by = {"name": artist_obj.nom_artiste, "id": artist_obj.id}
         except Artiste.DoesNotExist:
             remixed_by = remixed[0]
 
     try:
         artist_obj = Artiste.objects.get(nom_artiste__iexact=artist)
-        artist = {'name': artist_obj.nom_artiste, 'id': artist_obj.id}
+        artist = {"name": artist_obj.nom_artiste, "id": artist_obj.id}
     except Artiste.DoesNotExist:
         pass
 
-    return JsonResponse({
-        'success': True,
-        'full_title': full_title,
-        'title': title,
-        'artist': artist,
-        'remixed_by': remixed_by,
-        'featuring': featuring
-    })
+    return JsonResponse(
+        {
+            "success": True,
+            "full_title": full_title,
+            "title": title,
+            "artist": artist,
+            "remixed_by": remixed_by,
+            "featuring": featuring,
+        }
+    )
 
 
 @user_passes_test(lambda u: u.is_superuser)
 def create_artist(request):
-    name = request.POST.get('name')
+    name = request.POST.get("name")
     if not name:
-        return JsonResponse({'success': False, 'error': 'name manquant'})
+        return JsonResponse({"success": False, "error": "name manquant"})
     try:
-        artiste = Artiste.objects.create(nom_artiste=name, slug=slugify(name), createur=request.user.profil)
-    except IntegrityError as e:
-        return JsonResponse({'success': False, 'error': 'Cet artiste a déjà été créé...'})
-    return JsonResponse({'success': True, 'name': artiste.nom_artiste, 'id': artiste.id})
+        artiste = Artiste.objects.create(
+            nom_artiste=name, slug=slugify(name), createur=request.user.profil
+        )
+    except IntegrityError:
+        return JsonResponse(
+            {"success": False, "error": "Cet artiste a déjà été créé..."}
+        )
+    return JsonResponse(
+        {"success": True, "name": artiste.nom_artiste, "id": artiste.id}
+    )
+
+
+def artiste_search(request):
+    """Endpoint JSON pour le chargement distant des artistes (Tom Select).
+
+    Renvoie ``[{"id": …, "text": …}, …]`` filtré sur le paramètre ``q``.
+    Remplace l'endpoint AJAX de django-select2 pour le gros jeu « artistes ».
+    """
+    query = request.GET.get("q", "").strip()
+    artistes = Artiste.objects.all()
+    if query:
+        artistes = artistes.filter(
+            Q(nom_artiste__icontains=query)
+            | Q(prenom__icontains=query)
+            | Q(nom__icontains=query)
+            | Q(slug__icontains=query)
+        )
+    artistes = artistes.order_by("nom_artiste")[:30]
+    return JsonResponse(
+        [{"id": a.pk, "text": a.nom_artiste} for a in artistes], safe=False
+    )
 
 
 class MusiqueDetailView(FormMixin, DetailView):
     model = Musique
-    slug_field = 'slug'
+    slug_field = "slug"
     query_pk_and_slug = True
     form_class = LienForm
 
     def get_context_data(self, **kwargs):
-        context = super(MusiqueDetailView, self).get_context_data(**kwargs)
-        context['form'] = self.get_form()
-        context['plateformes'] = Plateforme.objects.all()
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.get_form()
+        context["plateformes"] = Plateforme.objects.all()
         return context
 
     def post(self, *args, **kwargs):
         self.object = self.get_object()
         if not self.request.user.is_authenticated:
-            messages.error(self.request, 'Vous devez être connecté pour proposer un lien.')
+            messages.error(
+                self.request, "Vous devez être connecté pour proposer un lien."
+            )
             return redirect_to_login(self.object.get_absolute_url())
         form = self.get_form()
         if form.is_valid():
@@ -286,39 +356,42 @@ class MusiqueDetailView(FormMixin, DetailView):
                 # Avertissement par mail qu'un lien a été proposé
                 current_site = Site.objects.get_current()
                 send_mail(
-                    'Nouveau lien proposé sur la musique %s' % self.object,
-                    'Le lien "%s" a été proposé pour la musique %s que tu as ajouté. Tu peux valider le lien ici : %s%s'
-                    % (lien.url, self.object, current_site.domain, self.object.get_absolute_url()),
-                    'noreply@benbb96.com',
-                    [self.object.createur.user.email]
+                    f"Nouveau lien proposé sur la musique {self.object}",
+                    f'Le lien "{lien.url}" a été proposé pour la musique {self.object} que tu as ajouté. Tu peux valider le lien ici : {current_site.domain}{self.object.get_absolute_url()}',
+                    "noreply@benbb96.com",
+                    [self.object.createur.user.email],
                 )
         lien.save()
-        messages.success(self.request, 'Le lien a bien été ajouté.')
+        messages.success(self.request, "Le lien a bien été ajouté.")
         return redirect(self.object.get_absolute_url())
 
 
 class ArtisteListView(FilterView):
     filterset_class = ArtisteFilter
     paginate_by = 50
-    queryset = Artiste.objects.prefetch_related('musiques', 'musiques_featuring', 'remixes')
+    queryset = Artiste.objects.prefetch_related(
+        "musiques", "musiques_featuring", "remixes"
+    )
 
 
 class ArtisteDetailView(DetailView):
     model = Artiste
-    slug_field = 'slug'
+    slug_field = "slug"
 
 
 @require_POST
 def incremente_link_click_count(request, lien_id):
     lien = get_object_or_404(Lien, id=lien_id)
     lien.click_count += 1
-    lien.save(update_fields=['click_count'])
-    return JsonResponse({
-        'success': True,
-        'click_count': lien.click_count,
-        'music_id': lien.musique.id,
-        'music_count': lien.musique.nombre_vue()
-    })
+    lien.save(update_fields=["click_count"])
+    return JsonResponse(
+        {
+            "success": True,
+            "click_count": lien.click_count,
+            "music_id": lien.musique.id,
+            "music_count": lien.musique.nombre_vue(),
+        }
+    )
 
 
 def valider_lien(request, lien_id):
@@ -327,18 +400,18 @@ def valider_lien(request, lien_id):
         messages.error(request, "Cette musique ne t'appartient pas.")
     else:
         lien.date_validation = timezone.now()
-        lien.save(update_fields=['date_validation'])
+        lien.save(update_fields=["date_validation"])
     return redirect(lien.musique.get_absolute_url())
 
 
 def get_spotify_oauth(request):
-    callback_full_url = request.build_absolute_uri(reverse('spotify_callback'))
+    callback_full_url = request.build_absolute_uri(reverse("spotify_callback"))
     return SpotifyOAuth(
         client_id=settings.SPOTIFY_CLIENT_ID,
         client_secret=settings.SPOTIFY_CLIENT_SECRET,
-        scope='playlist-modify-public',
+        scope="playlist-modify-public",
         redirect_uri=callback_full_url,
-        cache_handler=DjangoSessionCacheHandler(request)
+        cache_handler=DjangoSessionCacheHandler(request),
     )
 
 
@@ -347,45 +420,61 @@ def synchroniser_playlist(request, playlist_id, lien_id):
     lien = get_object_or_404(playlist.liens.all(), id=lien_id)
 
     if not lien.plateforme.est_spotify():
-        return JsonResponse({'error': 'Seul Spotify est géré.'}, status=400)
+        return JsonResponse({"error": "Seul Spotify est géré."}, status=400)
 
     try:
         spotify_playlist = settings.SPOTIFY.playlist(playlist_id=lien.url)
         spotify_playlist_tracks = settings.SPOTIFY.playlist_tracks(playlist_id=lien.url)
     except Exception as e:
-        return JsonResponse({'success': False, 'error': f"Erreur lors de l'appel API vers Spotify : {e}"})
+        return JsonResponse(
+            {
+                "success": False,
+                "error": f"Erreur lors de l'appel API vers Spotify : {e}",
+            }
+        )
 
-    current_spotify_track_ids = [t['track']['id'] for t in spotify_playlist_tracks['items']]
+    current_spotify_track_ids = [
+        t["track"]["id"] for t in spotify_playlist_tracks["items"]
+    ]
     new_spotify_track_ids = []
     to_add = []
-    for musique in playlist.musiques.prefetch_related('liens__plateforme'):
-        for l in musique.liens.all():
-            if l.plateforme.est_spotify():
+    for musique in playlist.musiques.prefetch_related("liens__plateforme"):
+        for lien in musique.liens.all():
+            if lien.plateforme.est_spotify():
                 try:
-                    spotify_track = settings.SPOTIFY.track(l.url)
+                    spotify_track = settings.SPOTIFY.track(lien.url)
                 except SpotifyException as e:
                     print(e)
-                    return JsonResponse({'success': False, 'error': f"Erreur avec l'URL {l.url}  : {e}"})
+                    return JsonResponse(
+                        {
+                            "success": False,
+                            "error": f"Erreur avec l'URL {lien.url}  : {e}",
+                        }
+                    )
                 else:
-                    new_spotify_track_ids.append(spotify_track['id'])
-                    if spotify_track['id'] not in current_spotify_track_ids:
-                        to_add.append(spotify_track['id'])
+                    new_spotify_track_ids.append(spotify_track["id"])
+                    if spotify_track["id"] not in current_spotify_track_ids:
+                        to_add.append(spotify_track["id"])
                     break
         else:
             continue
 
     sp = Spotify(auth_manager=get_spotify_oauth(request))
     if to_add:
-        sp.playlist_add_items(spotify_playlist['id'], to_add)
+        sp.playlist_add_items(spotify_playlist["id"], to_add)
 
-    to_remove = [spotify_id for spotify_id in current_spotify_track_ids if spotify_id not in new_spotify_track_ids]
+    to_remove = [
+        spotify_id
+        for spotify_id in current_spotify_track_ids
+        if spotify_id not in new_spotify_track_ids
+    ]
     if to_remove:
-        sp.playlist_remove_all_occurrences_of_items(spotify_playlist['id'], to_remove)
+        sp.playlist_remove_all_occurrences_of_items(spotify_playlist["id"], to_remove)
 
-    return JsonResponse({'success': True})
+    return JsonResponse({"success": True})
 
 
 def spotify_callback(request):
     auth_manager = get_spotify_oauth(request)
-    auth_manager.get_access_token(request.GET.get('code'))
-    return HttpResponse('Authentification sur Spotify réussi !')
+    auth_manager.get_access_token(request.GET.get("code"))
+    return HttpResponse("Authentification sur Spotify réussi !")

@@ -3,35 +3,32 @@ from django.db import models
 from django.urls import reverse
 from simple_history.models import HistoricalRecords
 
-from base.models import Profil, PhotoAbstract
+from base.models import PhotoAbstract, Profil
 
 
 class BaseModel(models.Model):
-    name = models.CharField('nom', max_length=100)
-    slug = AutoSlugField(unique=True, populate_from='name')
+    name = models.CharField("nom", max_length=100)
+    slug = AutoSlugField(unique=True, populate_from="name")
     description = models.TextField(blank=True)
     creator = models.ForeignKey(
         Profil,
         on_delete=models.SET_NULL,
-        verbose_name='créateur',
+        verbose_name="créateur",
         null=True,
-        blank=True
+        blank=True,
     )
-    created_at = models.DateTimeField('date création', auto_now_add=True)
-    updated_at = models.DateTimeField('date mise à jour', auto_now=True)
+    created_at = models.DateTimeField("date création", auto_now_add=True)
+    updated_at = models.DateTimeField("date mise à jour", auto_now=True)
     BEGINNER = 1
     INTERMEDIATE = 2
     ADVANCED = 3
     DIFFICULTY = (
-        (BEGINNER, 'Débutant'),
-        (INTERMEDIATE, 'Intermédiaire'),
-        (ADVANCED, 'Avancé'),
+        (BEGINNER, "Débutant"),
+        (INTERMEDIATE, "Intermédiaire"),
+        (ADVANCED, "Avancé"),
     )
-    difficulty = models.PositiveSmallIntegerField(
-        'difficulté',
-        choices=DIFFICULTY
-    )
-    tutorial_video_link = models.URLField('lien vidéo tutoriel', blank=True)
+    difficulty = models.PositiveSmallIntegerField("difficulté", choices=DIFFICULTY)
+    tutorial_video_link = models.URLField("lien vidéo tutoriel", blank=True)
     # TODO proof_video
 
     class Meta:
@@ -45,27 +42,23 @@ class KendamaTrick(BaseModel):
     # TODO photo
     players = models.ManyToManyField(
         Profil,
-        verbose_name='joueurs',
-        related_name='tricks',
-        through='TrickPlayer',
-        blank=True
+        verbose_name="joueurs",
+        related_name="tricks",
+        through="TrickPlayer",
+        blank=True,
     )
 
     class Meta:
-        verbose_name = 'trick de Kendama'
-        verbose_name_plural = 'tricks de Kendama'
-        ordering = ('name',)
+        verbose_name = "trick de Kendama"
+        verbose_name_plural = "tricks de Kendama"
+        ordering = ("name",)
 
     def get_absolute_url(self):
-        return reverse('kendama:detail-trick', args=[self.slug])
+        return reverse("kendama:detail-trick", args=[self.slug])
 
 
 class BasePlayerFrequency(models.Model):
-    player = models.ForeignKey(
-        Profil,
-        on_delete=models.CASCADE,
-        verbose_name='joueur'
-    )
+    player = models.ForeignKey(Profil, on_delete=models.CASCADE, verbose_name="joueur")
     NEVER = 1
     ONCE = 2
     RARELY = 3
@@ -73,19 +66,17 @@ class BasePlayerFrequency(models.Model):
     GENERALLY = 5
     ALWAYS = 6
     FREQUENCY = (
-        (NEVER, 'Jamais'),
-        (ONCE, 'Seulement une fois'),
-        (RARELY, 'Rarement (environ 10%)'),
-        (SOMETIMES, 'Parfois (environ 33%)'),
-        (GENERALLY, 'Généralement (environ 66%)'),
-        (ALWAYS, 'Presque toujours (environ 99%)'),
+        (NEVER, "Jamais"),
+        (ONCE, "Seulement une fois"),
+        (RARELY, "Rarement (environ 10%)"),
+        (SOMETIMES, "Parfois (environ 33%)"),
+        (GENERALLY, "Généralement (environ 66%)"),
+        (ALWAYS, "Presque toujours (environ 99%)"),
     )
     frequency = models.PositiveSmallIntegerField(
-        'fréquence de réussite',
-        choices=FREQUENCY,
-        default=NEVER
+        "fréquence de réussite", choices=FREQUENCY, default=NEVER
     )
-    created_at = models.DateTimeField('date création', auto_now_add=True)
+    created_at = models.DateTimeField("date création", auto_now_add=True)
 
     # TODO proof_video
 
@@ -94,79 +85,89 @@ class BasePlayerFrequency(models.Model):
 
 
 class TrickPlayer(BasePlayerFrequency):
-    trick = models.ForeignKey(KendamaTrick, on_delete=models.CASCADE, related_name='trick_players')
+    trick = models.ForeignKey(
+        KendamaTrick, on_delete=models.CASCADE, related_name="trick_players"
+    )
     history = HistoricalRecords()
 
     class Meta:
-        verbose_name = 'trick de joueur'
-        verbose_name_plural = 'tricks de joueur'
-        unique_together = ('trick', 'player')
+        verbose_name = "trick de joueur"
+        verbose_name_plural = "tricks de joueur"
+        unique_together = ("trick", "player")
 
     def __str__(self):
-        return f'{self.player} - {self.trick} : {self.get_frequency_display()}'
+        return f"{self.player} - {self.trick} : {self.get_frequency_display()}"
 
 
 class Combo(BaseModel):
-    tricks = models.ManyToManyField(KendamaTrick, related_name='combos', through='ComboTrick')
+    tricks = models.ManyToManyField(
+        KendamaTrick, related_name="combos", through="ComboTrick"
+    )
     players = models.ManyToManyField(
         Profil,
-        verbose_name='joueurs',
-        related_name='combos',
-        through='ComboPlayer',
-        blank=True
+        verbose_name="joueurs",
+        related_name="combos",
+        through="ComboPlayer",
+        blank=True,
     )
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
 
     def get_absolute_url(self):
-        return reverse('kendama:detail-combo', args=[self.slug])
+        return reverse("kendama:detail-combo", args=[self.slug])
 
 
 class ComboTrick(models.Model):
-    combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='combo_tricks')
-    trick = models.ForeignKey(KendamaTrick, on_delete=models.CASCADE, related_name='combo_tricks')
-    order = models.PositiveSmallIntegerField('ordre', default=0, db_index=True)
+    combo = models.ForeignKey(
+        Combo, on_delete=models.CASCADE, related_name="combo_tricks"
+    )
+    trick = models.ForeignKey(
+        KendamaTrick, on_delete=models.CASCADE, related_name="combo_tricks"
+    )
+    order = models.PositiveSmallIntegerField("ordre", default=0, db_index=True)
 
     class Meta:
-        ordering = ('combo', 'order')
-        unique_together = ('combo', 'trick', 'order')
+        ordering = ("combo", "order")
+        unique_together = ("combo", "trick", "order")
 
 
 class ComboPlayer(BasePlayerFrequency):
-    combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='combo_players')
+    combo = models.ForeignKey(
+        Combo, on_delete=models.CASCADE, related_name="combo_players"
+    )
     history = HistoricalRecords()
 
     class Meta:
-        verbose_name = 'combo de joueur'
-        verbose_name_plural = 'combos de joueur'
-        unique_together = ('combo', 'player')
+        verbose_name = "combo de joueur"
+        verbose_name_plural = "combos de joueur"
+        unique_together = ("combo", "player")
 
     def __str__(self):
-        return f'{self.player} - {self.combo} : {self.get_frequency_display()}'
+        return f"{self.player} - {self.combo} : {self.get_frequency_display()}"
 
 
 class Kendama(PhotoAbstract):
-    PHOTO_FOLDER = 'kendamas'
+    PHOTO_FOLDER = "kendamas"
 
     owner = models.ForeignKey(
         Profil,
         on_delete=models.CASCADE,
-        verbose_name='possesseur',
-        related_name='kendamas'
+        verbose_name="possesseur",
+        related_name="kendamas",
     )
     name = models.CharField(max_length=100)
-    slug = AutoSlugField(unique=True, populate_from='name')
-    created_at = models.DateTimeField('date de création', auto_now_add=True)
+    slug = AutoSlugField(unique=True, populate_from="name")
+    created_at = models.DateTimeField("date de création", auto_now_add=True)
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ("-created_at",)
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('kendama:detail-kendama', args=[self.slug])
+        return reverse("kendama:detail-kendama", args=[self.slug])
 
 
 class LadderQueryset(models.QuerySet):
@@ -178,29 +179,35 @@ class LadderQueryset(models.QuerySet):
 
 
 class Ladder(BaseModel):
-    combos = models.ManyToManyField(Combo, related_name='ladders', through='LadderCombo')
+    combos = models.ManyToManyField(
+        Combo, related_name="ladders", through="LadderCombo"
+    )
     private = models.BooleanField(
-        'privé',
+        "privé",
         default=False,
-        help_text="Cochez cette case pour que ce ladder ne soit visible qu'à vous."
+        help_text="Cochez cette case pour que ce ladder ne soit visible qu'à vous.",
     )
 
     objects = LadderQueryset.as_manager()
 
     class Meta:
-        verbose_name = 'ladder'
-        verbose_name_plural = 'ladders'
-        ordering = ('name',)
+        verbose_name = "ladder"
+        verbose_name_plural = "ladders"
+        ordering = ("name",)
 
     def get_absolute_url(self):
-        return reverse('kendama:detail-ladder', args=[self.slug])
+        return reverse("kendama:detail-ladder", args=[self.slug])
 
 
 class LadderCombo(models.Model):
-    ladder = models.ForeignKey(Ladder, on_delete=models.CASCADE, related_name='ladder_combos')
-    combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='ladder_combos')
-    order = models.PositiveSmallIntegerField('ordre', default=0, db_index=True)
+    ladder = models.ForeignKey(
+        Ladder, on_delete=models.CASCADE, related_name="ladder_combos"
+    )
+    combo = models.ForeignKey(
+        Combo, on_delete=models.CASCADE, related_name="ladder_combos"
+    )
+    order = models.PositiveSmallIntegerField("ordre", default=0, db_index=True)
 
     class Meta:
-        ordering = ('ladder', 'order')
-        unique_together = ('ladder', 'combo', 'order')
+        ordering = ("ladder", "order")
+        unique_together = ("ladder", "combo", "order")

@@ -81,3 +81,31 @@ msgstr "Se connecter"
 #: .\templates\navbar.html:55
 msgid "Logout"
 msgstr "Se déconnecter"
+
+#: templates/navbar.html:42
+msgid "Theme"
+msgstr "Thème"
+
+#: templates/navbar.html:43
+msgid "Light theme"
+msgstr "Thème clair"
+
+#: templates/navbar.html:43
+msgid "Light"
+msgstr "Clair"
+
+#: templates/navbar.html:44
+msgid "Dark theme"
+msgstr "Thème sombre"
+
+#: templates/navbar.html:44
+msgid "Dark"
+msgstr "Sombre"
+
+#: templates/navbar.html:45
+msgid "Follow system theme"
+msgstr "Suivre le système"
+
+#: templates/navbar.html:45
+msgid "Auto"
+msgstr "Auto"

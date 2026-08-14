@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-30 23:27+0100\n"
+"POT-Creation-Date: 2026-08-03 18:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,44 +26,130 @@ msgstr ""
 msgid "About me"
 msgstr ""
 
-#: templates/base/about.html:16
+#: templates/base/about.html:16 templates/base/home.html:31
 msgid "Picture of me"
 msgstr ""
 
-#: templates/base/about.html:16
-msgid "It's me!"
+#: templates/base/about.html:20 templates/base/home.html:15
+msgid "Lyon, France"
 msgstr ""
 
-#: templates/base/about.html:19
+#: templates/base/about.html:24 templates/base/about.html:54
+#: templates/base/home.html:17
+msgid "Full-Stack Lead Developer"
+msgstr ""
+
+#: templates/base/about.html:34
+msgid "Download my CV"
+msgstr ""
+
+#: templates/base/about.html:40
 #, python-format
 msgid ""
 "\n"
-"                Hey, it's me, Benjamin, but everybody call me BBB !<br><br>\n"
-"                I love to code in Python with the Framework <a href="
-"\"%(django_site)s\" target=\"_blank\">Django</a>. That's why this website "
-"exists !<br>\n"
-"                I'd like to host a lot of personal projects which come from "
-"simple ideas or needs I have in my daily life.<br><br>\n"
-"                You can follow the project flow on my GitHub repository : <a "
-"href=\"%(github)s\" target=\"_blank\">%(github)s</a>.<br>\n"
-"                Also find me on numerous social networks displayed on the "
-"bottom 😉\n"
-"            "
+"                    Hey, it's me, Benjamin, but everybody calls me BBB — the "
+"initials of my full name,\n"
+"                    Benjamin Bernard-Bouissières. I'm a huge computer geek: "
+"I love that feeling when everything\n"
+"                    falls into place after solving a technical problem — "
+"that's why this website exists, hosting\n"
+"                    personal projects born from everyday ideas or needs, "
+"built with\n"
+"                    <a href=\"%(django_site)s\" target=\"_blank\">Django</"
+"a>. I also care about the environment and\n"
+"                    try to keep that in mind in my work.\n"
+"                "
+msgstr ""
+
+#: templates/base/about.html:50
+msgid "Background"
+msgstr ""
+
+#: templates/base/about.html:53
+msgid "Present"
+msgstr ""
+
+#: templates/base/about.html:59
+msgid "Python / PHP Developer"
+msgstr ""
+
+#: templates/base/about.html:64
+msgid "CMMS Support Technician"
+msgstr ""
+
+#: templates/base/about.html:69
+msgid "Video Game Developer"
+msgstr ""
+
+#: templates/base/about.html:70
+msgid "University exchange, Wales"
+msgstr ""
+
+#: templates/base/about.html:74
+msgid "Skills"
+msgstr ""
+
+#: templates/base/about.html:81
+msgid "AI"
+msgstr ""
+
+#: templates/base/about.html:84
+msgid "Interests"
+msgstr ""
+
+#: templates/base/about.html:88
+msgid "Sport"
+msgstr ""
+
+#: templates/base/about.html:92
+msgid "Video games"
+msgstr ""
+
+#: templates/base/about.html:96
+msgid "Board games"
+msgstr ""
+
+#: templates/base/about.html:100
+msgid "Music"
+msgstr ""
+
+#: templates/base/about.html:104
+msgid "GreenIT & digital sobriety"
 msgstr ""
 
 #: templates/base/home.html:9
 msgid "Home"
 msgstr ""
 
-#: templates/base/home.html:10
+#: templates/base/home.html:16
+msgid "Hi, I'm Benbb96"
+msgstr ""
+
+#: templates/base/home.html:19
+msgid ""
+"I code in Python/Django on my free time, often to solve a small everyday\n"
+"                    problem — always keeping an eye on environmental impact "
+"(GreenIT). This site hosts most\n"
+"                    of my personal projects."
+msgstr ""
+
+#: templates/base/home.html:24
+msgid "See my projects"
+msgstr ""
+
+#: templates/base/home.html:28
+msgid "Learn more about me"
+msgstr ""
+
+#: templates/base/home.html:38
 msgid "My projects"
 msgstr ""
 
-#: templates/base/home.html:11
-msgid "Here is the list of the projects I make public for the moment."
+#: templates/base/home.html:39
+msgid "online"
 msgstr ""
 
-#: templates/base/home.html:21
+#: templates/base/home.html:47
 msgid "Project"
 msgstr ""
 
@@ -77,34 +163,128 @@ msgid ""
 "each times bigger !"
 msgstr ""
 
-#: templates/base/labyrinthe_game.html:15
+#: templates/base/labyrinthe_game.html:18
+msgid "Mode"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:22
+msgid "Niveau"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:26
+msgid "Temps"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:30
+msgid "Record"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:36
+msgid "Pause"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:41
+msgid "Son"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:48
+msgid "Ce jeu a besoin de JavaScript pour fonctionner."
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:55
+msgid "Commandes du jeu"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:59
+msgid "Haut"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:63
+msgid "Gauche"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:67
+msgid "Valider"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:71
+msgid "Droite"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:75
+msgid "Bas"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:79
 msgid "Les commandes"
 msgstr ""
 
-#: templates/base/labyrinthe_game.html:17
+#: templates/base/labyrinthe_game.html:81
 msgid ""
 "\n"
 "            Pour se déplacer, vous pouvez soit utilisez votre clavier : les "
 "flèches de directions pour vous déplacer\n"
 "            <b>rapidement</b> d'un bout à l'autre, et les touches Z, Q, S et "
 "D pour vous déplacer <b>case par case</b> ;\n"
-"            ou bien avec la souris en <b>cliquant d'abord</b>> sur le joueur "
+"            ou bien avec la souris en <b>cliquant d'abord</b> sur le joueur "
 "puis en déplaçant la souris. Cliquez de nouveau\n"
 "            sur le joueur pour arrêter le déplacement.\n"
 "        "
 msgstr ""
 
-#: templates/base/labyrinthe_game.html:25
+#: templates/base/labyrinthe_game.html:89
+msgid ""
+"\n"
+"            Sur mobile (ou à la souris), utilisez le <b>pavé directionnel</"
+"b> sous le terrain, ou touchez\n"
+"            directement une <b>case voisine</b> du joueur pour vous y "
+"déplacer.\n"
+"        "
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:95
 msgid ""
 "\n"
 "            Il existe quelques touches spéciales :\n"
 "        "
 msgstr ""
 
-#: urls.py:11
-msgid "about"
+#: templates/base/labyrinthe_game.html:101
+msgid "Met en pause le jeu"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:103
+msgid "Affiche/Cache les cases par lesquelles est passé le joueur"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:107
+msgid "Redémarre le jeu"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:109
+msgid "Active/désactive le mode Blind (les murs qui disparaissent)"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:113
+msgid "Passe directement au niveau supérieur"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:115
+msgid "Remet à zéro la disparition des murs"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:119
+msgid "Active/désactive le tracé du parcours du joueur"
+msgstr ""
+
+#: templates/base/labyrinthe_game.html:121
+msgid "Affiche dans la console la position du joueur sur la grille"
 msgstr ""
 
 #: urls.py:12
+msgid "about"
+msgstr ""
+
+#: urls.py:15
 msgid "labyrinthe-game"
 msgstr ""

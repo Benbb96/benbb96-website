@@ -12,19 +12,19 @@
         {% csrf_token %}
         {{ formset.management_form }}
         {% if formset.errors %}
-            <p class="text-danger">
+            <p class="ds-text-danger">
                 Il y a des erreurs dans le formulaire.<br>
                 {{ formset.non_field_errors }}
             </p>
         {% endif %}
-        <div class="table-responsive">
-            <table class="table table-hover table-striped">
+        <div class="ds-table-wrap">
+            <table class="ds-table ds-table--hover ds-table--striped">
                 <thead>
                 <tr>
-                    <th class="text-center" style="width: 75%">
+                    <th class="ds-text-center" style="width: 75%">
                         Joueur
                     </th>
-                    <th class="text-center" style="width: 25%">
+                    <th class="ds-text-center" style="width: 25%">
                         {% if jeu.type == jeu.CLASSEMENT %}
                             Classement
                         {% else %}
@@ -51,16 +51,16 @@
                 </tbody>
             </table>
         </div>
-        <button type="button" class="btn btn-default" id="add_form" title="Ajouter un joueur">
-                <i class="fa fa-plus"></i>
+        <button type="button" class="ds-btn ds-btn--ghost" id="add_form" title="Ajouter un joueur">
+                <i class="fa fa-plus" aria-hidden="true"></i>
                 Ajouter un joueur
             </button>
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">
-                <i class="fa fa-check"></i>
+        <div class="ds-cluster ds-cluster--center ds-mt-4">
+            <button type="submit" class="ds-btn">
+                <i class="fa fa-check" aria-hidden="true"></i>
                 {% if partie %}Modifier{% else %}Ajouter{% endif %}
             </button>
-            <a class="btn btn-default" href="{{ jeu.get_absolute_url }}">Annuler</a>
+            <a class="ds-btn ds-btn--ghost" href="{{ jeu.get_absolute_url }}">Annuler</a>
         </div>
     </form>
 {% endblock %}
@@ -68,14 +68,24 @@
 {% block javascript %}
     {{ formset.media.js }}
     <script>
-        let form_count = {{ formset.total_form_count }};
-        $('#add_form').on('click', function() {
-            const joueur = '{{ formset.empty_form.joueur|escapejs }}'.replace(/__prefix__/g, form_count);
-            const score_classement = '{{ formset.empty_form.score_classement|escapejs }}'.replace(/__prefix__/g, form_count);
-            $('#joueurs').append(`<tr><td>${joueur}</td><td>${score_classement}</td></tr>`)
-            $('.django-select2').djangoSelect2();
-            form_count++;
-            $('#id_partiejoueur_set-TOTAL_FORMS').val(form_count);
-        });
+        (function () {
+            let formCount = {{ formset.total_form_count }};
+            const joueurTpl = '{{ formset.empty_form.joueur|escapejs }}';
+            const scoreTpl = '{{ formset.empty_form.score_classement|escapejs }}';
+            const tbody = document.getElementById('joueurs');
+            const totalForms = document.getElementById('id_partiejoueur_set-TOTAL_FORMS');
+
+            document.getElementById('add_form').addEventListener('click', function () {
+                const joueur = joueurTpl.replace(/__prefix__/g, formCount);
+                const score = scoreTpl.replace(/__prefix__/g, formCount);
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${joueur}</td><td>${score}</td>`;
+                tbody.appendChild(row);
+                // (Ré)initialise Tom Select sur le <select> fraîchement ajouté.
+                if (window.tomSelectInit) window.tomSelectInit(row);
+                formCount++;
+                totalForms.value = formCount;
+            });
+        })();
     </script>
 {% endblock %}

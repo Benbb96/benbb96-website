@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% load bootstrap3 %}
-
 {% block navbar %}
 {% include 'navbar.html' with home=False %}
 {% endblock %}
@@ -13,16 +11,14 @@
 {% block jumbotron_description %}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-sm-6 col-sm-offset-3 col-xs-12">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <div class="text-center">
-                    {% bootstrap_button "Sauvegarder les modifications" button_type="submit" button_class="btn-primary" %}
-                    <a href="{{ profil.get_absolute_url }}" class="btn btn-default">Annuler</a>
-                </div>
-            </form>
-        </div>
+    <div class="ds-narrow">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% include 'components/form.html' %}
+            <div class="ds-cluster ds-cluster--center ds-mt-4">
+                <button type="submit" class="ds-btn">Sauvegarder les modifications</button>
+                <a href="{{ profil.get_absolute_url }}" class="ds-btn ds-btn--ghost">Annuler</a>
+            </div>
+        </form>
     </div>
 {% endblock %}

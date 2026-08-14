@@ -6,21 +6,22 @@ from avis.models import Avis, Produit
 class AvisForm(forms.ModelForm):
     class Meta:
         model = Avis
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ProduitForm(forms.ModelForm):
     class Meta:
         model = Produit
-        fields = '__all__'
+        fields = "__all__"
 
     def clean(self):
-        if 'categories' in self.cleaned_data:
-            structure = self.cleaned_data['structure']
+        if "categories" in self.cleaned_data:
+            structure = self.cleaned_data["structure"]
             categories_possible = structure.type.categories.all()
-            for categorie in self.cleaned_data['categories'].all():
+            for categorie in self.cleaned_data["categories"].all():
                 if categorie not in categories_possible:
-                    raise forms.ValidationError({
-                        'categories': 'Vous ne pouvez pas choisir la catégorie %s pour une structure de type %s' %
-                                      (categorie, structure.type)
-                    })
+                    raise forms.ValidationError(
+                        {
+                            "categories": f"Vous ne pouvez pas choisir la catégorie {categorie} pour une structure de type {structure.type}"
+                        }
+                    )

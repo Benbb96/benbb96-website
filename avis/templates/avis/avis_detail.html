@@ -1,62 +1,65 @@
 {% extends 'avis/base_avis.html' %}
-
 {% load custom_tags %}
-
 {% block avis_title %}Avis {{ object.produit }}{% endblock %}
-
 {% block avis_content %}
-    <ul class="breadcrumb">
+    <ul class="ds-breadcrumb">
         <li><a href="{{ object.produit.structure.get_absolute_url }}">{{ object.produit.structure }}</a></li>
         <li><a href="{{ object.produit.get_absolute_url }}">{{ object.produit.nom }}</a></li>
         <li>Avis n°{{ object.id }}</li>
     </ul>
-
-    <h2>Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit.nom }}</h2>
-    <h4>
-        Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }}
-        {% if object.has_been_edited %}
-            | Editée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}
-        {% endif %}
-    </h4>
-    <p>
-    {% if object.produit.categories.exists %}
-        {% for categorie in object.produit.categories.all %}
-            <a href="{{ categorie.get_absolute_url }}">
-                <span class="label label-primary">{{ categorie }}</span>
-            </a>
-        {% endfor %}
-    {% endif %}
-    </p>
-    <div class="row">
-        <div class="col-md-6 col-xs-12">
-            {% if object.photo %}
-            <img src="{{ object.photo_url }}" width="100%" title="Photo du produit {{ object.produit }}" alt="Photo du produit {{ object.produit }} prise par {{ object.auteur }}" />
-            {% endif %}
+    <div class="ds-cluster ds-cluster--split" style="align-items: flex-start">
+        <div>
+            <h2 class="ds-mb-0">Avis de <a href="{{ object.auteur.get_absolute_url }}">{{ object.auteur }}</a> sur {{ object.produit.nom }}</h2>
+            <p class="ds-text-muted ds-mb-0">
+                Ajoutée le {{ object.date_creation|date:'d/m/y' }} à {{ object.date_creation|time }}
+                {% if object.has_been_edited %}
+                    · Éditée le {{ object.date_edition|date:'d/m/y' }} à {{ object.date_edition|time }}
+                {% endif %}
+            </p>
         </div>
-        <div class="col-md-6 col-xs-12 h4">
-            <div class="well">
+        <div class="ds-score ds-score--{{ object.note|color }}">
+            <h2 class="ds-mb-0">{{ object.note }}/10</h2>
+        </div>
+    </div>
+    {% if object.produit.categories.exists %}
+        <div class="ds-cluster ds-mt-3">
+            {% for categorie in object.produit.categories.all %}
+                <a href="{{ categorie.get_absolute_url }}"><span class="ds-badge ds-badge--primary">{{ categorie }}</span></a>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="{% if object.photo %}ds-grid ds-grid--2{% endif %} ds-mt-4">
+        {% if object.photo %}
+            <div>
+                <img class="ds-rounded"
+                     src="{{ object.photo_url }}"
+                     width="100%"
+                     title="Photo du produit {{ object.produit }}"
+                     alt="Photo du produit {{ object.produit }} prise par {{ object.auteur }}" />
+            </div>
+        {% endif %}
+        <div>
+            <div class="ds-well">
                 {{ object.avis|linebreaks }}
                 {% if request.user.id == object.auteur.id %}
-                    <div class="text-right">
+                    <div class="ds-text-right">
                         <a href="{% url 'admin:avis_avis_change' object.id %}">
-                            Editer <i class="fa fa-edit" title="Editer cet avis"></i>
+                            Editer <i class="fa fa-edit" title="Editer cet avis" aria-hidden="true"></i>
                         </a>
                     </div>
                 {% endif %}
             </div>
-            <div class="pull-right">
+            <div class="ds-text-right ds-mt-4">
                 <a href="{{ object.auteur.get_absolute_url }}">
                     {{ object.auteur }}
                     {% if object.auteur.avatar %}
-                        <img class="img-rounded" src="{{ object.auteur.avatar.url }}" alt="Avatar de {{ object.auteur }}" style="max-height: 30px"/>
+                        <img class="ds-rounded"
+                             src="{{ object.auteur.avatar.url }}"
+                             alt="Avatar de {{ object.auteur }}"
+                             style="max-height: 30px" />
                     {% endif %}
                 </a>
             </div>
-        </div>
-    </div>
-    <div class="panel panel-{{ object.note|color }}" style="margin: 15px auto; width: 30%">
-        <div class="panel-heading text-center">
-            <h2><strong>{{ object.note }}/10</strong></h2>
         </div>
     </div>
 {% endblock %}

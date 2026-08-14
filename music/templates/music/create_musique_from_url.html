@@ -1,147 +1,156 @@
 {% extends 'music/base_music.html' %}
-{% load i18n bootstrap3 fontawesome_6 %}
-
+{% load i18n fontawesome_6 %}
 {% block music_title %}Création musique via URL{% endblock %}
-
 {% block stylesheet %}
     {{ form.media.css }}
 {% endblock %}
-
 {% block content %}
-    <div class="row">
-        <div class="col-sm-6 col-sm-offset-3 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2>
-                        Créer une musique depuis un lien
-                        <a href="{{ playlist.get_absolute_url }}">{{ playlist.nom }}</a>
-                    </h2>
-                </div>
-                <div class="panel-body">
-                    <form method="post">
-                        {% csrf_token %}
-
-                        <p>
-                            Tu peux pré-remplir certains champs en collant un lien vers la musique dans
-                            l'encart ci-dessous.
-                        </p>
-
-                        <div class="well">
-                            <ul class="list-inline">
-                                {{ link_form.as_ul }}
-                                <li>
-                                    <button class="btn btn-primary" type="button" id="addLink" style="display: none">
-                                        Rechercher les infos
-                                        {% fa6_icon 'arrow-alt-circle-down' %}
-                                    </button>
-                                </li>
-                            </ul>
-                            <div class="text-muted" id="full-title"></div>
-                        </div>
-
-                        {% bootstrap_form form %}
-                        <div class="text-center">
-                            <a href="{% url 'admin:music_artiste_add' %}" class="btn btn-default" target="_blank">
-                                Créer Artiste
-                            </a>
-                            <a href="{% url 'admin:music_style_add' %}" class="btn btn-default" target="_blank">
-                                Créer Style
-                            </a>
-                            <a href="{% url 'admin:music_label_add' %}" class="btn btn-default" target="_blank">
-                                Créer Label
-                            </a>
-                            <a href="{% url 'admin:music_playlist_add' %}" class="btn btn-default" target="_blank">
-                                Créer Playlist
-                            </a>
-                            <button class="btn btn-lg btn-primary">
-                                {% fa6_icon 'check' %}
-                                Valider
-                            </button>
-                        </div>
-                    </form>
-                </div>
+    <div class="ds-narrow">
+        <div class="ds-card">
+            <div class="ds-card__header">
+                <h2 class="ds-mb-0">
+                    Créer une musique depuis un lien
+                    <a href="{{ playlist.get_absolute_url }}">{{ playlist.nom }}</a>
+                </h2>
+            </div>
+            <div class="ds-card__body">
+                <form method="post">
+                    {% csrf_token %}
+                    <p>
+                        Tu peux pré-remplir certains champs en collant un lien vers la musique dans
+                        l'encart ci-dessous.
+                    </p>
+                    <div class="ds-well">
+                        <ul class="ds-form-inline">
+                            {{ link_form.as_ul }}
+                            <li>
+                                <button class="ds-btn" type="button" id="addLink" style="display: none">
+                                    Rechercher les infos
+                                    {% fa6_icon 'arrow-alt-circle-down' %}
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="ds-text-muted" id="full-title"></div>
+                    </div>
+                    {% include 'components/form.html' %}
+                    <p class="ds-mt-4 ds-mb-2"><small class="ds-text-muted">Créer un élément manquant</small></p>
+                    <div class="ds-cluster ds-cluster--center">
+                        <a href="{% url 'admin:music_artiste_add' %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm"
+                           target="_blank">Créer Artiste</a>
+                        <a href="{% url 'admin:music_style_add' %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm"
+                           target="_blank">Créer Style</a>
+                        <a href="{% url 'admin:music_label_add' %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm"
+                           target="_blank">Créer Label</a>
+                        <a href="{% url 'admin:music_playlist_add' %}"
+                           class="ds-btn ds-btn--ghost ds-btn--sm"
+                           target="_blank">Créer Playlist</a>
+                    </div>
+                    <div class="ds-cluster ds-cluster--center ds-mt-5">
+                        <button class="ds-btn ds-btn--lg">
+                            {% fa6_icon 'check' %}
+                            Valider
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 {% endblock %}
-
 {% block javascript %}
     {{ block.super }}
     {{ form.media.js }}
     {% include 'music/components/auto_select_plateforme_script.html' %}
     <script>
-        function createArtist(artistName, selectId) {
-            $.post('{% url 'music:create_artist' %}', {name: artistName})
-                .done(response => {
-                    if (response.success) {
-                        const option = new Option(response.name, response.id, true, true);
-                        $('#' + selectId).append(option).trigger('change');
-                    } else {
-                        alert(response.error)
-                    }
-                })
+        // Ajoute (ou réutilise) une option dans un <select> Tom Select et la sélectionne.
+        function selectArtist(selectId, id, name) {
+            const ts = document.getElementById(selectId).tomselect;
+            if (!ts) return;
+            ts.addOption({ id: id, text: name });
+            ts.addItem(id);
         }
 
-        $(() => {
-            $('#id_url').on('input', function () {
-                $('#addLink').toggle($(this).val() !== '')
-            })
+        function createArtist(artistName, selectId) {
+            const body = new FormData();
+            body.append('name', artistName);
+            window.http.json("{% url 'music:create_artist' %}", {
+                method: 'POST', body: body
+            }).then(response => {
+                if (response.success) {
+                    selectArtist(selectId, response.id, response.name);
+                } else {
+                    alert(response.error);
+                }
+            });
+        }
 
-            $('#addLink').on('click', () => {
-                // Clear possible displayed artists and the full title
-                $('#displayFetchedArtist').remove()
-                $('#displayFetchedRemixedBy').remove()
-                $('#full-title').text('')
+        (function () {
+            const urlInput = document.getElementById('id_url');
+            const addLink = document.getElementById('addLink');
+            const fullTitle = document.getElementById('full-title');
 
-                const url = $('#id_url').val()
-                const plateforme = $('#id_plateforme').val()
-                $.post('{% url 'music:get_music_info_from_link' %}', {url, plateforme})
-                    .done(response => {
-                        if (response.success) {
-                            $('#full-title').text(response.full_title)
+            urlInput.addEventListener('input', function () {
+                addLink.style.display = urlInput.value !== '' ? '' : 'none';
+            });
 
-                            $('#id_titre').val(response.title)
+            addLink.addEventListener('click', function () {
+                // Nettoie les éventuels noms affichés et le titre complet.
+                const oldArtist = document.getElementById('displayFetchedArtist');
+                const oldRemixed = document.getElementById('displayFetchedRemixedBy');
+                if (oldArtist) oldArtist.remove();
+                if (oldRemixed) oldRemixed.remove();
+                fullTitle.textContent = '';
 
-                            if (response.artist.name) {
-                                const option = new Option(response.artist.name, response.artist.id, true, true);
-                                $('#id_artiste').append(option).trigger('change');
-                            } else {
-                                $('label[for=id_artiste]').after(
-                                    `<span style="margin-left: 10px" id="displayFetchedArtist">
-                                        Nom récupéré via le lien : <b>${response.artist}</b>
-                                        <button type="button" onclick="createArtist('${response.artist}', 'id_artiste')" class="btn btn-default btn-xs" title="Créer l'artiste">
-                                            <i class="fas fa-plus" />
-                                        </button>
-                                    </span>`
-                                )
-                            }
+                const data = new FormData();
+                data.append('url', urlInput.value);
+                data.append('plateforme', document.getElementById('id_plateforme').value);
+                window.http.json("{% url 'music:get_music_info_from_link' %}", {
+                    method: 'POST', body: data
+                }).then(response => {
+                    if (!response.success) { alert(response.error); return; }
 
-                            if (response.remixed_by.name) {
-                                const option = new Option(response.remixed_by.name, response.remixed_by.id, true, true);
-                                $('#id_remixed_by').append(option).trigger('change');
-                            } else if (response.remixed_by) {
-                                $('label[for=id_remixed_by]').after(
-                                    `<span style="margin-left: 10px" id="displayFetchedRemixedBy">
-                                        Nom récupéré via le lien : <b>${response.remixed_by}</b>
-                                    </span>
-                                    <button type="button" onclick="createArtist('${response.remixed_by}', 'id_remixed_by')" class="btn btn-default btn-xs" title="Créer l'artiste">
-                                        <i class="fas fa-plus" />
-                                    </button>`
-                                )
-                            }
+                    fullTitle.textContent = response.full_title;
+                    document.getElementById('id_titre').value = response.title;
 
-                            response.featuring.forEach(artist => {
-                                const option = new Option(artist.name, artist.id, true, true);
-                                $('#id_featuring').append(option).trigger('change');
-                            })
-                        } else {
-                            alert(response.error)
-                        }
-                    }).fail(err => {
-                        alert("Une erreur s'est produite. Voir les logs.")
-                        console.error(err)
-                    })
-            })
-        })
+                    if (response.artist.name) {
+                        selectArtist('id_artiste', response.artist.id, response.artist.name);
+                    } else {
+                        insertFetchedName('id_artiste', 'displayFetchedArtist', response.artist);
+                    }
+
+                    if (response.remixed_by.name) {
+                        selectArtist('id_remixed_by', response.remixed_by.id, response.remixed_by.name);
+                    } else if (response.remixed_by) {
+                        insertFetchedName('id_remixed_by', 'displayFetchedRemixedBy', response.remixed_by);
+                    }
+
+                    response.featuring.forEach(artist => {
+                        selectArtist('id_featuring', artist.id, artist.name);
+                    });
+                }).catch(err => {
+                    alert("Une erreur s'est produite. Voir les logs.");
+                    console.error(err);
+                });
+            });
+
+            // Affiche un nom récupéré non trouvé en base + un bouton pour le créer.
+            function insertFetchedName(selectId, spanId, name) {
+                const label = document.querySelector('label[for=' + selectId + ']');
+                if (!label) return;
+                const span = document.createElement('span');
+                span.id = spanId;
+                span.style.marginLeft = '10px';
+                span.innerHTML = 'Nom récupéré via le lien : <b></b> ' +
+                    '<button type="button" class="ds-btn ds-btn--ghost ds-btn--sm" title="Créer l\'artiste">' +
+                    '<i class="fas fa-plus"></i></button>';
+                span.querySelector('b').textContent = name;
+                span.querySelector('button').addEventListener('click', function () {
+                    createArtist(name, selectId);
+                });
+                label.after(span);
+            }
+        })();
     </script>
 {% endblock %}

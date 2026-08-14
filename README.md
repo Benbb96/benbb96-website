@@ -17,14 +17,30 @@ I'm always open to remarks and suggestions in order to progress in Python and Dj
 ## Tech Stack
 Benbb96/benbb96-website is built on the following main stack:
 
-- <img width='25' height='25' src='https://img.stackshare.io/service/993/pUBY5pVj.png' alt='Python'/> [Python](https://www.python.org) – Languages
-- <img width='25' height='25' src='https://img.stackshare.io/service/994/4aGjtNQv.png' alt='Django'/> [Django](https://www.djangoproject.com/) – Frameworks (Full Stack)
-- <img width='25' height='25' src='https://img.stackshare.io/service/1031/default_cbce472cd134adc6688572f999e9122b9657d4ba.png' alt='Redis'/> [Redis](http://redis.io/) – In-Memory Databases
-- <img width='25' height='25' src='https://img.stackshare.io/service/1101/C9QJ7V3X.png' alt='Bootstrap'/> [Bootstrap](http://getbootstrap.com/) – Front-End Frameworks
-- <img width='25' height='25' src='https://img.stackshare.io/service/1209/javascript.jpeg' alt='JavaScript'/> [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – Languages
-- <img width='25' height='25' src='https://img.stackshare.io/service/2180/1284191.png' alt='Pandas'/> [Pandas](http://pandas.pydata.org/) – Data Science Tools
-- <img width='25' height='25' src='https://img.stackshare.io/service/2375/default_1f67b0ca7416a9f52beb655f90b5602d5ef74b75.jpg' alt='Pillow'/> [Pillow](https://python-pillow.github.io/) – Image Processing and Management
-- <img width='25' height='25' src='https://img.stackshare.io/service/11563/actions.png' alt='GitHub Actions'/> [GitHub Actions](https://github.com/features/actions) – Continuous Integration
+**Backend**
+- <img width='25' height='25' src='https://img.stackshare.io/service/993/pUBY5pVj.png' alt='Python'/> [Python](https://www.python.org) – Language
+- <img width='25' height='25' src='https://img.stackshare.io/service/994/4aGjtNQv.png' alt='Django'/> [Django](https://www.djangoproject.com/) 5.2 – Web framework (full stack)
+- [Django REST Framework](https://www.django-rest-framework.org/) + [SimpleJWT](https://django-rest-framework-simplejwt.readthedocs.io/) – REST API + JWT auth (mobile app & external Vue frontends)
+- <img width='25' height='25' src='https://img.stackshare.io/service/2180/1284191.png' alt='Pandas'/> [Pandas](http://pandas.pydata.org/) (via [django-pandas](https://github.com/chrisdev/django-pandas)) – Time-series resampling (tracker)
+- <img width='25' height='25' src='https://img.stackshare.io/service/2375/default_1f67b0ca7416a9f52beb655f90b5602d5ef74b75.jpg' alt='Pillow'/> [Pillow](https://python-pillow.github.io/) – On-upload image optimization (resize + WebP)
+
+**Data & storage**
+- [SQLite](https://www.sqlite.org/) – Database (development **and** production)
+- [django-storages](https://django-storages.readthedocs.io/) + [Google Cloud Storage](https://cloud.google.com/storage) – Uploaded media (production)
+
+**Front-end** (no build step, no front-end framework)
+- <img width='25' height='25' src='https://img.stackshare.io/service/1209/javascript.jpeg' alt='JavaScript'/> [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – Vanilla JS (`fetch` helper, no jQuery)
+- Home-grown CSS design system (custom properties, flexbox/grid, `:has()`, `<dialog>`) — no CSS framework
+- [Tom Select](https://tom-select.js.org/) – Enhanced select widgets (vanilla, no jQuery)
+- [Chart.js](https://www.chartjs.org/) – Charts (tracker, kendama)
+- [FontAwesome 6](https://fontawesome.com/) – Icons
+
+**Tooling**
+- [uv](https://docs.astral.sh/uv/) – Dependency & virtualenv management (`pyproject.toml` + `uv.lock`)
+- [Ruff](https://docs.astral.sh/ruff/) – Linter + formatter (lint & format)
+- [pre-commit](https://pre-commit.com/) – Git hooks (ruff + hygiene)
+- [djLint](https://djlint.com/) – Django template linter (`uv run djlint . --lint`)
+- <img width='25' height='25' src='https://img.stackshare.io/service/11563/actions.png' alt='GitHub Actions'/> [GitHub Actions](https://github.com/features/actions) – CI/CD (deploy to PythonAnywhere via uv)
 
 Full tech stack [here](/techstack.md)
 
@@ -37,7 +53,7 @@ git clone https://github.com/Benbb96/benbb96-website.git
 cd benbb96
 ```
 
-Create a file here which will store all secrets settings : `secrets.json`.  
+Create a file here which will store all secrets settings : `secrets.json`.
 You can configure it like this :
 
 ```
@@ -79,24 +95,31 @@ management commands help maintain the bucket:
 `optimize_existing_photos` (batch resize/WebP of existing images) and `clean_orphan_media`
 (remove files no longer referenced in the database — dry-run by default, `--apply` to delete).
 
-Then, you should create a virtual environement, load the migration to build the database (`db.sqlite3`), create a superuser to be able to access the administration module, and finally run the server :
+Dependencies are managed with [uv](https://docs.astral.sh/uv/) (single source of truth:
+`pyproject.toml` + `uv.lock`; Python version in `.python-version`). Install uv, then let it build
+the virtual environment (`.venv`), load the migrations to build the database (`db.sqlite3`), create a
+superuser to access the administration module, and finally run the server:
 
 ```
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements/dev.txt
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py collectstatic --noinput
-python manage.py runserver
+# install uv (once): https://docs.astral.sh/uv/getting-started/installation/
+uv sync                       # creates .venv from uv.lock (prod + dev deps)
+uv run manage.py migrate
+uv run manage.py createsuperuser
+uv run manage.py collectstatic --noinput
+uv run manage.py runserver
 ```
+
+`uv sync` installs the dev group too (django-debug-toolbar, coverage, ruff, pre-commit, pyright,
+djlint); add `--no-dev` for a production-only environment. `uv run <cmd>` runs a command inside the
+environment without activating it. To add or bump a dependency, edit `pyproject.toml` then run
+`uv lock` (and commit the updated `uv.lock`).
 
 You can then create projects in [127.0.0.1:8000/admin/base/projet/](http://127.0.0.1:8000/admin/base/projet/) that will be displayed on the homepage.
 
-## Contact 
+## Contact
 
 If you want to contact me you can reach me at <benbb96@gmail.com>.
 
-## License 
+## License
 
 This project uses the following license: [MIT License](LICENSE).

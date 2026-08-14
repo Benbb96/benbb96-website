@@ -1,37 +1,36 @@
 {% extends 'music/base_music.html' %}
 {% load i18n fontawesome_6 %}
-
 {% block music_title %}{% trans "Playlist" %} {{ playlist.nom }}{% endblock %}
-
 {% block content %}
-    <div class="row">
-        <div class="col-sm-4 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2 class="text-center">
-                        {{ playlist.nom }}
-                        {% if playlist.createur.user == request.user %}
-                            <a href="{% url 'admin:music_playlist_change' playlist.id %}" class="btn btn-sm btn-default">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        {% endif %}
-                    </h2>
-                </div>
-                <div class="panel-body">
-                    <div>
-                        {% blocktrans with playlist_date=playlist.date_creation|date playlist_time=playlist.date_creation|time playlist_createur_url=playlist.createur.get_absolute_url playlist_createur=playlist.createur %}
-                            Created on {{ playlist_date }} at {{ playlist_time }}
-                            by <a href="{{ playlist_createur_url }}">{{ playlist_createur }}</a>.
-                        {% endblocktrans %}
-                    </div>
+    <div class="ds-text-center ds-mb-4">
+        <h1 class="ds-mb-0">
+            {{ playlist.nom }}
+            {% if playlist.createur.user == request.user %}
+                <a href="{% url 'admin:music_playlist_change' playlist.id %}"
+                   class="ds-btn ds-btn--ghost ds-btn--sm">
+                    <i class="fa fa-edit"></i>
+                </a>
+            {% endif %}
+        </h1>
+        <p class="ds-text-muted ds-mb-0">
+            {% blocktrans with playlist_date=playlist.date_creation|date playlist_time=playlist.date_creation|time playlist_createur_url=playlist.createur.get_absolute_url playlist_createur=playlist.createur %}
+                Created on {{ playlist_date }} at {{ playlist_time }}
+                by <a href="{{ playlist_createur_url }}">{{ playlist_createur }}</a>.
+            {% endblocktrans %}
+        </p>
+    </div>
+    <div class="ds-grid ds-grid--sidebar">
+        <div>
+            <div class="ds-card">
+                <div class="ds-card__body">
                     {% if playlist.description %}
-                        <h3>{% trans "Description" %}</h3>
+                        <p class="ds-mb-2"><small class="ds-text-muted">{% trans "Description" %}</small></p>
                         <p>{{ playlist.description|linebreaksbr }}</p>
                     {% endif %}
                     {% with liens=playlist.liens.all %}
                         {% if liens %}
-                            <h4>{% trans "Links" %}</h4>
-                            <ul class="list-inline">
+                            <p class="ds-mb-2"><small class="ds-text-muted">{% trans "Links" %}</small></p>
+                            <ul class="ds-inline-list">
                                 {% for lien in liens %}
                                     <li>
                                         <a href="{{ lien.url }}" target="_blank">
@@ -39,7 +38,7 @@
                                             {{ lien.plateforme }}
                                         </a>
                                         {% if playlist.createur.user == request.user %}
-                                            <a class="btn btn-default btn-xs synchronize"
+                                            <a class="ds-btn ds-btn--ghost ds-btn--sm synchronize"
                                                data-synchronize-url="{% url 'music:synchroniser_playlist' playlist.id lien.id %}">
                                                 {% fa6_icon 'sync' %}
                                             </a>
@@ -52,10 +51,10 @@
                     {% if playlist.createur.user == request.user %}
                         <form method="post">
                             {% csrf_token %}
-                            <ul class="list-inline">
+                            <ul class="ds-form-inline">
                                 {{ form.as_ul }}
                                 <li>
-                                    <button class="btn btn-success" type="submit" title="Ajouter le lien">
+                                    <button class="ds-btn ds-btn--success" type="submit" title="Ajouter le lien">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </li>
@@ -64,20 +63,12 @@
                     {% endif %}
                     {% include 'music/components/style_list_inline.html' with styles=playlist.styles.all %}
                     {% if playlist.musiqueplaylist_set.exists %}
-                        <h3>{% blocktrans %}Playlist artists{% endblocktrans %}</h3>
+                        <p class="ds-mb-2"><small class="ds-text-muted">{% blocktrans %}Playlist artists{% endblocktrans %}</small></p>
                         {% if playlist.artistes.count > 4 %}
-                        <div class="panel-group">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title text-center">
-                                        <a data-toggle="collapse" href="#collapse1">{% trans "See all..." %}</a>
-                                    </h4>
-                                </div>
-                                <div id="collapse1" class="panel-collapse collapse">
-                                    {% include 'music/playlist_artist_list.html' with artistes=playlist.artistes.all %}
-                                </div>
-                            </div>
-                        </div>
+                            <details class="ds-details">
+                                <summary>{% trans "See all..." %}</summary>
+                                {% include 'music/playlist_artist_list.html' with artistes=playlist.artistes.all %}
+                            </details>
                         {% else %}
                             {% include 'music/playlist_artist_list.html' with artistes=playlist.artistes.all %}
                         {% endif %}
@@ -85,39 +76,37 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-8 col-xs-12">
+        <div>
             <h2>
                 {% trans "Musics" %}
                 <small>
-                    <span class="badge" title="{% trans "Playlist music count" %}">
-                        {{ musiques|length }}
-                    </span>
+                    <span class="ds-badge" title="{% trans "Playlist music count" %}">{{ musiques|length }}</span>
                 </small>
             </h2>
             {% include 'music/components/table_musics.html' %}
         </div>
     </div>
 {% endblock %}
-
 {% block javascript %}
     {{ block.super }}
     {% include 'music/components/auto_select_plateforme_script.html' %}
     <script>
-        $(() => {
-            $('.synchronize').on('click', function () {
-                $.post($(this).data('synchronizeUrl'))
-                    .done(response => {
-                        if (response.success) {
-                            $(this).addClass('btn-success')
-                            $(this).removeClass('btn-default')
+        // Synchronisation d'une playlist via un lien de plateforme (fetch + CSRF via window.http).
+        document.querySelectorAll('.synchronize').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                http.json(btn.dataset.synchronizeUrl, { method: 'POST' })
+                    .then(response => {
+                        if (response && response.success) {
+                            btn.classList.remove('ds-btn--ghost');
+                            btn.classList.add('ds-btn--success');
                         }
                     })
-                    .fail(error => {
-                        console.error(error)
-                        $(this).addClass('btn-danger')
-                        $(this).removeClass('btn-default')
-                    })
-            })
-        })
+                    .catch(error => {
+                        console.error(error);
+                        btn.classList.remove('ds-btn--ghost');
+                        btn.classList.add('ds-btn--danger');
+                    });
+            });
+        });
     </script>
 {% endblock %}

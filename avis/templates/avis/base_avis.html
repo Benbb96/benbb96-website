@@ -1,17 +1,14 @@
 {% extends 'base.html' %}
-
 {% block title %}{% block avis_title %}Avis{% endblock %} | Avis{% endblock %}
-
 {% block navbar %}
-{% include 'navbar.html' with avis=True %}
+    {% include 'navbar.html' with avis=True %}
 {% endblock %}
-
 {% block jumbotron_title %}Avis{% endblock %}
 {% block jumbotron_description %}
-    Mes avis sur ce que j'ai fait/mangé récemment !<br>
+    Mes avis sur ce que j'ai fait/mangé récemment !
+    <br>
     <a href="{% url 'avis:liste-avis' %}">Avis</a> | <a href="{% url 'avis:produits' %}">Produits</a> | <a href="{% url 'avis:structures' %}">Structures</a>
 {% endblock %}
-
 {% block content %}
-{% block avis_content %}{% endblock %}
+    {% block avis_content %}{% endblock %}
 {% endblock %}

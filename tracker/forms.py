@@ -1,60 +1,56 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django_select2.forms import Select2MultipleWidget
 
+from base.widgets import TomSelectMultipleWidget
 from tracker.models import Track, Tracker
 
 
 class TrackerForm(forms.ModelForm):
     class Meta:
         model = Tracker
-        fields = ('nom', 'icone', 'color', 'type')
-        widgets = {
-            'nom': forms.TextInput(attrs={'class': 'form-control'}),
-            'type': forms.Select(attrs={'class': 'form-control'})
-        }
+        fields = ("nom", "icone", "color", "type")
+        widgets = {"nom": forms.TextInput(), "type": forms.Select()}
 
 
 class TrackForm(forms.ModelForm):
     valeur = forms.FloatField(
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': 'any', 'placeholder': 'Valeur'})
+        widget=forms.NumberInput(attrs={"step": "any", "placeholder": "Valeur"}),
     )
-    datetime = forms.DateTimeField(
-        required=True,
-        input_formats=['%Y-%m-%dT%H:%M']
-    )
+    datetime = forms.DateTimeField(required=True, input_formats=["%Y-%m-%dT%H:%M"])
 
     def __init__(self, *args, **kwargs):
-        tracker_type = kwargs.pop('tracker_type', None)
+        tracker_type = kwargs.pop("tracker_type", None)
         super().__init__(*args, **kwargs)
         if tracker_type == Tracker.TYPE_MESURE:
-            self.fields['valeur'].required = True
-            self.fields['valeur'].widget.attrs['required'] = 'required'
+            self.fields["valeur"].required = True
+            self.fields["valeur"].widget.attrs["required"] = "required"
 
     class Meta:
         model = Track
-        fields = ('valeur', 'commentaire', 'datetime')
+        fields = ("valeur", "commentaire", "datetime")
         widgets = {
-            'tracker': forms.HiddenInput(),
-            'commentaire': forms.TextInput(attrs={'placeholder': 'Commentaire facultatif', 'class': 'form-control'})
+            "tracker": forms.HiddenInput(),
+            "commentaire": forms.TextInput(
+                attrs={"placeholder": "Commentaire facultatif"}
+            ),
         }
-        labels = {'commentaire': 'Ajouter un nouveau track'}
+        labels = {"commentaire": "Ajouter un nouveau track"}
 
 
 class SelectTrackersForm(forms.Form):
     trackers = forms.ModelMultipleChoiceField(
-        label='Sélectionner des trackers à comparer',
+        label="Sélectionner des trackers à comparer",
         queryset=Tracker.objects.all(),
-        widget=Select2MultipleWidget(attrs={'class': 'form-control'})
+        widget=TomSelectMultipleWidget(placeholder="Trackers à comparer"),
     )
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['trackers'].queryset = user.profil.trackers.all()
+        self.fields["trackers"].queryset = user.profil.trackers.all()
 
     def clean_trackers(self):
-        trackers = self.cleaned_data.get('trackers', [])
+        trackers = self.cleaned_data.get("trackers", [])
         if len(trackers) < 2:
-            raise ValidationError('Veuillez sélectionner au minimum 2 trackers.')
+            raise ValidationError("Veuillez sélectionner au minimum 2 trackers.")
         return trackers

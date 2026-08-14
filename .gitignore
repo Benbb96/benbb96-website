@@ -2,8 +2,20 @@
 
 bin/
 venv/
+.venv/
 
 media/
+
+# collectstatic output (STATIC_ROOT) — régénéré au déploiement
+/static/
+
+# rapports Lighthouse générés localement
+*.report.html
+*.report.json
+
+# Docs de pilotage de la refonte : conservées en local (pour le proprio + les agents),
+# hors dépôt public. La doc publique = ARCHITECTURE.md + docs/kendama-a-preserver.md.
+docs/refonte/
 
 db.sqlite3
 secrets.json

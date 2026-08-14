@@ -7,79 +7,69 @@
 {% block stylesheet %}
     {{ block.super }}
     {{ form.media.css }}
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 {% endblock %}
 
-{% block content %}
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 col-xs-12">
-            <div class="text-center">
-                <h1>Comparer des trackers</h1>
-            </div>
+{% block content_class %}content--wide{% endblock %}
 
+{% block content %}
+    <div>
+        <div class="ds-text-center">
+            <h1>Comparer des trackers</h1>
+        </div>
+
+        <div class="tracker-controls">
             <form method="get">
-                <div class="form-group">
+                <div class="ds-form__group">
                     {{ form.trackers.label_tag }}
-                    <div class="row">
-                        <div class="col-sm-10 col-xs-12">
+                    <div class="ds-cluster">
+                        <div style="flex: 1 1 auto">
                             {{ form.trackers }}
                             {{ form.trackers.errors }}
                         </div>
-                        <div class="col-sm-2 col-xs-12">
-                            <button type="submit" class="btn btn-primary btn-block">
-                                Valider
-                            </button>
-                        </div>
+                        <button type="submit" class="ds-btn">
+                            Valider
+                        </button>
                     </div>
                 </div>
             </form>
+            {% include 'tracker/include/date_range.html' %}
+        </div>
 
-            <hr>
+        <ul class="ds-tabs ds-tabs--justified" data-tabs>
+            <li class="ds-tabs__item is-active"><a href="#statistiques">Statistiques</a></li>
+            <li class="ds-tabs__item"><a href="#historique">Historique</a></li>
+        </ul>
 
-            <div class="form-group">
-                <label for="dates">Filtrer les résultats selon deux dates :</label>
-                <input type="text" name="dates" id="dates" class="form-control" />
-            </div>
-
-            <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a data-toggle="tab" href="#statistiques">Statistiques</a></li>
-                <li><a data-toggle="tab" href="#historique">Historique</a></li>
-            </ul>
-
-            <div class="tab-content">
-                <div id="historique" class="tab-pane fade">
-                    <h2>Historique <small><span id="trackCount"></span> résultats</small></h2>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Tracker</th>
-                                <th>Date</th>
-                                {% if has_mesure %}<th>Valeur</th>{% endif %}
-                                <th>Commentaire</th>
-                            </tr>
-                            </thead>
-                            <tbody id="tracks">
-                            {# Will be filled in AJAX #}
-                            </tbody>
-                        </table>
-                    </div>
+        <div>
+            <div id="historique" class="ds-tab-panel">
+                <h2>Historique <small><span id="trackCount"></span> résultats</small></h2>
+                <div class="ds-table-wrap">
+                    <table class="ds-table ds-table--striped">
+                        <thead>
+                        <tr>
+                            <th>Tracker</th>
+                            <th>Date</th>
+                            {% if has_mesure %}<th>Valeur</th>{% endif %}
+                            <th>Commentaire</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tracks">
+                        {# Will be filled in AJAX #}
+                        </tbody>
+                    </table>
                 </div>
-                <div id="statistiques" class="tab-pane fade in active">
-                    <h2>Statistiques</h2>
-                    <div id="track_graph"{% if not trackers %} class="hidden" {% endif %}>
-                        {# TODO afficher les moyennes pour chaque tracker ? #}
-{#                        <p>#}
-{#                            <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>#}
-{#                        </p>#}
-                        <div class="text-center">
-                            <canvas id="allTracks" width="600" height="400"></canvas>
-                        </div>
-                        {% include 'tracker/include/frequency_buttons.html' %}
+            </div>
+            <div id="statistiques" class="ds-tab-panel is-active">
+                <h2>Statistiques</h2>
+                <div id="track_graph"{% if not trackers %} class="ds-hidden" {% endif %}>
+                    {# TODO afficher les moyennes pour chaque tracker ? #}
+                    <div class="ds-text-center">
+                        <canvas id="allTracks" width="600" height="400"></canvas>
                     </div>
-                    <div class="well hidden text-danger text-center" id="noTracks">
-                        Aucun track pour la période donnée.
-                    </div>
+                    {% include 'tracker/include/frequency_buttons.html' %}
+                </div>
+                <div class="ds-well ds-hidden ds-text-danger ds-text-center" id="noTracks">
+                    Aucun track pour la période donnée.
                 </div>
             </div>
         </div>
@@ -87,67 +77,45 @@
 {% endblock %}
 
 {% block javascript %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-    <script src="{% static 'js/moment-with-locales.js' %}"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="{% static 'js/chart.umd.min.js' %}"></script>
     {{ form.media.js }}
     <script>
-        {% get_current_language as LANGUAGE_CODE %}
-        moment.locale('{{ LANGUAGE_CODE }}')
-        const minDate = moment("{{ first_track.datetime|date:"c" }}")
-        const maxDate = moment("{{ last_track.datetime|date:"c" }}").add(1, 'minute')
-        const trackerDataUrl = '{% url 'tracker:tracker-data' %}'
+        const minDate = "{{ first_track.datetime|date:"c" }}";
+        const maxDate = "{{ last_track.datetime|date:"c" }}";
+        const trackerDataUrl = '{% url 'tracker:tracker-data' %}';
     </script>
     <script src="{% static 'tracker/js/common.js' %}"></script>
     <script>
         const trackerIds = [{% for tracker in trackers %}'{{ tracker.id }}',{% endfor %}];
+        const historyUrl = "{% url 'tracker:tracker-history' %}";
 
-        $(() => {
-            function daterange_callback(s, e) {
-                $('#reportrange span').html(s.format('LLLL') + ' - ' + e.format('LLLL'));
-                start = s.format('YY-MM-DD HH:mm:ss');
-                end = e.format('YY-MM-DD HH:mm:ss');
-                update_all($('button.btn-frequency.btn-primary').data('frequency'))
-            }
+        // Met à jour le graphe + le tableau d'historique pour la plage courante.
+        const update_all = frequency => {
+            update_track_graph(frequency);
 
-            $('input[name="dates"]').daterangepicker(dateRangeOptions, daterange_callback);
+            const body = new FormData();
+            trackerIds.forEach(id => body.append('id[]', id));
+            if (start) body.append('start', start);
+            if (end) body.append('end', end);
+            window.http.json(historyUrl, { method: 'POST', body: body })
+                .then(response => {
+                    document.getElementById('tracks').innerHTML = response.html;
+                    document.getElementById('trackCount').textContent = response.trackCount;
+                })
+                .catch(error => console.error('Erreur historique', error));
+        };
 
+        document.addEventListener('DOMContentLoaded', function () {
             allTracks = new Chart(document.getElementById("allTracks"), {
                 type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: []
-                    }]
-                },
+                data: { labels: [], datasets: [{ data: [] }] },
                 options: {
-                    legend: {
-                        display: true
-                    },
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
+                    plugins: { legend: { display: true } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
 
-            daterange_callback(start, end);
+            initTrackerDateRange(minDate, maxDate);
         });
-
-        const update_all = frequency => {
-            update_track_graph(frequency)
-
-            $.post("{% url 'tracker:tracker-history' %}", {id: trackerIds, start: start, end: end})
-                .done(response => {
-                    $('tbody#tracks').html(response.html)
-                    $('span#trackCount').text(response.trackCount)
-                })
-                .fail((xhr, textStatus, errorThrown) => {
-                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus))
-                });
-        }
     </script>
 {% endblock %}

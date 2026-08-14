@@ -1,48 +1,50 @@
 {% load i18n fontawesome_6 %}
-
 {% if not musiques %}
-    <h3>{% trans "No music has been created here." %}</h3>
+    <p class="ds-text-muted">{% trans "No music has been created here." %}</p>
 {% else %}
-    <div class="table-responsive">
-        <table class="table">
+    <div class="ds-table-wrap">
+        <table class="ds-table">
             <thead>
-            <tr>
-                <th>{% trans "Title" %}</th>
-                <th>{% trans "Style" %}</th>
-                <th class="text-center">{% trans "Date add" %}</th>
-                <th class="text-center">{% trans "View count" %}</th>
-                <th class="text-center" style="width: 70px">{% trans "Links" %}</th>
-            </tr>
+                <tr>
+                    <th>{% trans "Title" %}</th>
+                    <th>{% trans "Style" %}</th>
+                    <th class="ds-text-center">{% trans "Date add" %}</th>
+                    <th class="ds-text-center">{% trans "View count" %}</th>
+                    <th class="ds-text-center" style="width: 70px">{% trans "Links" %}</th>
+                </tr>
             </thead>
             <tbody>
-            {% for musique in musiques %}
-                <tr>
-                    <td>
-                        <a href="{{ musique.get_absolute_url }}">
-                            <b>{{ musique }}</b>
-                        </a>
-                    </td>
-                    <td>
-                        {% for style in musique.styles.all %}
-                            <a class="label label-default" href="{{ style.get_absolute_url }}">{{ style }}</a>
-                        {% endfor %}
-                    </td>
-                    <td class="text-center">{{ musique.date_creation|date:'DATETIME_FORMAT' }}</td>
-                    <td class="text-center">
-                        <span class="badge click_count" id="musique{{ musique.id }}">{{ musique.nb_vue|default:0 }}</span>
-                    </td>
-                    <td class="text-center">
-                        {% if musique.liens %}
-                            {% for lien in musique.liens.all %}
-                                <a class="platformLink" data-link-id="{{ lien.id }}" href="{{ lien.url }}" target="_blank"
-                                   data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
-                                    {% fa6_icon lien.plateforme|lower 'fab' %}
-                                </a>
+                {% for musique in musiques %}
+                    <tr>
+                        <td>
+                            <a href="{{ musique.get_absolute_url }}">
+                                <b>{{ musique }}</b>
+                            </a>
+                        </td>
+                        <td>
+                            {% for style in musique.styles.all %}
+                                <a class="ds-badge" href="{{ style.get_absolute_url }}">{{ style }}</a>
                             {% endfor %}
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
+                        </td>
+                        <td class="ds-text-center">{{ musique.date_creation|date:'DATETIME_FORMAT' }}</td>
+                        <td class="ds-text-center">
+                            <span class="ds-badge click_count" id="musique{{ musique.id }}">{{ musique.nb_vue|default:0 }}</span>
+                        </td>
+                        <td class="ds-text-center">
+                            {% if musique.liens %}
+                                {% for lien in musique.liens.all %}
+                                    <a class="platformLink"
+                                       data-link-id="{{ lien.id }}"
+                                       href="{{ lien.url }}"
+                                       target="_blank"
+                                       data-link-url="{% url 'music:incremente_link_click_count' lien.id %}">
+                                        {% fa6_icon lien.plateforme|lower 'fab' %}
+                                    </a>
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

@@ -1,301 +1,227 @@
 {% extends 'tracker/base_tracker.html' %}
-
 {% load custom_tags fontawesome_6 admin_urls static i18n %}
-
 {% block tracker_title %}Tracker {{ tracker.nom }}{% endblock %}
-
 {% block stylesheet %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 {% endblock %}
-
+{% block content_class %}content--wide{% endblock %}
 {% block content %}
     <!-- Confirm Track delete modal -->
-    <div id="modalConfirmDelete" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Supprimer un track</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sûr de vouloir supprimer le track datant du <span id="toDeleteTrackDate"></span> ?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="deleteTrackBtn">Oui</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                </div>
+    <dialog id="modalConfirmDelete" class="ds-modal">
+        <div class="ds-modal__header">
+            <h4 class="ds-modal__title">Supprimer un track</h4>
+            <button type="button"
+                    class="ds-modal__close"
+                    onclick="this.closest('dialog').close()">&times;</button>
+        </div>
+        <div class="ds-modal__body">
+            <p>Êtes-vous sûr de vouloir supprimer le track datant du <span id="toDeleteTrackDate"></span> ?</p>
+        </div>
+        <div class="ds-modal__footer">
+            <button type="button" class="ds-btn ds-btn--danger" id="deleteTrackBtn">Oui</button>
+            <button type="button"
+                    class="ds-btn ds-btn--ghost"
+                    onclick="this.closest('dialog').close()">Annuler</button>
+        </div>
+    </dialog>
+    <div>
+        <div class="ds-text-center">
+            <h1 class="tracker-title"
+                style="background-color: {{ tracker.color }};
+                       color: {{ tracker.color|contrast_color }}">
+                {{ tracker.nom }} {% fa6_icon tracker.icone.name tracker.icone.style_prefix %}
+                <a class="ds-btn ds-btn--secondary ds-btn--sm"
+                   href="{% url 'tracker:update-tracker' tracker.id %}">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="ds-btn ds-btn--danger ds-btn--sm"
+                   href="{% url 'tracker:delete-tracker' tracker.id %}">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </h1>
+            <div>
+                {% with tracks_count=tracker.tracks.count %}
+                    Créé il y a
+                    <span class="text-italic" title="{{ tracker.date_creation }}">{{ tracker.date_creation|timesince }}</span>,
+                    <b id="totalCount" class="ds-badge">{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
+                    {% if tracks_count %}
+                        <br>
+                        Tracké pour la dernière fois il y a
+                        <span class="text-italic" title="{{ tracker.tracks.first.datetime }}">
+                            {{ tracker.tracks.first.datetime|timesince }}
+                        </span>.
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 col-xs-12">
-            <div class="text-center">
-                <h1 class="tracker-title" style="background-color: {{ tracker.color }}; color: {{ tracker.color|contrast_color }}">
-                    {{ tracker.nom }} {% fa6_icon tracker.icone.name tracker.icone.style_prefix %}
-                    <a class="btn btn-info" href="{% url 'tracker:update-tracker' tracker.id %}">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    <a class="btn btn-danger" href="{% url 'tracker:delete-tracker' tracker.id %}">
-                        <i class="fa fa-trash"></i>
-                    </a>
-                </h1>
-                <div>
-                    {% with tracks_count=tracker.tracks.count %}
-                        Créé il y a
-                        <span class="text-italic" title="{{ tracker.date_creation }}">
-                            {{ tracker.date_creation|timesince }}
-                        </span>,
-                        <b id="totalCount" class="badge">{{ tracks_count }}</b> track{{ tracks_count|pluralize }} au total.
-                        {% if tracks_count %}
-                            <br>Tracké pour la dernière fois il y a
-                            <span class="text-italic" title="{{ tracker.tracks.first.datetime }}">
-                                {{ tracker.tracks.first.datetime|timesince }}
-                            </span>.
-                        {% endif %}
-                    {% endwith %}
-                </div>
-            </div>
-
+        <div class="tracker-controls">
             <form method="post">
                 {% csrf_token %}
                 {% if tracker.type == 'mesure' %}
-                    <div class="form-group">
-                        <label for="{{ form.valeur.id_for_label }}">Valeur</label>
-                        <div class="input-group">
+                    <div class="ds-form__group">
+                        <label class="ds-form__label" for="{{ form.valeur.id_for_label }}">Valeur</label>
+                        <div class="ds-input-group">
                             {{ form.valeur }}
-                            <div class="input-group-btn">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="glyphicon glyphicon-plus" title="Ajouter un nouveau track"></i>
-                                </button>
-                            </div>
-                            <div class="input-group-btn">
-                                <button class="btn btn-default" type="button" id="toggleDatetime">
-                                    <i class="glyphicon glyphicon-time" title="Changer la date et l'heure"></i>
-                                </button>
-                            </div>
+                            <button class="ds-btn" type="submit">
+                                <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
+                            </button>
+                            <button class="ds-btn ds-btn--ghost" type="button" id="toggleDatetime">
+                                <i class="fa fa-clock" title="Changer la date et l'heure"></i>
+                            </button>
                         </div>
                         {{ form.valeur.errors }}
                     </div>
-                    <div class="form-group">
-                        <label for="{{ form.commentaire.id_for_label }}">Commentaire (facultatif)</label>
+                    <div class="ds-form__group">
+                        <label class="ds-form__label" for="{{ form.commentaire.id_for_label }}">Commentaire (facultatif)</label>
                         {{ form.commentaire }}
                         {{ form.commentaire.errors }}
                     </div>
                 {% else %}
-                    <div class="input-group">
+                    <div class="ds-form__group">
                         {{ form.commentaire.label_tag }}
-                    </div>
-                    <div class="input-group">
-                        {{ form.commentaire }}
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="glyphicon glyphicon-plus" title="Ajouter un nouveau track"></i>
+                        <div class="ds-input-group">
+                            {{ form.commentaire }}
+                            <button class="ds-btn" type="submit">
+                                <i class="fa fa-plus" title="Ajouter un nouveau track"></i>
+                            </button>
+                            <button class="ds-btn ds-btn--ghost" type="button" id="toggleDatetime">
+                                <i class="fa fa-clock" title="Changer la date et l'heure"></i>
                             </button>
                         </div>
-                        <div class="input-group-btn">
-                            <button class="btn btn-default" type="button" id="toggleDatetime">
-                                <i class="glyphicon glyphicon-time" title="Changer la date et l'heure"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         {{ form.commentaire.errors }}
                     </div>
                 {% endif %}
-                <div class="form-group row">
-                    <div class="col-sm-4 col-xs-12" id="datetime" style="display: none">
-                        <label for="id_datetime">Changer la date et l'heure :</label>
-                        <input type="datetime-local" name="datetime" value="{{ form.datetime.value|date:"Y-m-d" }}T{{ form.datetime.value|time:"H:i" }}" class="form-control" required="" id="id_datetime">
-                    </div>
+                <div class="ds-form__group" id="datetime" style="display: none">
+                    <label class="ds-form__label" for="id_datetime">Changer la date et l'heure :</label>
+                    <input type="datetime-local"
+                           name="datetime"
+                           value="{{ form.datetime.value|date:"Y-m-d" }}T{{ form.datetime.value|time:"H:i" }}"
+                           required=""
+                           id="id_datetime">
                 </div>
-                <div class="form-group">
-                    {{ form.datetime.errors }}
-                </div>
+                <div class="ds-form__group">{{ form.datetime.errors }}</div>
             </form>
-
             <hr>
-
-            <div class="form-group">
-                <label for="dates">Filtrer les résultats selon deux dates :</label>
-                <input type="text" name="dates" id="dates" class="form-control" />
-            </div>
-
-            <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a data-toggle="tab" href="#historique">Historique</a></li>
-                <li><a data-toggle="tab" href="#statistiques">Statistiques</a></li>
-            </ul>
-
-            <div class="tab-content">
-                <div id="historique" class="tab-pane fade in active">
-                    <h2>Historique <small><span id="trackCount"></span> {{ tracker.nom|lower }}s</small></h2>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
+            {% include 'tracker/include/date_range.html' %}
+        </div>
+        <ul class="ds-tabs ds-tabs--justified" data-tabs>
+            <li class="ds-tabs__item is-active"><a href="#historique">Historique</a></li>
+            <li class="ds-tabs__item"><a href="#statistiques">Statistiques</a></li>
+        </ul>
+        <div>
+            <div id="historique" class="ds-tab-panel is-active">
+                <h2>Historique <small><span id="trackCount"></span> {{ tracker.nom|lower }}s</small></h2>
+                <div class="ds-table-wrap">
+                    <table class="ds-table ds-table--striped">
+                        <thead>
                             <tr>
                                 <th>Date</th>
                                 {% if tracker.type == 'mesure' %}<th>Valeur</th>{% endif %}
                                 <th>Commentaire</th>
                                 <th>Actions</th>
                             </tr>
-                            </thead>
-                            <tbody id="tracks">
+                        </thead>
+                        <tbody id="tracks">
                             {# Will be filled in AJAX #}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="statistiques" class="ds-tab-panel">
+                <h2>Statistiques</h2>
+                {% if not tracker.tracks.exists %}<p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>{% endif %}
+                <div id="track_graph"
+                     {% if not tracker.tracks.exists %} class="ds-hidden" {% endif %}>
+                    <p>
+                        {% if tracker.type == 'mesure' %}
+                            Moyenne : <strong id="avg"></strong>
+                            (min : <span id="valMin"></span>, max : <span id="valMax"></span>)
+                            par <span id="frequency"></span>
+                        {% else %}
+                            <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
+                        {% endif %}
+                    </p>
+                    <div class="ds-text-center">
+                        <canvas id="allTracks" width="600" height="400"></canvas>
+                    </div>
+                    {% include 'tracker/include/frequency_buttons.html' %}
+                    {% if tracker.type == 'mesure' %}
+                        <h3>Statistiques globales</h3>
+                        <div class="ds-grid ds-grid--3">
+                            <div>Valeur min : <strong id="valeurMin">-</strong></div>
+                            <div>Valeur moyenne : <strong id="valeurAvg">-</strong></div>
+                            <div>Valeur max : <strong id="valeurMax">-</strong></div>
+                        </div>
+                    {% endif %}
+                    <h3>Ecarts</h3>
+                    <p>Voici les statistiques des différences de temps entre deux tracks à la suite.</p>
+                    <div class="ds-grid ds-grid--3">
+                        <div>Plus petit écart : <span id="deltaMin">Pas assez de donnée...</span></div>
+                        <div>Ecart moyen : <strong id="deltaAvg">Pas assez de donnée...</strong></div>
+                        <div>Plus grand écart : <span id="deltaMax">Pas assez de donnée...</span></div>
+                    </div>
+                    <h3>Répartition</h3>
+                    <div class="ds-grid ds-grid--2">
+                        <div class="ds-text-center">
+                            <h4>Par heure de la journée</h4>
+                            <canvas id="trackByHourChart" width="600" height="400"></canvas>
+                        </div>
+                        <div class="ds-text-center">
+                            <h4>Par jour de la semaine</h4>
+                            <canvas id="trackByDayChart" width="600" height="400"></canvas>
+                        </div>
+                    </div>
+                    <h3>Mots-clefs (50 max)</h3>
+                    <div class="ds-table-wrap">
+                        <table class="ds-table ds-table--bordered ds-table--striped">
+                            <thead>
+                                <tr>
+                                    <th class="ds-text-right">Mot</th>
+                                    <th>Nombre d'occurence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="words">
+                                {# Filled by ajax #}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div id="statistiques" class="tab-pane fade">
-                    <h2>Statistiques</h2>
-                    {% if not tracker.tracks.exists %}
-                        <p>Il n'y a pas assez d'enregistrements pour afficher le graphique...</p>
-                    {% endif %}
-                    <div id="track_graph"{% if not tracker.tracks.exists %} class="hidden" {% endif %}>
-                        <p>
-                            {% if tracker.type == 'mesure' %}
-                                Moyenne : <strong id="avg"></strong>
-                                (min : <span id="valMin"></span>, max : <span id="valMax"></span>)
-                                par <span id="frequency"></span>
-                            {% else %}
-                                <strong id="avg"></strong> {{ tracker.nom|lower }} par <span id="frequency"></span>
-                            {% endif %}
-                        </p>
-                        <div class="text-center">
-                            <canvas id="allTracks" width="600" height="400"></canvas>
-                        </div>
-                        {% include 'tracker/include/frequency_buttons.html' %}
-                        {% if tracker.type == 'mesure' %}
-                            <h3>Statistiques globales</h3>
-                            <div class="row">
-                                <div class="col-sm-4 col-xs-12">
-                                    Valeur min : <strong id="valeurMin">-</strong>
-                                </div>
-                                <div class="col-sm-4 col-xs-12">
-                                    Valeur moyenne : <strong id="valeurAvg">-</strong>
-                                </div>
-                                <div class="col-sm-4 col-xs-12">
-                                    Valeur max : <strong id="valeurMax">-</strong>
-                                </div>
-                            </div>
-                        {% endif %}
-                        <h3>Ecarts</h3>
-                        <p>Voici les statistiques des différences de temps entre deux tracks à la suite.</p>
-                        <div class="row">
-                            <div class="col-sm-4 col-xs-12">
-                                Plus petit écart : <span id="deltaMin">Pas assez de donnée...</span>
-                            </div>
-                            <div class="col-sm-4 col-xs-12">
-                                Ecart moyen : <strong id="deltaAvg">Pas assez de donnée...</strong>
-                            </div>
-                            <div class="col-sm-4 col-xs-12">
-                                Plus grand écart : <span id="deltaMax">Pas assez de donnée...</span>
-                            </div>
-                        </div>
-                        <h3>Répartition</h3>
-                        <div class="row">
-                            <div class="col-sm-6 col-xs-12 text-center">
-                                <h4>Par heure de la journée</h4>
-                                <canvas id="trackByHourChart" width="600" height="400"></canvas>
-                            </div>
-                            <div class="col-sm-6 col-xs-12 text-center">
-                                <h4>Par jour de la semaine</h4>
-                                <canvas id="trackByDayChart" width="600" height="400"></canvas>
-                            </div>
-                        </div>
-                        <h3>Mots-clefs (50 max)</h3>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th class="text-right">Mot</th>
-                                        <th>Nombre d'occurence</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="words">
-                                    {# Filled by ajax #}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="well hidden text-danger text-center" id="noTracks">
-                        Aucun track pour la période donnée.
-                    </div>
-                </div>
+                <div class="ds-well ds-hidden ds-text-danger ds-text-center" id="noTracks">Aucun track pour la période donnée.</div>
             </div>
         </div>
     </div>
 {% endblock %}
-
 {% block javascript %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-    <script src="{% static 'js/moment-with-locales.js' %}"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="{% static 'js/chart.umd.min.js' %}"></script>
     <script>
-        {% get_current_language as LANGUAGE_CODE %}
-        moment.locale('{{ LANGUAGE_CODE }}')
-        const minDate = moment("{{ tracker.tracks.first_track.datetime|date:"c" }}")
-        const maxDate = moment("{{ tracker.tracks.last_track.datetime|date:"c" }}").add(1, 'minute')
-        const trackerDataUrl = '{% url 'tracker:tracker-data' %}'
-        const trackerType = '{{ tracker.type }}'
+        const minDate = "{{ tracker.tracks.first_track.datetime|date:"c" }}";
+        const maxDate = "{{ tracker.tracks.last_track.datetime|date:"c" }}";
+        const trackerDataUrl = '{% url 'tracker:tracker-data' %}';
+        const trackerType = '{{ tracker.type }}';
+        const trackerColor = '{{ tracker.color }}';
     </script>
     <script src="{% static 'tracker/js/common.js' %}"></script>
     <script>
         const trackerIds = ['{{ tracker.id }}'];
+        const otherStatsUrl = "{% url 'tracker:tracker-other-stats' %}";
+        const historyUrl = "{% url 'tracker:tracker-history' %}";
 
-        $(() => {
-            function daterange_callback(s, e) {
-                $('#reportrange span').html(s.format('LLLL') + ' - ' + e.format('LLLL'));
-                start = s.format('YY-MM-DD HH:mm:ss');
-                end = e.format('YY-MM-DD HH:mm:ss');
-                update_all($('button.btn-frequency.btn-primary').data('frequency'))
-            }
-
-            $('input[name="dates"]').daterangepicker(dateRangeOptions, daterange_callback);
-
+        document.addEventListener('DOMContentLoaded', function () {
             allTracks = new Chart(document.getElementById("allTracks"), {
                 type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: []
-                    }]
-                },
+                data: { labels: [], datasets: [{ data: [] }] },
                 options: {
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
 
             trackByHourChart = new Chart(document.getElementById("trackByHourChart"), {
                 type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Total',
-                        backgroundColor: '#337ab7',
-                        data: []
-                    }]
-                },
+                data: { labels: [], datasets: [{ label: 'Total', backgroundColor: trackerColor, data: [] }] },
                 options: {
-                    legend: {
-                        display:false
-                    },
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }]
-                    }
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
 
@@ -305,74 +231,133 @@
                     labels: [],
                     datasets: [{
                         label: 'Total',
-                        backgroundColor: [
-                            'rgba(255, 0, 0, 0.5)',
-                            'rgba(0, 255, 0, 0.5)',
-                            'rgba(0, 0, 255, 0.5)',
-                            'rgba(255, 255, 0, 0.5)',
-                            'rgba(255, 0, 255, 0.5)',
-                            'rgba(0, 255, 255, 0.5)',
-                            'rgba(0, 0, 0, 0.5)'
-                        ],
+                        backgroundColor: DAY_COLORS[currentTheme()],
                         data: []
                     }]
                 },
                 options: {
-                    legend: {
-                        display:true,
-                        position: 'bottom'
-                    },
-                    tooltips: {
-                        // https://stackoverflow.com/a/37260662/8439435 - Pour ajouter le pourcentage
-                        callbacks: {
-                            label: function (tooltipItem, data) {
-                                // Get the concerned dataset
-                                var dataset = data.datasets[tooltipItem.datasetIndex];
-                                // Calculate the total of this data set
-                                var total = dataset.data.reduce(function (previousValue, currentValue, currentIndex, array) {
-                                    return previousValue + currentValue;
-                                });
-                                // Get the current items value
-                                var currentValue = dataset.data[tooltipItem.index];
-                                // Calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
-                                var percentage = Math.floor(((currentValue / total) * 100) + 0.5);
-
-                                return data.labels[tooltipItem.index] + ' : ' + currentValue + ' (' + percentage + "%)";
+                    plugins: {
+                        legend: { display: true, position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                // Ajoute le pourcentage dans l'infobulle (API Chart.js v4).
+                                label: function (context) {
+                                    const data = context.dataset.data;
+                                    const total = data.reduce((a, b) => a + b, 0);
+                                    const value = context.parsed;
+                                    const percentage = total ? Math.floor(((value / total) * 100) + 0.5) : 0;
+                                    return context.label + ' : ' + value + ' (' + percentage + '%)';
+                                }
                             }
                         }
                     }
                 }
             });
 
-            daterange_callback(start, end);
+            // Affiche/masque le champ date-heure du formulaire d'ajout.
+            const toggleDatetime = document.getElementById('toggleDatetime');
+            if (toggleDatetime) {
+                toggleDatetime.addEventListener('click', function () {
+                    const el = document.getElementById('datetime');
+                    el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+                });
+            }
 
-            // Tracker Management
-
-            $('button#toggleDatetime').click(function () {
-                $('#datetime').toggle()
+            // Suppression d'un track depuis la modale de confirmation.
+            const deleteTrackBtn = document.getElementById('deleteTrackBtn');
+            deleteTrackBtn.addEventListener('click', function () {
+                window.http.request(deleteTrackBtn.dataset.url, { method: 'DELETE' })
+                    .then(response => {
+                        if (!response.ok) throw new Error('HTTP ' + response.status);
+                        const row = document.getElementById(deleteTrackBtn.dataset.trackId);
+                        if (row) row.style.display = 'none';
+                        document.getElementById('modalConfirmDelete').close();
+                        const tc = document.getElementById('trackCount');
+                        tc.textContent = parseInt(tc.textContent) - 1;
+                        const total = document.getElementById('totalCount');
+                        total.textContent = parseInt(total.textContent) - 1;
+                        update_all(activeFrequency());
+                    })
+                    .catch(error => alert('Erreur lors de la suppression : ' + error.message));
             });
 
-            // Call the api endpoint to delete the track and then hide the modal
-            $('#deleteTrackBtn').click(function () {
-                $.ajax({url: $(this).data('url'), type: 'DELETE'})
-                    .done((response) => {
-                        $('.track#' + $(this).data('trackId')).fadeOut();
-                        $("#modalConfirmDelete").modal('hide');
-                        $('span#trackCount').text(parseInt($('span#trackCount').text()) - 1);
-                        $('b#totalCount').text(parseInt($('b#totalCount').text()) - 1);
-                        update_all($('button.btn-frequency.btn-primary').data('frequency'))
-                    })
-                    .fail((xhr, textStatus, errorThrown) => {
-                        alert(textStatus + ' - ' + errorThrown)
-                    })
-            })
+            initTrackerDateRange(minDate, maxDate);
         });
+
+        // Lie les interactions sur les lignes d'historique fraîchement injectées.
+        function bindHistoryRows() {
+            document.querySelectorAll('.displayForm').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const row = btn.closest('tr');
+                    document.querySelectorAll('.track').forEach(t => t.classList.remove('ds-hidden'));
+                    row.classList.add('ds-hidden');
+                    document.querySelectorAll('.trackForm').forEach(f => f.classList.add('ds-hidden'));
+                    if (row.nextElementSibling) row.nextElementSibling.classList.remove('ds-hidden');
+                });
+            });
+
+            document.querySelectorAll('.cancelBtn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const formRow = btn.closest('tr');
+                    formRow.classList.add('ds-hidden');
+                    if (formRow.previousElementSibling) formRow.previousElementSibling.classList.remove('ds-hidden');
+                });
+            });
+
+            document.querySelectorAll('.trackForm form').forEach(function (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const body = new URLSearchParams(new FormData(form));
+                    window.http.request(form.action, { method: 'PUT', body: body })
+                        .then(response => response.json().then(data => ({ ok: response.ok, data })))
+                        .then(({ ok, data }) => {
+                            if (!ok) throw data;
+                            const formRow = form.closest('tr');
+                            const track = formRow.previousElementSibling;
+                            track.querySelector('td.commentaire').textContent = data.commentaire;
+                            const valeurCell = track.querySelector('td.valeur');
+                            if (valeurCell && data.valeur !== null && data.valeur !== undefined) {
+                                valeurCell.textContent = data.valeur;
+                            }
+                            track.querySelector('td.date').textContent = formatTrackDate(data.datetime);
+                            form.querySelector('.cancelBtn').click();
+                        })
+                        .catch(errors => {
+                            if (errors && typeof errors === 'object') {
+                                Object.entries(errors).forEach(([name, error]) => {
+                                    const input = form.querySelector('input[name=' + name + ']');
+                                    if (input) {
+                                        const div = document.createElement('div');
+                                        div.className = 'errorlist';
+                                        div.textContent = error;
+                                        input.parentElement.appendChild(div);
+                                    }
+                                });
+                            }
+                        });
+                });
+            });
+
+            document.querySelectorAll('.modalConfirmDelete').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const row = btn.closest('tr');
+                    deleteTrackBtn.dataset.trackId = row.getAttribute('id');
+                    deleteTrackBtn.dataset.url = btn.dataset.targetUrl;
+                    document.getElementById('toDeleteTrackDate').textContent = row.querySelector('td.date').textContent;
+                    document.getElementById('modalConfirmDelete').showModal();
+                });
+            });
+        }
 
         const update_all = frequency => {
             update_track_graph(frequency);
 
-            $.post("{% url 'tracker:tracker-other-stats' %}", {id: trackerIds, start: start, end: end})
-                .done(response => {
+            const statsBody = new FormData();
+            trackerIds.forEach(id => statsBody.append('id[]', id));
+            if (start) statsBody.append('start', start);
+            if (end) statsBody.append('end', end);
+            window.http.json(otherStatsUrl, { method: 'POST', body: statsBody })
+                .then(response => {
                     if (response.trackByHourChart !== undefined && response.trackByDayChart !== undefined) {
                         trackByHourChart.data.labels = response.trackByHourChart.labels;
                         trackByHourChart.data.datasets[0].data = response.trackByHourChart.values;
@@ -383,83 +368,42 @@
                     }
                     if (response.deltaStats) {
                         for (const [key, value] of Object.entries(response.deltaStats)) {
-                            $('#' + key).html(value);
+                            const el = document.getElementById(key);
+                            if (el) el.innerHTML = value;
                         }
                     }
                     if (response.valeurStats) {
-                        $('#valeurMin').text(response.valeurStats.min);
-                        $('#valeurAvg').text(response.valeurStats.avg);
-                        $('#valeurMax').text(response.valeurStats.max);
+                        document.getElementById('valeurMin').textContent = response.valeurStats.min;
+                        document.getElementById('valeurAvg').textContent = response.valeurStats.avg;
+                        document.getElementById('valeurMax').textContent = response.valeurStats.max;
                     }
-                    const wordsBody = $('tbody#words')
-                    wordsBody.empty()
+                    const wordsBody = document.getElementById('words');
+                    wordsBody.innerHTML = '';
                     if (response.words !== undefined) {
                         for (const [word, value] of Object.entries(response.words)) {
-                            wordsBody.append('<tr><td class="text-right">' + word + '</td><td>' + value + '</td></tr>')
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = '<td class="ds-text-right"></td><td></td>';
+                            tr.children[0].textContent = word;
+                            tr.children[1].textContent = value;
+                            wordsBody.appendChild(tr);
                         }
                     } else {
-                        wordsBody.append('<tr><td colspan="2">Aucun mots-clef</td></tr>')
+                        wordsBody.innerHTML = '<tr><td colspan="2">Aucun mots-clef</td></tr>';
                     }
                 })
-                .fail((xhr, textStatus, errorThrown) => {
-                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
-                });
+                .catch(error => console.error('Erreur statistiques', error));
 
-            $.post("{% url 'tracker:tracker-history' %}", {id: trackerIds, start: start, end: end})
-                .done(response => {
-                    $('tbody#tracks').html(response.html);
-                    $('span#trackCount').text(response.trackCount);
-
-                    // Next functions are added only after the table has been built in order to make these events work
-
-                    // Display a track form and hide all the others
-                    $('.displayForm').click(function () {
-                        const track = $(this).closest('tr');
-                        $('.track').removeClass('hidden');
-                        track.addClass('hidden');
-                        $('.trackForm').addClass('hidden');
-                        track.next().removeClass('hidden')
-                    });
-
-                    // Hide a track form
-                    $('.cancelBtn').click(function () {
-                        const trackForm = $(this).closest('tr');
-                        trackForm.addClass('hidden');
-                        trackForm.prev().removeClass('hidden');
-                    });
-
-                    // Submit a track edit form in AJAX
-                    $('.trackForm form').submit(function (e) {
-                        e.preventDefault();
-                        $.ajax({url: $(this).attr('action'), type: 'PUT', dataType: 'json', data: $(this).serialize()})
-                            .done((response) => {
-                                const track = $(this).closest('tr').prev();
-                                track.find('td.commentaire').text(response.commentaire);
-                                if (response.valeur !== null && response.valeur !== undefined) {
-                                    track.find('td.valeur').text(response.valeur);
-                                }
-                                const datetime = moment(response.datetime).format('LLL');
-                                track.find('td.date').text(datetime);
-                                $(this).find('.cancelBtn').trigger('click')
-                            })
-                            .fail(err => {
-                                $.each(err.responseJSON, (name, error) => {
-                                    $(this).find('input[name=' + name + ']').parent().addClass('has-error').append('<div class="errorlist">' + error + '</div>')
-                                })
-                            })
-                    });
-
-                    // Display the confirm track delete modal
-                    $('.modalConfirmDelete').click(function () {
-                        const track = $(this).closest('tr');
-                        $('#deleteTrackBtn').data('trackId', track.attr('id')).data('url', $(this).data('targetUrl'));
-                        $('#toDeleteTrackDate').text(track.find('td.date').text());
-                        $("#modalConfirmDelete").modal();
-                    });
+            const histBody = new FormData();
+            trackerIds.forEach(id => histBody.append('id[]', id));
+            if (start) histBody.append('start', start);
+            if (end) histBody.append('end', end);
+            window.http.json(historyUrl, { method: 'POST', body: histBody })
+                .then(response => {
+                    document.getElementById('tracks').innerHTML = response.html;
+                    document.getElementById('trackCount').textContent = response.trackCount;
+                    bindHistoryRows();
                 })
-                .fail((xhr, textStatus, errorThrown) => {
-                    console.error( '(' + errorThrown + ') ' + (xhr.responseJSON !== undefined ? xhr.responseJSON.error : textStatus));
-                });
-        }
+                .catch(error => console.error('Erreur historique', error));
+        };
     </script>
 {% endblock %}

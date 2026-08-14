@@ -1,57 +1,64 @@
 from django import forms
 
-from kendama.models import Kendama, TrickPlayer, ComboPlayer, KendamaTrick, Combo, Ladder
+from kendama.models import (
+    Combo,
+    ComboPlayer,
+    Kendama,
+    KendamaTrick,
+    Ladder,
+    TrickPlayer,
+)
 
 
 class KendamaForm(forms.ModelForm):
     class Meta:
         model = Kendama
-        fields = '__all__'
+        fields = "__all__"
 
 
 class KendamaTrickForm(forms.ModelForm):
     class Meta:
         model = KendamaTrick
-        exclude = ('slug', 'creator', 'players')
+        exclude = ("slug", "creator", "players")
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-            'tutorial_video_link': forms.URLInput(attrs={'class': 'input-block'})
+            "description": forms.Textarea(attrs={"rows": 4}),
+            "tutorial_video_link": forms.URLInput(attrs={"class": "input-block"}),
         }
 
 
 class ComboForm(forms.ModelForm):
     class Meta:
         model = Combo
-        exclude = ('slug', 'creator', 'players', 'tricks')
+        exclude = ("slug", "creator", "players", "tricks")
         widgets = {
-            'tutorial_video_link': forms.URLInput(attrs={'class': 'input-block'}),
+            "tutorial_video_link": forms.URLInput(attrs={"class": "input-block"}),
         }
 
 
 class TrickPlayerForm(forms.ModelForm):
     frequency = forms.ChoiceField(
-        choices=tuple([('', '------')] + list(TrickPlayer.FREQUENCY))
+        choices=tuple([("", "------")] + list(TrickPlayer.FREQUENCY))
     )
 
     class Meta:
         model = TrickPlayer
-        fields = ('frequency',)
+        fields = ("frequency",)
 
 
 class ComboPlayerForm(forms.ModelForm):
     frequency = forms.ChoiceField(
-        choices=tuple([('', '------')] + list(ComboPlayer.FREQUENCY))
+        choices=tuple([("", "------")] + list(ComboPlayer.FREQUENCY))
     )
 
     class Meta:
         model = ComboPlayer
-        fields = ('frequency',)
+        fields = ("frequency",)
 
 
 class LadderForm(forms.ModelForm):
     class Meta:
         model = Ladder
-        exclude = ('slug', 'creator', 'players', 'combos')
+        exclude = ("slug", "creator", "players", "combos")
         widgets = {
-            'tutorial_video_link': forms.URLInput(attrs={'class': 'input-block'}),
+            "tutorial_video_link": forms.URLInput(attrs={"class": "input-block"}),
         }

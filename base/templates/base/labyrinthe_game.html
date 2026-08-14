@@ -2,6 +2,10 @@
 
 {% load static i18n %}
 
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'base/css/labyrinthe.css' %}">
+{% endblock %}
+
 {% block title %}{% trans "Labyrinthe Game" %}{% endblock %}
 {% block jumbotron_title %}{% trans "Labyrinthe Game" %}{% endblock %}
 {% block jumbotron_description %}
@@ -9,9 +13,77 @@
 {% endblock %}
 
 {% block content %}
-    <div class="text-center">
-        <div id="sketch-holder"></div>
+    <div class="ds-laby">
+        {% comment %}
+            Niveau, chrono et record sont en HTML plutôt que dessinés dans le canvas :
+            ils suivent ainsi le thème du site et restent lisibles en navigation clavier.
+        {% endcomment %}
+        <div class="ds-laby__hud">
+            <dl class="ds-laby__stats">
+                <div class="ds-laby__stat">
+                    <dt>{% trans "Mode" %}</dt>
+                    <dd data-laby-mode>—</dd>
+                </div>
+                <div class="ds-laby__stat">
+                    <dt>{% trans "Niveau" %}</dt>
+                    <dd data-laby-level>—</dd>
+                </div>
+                <div class="ds-laby__stat">
+                    <dt>{% trans "Temps" %}</dt>
+                    <dd data-laby-time>—</dd>
+                </div>
+                <div class="ds-laby__stat">
+                    <dt>{% trans "Record" %}</dt>
+                    <dd data-laby-best>—</dd>
+                </div>
+            </dl>
+            <div class="ds-laby__actions">
+                <button type="button" class="ds-btn ds-btn--ghost ds-btn--sm" data-laby-pause>
+                    {% trans "Pause" %}
+                </button>
+                <button type="button"
+                        class="ds-btn ds-btn--ghost ds-btn--sm"
+                        data-laby-sound
+                        aria-pressed="true">{% trans "Son" %}</button>
+            </div>
+        </div>
+
+        <div id="sketch-holder" class="ds-laby__stage">
+            <noscript>
+                <p class="ds-laby__noscript">
+                    {% trans "Ce jeu a besoin de JavaScript pour fonctionner." %}
+                </p>
+            </noscript>
+        </div>
+
+        {% comment %}
+            Commandes tactiles : sur mobile le jeu n'avait aucune commande (ni clavier,
+            ni tactile) et était donc injouable. Elles restent utiles à la souris.
+        {% endcomment %}
+        <div class="ds-laby__pad" role="group" aria-label="{% trans 'Commandes du jeu' %}">
+            <button type="button"
+                    class="ds-btn ds-btn--ghost ds-laby__key ds-laby__key--up"
+                    data-laby-dir="up"
+                    aria-label="{% trans 'Haut' %}">↑</button>
+            <button type="button"
+                    class="ds-btn ds-btn--ghost ds-laby__key ds-laby__key--left"
+                    data-laby-dir="left"
+                    aria-label="{% trans 'Gauche' %}">←</button>
+            <button type="button"
+                    class="ds-btn ds-laby__key ds-laby__key--ok"
+                    data-laby-confirm
+                    aria-label="{% trans 'Valider' %}">OK</button>
+            <button type="button"
+                    class="ds-btn ds-btn--ghost ds-laby__key ds-laby__key--right"
+                    data-laby-dir="right"
+                    aria-label="{% trans 'Droite' %}">→</button>
+            <button type="button"
+                    class="ds-btn ds-btn--ghost ds-laby__key ds-laby__key--down"
+                    data-laby-dir="down"
+                    aria-label="{% trans 'Bas' %}">↓</button>
+        </div>
     </div>
+
     <h3>{% trans "Les commandes" %}</h3>
     <p>
         {% blocktrans %}
@@ -21,34 +93,40 @@
             sur le joueur pour arrêter le déplacement.
         {% endblocktrans %}
     </p>
+    <p>
+        {% blocktrans %}
+            Sur mobile (ou à la souris), utilisez le <b>pavé directionnel</b> sous le terrain, ou touchez
+            directement une <b>case voisine</b> du joueur pour vous y déplacer.
+        {% endblocktrans %}
+    </p>
     <div>
         {% blocktrans %}
             Il existe quelques touches spéciales :
         {% endblocktrans %}
-        <div class="row">
-            <dl class="col-sm-3 col-xs-6">
+        <div class="ds-grid ds-grid--4">
+            <dl>
                 <dt>X</dt>
-                <dd>Met en pause le jeu</dd>
+                <dd>{% trans "Met en pause le jeu" %}</dd>
                 <dt>P</dt>
-                <dd>Affiche/Cache les cases par lesquelles est passé le joueur</dd>
+                <dd>{% trans "Affiche/Cache les cases par lesquelles est passé le joueur" %}</dd>
             </dl>
-            <dl class="col-sm-3 col-xs-6">
+            <dl>
                 <dt>R</dt>
-                <dd>Redémarre le jeu</dd>
+                <dd>{% trans "Redémarre le jeu" %}</dd>
                 <dt>B</dt>
-                <dd>Active/désactive le mode Blind (les murs qui disparaissent)</dd>
+                <dd>{% trans "Active/désactive le mode Blind (les murs qui disparaissent)" %}</dd>
             </dl>
-            <dl class="col-sm-3 col-xs-6">
+            <dl>
                 <dt>L</dt>
-                <dd>Passe directement au niveau supérieur</dd>
+                <dd>{% trans "Passe directement au niveau supérieur" %}</dd>
                 <dt>A</dt>
-                <dd>Remet à zéro la disparition des murs</dd>
+                <dd>{% trans "Remet à zéro la disparition des murs" %}</dd>
             </dl>
-            <dl class="col-sm-3 col-xs-6">
+            <dl>
                 <dt>C</dt>
-                <dd>Active/désactive le tracé du parcours du joueur</dd>
+                <dd>{% trans "Active/désactive le tracé du parcours du joueur" %}</dd>
                 <dt>W</dt>
-                <dd>Affiche dans la console la position du joueur dans la Matrice</dd>
+                <dd>{% trans "Affiche dans la console la position du joueur sur la grille" %}</dd>
             </dl>
         </div>
     </div>
@@ -57,6 +135,8 @@
 {% block javascript %}
     <script src="{% static 'base/js/p5.min.js' %}"></script>
     <script src="{% static 'base/js/p5.sound.min.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/Palette.js' %}"></script>
+    <script src="{% static 'base/js/labyrinthe_game/Hud.js' %}"></script>
     <script src="{% static 'base/js/labyrinthe_game/LabyrintheGame.js' %}"></script>
     <script src="{% static 'base/js/labyrinthe_game/Button.js' %}"></script>
     <script src="{% static 'base/js/labyrinthe_game/Chemin.js' %}"></script>

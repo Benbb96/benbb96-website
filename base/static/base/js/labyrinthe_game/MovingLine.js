@@ -1,6 +1,11 @@
 // La classe des lignes animées
 
-let SIZE = 60;  // La taille de la ligne
+// La taille d'une ligne, proportionnelle au canvas : elle valait 60 px en dur,
+// calibrés pour le canvas de 444 px qui n'existe plus (il est désormais
+// responsive, cf. canvasSize() dans LabyrintheGame.js).
+function lineSize() {
+    return width * 0.135
+}
 
 class MovingLine {
 
@@ -58,10 +63,11 @@ class MovingLine {
                 this.ready = true;
         }
 
+        const size = lineSize();
         push();
-        translate(this.t.x * SIZE, this.t.y * SIZE);  // On applique la nouvelle translation
+        translate(this.t.x * size, this.t.y * size);  // On applique la nouvelle translation
         rotate(this.r);  // On applique la nouvelle rotation
-        line(this.a.x * SIZE, this.a.y * SIZE, this.b.x * SIZE, this.b.y * SIZE);  // On dessine la ligne
+        line(this.a.x * size, this.a.y * size, this.b.x * size, this.b.y * size);  // On dessine la ligne
         pop();
     }
 

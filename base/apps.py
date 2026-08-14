@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class BaseConfig(AppConfig):
-    name = 'base'
+    name = "base"
 
     def ready(self):
-        import base.signals
+        import base.signals  # noqa: F401  (import à effet de bord : branche les signaux)

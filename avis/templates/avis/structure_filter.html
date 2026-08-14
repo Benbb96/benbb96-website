@@ -1,58 +1,48 @@
 {% extends 'avis/base_avis.html' %}
-
-{% load custom_tags bootstrap3 %}
-
+{% load custom_tags %}
 {% block avis_title %}Structures{% endblock %}
-
 {% block avis_content %}
-    <h1>Structures</h1>
-    <hr />
+    <h1 class="ds-text-center ds-mb-4">Structures</h1>
     <div class="filter-bar">
-        <form class="form-inline" method="get">
-            {% bootstrap_form filter.form %}
-            {% buttons submit='Filtrer <i class="fa fa-filter"></i>' %}{% endbuttons %}
+        <form class="ds-form-inline" method="get">
+            {% include 'components/form.html' with form=filter.form %}
+            <button type="submit" class="ds-btn">Filtrer <i class="fa fa-filter" aria-hidden="true"></i></button>
         </form>
     </div>
-    <hr />
     {% include 'components/pagination.html' %}
-
     {% for structure in structures %}
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3>
+        <div class="ds-card ds-mb-4">
+            <div class="ds-card__header ds-cluster ds-cluster--split">
+                <h3 class="ds-mb-0">
                     <a href="{{ structure.get_absolute_url }}">{{ structure.nom }}</a>
-                    <small>{{ structure.type }}</small>
-                    {% if structure.moyenne %}
-                        <span class="pull-right" style="width: 20%; margin-right: 20px">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-{{ structure.moyenne|color }}" role="progressbar"
-                                     aria-valuenow="{{ structure.moyenne|multiply_10 }}" aria-valuemin="0"
-                                     aria-valuemax="100" style="width:{{ structure.moyenne|multiply_10 }}%">
-                                    {{ structure.moyenne|floatformat }}/10
-                                </div>
-                            </div>
-                        </span>
-                    {% endif %}
+                    <small class="ds-text-muted">{{ structure.type }}</small>
                 </h3>
-            </div>
-            <div class="panel-body">
-                <p>Ajouté le {{ structure.date_creation|date }}</p>
-                {% if structure.informations %}
-                    <div>{{ structure.informations }}</div>
-                {% endif %}
-                <h4>Ses produits</h4>
-                <div class="row">
-                    {% for produit in structure.produit_set.all %}
-                        <div class="col-md-3 col-sm-4 col-xs-6">
-                            <h5><a href="{{ produit.get_absolute_url }}">{{ produit.nom }}</a></h5>
+                {% if structure.moyenne %}
+                    <div class="ds-progress" style="flex: 0 0 20%; min-width: 120px">
+                        <div class="ds-progress__bar ds-progress__bar--{{ structure.moyenne|color }}"
+                             style="width:{{ structure.moyenne|multiply_10 }}%">
+                            {{ structure.moyenne|floatformat }}/10
                         </div>
-                    {% endfor %}
-                </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="ds-card__body">
+                <p class="ds-text-muted ds-mb-3">Ajouté le {{ structure.date_creation|date }}</p>
+                {% if structure.informations %}
+                    <p>{{ structure.informations }}</p>
+                {% endif %}
+                {% if structure.produit_set.exists %}
+                    <p class="ds-text-muted ds-mb-2"><small>Ses produits</small></p>
+                    <div class="ds-cluster">
+                        {% for produit in structure.produit_set.all %}
+                            <a href="{{ produit.get_absolute_url }}"><span class="ds-badge ds-badge--primary">{{ produit.nom }}</span></a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     {% empty %}
-        <div>Pas de structure enregistré.</div>
+        <div class="ds-well ds-text-center">Pas de structure enregistrée.</div>
     {% endfor %}
-
     {% include 'components/pagination.html' %}
 {% endblock %}

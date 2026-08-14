@@ -13,12 +13,12 @@ def multiply_10(value):
 @register.filter
 def color(value):
     if value >= 8:
-        return 'success'
+        return "success"
     if value >= 6:
-        return 'info'
+        return "info"
     if value >= 4:
-        return 'warning'
-    return 'danger'
+        return "warning"
+    return "danger"
 
 
 @register.filter
@@ -47,7 +47,7 @@ def param_replace(context, **kwargs):
     Based on
     https://stackoverflow.com/questions/22734695/next-and-before-links-for-a-django-paginated-query/22735278#22735278
     """
-    d = context['request'].GET.copy()
+    d = context["request"].GET.copy()
     for k, v in kwargs.items():
         d[k] = str(v)
     for k in [k for k, v in d.items() if not v]:
@@ -74,10 +74,17 @@ def contrast_color(hex_color):
     b2_black_color = int(black_color[5:7], 16)
 
     # Calc contrast ratio
-    l1 = 0.2126 * pow(r1 / 255, 2.2) + 0.7152 * pow(g1 / 255, 2.2) + 0.0722 * pow(b1 / 255, 2.2)
+    l1 = (
+        0.2126 * pow(r1 / 255, 2.2)
+        + 0.7152 * pow(g1 / 255, 2.2)
+        + 0.0722 * pow(b1 / 255, 2.2)
+    )
 
-    l2 = 0.2126 * pow(r2_black_color / 255, 2.2) + 0.7152 * pow(g2_black_color / 255, 2.2) + 0.0722 * pow(
-        b2_black_color / 255, 2.2)
+    l2 = (
+        0.2126 * pow(r2_black_color / 255, 2.2)
+        + 0.7152 * pow(g2_black_color / 255, 2.2)
+        + 0.0722 * pow(b2_black_color / 255, 2.2)
+    )
 
     if l1 > l2:
         contrast_ratio = int((l1 + 0.05) / (l2 + 0.05))
@@ -86,6 +93,6 @@ def contrast_color(hex_color):
 
     # If contrast is more than 5, return black color
     if contrast_ratio > 5:
-        return '#000000'
+        return "#000000"
     # if not, return white color
-    return '#FFFFFF'
+    return "#FFFFFF"
