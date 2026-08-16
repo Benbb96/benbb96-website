@@ -914,6 +914,7 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 .ds-hero--split .ds-hero__inner {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--ds-space-8);
     flex-wrap: wrap;
 }
@@ -938,7 +939,9 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 .ds-hero__actions { display: flex; flex-wrap: wrap; gap: var(--ds-space-3); }
 
 /* Avatar rond signature — anneau jaune, utilisé dans le hero split (home) et
-   la barre latérale de /about. Toujours une vraie <img> (object-fit: cover). */
+   la barre latérale de /about. Toujours une vraie <img> (object-fit: cover).
+   Source unique : img/bbb.webp en 480×480, soit 2× la plus grande taille de
+   rendu (13rem) et 3× la taille mobile — pas besoin de srcset. */
 .ds-avatar {
     display: block;
     border-radius: 999px;
@@ -946,7 +949,11 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
     flex: 0 0 auto;
     box-shadow: 0 0 0 4px var(--ds-surface), 0 0 0 6px var(--ds-primary), var(--ds-shadow-lg);
 }
-.ds-avatar--lg { width: 9.5rem; height: 9.5rem; }
+/* Grandit avec la place disponible sur desktop, plancher à 9.5rem sur mobile. */
+.ds-avatar--lg {
+    width: clamp(9.5rem, 20vw, 13rem);
+    height: clamp(9.5rem, 20vw, 13rem);
+}
 .ds-avatar--sm {
     width: 6.5rem;
     height: 6.5rem;
