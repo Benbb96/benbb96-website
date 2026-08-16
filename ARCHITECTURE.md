@@ -19,6 +19,9 @@ PythonAnywhere.
   `ruff` (lint + format), `pre-commit`.
 - **Déploiement** : push sur `main` → GitHub Actions (SSH) → `git pull` + `uv sync --frozen --no-dev`
   + `migrate` + `collectstatic` + reload WSGI. Aucune étape de build front.
+- **Statiques en prod** : servis par **WhiteNoise** (noms hashés, `immutable`, brotli). Deux
+  prérequis vivent sur le serveur, hors dépôt — voir le commentaire de `STORAGES` dans
+  `config/settings/prod.py`.
 
 ## Applications
 

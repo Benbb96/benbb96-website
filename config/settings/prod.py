@@ -39,9 +39,17 @@ GS_QUERYSTRING_AUTH = False
 
 # staticfiles : WhiteNoise hashe les noms de fichiers (manifest) et pré-compresse
 # en gzip + brotli à collectstatic, ce qui permet de servir /static/ en
-# `Cache-Control: max-age=315360000, public, immutable`. Prérequis PythonAnywhere :
-# le mapping statique /static/ du Web tab doit être SUPPRIMÉ, sinon nginx
-# intercepte les requêtes et WhiteNoise ne les voit jamais.
+# `Cache-Control: max-age=315360000, public, immutable`.
+#
+# Deux prérequis vivent côté PythonAnywhere, hors dépôt — si l'un des deux saute,
+# le site se retrouve sans CSS parce que le HTML réclame des noms hashés :
+#
+# 1. Le mapping statique /static/ du Web tab doit être SUPPRIMÉ, sinon nginx
+#    intercepte les requêtes en amont et WhiteNoise ne les voit jamais.
+# 2. /var/www/www_benbb96_com_wsgi.py doit exposer `get_wsgi_application()` NU.
+#    Il enveloppait l'app dans un `StaticFilesHandler`, qui capte /static/ avant
+#    la pile de middlewares et sert via les finders (donc depuis assets/, où les
+#    noms hashés n'existent pas) : tous les fichiers hashés partaient en 404.
 STORAGES = {
     "default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"},
     "staticfiles": {
