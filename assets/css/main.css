@@ -495,7 +495,14 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 .ds-card--hover:hover::before,
 .ds-card--hover:focus-within::before { transform: scaleX(1); }
 .ds-card__media { display: block; width: 100%; }
-.ds-card__media img { display: block; width: 100%; object-fit: cover; }
+/* aspect-ratio fixe : réserve la place avant le chargement (pas de saut de mise
+   en page) et aligne les cartes d'une même grille. 16/10 = le ratio natif des
+   images de projets (1280x796/800), qui traversent donc la grille sans être
+   recadrées. object-fit: cover, jusque-là inerte faute de hauteur imposée,
+   rattrape les rares images d'un autre ratio en recadrant au lieu de déformer.
+   Les vignettes d'avis fixent leur propre `height`, qui neutralise
+   l'aspect-ratio : elles ne sont pas concernées. */
+.ds-card__media img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
 .ds-card__body { padding: var(--ds-space-5); }
 .ds-card__title { margin-top: 0; }
 .ds-card__footer {

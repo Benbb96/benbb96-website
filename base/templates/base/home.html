@@ -44,7 +44,7 @@
                 <a class="ds-card ds-card--hover" href="{{ projet.get_absolute_url }}"{% if projet.external %} target="_blank"{% endif %}>
                     {% if projet.image %}
                         <span class="ds-card__media">
-                            <img src="{{ projet.image.url }}" style="max-height: 300px" alt="{% trans "Project" %} {{ projet.nom }}">
+                            <img src="{{ projet.image.url }}" width="1280" height="800" alt="{% trans "Project" %} {{ projet.nom }}">
                         </span>
                     {% endif %}
                     <span class="ds-card__body ds-text-center">
