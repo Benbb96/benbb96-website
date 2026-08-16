@@ -84,7 +84,10 @@ import *`). Différences structurantes :
 - **dev** : `FileSystemStorage` local **mais** `MEDIA_URL` pointe vers le bucket GCS public → les
   images de la base de prod s'affichent sans credentials, en lecture seule ; un fichier uploadé en
   dev reste sur le disque local et **ne s'affichera pas**. C'est voulu.
-- SQLite en dev **comme en prod** (`db.sqlite3` versionné dans le dépôt).
+- SQLite en dev **comme en prod**, mais `db.sqlite3` est **gitignoré** : la base locale et
+  celle de prod sont deux fichiers indépendants. Une modification de données faite en local
+  (ajout d'un projet, changement d'image…) ne part **pas** au déploiement — il faut la refaire
+  côté prod, ou rapatrier le fichier de prod pour travailler sur les mêmes données.
 
 ### URLs et i18n
 
