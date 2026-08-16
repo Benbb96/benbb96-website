@@ -65,6 +65,10 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Sert /static/ depuis l'app avec les bons en-têtes de cache : le nginx de
+    # PythonAnywhere n'envoie aucun Cache-Control. Doit rester juste après
+    # SecurityMiddleware. Inerte en dev, où runserver sert les statiques.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "corsheaders.middleware.CorsMiddleware",

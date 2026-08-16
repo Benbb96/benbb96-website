@@ -28,6 +28,7 @@ dependencies = [
     "setuptools==84.0.0",
     "soundcloud",  # fork Benbb96 — voir [tool.uv.sources]
     "spotipy==2.26.0",
+    "whitenoise[brotli]>=6.12.0",
 ]
 
 # Dépendances de développement (PEP 735). Exclues en prod via `uv sync --no-dev`.

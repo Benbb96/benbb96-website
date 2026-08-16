@@ -37,9 +37,16 @@ GS_LOCATION = "media"
 GS_DEFAULT_ACL = "publicRead"
 GS_QUERYSTRING_AUTH = False
 
+# staticfiles : WhiteNoise hashe les noms de fichiers (manifest) et pré-compresse
+# en gzip + brotli à collectstatic, ce qui permet de servir /static/ en
+# `Cache-Control: max-age=315360000, public, immutable`. Prérequis PythonAnywhere :
+# le mapping statique /static/ du Web tab doit être SUPPRIMÉ, sinon nginx
+# intercepte les requêtes et WhiteNoise ne les voit jamais.
 STORAGES = {
     "default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"},
-    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    "staticfiles": {
+        "BACKEND": "config.storages.NonStrictCompressedManifestStaticFilesStorage"
+    },
 }
 
 GOOGLE_ANALYTICS_KEY = get_secret_setting("GOOGLE_ANALYTICS_KEY")
