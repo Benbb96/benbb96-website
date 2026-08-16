@@ -1,4 +1,4 @@
-{% load static fontawesome_6 i18n %}
+{% load static i18n %}
 
 <!DOCTYPE html>
 <html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
@@ -41,7 +41,16 @@
     <!-- Favicon -->
     {% include 'favicon.html' %}
 
-    {% fontawesome_6_static %}
+    {% comment %}
+        Équivalent du tag fontawesome_6_static, MOINS son script. Le tag émet
+        aussi django-fontawesome.js (9,4 Kio, bloquant le rendu) : c'est le
+        picker d'icônes du widget IconField, inutile sur le site public. Les
+        pages qui ont réellement un IconField dans un formulaire (tracker_form,
+        tracker_list, compare_trackers) le chargent déjà via form.media.js,
+        déclaré par IconWidget.Media — le sélecteur continue de fonctionner.
+    {% endcomment %}
+    <link rel="stylesheet" href="{% static 'fontawesome_6/css/django-fontawesome.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'fontawesome_6/css/all.min.css' %}" media="all">
 
     {# Design system maison + styles hérités, tout dans main.css. #}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
