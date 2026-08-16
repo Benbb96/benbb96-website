@@ -1,10 +1,8 @@
 """
 Optimisation d'images partagée : redimensionnement + conversion WebP.
 
-Utilisé par :
-  - PhotoAbstract.save() et PhotoOptimizationMixin.save() (base/models.py) pour optimiser
-    les nouveaux uploads à la volée ;
-  - la management command optimize_existing_photos pour le traitement par lot de l'existant.
+Utilisé par PhotoAbstract.save() et PhotoOptimizationMixin.save() (base/models.py) pour optimiser
+les nouveaux uploads à la volée.
 """
 
 import os
@@ -55,7 +53,7 @@ def get_photo_models():
 
     Imports paresseux (dans la fonction) pour éviter tout import circulaire : ce module
     est importé par base.models, donc il ne doit pas importer les modèles au chargement.
-    Source unique partagée par les commandes optimize_existing_photos et clean_orphan_media.
+    Source unique utilisée par la commande clean_orphan_media.
     """
     from avis.models import Avis
     from base.models import Profil, Projet

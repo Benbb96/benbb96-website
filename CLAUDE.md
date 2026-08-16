@@ -67,10 +67,13 @@ Le serveur charge les `.mo` en mémoire au démarrage → **redémarrer après u
 ### Médias
 
 ```bash
-uv run python manage.py optimize_existing_photos   # resize + WebP en lot sur l'existant
 uv run python manage.py clean_orphan_media         # dry-run par défaut, --apply pour supprimer
-uv run python manage.py normalize_photo_paths      # normalisation des chemins post-migration GCS
 ```
+
+À lancer **en settings prod** (en dev, `default_storage` est local alors que `MEDIA_URL` pointe sur
+GCS : la commande listerait le disque local au lieu du bucket). Les commandes de migration
+`normalize_photo_paths` et `optimize_existing_photos` ont été retirées une fois le lot existant
+converti — l'optimisation à l'upload est assurée par `base/image_utils.py`.
 
 ## Architecture
 

@@ -90,10 +90,9 @@ The bucket name and options live in `config/settings/prod.py`
 setting that enables the GCS backend. Bucket objects must be publicly readable (grant `allUsers` the
 *Storage Object Viewer* role on the bucket).
 
-Images are optimized on upload (resized to 1280 px max + WebP) by `base.image_utils`. Two
-management commands help maintain the bucket:
-`optimize_existing_photos` (batch resize/WebP of existing images) and `clean_orphan_media`
-(remove files no longer referenced in the database — dry-run by default, `--apply` to delete).
+Images are optimized on upload (resized to 1280 px max + WebP) by `base.image_utils`. The
+`clean_orphan_media` management command helps maintain the bucket: it removes files no longer
+referenced in the database (dry-run by default, `--apply` to delete).
 
 Dependencies are managed with [uv](https://docs.astral.sh/uv/) (single source of truth:
 `pyproject.toml` + `uv.lock`; Python version in `.python-version`). Install uv, then let it build
