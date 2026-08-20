@@ -19,7 +19,7 @@ Benbb96/benbb96-website is built on the following main stack:
 
 **Backend**
 - <img width='25' height='25' src='https://img.stackshare.io/service/993/pUBY5pVj.png' alt='Python'/> [Python](https://www.python.org) – Language
-- <img width='25' height='25' src='https://img.stackshare.io/service/994/4aGjtNQv.png' alt='Django'/> [Django](https://www.djangoproject.com/) 5.2 – Web framework (full stack)
+- <img width='25' height='25' src='https://img.stackshare.io/service/994/4aGjtNQv.png' alt='Django'/> [Django](https://www.djangoproject.com/) 6.1 – Web framework (full stack)
 - [Django REST Framework](https://www.django-rest-framework.org/) + [SimpleJWT](https://django-rest-framework-simplejwt.readthedocs.io/) – REST API + JWT auth (mobile app & external Vue frontends)
 - <img width='25' height='25' src='https://img.stackshare.io/service/2180/1284191.png' alt='Pandas'/> [Pandas](http://pandas.pydata.org/) (via [django-pandas](https://github.com/chrisdev/django-pandas)) – Time-series resampling (tracker)
 - <img width='25' height='25' src='https://img.stackshare.io/service/2375/default_1f67b0ca7416a9f52beb655f90b5602d5ef74b75.jpg' alt='Pillow'/> [Pillow](https://python-pillow.github.io/) – On-upload image optimization (resize + WebP)

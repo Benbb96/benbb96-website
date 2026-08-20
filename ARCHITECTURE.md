@@ -1,12 +1,12 @@
 # Architecture
 
-Site personnel de Benbb96 : un projet **Django 5.2** monolithique qui regroupe plusieurs
+Site personnel de Benbb96 : un projet **Django 6.1** monolithique qui regroupe plusieurs
 mini-applications indépendantes. Bilingue **FR/EN**, sans étape de build front, déployé sur
 PythonAnywhere.
 
 ## Stack
 
-- **Backend** : Django 5.2, Python 3.13 (prod), **SQLite** (dev et prod).
+- **Backend** : Django 6.1, Python 3.13 (prod), **SQLite** (dev et prod).
 - **Front** : **design system CSS maison** (custom properties, flexbox/grid, `<dialog>`, `:has()`) —
   **sans framework** (pas de Bootstrap) ni **jQuery**, pas de bundler. Dark mode complet.
 - **JS** : vanilla. [Tom Select](https://tom-select.js.org/) (selects searchable), Chart.js v4

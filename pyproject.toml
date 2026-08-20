@@ -5,7 +5,7 @@ description = "Site web personnel de Benbb96 (Django)"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "Django==5.2.16",
+    "Django==6.1",
     "django-admin-sortable",  # fork LEAGUEDORA — voir [tool.uv.sources]
     "django-anymail==13.0",
     "django-autoslug==1.9.9",
