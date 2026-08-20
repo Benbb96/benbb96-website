@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Contexte
 
-Site personnel de Benbb96 (benbb96.com) : un projet Django 5.2 monolithique qui regroupe plusieurs
+Site personnel de Benbb96 (benbb96.com) : un projet Django 6.1 monolithique qui regroupe plusieurs
 mini-applications indépendantes (avis, musique, trackers, kendama…). Le site est **bilingue FR/EN**
 et l'UI comme les commentaires sont **en français** — écrire en français par défaut.
 
