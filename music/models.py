@@ -168,6 +168,9 @@ class MusiqueManager(models.Manager):
             .select_related("artiste", "remixed_by")
             .prefetch_related("featuring", "liens", "styles")
             .annotate(nb_vue=models.Sum("liens__click_count"))
+            # L'annotation (GROUP BY) fait perdre l'ordre par défaut du Meta :
+            # on le réapplique pour éviter UnorderedObjectListWarning à la pagination.
+            .order_by("artiste__nom_artiste", "titre")
         )
 
 

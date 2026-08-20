@@ -64,6 +64,9 @@ class StructureManager(models.Manager):
                 moyenne=models.Avg("produit__avis__note"),
                 produit_count=models.Count("produit", distinct=True),
             )
+            # L'annotation (GROUP BY) fait perdre l'ordre par défaut du Meta :
+            # on le réapplique pour éviter UnorderedObjectListWarning à la pagination.
+            .order_by("nom")
         )
 
 
@@ -122,6 +125,9 @@ class ProduitManager(models.Manager):
                 moyenne=models.Avg("avis__note"),
                 avis_count=models.Count("avis", distinct=True),
             )
+            # L'annotation (GROUP BY) fait perdre l'ordre par défaut du Meta :
+            # on le réapplique pour éviter UnorderedObjectListWarning à la pagination.
+            .order_by("nom")
         )
 
 

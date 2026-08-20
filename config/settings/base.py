@@ -213,8 +213,14 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, "test_mails")
+# Framework MAILERS (Django 6+) : remplace les réglages EMAIL_* dépréciés
+# (RemovedInDjango70). En dev, on écrit les mails dans des fichiers.
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.filebased.EmailBackend",
+        "OPTIONS": {"file_path": os.path.join(BASE_DIR, "test_mails")},
+    },
+}
 
 ADMINS = [("Benbb96", "benbb96@gmail.com")]
 EMAIL_SUBJECT_PREFIX = "[Benbb96] "

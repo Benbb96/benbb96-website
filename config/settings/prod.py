@@ -69,7 +69,14 @@ CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
 
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+# Framework MAILERS (Django 6+) : on surcharge le mailer par défaut de base.py
+# pour envoyer via Anymail/Mailgun en prod. Le réglage ANYMAIL reste lu normalement
+# (ce n'est pas un réglage EMAIL_* déprécié).
+MAILERS = {
+    "default": {
+        "BACKEND": "anymail.backends.mailgun.EmailBackend",
+    },
+}
 ANYMAIL = {
     "MAILGUN_API_KEY": get_secret_setting("ACCESS-KEY"),
     "MAILGUN_SENDER_DOMAIN": get_secret_setting("SERVER-NAME"),
