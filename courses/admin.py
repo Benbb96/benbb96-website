@@ -53,8 +53,7 @@ class RayonAdmin(FoyerScopedAdmin):
 
 @admin.register(Etiquette)
 class EtiquetteAdmin(FoyerScopedAdmin):
-    list_display = ("nom", "foyer", "affiche_couleur", "supprime_le")
-    list_filter = ("supprime_le",)
+    list_display = ("nom", "foyer", "affiche_couleur")
     search_fields = ("nom", "foyer__nom")
     list_select_related = ("foyer",)
 
@@ -145,7 +144,7 @@ class MouvementStockAdmin(FoyerScopedAdmin):
 class ArticleMagasinAdmin(FoyerScopedAdmin):
     profil_lookup = "magasin__foyer__membres"
 
-    list_display = ("libelle", "magasin", "article", "marque", "occurrences", "vu_le")
+    list_display = ("libelle", "magasin", "article", "marque", "modifie_le")
     search_fields = ("libelle", "marque", "article__nom", "magasin__nom")
     list_select_related = ("magasin", "article")
     autocomplete_fields = ("article", "magasin")

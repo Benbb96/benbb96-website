@@ -1,10 +1,12 @@
 import uuid
+from decimal import Decimal
 
 from autoslug import AutoSlugField
 from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from fontawesome_6.fields import IconField
 
 from base.models import Profil
@@ -78,22 +80,17 @@ class Etiquette(models.Model):
     nom = models.CharField(max_length=50)
     couleur = ColorField(default="#FFFFFF")
 
+    # Pas de `supprime_le` ici, contrairement aux modèles qui naissent et meurent hors ligne :
+    # une étiquette est un objet de référentiel, rare et quasi jamais supprimé. Le tombstone
+    # coûterait une contrainte d'unicité conditionnelle et un filtre à ne jamais oublier, pour
+    # ne éviter qu'un désagrément bénin (un tag qui réapparaît). Cf. conception.md §5.
     uuid = _uuid_field()
     modifie_le = models.DateTimeField(auto_now=True)
-    supprime_le = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ("nom",)
         verbose_name = "étiquette"
-        constraints = [
-            # Conditionnelle et non unique_together : supprimer « Apéro » (soft delete) puis en
-            # recréer une du même nom ne doit pas heurter le tombstone (§5, note soft delete + unicité).
-            models.UniqueConstraint(
-                fields=["foyer", "nom"],
-                condition=models.Q(supprime_le__isnull=True),
-                name="nom_unique_par_foyer_hors_supprimees",
-            )
-        ]
+        unique_together = ("foyer", "nom")
 
     def __str__(self):
         return self.nom
@@ -101,15 +98,15 @@ class Etiquette(models.Model):
 
 class Article(models.Model):
     class Unite(models.TextChoices):
-        UNITE = "unite", "unité"
+        UNITE = "unite", _("unité")
         KG = "kg", "kg"
         G = "g", "g"
         L = "l", "L"
         ML = "ml", "mL"
-        PAQUET = "paquet", "paquet"
-        BOITE = "boite", "boîte"
-        SACHET = "sachet", "sachet"
-        BOUTEILLE = "bouteille", "bouteille"
+        PAQUET = "paquet", _("paquet")
+        BOITE = "boite", _("boîte")
+        SACHET = "sachet", _("sachet")
+        BOUTEILLE = "bouteille", _("bouteille")
 
     foyer = models.ForeignKey(Foyer, on_delete=models.CASCADE, related_name="articles")
     nom = models.CharField(max_length=150)
@@ -164,12 +161,46 @@ class Article(models.Model):
     def __str__(self):
         return self.nom
 
+    @property
+    def conso_retenue(self):
+        """
+        Consommation journalière servant au calcul : l'estimation apprise si elle existe,
+        sinon la graine d'amorçage, sinon rien (conception.md §4). L'estimation passe
+        toujours devant — c'est ce qui rend la graine inerte dès qu'on a de l'historique.
+        """
+        if not self.suivi_auto:
+            return None
+        return self.conso_par_jour_estimee or self.conso_amorce
+
+    @property
+    def stock_estime(self):
+        """
+        Stock à l'instant présent : la valeur figée au dernier achat ou recomptage, moins ce
+        qui a dû être consommé depuis (conception.md §4).
+
+        Fonction pure du temps, sans accès à la base : le client la recalcule à l'identique
+        hors ligne. C'est pourquoi il n'existe aucun champ `stock_estime` — il serait périmé
+        dès le lendemain et réclamerait un cron pour rien.
+        """
+        conso = self.conso_retenue
+        if conso is None or self.stock_maj_le is None:
+            return self.stock_reference
+        jours = Decimal((timezone.now() - self.stock_maj_le).total_seconds()) / Decimal(
+            86400
+        )
+        return max(self.stock_reference - conso * jours, Decimal(0))
+
+    # Le besoin (`max(stock_cible − stock_estime, 0)` + demandes ponctuelles non satisfaites)
+    # n'est volontairement PAS une property : la part « demandes » exige une requête, qui
+    # deviendrait un N+1 sur une liste de 200 articles. Il sera calculé par annotation de
+    # queryset en phase 1.
+
 
 class Sortie(models.Model):
     class Source(models.TextChoices):
-        MANUEL = "manuel", "Manuel"
-        TICKET = "ticket", "Ticket de caisse"
-        DRIVE = "drive", "Drive"
+        MANUEL = "manuel", _("Manuel")
+        TICKET = "ticket", _("Ticket de caisse")
+        DRIVE = "drive", _("Drive")
 
     foyer = models.ForeignKey(Foyer, on_delete=models.CASCADE, related_name="sorties")
     nom = models.CharField(max_length=100, blank=True)
@@ -238,10 +269,10 @@ class DemandePonctuelle(models.Model):
 
 class Ligne(models.Model):
     class Origine(models.TextChoices):
-        MANUEL = "manuel", "Manuel"
-        SEUIL = "seuil", "Seuil"
-        SUGGESTION = "suggestion", "Suggestion"
-        IMPORT = "import", "Import"
+        MANUEL = "manuel", _("Manuel")
+        SEUIL = "seuil", _("Seuil")
+        SUGGESTION = "suggestion", _("Suggestion")
+        IMPORT = "import", _("Import")
 
     sortie = models.ForeignKey(Sortie, on_delete=models.CASCADE, related_name="lignes")
     article = models.ForeignKey(
@@ -302,9 +333,9 @@ class Ligne(models.Model):
 
 class MouvementStock(models.Model):
     class Type(models.TextChoices):
-        ACHAT = "achat", "Achat"
-        RECALAGE = "recalage", "Recalage"
-        PERTE = "perte", "Perte"
+        ACHAT = "achat", _("Achat")
+        RECALAGE = "recalage", _("Recalage")
+        PERTE = "perte", _("Perte")
 
     article = models.ForeignKey(
         Article, on_delete=models.CASCADE, related_name="mouvements"
@@ -358,9 +389,9 @@ class ArticleMagasin(models.Model):
         max_length=200, help_text="Tel que le ticket ou le drive l'écrit."
     )
     marque = models.CharField(max_length=100, blank=True)
-    code_barre = models.CharField(max_length=20, blank=True)
-    vu_le = models.DateTimeField(auto_now=True)
-    occurrences = models.PositiveIntegerField(default=1)
+    modifie_le = models.DateTimeField(auto_now=True)
+    # `code_barre` viendra avec le scan (phase 6) et `occurrences` n'aurait rien apporté :
+    # le nombre de fois qu'un libellé a été acheté se compte déjà sur les Ligne qui le pointent.
 
     class Meta:
         # (magasin, libelle) et non (article, magasin) : plusieurs libellés (ticket vs drive)

@@ -96,6 +96,7 @@ class Rayon:                 # la « catégorie » du POC — ordre = parcours d
 
 class Etiquette:             # les tags — transverses aux rayons
     foyer FK, nom, couleur   # ex. « Festival », « Bébé », « Bio »
+    # uuid, modifie_le — mais PAS supprime_le (voir les notes)
 
 class Article:
     foyer FK, nom, rayon FK (null), etiquettes = M2M(Etiquette)
@@ -140,9 +141,9 @@ class ArticleMagasin:        # le produit concret acheté dans CE magasin
     article FK, magasin FK
     libelle                  # « CHOCO AUCH 500G » — tel que le ticket ou le drive l'écrit
     marque                   # « Auchan »
-    code_barre               # facultatif
-    vu_le, occurrences
+    modifie_le
     # unique_together (magasin, libelle) — PAS (article, magasin) : voir la note ci-dessous
+    # `code_barre` viendra avec la phase 6 ; pas d'`occurrences` (dérivable des Ligne)
 ```
 
 **Notes de conception**
@@ -214,12 +215,26 @@ class ArticleMagasin:        # le produit concret acheté dans CE magasin
   | `recalage` | **nouvelle valeur absolue** du stock — ni un ajout ni un retrait |
   La valeur reste toujours positive ; c'est le `type` qui porte le signe et la sémantique. Le calcul
   de la §8 doit traiter `recalage` à part : il *remplace* `stock_reference` au lieu de s'y ajouter.
-- **Soft delete + unicité = collision à la recréation.** `Etiquette` a `supprime_le` *et*
-  `unique_together ("foyer", "nom")` : supprimer « Apéro » puis en recréer une du même nom échoue,
-  car la ligne effacée occupe toujours le couple. Il faut une contrainte **conditionnelle** —
-  `UniqueConstraint(fields=["foyer", "nom"], condition=Q(supprime_le__isnull=True))`. Ici c'est
-  légitime et faisable : la condition ne porte que sur des colonnes de la table (contrairement au
-  cas impossible du §5.1).
+- **`Etiquette` n'a pas de `supprime_le`, et c'est délibéré.** Le tombstone ne sert qu'aux objets
+  qui naissent et meurent hors ligne ; une étiquette est un objet de référentiel, rare et quasi
+  jamais supprimé. Le garder imposait une contrainte d'unicité **conditionnelle** (sans quoi
+  recréer « Apéro » après suppression heurte le tombstone) plus un filtre `supprime_le__isnull=True`
+  à ne jamais oublier — le tout pour éviter un désagrément bénin : un tag qui réapparaît sur un
+  appareil resté longtemps hors ligne. Un `unique_together ("foyer", "nom")` simple suffit.
+- **`stock_estime` est une property, jamais un champ.** C'est une fonction pure du temps
+  (§4) : la stocker créerait une valeur périmée dès le lendemain, qu'un cron devrait rafraîchir
+  pour rien. En property, elle n'accède pas à la base — donc le client la recalcule à l'identique
+  hors ligne. Le **besoin**, lui, n'est volontairement pas une property : sa part « demandes
+  ponctuelles » exige une requête, qui deviendrait un N+1 sur une liste de 200 articles ; il sera
+  calculé par annotation de queryset en phase 1.
+- **`conso_par_jour_estimee` est stockée alors qu'elle est calculable — c'est une dénormalisation
+  assumée.** La recalculer à la volée demanderait tout l'historique des `MouvementStock` de
+  l'article ; or le client hors ligne doit pouvoir l'utiliser pour faire fondre le stock, et
+  synchroniser l'intégralité du journal vers chaque appareil serait disproportionné. Le champ est
+  donc réécrit côté serveur à deux moments : **à la clôture d'une sortie** (un achat de plus dans
+  l'échantillon) et par la **commande quotidienne** du §8. Conséquence à connaître : ce recalcul
+  nocturne touche `modifie_le` sur tous les articles suivis, donc le pull du lendemain rapatrie le
+  catalogue entier — quelques dizaines de Ko, sans conséquence à cette échelle.
 - **La cohérence inter-foyer doit être validée explicitement** — aucune contrainte de base ne la
   donne. Les quatre couples à vérifier : `Article.rayon` (même foyer que l'article),
   `Ligne` (`sortie.foyer` == `article.foyer`), `DemandePonctuelle` (`article.foyer` ==
@@ -430,6 +445,10 @@ sournoise :
 **Quels modèles portent un uuid** : ceux qui peuvent naître hors ligne — `Article`, `Sortie`,
 `Ligne`, `DemandePonctuelle`, `MouvementStock`, `Etiquette` (création à la volée dans Tom Select).
 Le référentiel administré en ligne (`Foyer`, `Rayon`, `Magasin`, `ArticleMagasin`) n'en a pas besoin.
+
+**`supprime_le` est plus restrictif que `uuid`** : seuls les objets dont la *suppression* doit se
+propager en portent — `Article`, `Sortie`, `Ligne`, `DemandePonctuelle`, `MouvementStock`. Pas
+`Etiquette` (cf. §5).
 
 #### En quoi consiste la résolution `uuid → id`
 

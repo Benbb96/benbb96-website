@@ -4,13 +4,17 @@ Tests de smoke
 Filet de sécurité de non-régression. Couvre :
   1. Status 200 des vues publiques clés
   2. Redirect (302) des vues login_required sans auth
-  3. Non-régression des endpoints API tracker & super_moite_moite
-  4. Obtention/rafraîchissement de token JWT
-  5. Validité des `profil_lookup` des admins scopés (base.admin.ProfilScopedAdmin)
-  6. Squelette de l'app courses (phase 0) : contraintes de modèles et seed_foyer
+  3. Non-régression de l'API tracker
+  4. Non-régression de l'API super_moite_moite
+  5. Obtention/rafraîchissement de token JWT
+  6. Validité des `profil_lookup` des admins scopés (base.admin.ProfilScopedAdmin)
+  7. Squelette de l'app courses (phase 0) : modèles, calculs et seed_foyer
 
 Lancer : python manage.py test smoke_tests
 """
+
+from datetime import timedelta
+from decimal import Decimal
 
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -269,7 +273,7 @@ class AdminProfilScopeTest(TestCase):
 
 
 # ---------------------------------------------------------------------------
-# 6. App courses (phase 0) — modèles et seed_foyer
+# 7. App courses (phase 0) — modèles, calculs et seed_foyer
 # ---------------------------------------------------------------------------
 
 
@@ -304,13 +308,11 @@ class CoursesModelsSmokeTest(TestCase):
         Ligne.objects.create(sortie=sortie_2, article=self.article)
         self.assertEqual(Ligne.objects.filter(article=self.article).count(), 2)
 
-    def test_etiquette_recreation_apres_soft_delete(self):
-        """Soft delete + unicité (§5) : la contrainte est conditionnelle, pas unique_together."""
-        etiquette = Etiquette.objects.create(foyer=self.foyer, nom="Apéro")
-        etiquette.supprime_le = timezone.now()
-        etiquette.save()
-        # Ne doit pas lever IntegrityError malgré le même (foyer, nom).
+    def test_etiquette_meme_nom_dans_deux_foyers(self):
+        """L'unicité porte sur (foyer, nom) : deux foyers peuvent avoir leur « Apéro »."""
+        autre = Foyer.objects.create(nom="Chez les parents")
         Etiquette.objects.create(foyer=self.foyer, nom="Apéro")
+        Etiquette.objects.create(foyer=autre, nom="Apéro")
 
     def test_etiquette_doublon_actif_rejete(self):
         Etiquette.objects.create(foyer=self.foyer, nom="Bio")
@@ -338,3 +340,44 @@ class SeedFoyerCommandTest(TestCase):
     def test_seed_foyer_slug_inconnu(self):
         with self.assertRaises(CommandError):
             call_command("seed_foyer", "slug-qui-nexiste-pas")
+
+
+class ArticleStockEstimeTest(TestCase):
+    """
+    Le cœur de l'app (conception.md §4) : le stock n'est pas saisi, il fond tout seul.
+    Une régression ici fausserait toutes les suggestions sans rien casser de visible.
+    """
+
+    def setUp(self):
+        self.foyer = Foyer.objects.create(nom="Chez nous")
+
+    def _article(self, **kwargs):
+        defauts = {
+            "foyer": self.foyer,
+            "nom": "Couches taille 4",
+            "stock_reference": Decimal(40),
+            "stock_maj_le": timezone.now() - timedelta(days=10),
+            "conso_amorce": Decimal(1),
+        }
+        return Article.objects.create(**{**defauts, **kwargs})
+
+    def test_le_stock_decroit_avec_le_temps(self):
+        # 40 achetées il y a 10 jours, 1 par jour → il doit en rester 30.
+        self.assertAlmostEqual(float(self._article().stock_estime), 30.0, places=3)
+
+    def test_le_stock_ne_descend_jamais_sous_zero(self):
+        article = self._article(stock_maj_le=timezone.now() - timedelta(days=400))
+        self.assertEqual(article.stock_estime, Decimal(0))
+
+    def test_l_estimation_apprise_prime_sur_la_graine(self):
+        # conso_amorce=1 mais estimation=2 → l'estimation gagne, la graine devient inerte.
+        article = self._article(conso_par_jour_estimee=Decimal(2))
+        self.assertAlmostEqual(float(article.stock_estime), 20.0, places=3)
+
+    def test_sans_suivi_auto_le_stock_reste_fige(self):
+        article = self._article(suivi_auto=False)
+        self.assertEqual(article.stock_estime, Decimal(40))
+
+    def test_sans_consommation_connue_le_stock_reste_fige(self):
+        article = self._article(conso_amorce=None)
+        self.assertEqual(article.stock_estime, Decimal(40))
