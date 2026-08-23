@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "my_spot.apps.MySpotConfig",
     "super_moite_moite.apps.SuperMoiteMoiteConfig",
     "kendama.apps.KendamaConfig",
+    "courses.apps.CoursesConfig",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",

@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; }
+    a { color: #1c1912; text-decoration: none; } a:hover { color: #caa100; }
+    .cs {
+      --ds-bg:#f7f5ef; --ds-surface:#ffffff; --ds-surface-alt:#efece1;
+      --ds-text:#1c1912; --ds-text-muted:#5c5646;
+      --ds-border:#e3ddc9; --ds-border-strong:#cabf9e;
+      --ds-primary:#f2c200; --ds-primary-dark:#caa100; --ds-primary-light:#fdf1c7; --ds-primary-ink:#201a08;
+      --ds-secondary:#1c1912;
+      --ds-success:#3f7d4a; --ds-warning:#d9660b; --ds-danger:#c1432c; --ds-info:#2f6f8f;
+    }
+    .cs.theme-dark {
+      --ds-bg:#15130e; --ds-surface:#1d1a13; --ds-surface-alt:#262218;
+      --ds-text:#f3efe3; --ds-text-muted:#b5ad97;
+      --ds-border:#35301f; --ds-border-strong:#4a4328;
+      --ds-primary:#e0ab2c; --ds-primary-dark:#f0c04a; --ds-primary-light:#332a12; --ds-primary-ink:#17130a;
+      --ds-secondary:#0f0d09;
+      --ds-success:#63a86f; --ds-warning:#e2883f; --ds-danger:#e0715a; --ds-info:#5da0c4;
+    }
+  </style>
+</helmet>
+<div class="cs {{themeClass}}" style="min-height: 880px; display: flex; flex-direction: column; background: var(--ds-bg); color: var(--ds-text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 17px; line-height: 1.6;">
+
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--ds-secondary); color: #f3efe3;">
+    <div style="width: 10px; height: 10px; border-radius: 999px; background: var(--ds-primary); flex: none;"></div>
+    <div style="font-size: 15px; font-weight: 600; flex-grow: 1;">Chez nous</div>
+    <div style="font-size: 13px; color: #b5ad97;">49 articles</div>
+  </div>
+
+  <div style="display: flex; gap: 4px; padding: 8px 16px 0; background: var(--ds-surface); border-bottom: 1px solid var(--ds-border);">
+    <div style="padding: 10px 4px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text-muted);">À acheter</div>
+    <div style="padding: 10px 12px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text-muted);">Historique</div>
+    <div style="padding: 10px 12px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text); border-bottom: 2.5px solid var(--ds-primary); margin-bottom: -1px;">Inventaire</div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 8px; margin: 12px 16px 4px; padding: 8px 12px; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface);">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="1.9" stroke-linecap="round" style="width: 17px; height: 17px; flex: none;"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+    <div style="font-size: 17px; color: var(--ds-text-muted); flex-grow: 1;">Rechercher un article</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; padding: 8px 16px 16px; flex-grow: 1;">
+    <div style="border: 1px solid var(--ds-border); border-radius: 12px; background: var(--ds-surface); overflow: hidden;">
+      <sc-for list="{{articles}}" as="art" hint-placeholder-count="7">
+        <div style="{{art.blocStyle}}">
+
+          <div onClick="{{art.toggle}}" style="display: flex; align-items: center; gap: 12px; padding: 9px 14px; min-height: 46px; cursor: pointer;">
+            <div style="display: flex; flex-direction: column; gap: 3px; flex-grow: 1;">
+              <div style="display: flex; align-items: baseline; gap: 7px;">
+                <div style="font-size: 17px; font-weight: 600; line-height: 1.3;">{{art.nom}}</div>
+                <div style="font-size: 13px; color: var(--ds-text-muted); line-height: 1.3;">{{art.rayon}}</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 92px; height: 5px; border-radius: 999px; background: var(--ds-surface-alt); overflow: hidden; flex: none;">
+                  <div style="height: 5px; border-radius: 999px; width: {{art.pct}}; background: {{art.jaugeFond}};"></div>
+                </div>
+                <div style="font-size: 13px; color: var(--ds-text-muted); line-height: 1.3; font-variant-numeric: tabular-nums;">{{art.niveau}}</div>
+              </div>
+            </div>
+            <div style="padding: 0.15em 0.6em; font-size: 15px; font-weight: 600; line-height: 1.4; border-radius: 999px; background: {{art.badgeFond}}; color: {{art.badgeTexte}}; white-space: nowrap; flex: none;">{{art.badge}}</div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2" stroke-linecap="round" style="width: 15px; height: 15px; flex: none; transform: {{art.chevron}};"><path d="M9 6l6 6-6 6"/></svg>
+          </div>
+
+          <sc-if value="{{art.ouvert}}" hint-placeholder-val="{{false}}">
+            <div style="padding: 4px 14px 12px; background: var(--ds-surface-alt); border-top: 1px solid var(--ds-border);">
+
+              <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 10px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="font-size: 15px; color: var(--ds-text-muted); flex-grow: 1;">Souhaité à la maison</div>
+                  <div style="display: flex; align-items: center; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface); overflow: hidden; flex: none;">
+                    <div onClick="{{art.cibleMoins}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ds-text-muted);">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 14px; height: 14px;"><path d="M5 12h14"/></svg>
+                    </div>
+                    <div style="width: 44px; text-align: center; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums;">{{art.cible}}</div>
+                    <div onClick="{{art.ciblePlus}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ds-text-muted);">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 14px; height: 14px;"><path d="M12 5v14M5 12h14"/></svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="display: flex; flex-direction: column; flex-grow: 1;">
+                    <div style="font-size: 15px; color: var(--ds-text-muted); line-height: 1.35;">Besoin ponctuel</div>
+                    <div style="font-size: 13px; color: var(--ds-text-muted); line-height: 1.35;">En plus, pour cette fois</div>
+                  </div>
+                  <div style="display: flex; align-items: center; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: {{art.ponctuelFond}}; overflow: hidden; flex: none;">
+                    <div onClick="{{art.ponctuelMoins}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ds-text-muted);">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 14px; height: 14px;"><path d="M5 12h14"/></svg>
+                    </div>
+                    <div style="width: 44px; text-align: center; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums;">{{art.ponctuel}}</div>
+                    <div onClick="{{art.ponctuelPlus}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ds-text-muted);">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 14px; height: 14px;"><path d="M12 5v14M5 12h14"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 9px; margin-top: 12px; padding: 9px 11px; border: 1px solid var(--ds-info); border-radius: 8px; background: color-mix(in srgb, var(--ds-info) 8%, var(--ds-surface));">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-info)" stroke-width="1.8" stroke-linecap="round" style="width: 16px; height: 16px; flex: none;"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+                <div style="display: flex; flex-direction: column; flex-grow: 1;">
+                  <div style="font-size: 15px; font-weight: 600; line-height: 1.35;">Stock estimé : {{art.stock}}</div>
+                  <div style="font-size: 13px; color: var(--ds-text-muted); line-height: 1.35;">{{art.estimation}}</div>
+                </div>
+                <div style="height: 36px; display: flex; align-items: center; padding: 0 12px; border-radius: 8px; border: 1px solid var(--ds-border-strong); background: var(--ds-surface); font-size: 15px; font-weight: 600; cursor: pointer; flex: none;">Recompter</div>
+              </div>
+
+            </div>
+          </sc-if>
+
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","options":["clair","sombre"],"default":"clair","section":"Thème"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ouvert: 'couches',
+      vals: {
+        couches:    { cible: 40, stock: 6,  ponctuel: 0 },
+        lait:       { cible: 6,  stock: 2,  ponctuel: 0 },
+        yaourts:    { cible: 4,  stock: 1,  ponctuel: 0 },
+        pq:         { cible: 12, stock: 11, ponctuel: 0 },
+        cafe:       { cible: 2,  stock: 2,  ponctuel: 0 },
+        feuilletee: { cible: 0,  stock: 0,  ponctuel: 1 },
+        lessive:    { cible: 1,  stock: 1,  ponctuel: 0 },
+      },
+    };
+  }
+
+  base() {
+    return [
+      { id: 'couches', nom: 'Couches taille 4', rayon: 'Bébé', estimation: 'Épuisé vers le 28 août · 1 / jour' },
+      { id: 'lait', nom: 'Lait', rayon: 'Crèmerie', estimation: 'Épuisé vers le 26 août · 0,5 / jour (estimé)' },
+      { id: 'yaourts', nom: 'Yaourts nature', rayon: 'Crèmerie', estimation: 'Épuisé vers le 23 août · 2 / jour (estimé)' },
+      { id: 'pq', nom: 'Papier toilette', rayon: 'Hygiène', estimation: 'Épuisé vers le 28 sept. · 0,3 / jour (estimé)' },
+      { id: 'cafe', nom: 'Café', rayon: 'Épicerie sucrée', estimation: 'Racheté tous les 24 j en moyenne' },
+      { id: 'feuilletee', nom: 'Pâte feuilletée', rayon: 'Surgelés', estimation: 'Achats trop irréguliers — pas de suivi' },
+      { id: 'lessive', nom: 'Lessive', rayon: 'Entretien maison', estimation: 'Suivi automatique désactivé' },
+    ];
+  }
+
+  bouger(id, champ, delta) {
+    const vals = this.state.vals;
+    const suivant = Object.assign({}, vals[id]);
+    suivant[champ] = Math.max(0, vals[id][champ] + delta);
+    this.setState({ vals: Object.assign({}, vals, { [id]: suivant }) });
+  }
+
+  renderVals() {
+    const sombre = this.props.theme === 'sombre';
+    const total = this.base().length;
+    const articles = this.base().map((a, i) => {
+      const v = this.state.vals[a.id];
+      const besoin = Math.max(v.cible - v.stock, 0) + v.ponctuel;
+      const ouvert = this.state.ouvert === a.id;
+      const ratio = v.cible > 0 ? Math.min(v.stock / v.cible, 1) : 0;
+      const bas = ratio < 0.34;
+      return {
+        nom: a.nom,
+        rayon: a.rayon,
+        estimation: a.estimation,
+        cible: v.cible,
+        stock: v.stock,
+        ponctuel: v.ponctuel,
+        ouvert: ouvert,
+        pct: Math.round(ratio * 100) + '%',
+        jaugeFond: bas ? 'var(--ds-warning)' : 'var(--ds-success)',
+        niveau: v.stock + ' / ' + v.cible + ' restant',
+        badge: besoin > 0 ? '× ' + besoin : 'ok',
+        badgeFond: besoin > 0 ? 'var(--ds-primary-light)' : 'var(--ds-surface-alt)',
+        badgeTexte: besoin > 0 ? 'var(--ds-text)' : 'var(--ds-text-muted)',
+        ponctuelFond: v.ponctuel > 0 ? 'var(--ds-primary-light)' : 'var(--ds-surface)',
+        chevron: ouvert ? 'rotate(90deg)' : 'rotate(0deg)',
+        blocStyle: i < total - 1 ? 'border-bottom: 1px solid var(--ds-border);' : '',
+        toggle: () => this.setState({ ouvert: ouvert ? null : a.id }),
+        cibleMoins: () => this.bouger(a.id, 'cible', -1),
+        ciblePlus: () => this.bouger(a.id, 'cible', 1),
+        ponctuelMoins: () => this.bouger(a.id, 'ponctuel', -1),
+        ponctuelPlus: () => this.bouger(a.id, 'ponctuel', 1),
+      };
+    });
+    return { themeClass: sombre ? 'theme-dark' : '', articles: articles };
+  }
+}
+</script>
+</body>
+</html>

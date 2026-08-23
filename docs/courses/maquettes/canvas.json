@@ -1,0 +1,91 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 880,
+      "title": "À acheter — mode magasin"
+    },
+    {
+      "file": "Inventaire.dc.html",
+      "x": 500,
+      "y": 0,
+      "w": 390,
+      "h": 880,
+      "title": "Inventaire"
+    },
+    {
+      "file": "Sorties.dc.html",
+      "x": 1000,
+      "y": 0,
+      "w": 390,
+      "h": 940,
+      "title": "Historique des sorties"
+    },
+    {
+      "file": "Article.dc.html",
+      "x": 0,
+      "y": 1400,
+      "w": 390,
+      "h": 1240,
+      "title": "Fiche article"
+    },
+    {
+      "file": "Mouvements.dc.html",
+      "x": 500,
+      "y": 1400,
+      "w": 390,
+      "h": 880,
+      "title": "Journal d'un article"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "note-magasin",
+      "x": 0,
+      "y": -250,
+      "w": 390,
+      "text": "ÉCRAN MAGASIN — « À acheter »\n\nEn haut, le sélecteur de sortie (§5.1) : « Tout ce qui manque » est le besoin GLOBAL du foyer, « Apéro samedi » est une sortie ouverte qui ne contient que ce qu'on y a mis. Bascule entre les deux pour voir la différence — c'est ce qui empêche de rentrer avec 8 laits.\n\nLa pastille à initiale (S / B) marque un article demandé par quelqu'un : c'est une DemandePonctuelle, pas un besoin calculé.\n\nLes suggestions n'existent que sur la vue globale, dans leur bloc en pointillés, avec leur raison et un refus possible."
+    },
+    {
+      "id": "note-inventaire",
+      "x": 500,
+      "y": -250,
+      "w": 390,
+      "text": "INVENTAIRE — direction B retenue\n\nLa jauge donne le niveau d'un coup d'œil (ambre sous 1/3), l'édition arrive au tap.\n\nConséquence importante du choix de B : le stock estimé n'est plus éditable au stepper. Il passe par « Recompter », donc par un MouvementStock(type=recalage) — l'apprentissage garde des données propres et traçables."
+    },
+    {
+      "id": "note-sorties",
+      "x": 1000,
+      "y": -250,
+      "w": 390,
+      "text": "HISTORIQUE DES SORTIES\n\nLa sortie EN COURS n'est pas ici : c'est l'écran « À acheter ». Cet onglet ne montre que les sorties clôturées, avec leur source (saisie, drive, ticket).\n\n« Corriger » n'est pas un confort : une sortie validée par erreur fausse le rythme de consommation sans recours. C'est aussi ici qu'atterrissent les imports du §9."
+    },
+    {
+      "id": "note-article",
+      "x": 0,
+      "y": 1120,
+      "w": 390,
+      "text": "FICHE ARTICLE — création et édition\n\nTous les champs du §5 posés à l'écran. Le toggle « suivi automatique » et le segment « estimée / imposée » fonctionnent : c'est en les manipulant qu'on voit si le modèle tient.\n\nLes étiquettes et le rayon seront des Tom Select (déjà vendorisé, donc utilisable hors ligne)."
+    },
+    {
+      "id": "note-mouvements",
+      "x": 500,
+      "y": 1120,
+      "w": 390,
+      "text": "JOURNAL D'UN ARTICLE\n\nMême modèle MouvementStock que les sorties, vu par l'autre bout : un seul journal, deux entrées.\n\nLe graphe rend le §4 tangible — escalier qui descend, saut vertical à chaque achat, remontée au recomptage du 5 août (l'estimation disait 20, il y en avait 23), puis projection en pointillé jusqu'à la rupture."
+    },
+    {
+      "id": "note-a-trancher",
+      "x": 250,
+      "y": 2740,
+      "w": 890,
+      "text": "CE QUE CES ÉCRANS RÉVÈLENT — trois points à trancher avant la migration initiale\n\n1. MouvementStock a besoin d'une FK vers Ligne (nullable). Sans elle, le bouton « Corriger » d'une sortie clôturée\n   ne sait pas quels mouvements annuler : on peut créer l'historique, pas le défaire. C'est le manque le plus net.\n\n2. Qui gagne entre conso_par_jour (imposée) et conso_par_jour_estimee ? Le segment « Estimée / Imposée » de la fiche\n   article suppose un arbitre. Soit un booléen de plus, soit la convention « si conso_par_jour est renseignée, elle\n   gagne » — qui évite un champ mais interdit de garder une valeur manuelle en réserve tout en suivant l'estimation.\n\n3. Le motif d'absence d'estimation (« achats trop irréguliers », « suivi désactivé ») se stocke-t-il sur Article,\n   ou se recalcule-t-il à l'affichage ? Reporté depuis la passe précédente, toujours ouvert."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

@@ -7,16 +7,22 @@ Filet de sécurité de non-régression. Couvre :
   3. Non-régression des endpoints API tracker & super_moite_moite
   4. Obtention/rafraîchissement de token JWT
   5. Validité des `profil_lookup` des admins scopés (base.admin.ProfilScopedAdmin)
+  6. Squelette de l'app courses (phase 0) : contraintes de modèles et seed_foyer
 
 Lancer : python manage.py test smoke_tests
 """
 
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.core.management import call_command
+from django.core.management.base import CommandError
+from django.db import IntegrityError, transaction
 from django.test import TestCase
-from django.utils import translation
+from django.utils import timezone, translation
 from rest_framework import status
 from rest_framework.test import APIClient
+
+from courses.models import Article, Etiquette, Foyer, Ligne, Rayon, Sortie
 
 
 def url(name, *args, lang="fr", **kwargs):
@@ -260,3 +266,75 @@ class AdminProfilScopeTest(TestCase):
             with self.subTest(admin=type(model_admin).__name__):
                 # Lève FieldError si le lookup ne correspond à aucun chemin réel.
                 model.objects.filter(**{model_admin.profil_lookup: profil}).exists()
+
+
+# ---------------------------------------------------------------------------
+# 6. App courses (phase 0) — modèles et seed_foyer
+# ---------------------------------------------------------------------------
+
+
+class CoursesModelsSmokeTest(TestCase):
+    """Contraintes de modèles posées en §5/§5.1/§7.1 de conception.md."""
+
+    def setUp(self):
+        user = User.objects.create_user("smoke_courses", password="testpass123!")
+        self.profil = user.profil
+        self.foyer = Foyer.objects.create(nom="Foyer smoke test")
+        self.article = Article.objects.create(foyer=self.foyer, nom="Lait")
+
+    def test_foyer_slug_auto_genere(self):
+        self.assertEqual(self.foyer.slug, "foyer-smoke-test")
+
+    def test_un_article_une_fois_par_sortie(self):
+        """UniqueConstraint(fields=["sortie", "article"]) — doublon dans la même sortie rejeté."""
+        sortie = Sortie.objects.create(foyer=self.foyer, cree_par=self.profil)
+        Ligne.objects.create(sortie=sortie, article=self.article)
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Ligne.objects.create(sortie=sortie, article=self.article)
+
+    def test_meme_article_dans_deux_sorties_ouvertes_autorise(self):
+        """§5.1 : la règle « une seule sortie ouverte » est applicative, pas une contrainte dure."""
+        sortie_1 = Sortie.objects.create(
+            foyer=self.foyer, cree_par=self.profil, nom="Semaine"
+        )
+        sortie_2 = Sortie.objects.create(
+            foyer=self.foyer, cree_par=self.profil, nom="Apéro"
+        )
+        Ligne.objects.create(sortie=sortie_1, article=self.article)
+        Ligne.objects.create(sortie=sortie_2, article=self.article)
+        self.assertEqual(Ligne.objects.filter(article=self.article).count(), 2)
+
+    def test_etiquette_recreation_apres_soft_delete(self):
+        """Soft delete + unicité (§5) : la contrainte est conditionnelle, pas unique_together."""
+        etiquette = Etiquette.objects.create(foyer=self.foyer, nom="Apéro")
+        etiquette.supprime_le = timezone.now()
+        etiquette.save()
+        # Ne doit pas lever IntegrityError malgré le même (foyer, nom).
+        Etiquette.objects.create(foyer=self.foyer, nom="Apéro")
+
+    def test_etiquette_doublon_actif_rejete(self):
+        Etiquette.objects.create(foyer=self.foyer, nom="Bio")
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Etiquette.objects.create(foyer=self.foyer, nom="Bio")
+
+
+class SeedFoyerCommandTest(TestCase):
+    """La commande seed_foyer (management command, pas data migration — cf. conception.md §10)."""
+
+    def setUp(self):
+        self.foyer = Foyer.objects.create(nom="Foyer seed test")
+
+    def test_seed_foyer_charge_le_poc(self):
+        call_command("seed_foyer", self.foyer.slug)
+        self.assertEqual(Rayon.objects.filter(foyer=self.foyer).count(), 10)
+        self.assertEqual(Article.objects.filter(foyer=self.foyer).count(), 49)
+
+    def test_seed_foyer_idempotent(self):
+        call_command("seed_foyer", self.foyer.slug)
+        call_command("seed_foyer", self.foyer.slug)
+        self.assertEqual(Rayon.objects.filter(foyer=self.foyer).count(), 10)
+        self.assertEqual(Article.objects.filter(foyer=self.foyer).count(), 49)
+
+    def test_seed_foyer_slug_inconnu(self):
+        with self.assertRaises(CommandError):
+            call_command("seed_foyer", "slug-qui-nexiste-pas")
