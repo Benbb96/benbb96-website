@@ -1,66 +1,341 @@
 {
-  "_source": "POC React (artifact Claude) — extrait le 2026-08-21. Ordre des rayons = ordre de parcours du magasin, à conserver.",
+  "_source": "POC React (artifact Claude) — extrait le 2026-08-21, unités ajoutées le 2026-08-23. Ordre des rayons = ordre de parcours du magasin, à conserver. `unite` est l'unité de CONSOMMATION (celle dont une recette parle, cf. conception.md §10.3), `conditionnement` ce qu'un achat ajoute au stock. Valeurs indicatives, à ajuster à l'usage.",
   "rayons": [
-    { "nom": "Fruits & légumes",        "ordre": 1 },
-    { "nom": "Crèmerie",                "ordre": 2 },
-    { "nom": "Boucherie",               "ordre": 3 },
-    { "nom": "Hygiène",                 "ordre": 4 },
-    { "nom": "Entretien maison",        "ordre": 5 },
-    { "nom": "Vie quotidienne maison",  "ordre": 6 },
-    { "nom": "Épicerie salée",          "ordre": 7 },
-    { "nom": "Épicerie sucrée",         "ordre": 8 },
-    { "nom": "Surgelés",                "ordre": 9 },
-    { "nom": "Boissons",                "ordre": 10 }
+    {
+      "nom": "Fruits & légumes",
+      "ordre": 1
+    },
+    {
+      "nom": "Crèmerie",
+      "ordre": 2
+    },
+    {
+      "nom": "Boucherie",
+      "ordre": 3
+    },
+    {
+      "nom": "Hygiène",
+      "ordre": 4
+    },
+    {
+      "nom": "Entretien maison",
+      "ordre": 5
+    },
+    {
+      "nom": "Vie quotidienne maison",
+      "ordre": 6
+    },
+    {
+      "nom": "Épicerie salée",
+      "ordre": 7
+    },
+    {
+      "nom": "Épicerie sucrée",
+      "ordre": 8
+    },
+    {
+      "nom": "Surgelés",
+      "ordre": 9
+    },
+    {
+      "nom": "Boissons",
+      "ordre": 10
+    }
   ],
   "articles": [
-    { "nom": "Bananes",               "rayon": "Fruits & légumes" },
-    { "nom": "Pommes",                "rayon": "Fruits & légumes" },
-    { "nom": "Tomates",               "rayon": "Fruits & légumes" },
-    { "nom": "Salade",                "rayon": "Fruits & légumes" },
-    { "nom": "Oignons",               "rayon": "Fruits & légumes" },
-    { "nom": "Pommes de terre",       "rayon": "Fruits & légumes" },
-    { "nom": "Citrons",               "rayon": "Fruits & légumes" },
-    { "nom": "Carottes",              "rayon": "Fruits & légumes" },
-    { "nom": "Lait",                  "rayon": "Crèmerie" },
-    { "nom": "Beurre",                "rayon": "Crèmerie" },
-    { "nom": "Oeufs",                 "rayon": "Crèmerie" },
-    { "nom": "Yaourts nature",        "rayon": "Crèmerie" },
-    { "nom": "Fromage râpé",          "rayon": "Crèmerie" },
-    { "nom": "Crème fraîche",         "rayon": "Crèmerie" },
-    { "nom": "Poulet",                "rayon": "Boucherie" },
-    { "nom": "Steak haché",           "rayon": "Boucherie" },
-    { "nom": "Jambon",                "rayon": "Boucherie" },
-    { "nom": "Poisson",               "rayon": "Boucherie" },
-    { "nom": "Dentifrice",            "rayon": "Hygiène" },
-    { "nom": "Papier toilette",       "rayon": "Hygiène" },
-    { "nom": "Shampooing",            "rayon": "Hygiène" },
-    { "nom": "Savon / gel douche",    "rayon": "Hygiène" },
-    { "nom": "Liquide vaisselle",     "rayon": "Entretien maison" },
-    { "nom": "Lessive",               "rayon": "Entretien maison" },
-    { "nom": "Essuie-tout",           "rayon": "Entretien maison" },
-    { "nom": "Éponges",               "rayon": "Entretien maison" },
-    { "nom": "Piles",                 "rayon": "Vie quotidienne maison" },
-    { "nom": "Ampoules",              "rayon": "Vie quotidienne maison" },
-    { "nom": "Sacs poubelle",         "rayon": "Vie quotidienne maison" },
-    { "nom": "Allumettes / briquet",  "rayon": "Vie quotidienne maison" },
-    { "nom": "Pâtes",                 "rayon": "Épicerie salée" },
-    { "nom": "Riz",                   "rayon": "Épicerie salée" },
-    { "nom": "Farine",                "rayon": "Épicerie salée" },
-    { "nom": "Huile d'olive",         "rayon": "Épicerie salée" },
-    { "nom": "Sel",                   "rayon": "Épicerie salée" },
-    { "nom": "Conserves de tomates",  "rayon": "Épicerie salée" },
-    { "nom": "Pain de mie",           "rayon": "Épicerie salée" },
-    { "nom": "Sucre",                 "rayon": "Épicerie sucrée" },
-    { "nom": "Café",                  "rayon": "Épicerie sucrée" },
-    { "nom": "Céréales",              "rayon": "Épicerie sucrée" },
-    { "nom": "Chocolat",              "rayon": "Épicerie sucrée" },
-    { "nom": "Biscuits",              "rayon": "Épicerie sucrée" },
-    { "nom": "Légumes surgelés",      "rayon": "Surgelés" },
-    { "nom": "Frites",                "rayon": "Surgelés" },
-    { "nom": "Poisson pané",          "rayon": "Surgelés" },
-    { "nom": "Glace",                 "rayon": "Surgelés" },
-    { "nom": "Pâte feuilletée",       "rayon": "Surgelés" },
-    { "nom": "Eau",                   "rayon": "Boissons" },
-    { "nom": "Jus de fruits",         "rayon": "Boissons" }
+    {
+      "nom": "Bananes",
+      "rayon": "Fruits & légumes",
+      "unite": "unite",
+      "conditionnement": 6
+    },
+    {
+      "nom": "Pommes",
+      "rayon": "Fruits & légumes",
+      "unite": "unite",
+      "conditionnement": 6
+    },
+    {
+      "nom": "Tomates",
+      "rayon": "Fruits & légumes",
+      "unite": "unite",
+      "conditionnement": 6
+    },
+    {
+      "nom": "Salade",
+      "rayon": "Fruits & légumes",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Oignons",
+      "rayon": "Fruits & légumes",
+      "unite": "unite",
+      "conditionnement": 4
+    },
+    {
+      "nom": "Pommes de terre",
+      "rayon": "Fruits & légumes",
+      "unite": "g",
+      "conditionnement": 2500
+    },
+    {
+      "nom": "Citrons",
+      "rayon": "Fruits & légumes",
+      "unite": "unite",
+      "conditionnement": 3
+    },
+    {
+      "nom": "Carottes",
+      "rayon": "Fruits & légumes",
+      "unite": "unite",
+      "conditionnement": 6
+    },
+    {
+      "nom": "Lait",
+      "rayon": "Crèmerie",
+      "unite": "ml",
+      "conditionnement": 1000
+    },
+    {
+      "nom": "Beurre",
+      "rayon": "Crèmerie",
+      "unite": "g",
+      "conditionnement": 250
+    },
+    {
+      "nom": "Oeufs",
+      "rayon": "Crèmerie",
+      "unite": "unite",
+      "conditionnement": 6
+    },
+    {
+      "nom": "Yaourts nature",
+      "rayon": "Crèmerie",
+      "unite": "unite",
+      "conditionnement": 16
+    },
+    {
+      "nom": "Fromage râpé",
+      "rayon": "Crèmerie",
+      "unite": "g",
+      "conditionnement": 200
+    },
+    {
+      "nom": "Crème fraîche",
+      "rayon": "Crèmerie",
+      "unite": "ml",
+      "conditionnement": 200
+    },
+    {
+      "nom": "Poulet",
+      "rayon": "Boucherie",
+      "unite": "g",
+      "conditionnement": 1000
+    },
+    {
+      "nom": "Steak haché",
+      "rayon": "Boucherie",
+      "unite": "unite",
+      "conditionnement": 2
+    },
+    {
+      "nom": "Jambon",
+      "rayon": "Boucherie",
+      "unite": "unite",
+      "conditionnement": 4
+    },
+    {
+      "nom": "Poisson",
+      "rayon": "Boucherie",
+      "unite": "g",
+      "conditionnement": 500
+    },
+    {
+      "nom": "Dentifrice",
+      "rayon": "Hygiène",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Papier toilette",
+      "rayon": "Hygiène",
+      "unite": "unite",
+      "conditionnement": 12
+    },
+    {
+      "nom": "Shampooing",
+      "rayon": "Hygiène",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Savon / gel douche",
+      "rayon": "Hygiène",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Liquide vaisselle",
+      "rayon": "Entretien maison",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Lessive",
+      "rayon": "Entretien maison",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Essuie-tout",
+      "rayon": "Entretien maison",
+      "unite": "unite",
+      "conditionnement": 6
+    },
+    {
+      "nom": "Éponges",
+      "rayon": "Entretien maison",
+      "unite": "unite",
+      "conditionnement": 4
+    },
+    {
+      "nom": "Piles",
+      "rayon": "Vie quotidienne maison",
+      "unite": "unite",
+      "conditionnement": 4
+    },
+    {
+      "nom": "Ampoules",
+      "rayon": "Vie quotidienne maison",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Sacs poubelle",
+      "rayon": "Vie quotidienne maison",
+      "unite": "unite",
+      "conditionnement": 20
+    },
+    {
+      "nom": "Allumettes / briquet",
+      "rayon": "Vie quotidienne maison",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Pâtes",
+      "rayon": "Épicerie salée",
+      "unite": "g",
+      "conditionnement": 500
+    },
+    {
+      "nom": "Riz",
+      "rayon": "Épicerie salée",
+      "unite": "g",
+      "conditionnement": 1000
+    },
+    {
+      "nom": "Farine",
+      "rayon": "Épicerie salée",
+      "unite": "g",
+      "conditionnement": 1000
+    },
+    {
+      "nom": "Huile d'olive",
+      "rayon": "Épicerie salée",
+      "unite": "ml",
+      "conditionnement": 750
+    },
+    {
+      "nom": "Sel",
+      "rayon": "Épicerie salée",
+      "unite": "g",
+      "conditionnement": 500
+    },
+    {
+      "nom": "Conserves de tomates",
+      "rayon": "Épicerie salée",
+      "unite": "g",
+      "conditionnement": 400
+    },
+    {
+      "nom": "Pain de mie",
+      "rayon": "Épicerie salée",
+      "unite": "unite",
+      "conditionnement": 20
+    },
+    {
+      "nom": "Sucre",
+      "rayon": "Épicerie sucrée",
+      "unite": "g",
+      "conditionnement": 1000
+    },
+    {
+      "nom": "Café",
+      "rayon": "Épicerie sucrée",
+      "unite": "g",
+      "conditionnement": 250
+    },
+    {
+      "nom": "Céréales",
+      "rayon": "Épicerie sucrée",
+      "unite": "g",
+      "conditionnement": 500
+    },
+    {
+      "nom": "Chocolat",
+      "rayon": "Épicerie sucrée",
+      "unite": "g",
+      "conditionnement": 200
+    },
+    {
+      "nom": "Biscuits",
+      "rayon": "Épicerie sucrée",
+      "unite": "g",
+      "conditionnement": 300
+    },
+    {
+      "nom": "Légumes surgelés",
+      "rayon": "Surgelés",
+      "unite": "g",
+      "conditionnement": 1000
+    },
+    {
+      "nom": "Frites",
+      "rayon": "Surgelés",
+      "unite": "g",
+      "conditionnement": 1000
+    },
+    {
+      "nom": "Poisson pané",
+      "rayon": "Surgelés",
+      "unite": "unite",
+      "conditionnement": 10
+    },
+    {
+      "nom": "Glace",
+      "rayon": "Surgelés",
+      "unite": "ml",
+      "conditionnement": 500
+    },
+    {
+      "nom": "Pâte feuilletée",
+      "rayon": "Surgelés",
+      "unite": "unite",
+      "conditionnement": 1
+    },
+    {
+      "nom": "Eau",
+      "rayon": "Boissons",
+      "unite": "ml",
+      "conditionnement": 1500
+    },
+    {
+      "nom": "Jus de fruits",
+      "rayon": "Boissons",
+      "unite": "ml",
+      "conditionnement": 1000
+    }
   ]
 }

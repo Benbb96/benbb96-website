@@ -337,6 +337,16 @@ class SeedFoyerCommandTest(TestCase):
         self.assertEqual(Rayon.objects.filter(foyer=self.foyer).count(), 10)
         self.assertEqual(Article.objects.filter(foyer=self.foyer).count(), 49)
 
+    def test_seed_foyer_charge_les_unites_de_consommation(self):
+        """L'unité est celle dont une recette parle (§10.3), pas l'unité d'achat."""
+        call_command("seed_foyer", self.foyer.slug)
+        farine = Article.objects.get(foyer=self.foyer, nom="Farine")
+        self.assertEqual(farine.unite, "g")
+        self.assertEqual(farine.conditionnement, Decimal(1000))
+        # Ce qu'une recette compte à l'unité le reste : « 3 œufs », pas « 150 g d'œufs ».
+        oeufs = Article.objects.get(foyer=self.foyer, nom="Oeufs")
+        self.assertEqual(oeufs.unite, "unite")
+
     def test_seed_foyer_slug_inconnu(self):
         with self.assertRaises(CommandError):
             call_command("seed_foyer", "slug-qui-nexiste-pas")

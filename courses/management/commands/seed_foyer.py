@@ -53,7 +53,13 @@ class Command(BaseCommand):
             _, created = Article.objects.get_or_create(
                 foyer=foyer,
                 nom=article_data["nom"],
-                defaults={"rayon": rayons_par_nom[article_data["rayon"]]},
+                defaults={
+                    "rayon": rayons_par_nom[article_data["rayon"]],
+                    # `unite` est l'unité de CONSOMMATION, pas d'achat (conception.md §10.3) :
+                    # une recette dose en grammes ou en millilitres, jamais en paquets.
+                    "unite": article_data["unite"],
+                    "conditionnement": article_data["conditionnement"],
+                },
             )
             articles_crees += int(created)
 
