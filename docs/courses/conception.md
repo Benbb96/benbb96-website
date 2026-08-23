@@ -612,17 +612,35 @@ inconnus (§9.2 étape 2), que `ArticleMagasin` fait disparaître au bout de deu
 
 ### 9.3 Conséquences techniques
 
-- **Acheminement du mail : adresse OVH dédiée + relève IMAP.** On transfère le mail de confirmation
-  à `courses@benbb96.com`, qu'une tâche planifiée PythonAnywhere relève en IMAP toutes les ~15 min
-  et transforme en `TacheImport`. Transférer est un geste natif à deux tapes sur Android, sans
-  copier-coller.
-  → **Pourquoi pas un webhook Mailgun/Anymail** (l'option envisagée d'abord) : `benbb96.com` a ses
-  MX chez OVH, donc recevoir sur Mailgun imposerait soit de casser la messagerie existante, soit de
-  monter un sous-domaine `in.benbb96.com` ; et Mailgun n'a plus de plan gratuit permanent. L'IMAP ne
-  demande **aucun changement DNS, aucun coût, et surtout aucun endpoint public** — donc pas de
-  signature à vérifier ni de surface d'attaque. Seul renoncement : ~15 min de latence, sans
-  conséquence pour un retour de courses.
-  → Vérifier l'expéditeur du mail relevé (membre du foyer) avant de créer la `TacheImport`.
+- **Acheminement du mail : webhook entrant Mailgun sur un sous-domaine dédié.** On transfère le mail
+  de confirmation à `courses@in.benbb96.com` ; une *route* Mailgun le POSTe vers une vue Django, qui
+  crée une `TacheImport`. Transférer est un geste natif à deux tapes sur Android, sans copier-coller.
+
+  **Contraintes constatées sur les comptes réels** (captures du 23/08/2026) :
+
+  | | État |
+  |---|---|
+  | Mailgun | plan **Flex à 0 $/mois**, 1000 messages inclus — largement au-dessus de ~4 courses/mois |
+  | OVH, offre e-mail | **`redirect`** : quota de comptes **0/0** → aucune boîte créable, donc **pas d'IMAP** |
+  | OVH, redirections | **0/1000 utilisées** → une redirection de confort reste possible |
+  | MX de `benbb96.com` | `mx{1,2,3}.mail.ovh.net` → **à ne pas toucher**, la messagerie existante en dépend |
+
+  D'où le montage : un **sous-domaine** `in.benbb96.com` porte ses propres MX vers Mailgun, sans
+  rien changer à `benbb96.com`. `django-anymail` est **déjà une dépendance du projet** et fournit
+  une vue de réception avec vérification de signature — l'intégration est de l'ordre de la trentaine
+  de lignes. En option, une redirection OVH `courses@benbb96.com` → `courses@in.benbb96.com` rend
+  l'adresse présentable.
+
+  → **L'IMAP a été envisagé puis écarté** : l'offre OVH `redirect` interdit toute boîte, il aurait
+  fallu créer un compte Gmail dédié, y stocker un mot de passe d'application sur le serveur et
+  écrire une relève périodique — plus de pièces mobiles que le webhook, pour 15 min de latence en
+  prime.
+
+  → **À vérifier avant de s'engager** : que les *Routes* (réception) sont bien actives sur le plan
+  Flex, et si les messages entrants s'imputent sur le quota de 1000.
+
+  → **Sécurité** : vérifier la signature Mailgun (Anymail le fait), **et** l'expéditeur du mail
+  (membre du foyer) avant de créer la `TacheImport` — l'adresse est publique par nature.
 - **C'est asynchrone.** Un appel LLM sur une photo dure plusieurs secondes : hors de question de le
   faire dans une requête WSGI. → **C'est ici que servent les tâches planifiées et les always-on tasks
   de PythonAnywhere** : une file simple (table `TacheImport` + worker qui la dépile), sans Celery ni Redis.
