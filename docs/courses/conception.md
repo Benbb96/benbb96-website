@@ -636,8 +636,19 @@ inconnus (§9.2 étape 2), que `ArticleMagasin` fait disparaître au bout de deu
   écrire une relève périodique — plus de pièces mobiles que le webhook, pour 15 min de latence en
   prime.
 
-  → **À vérifier avant de s'engager** : que les *Routes* (réception) sont bien actives sur le plan
-  Flex, et si les messages entrants s'imputent sur le quota de 1000.
+  → **Routes confirmées disponibles sur Flex** (capture du 23/08/2026) : la section *Receiving →
+  Routes* propose bien « Create route », et Mailgun *parse* le mail avant de le POSTer (corps HTML,
+  texte et pièces jointes en champs séparés) — le parser du §9.2 bis reçoit donc du HTML propre,
+  sans les réécritures de classes que fait Gmail à l'affichage.
+
+  ⚠️ **Région du compte.** L'interface Mailgun bascule entre **US** et **EU**, et ce n'est pas
+  cosmétique : domaines, routes et endpoints d'API sont cloisonnés par région
+  (`api.mailgun.net` vs `api.eu.mailgun.net`). Créer `in.benbb96.com` **dans la même région** que
+  le domaine d'envoi déjà en service, et si c'est l'EU, poser `MAILGUN_API_URL` dans le réglage
+  `ANYMAIL` de `config/settings/prod.py` — absent aujourd'hui, donc l'envoi passe par l'API US par
+  défaut. Une route créée dans la mauvaise région reste simplement invisible.
+
+  → Reste à vérifier : si les messages entrants s'imputent sur le quota de 1000/mois.
 
   → **Sécurité** : vérifier la signature Mailgun (Anymail le fait), **et** l'expéditeur du mail
   (membre du foyer) avant de créer la `TacheImport` — l'adresse est publique par nature.
