@@ -686,7 +686,103 @@ inconnus (§9.2 étape 2), que `ArticleMagasin` fait disparaître au bout de deu
 constitué et un usage installé — l'importer trop tôt reviendrait à créer des articles en masse
 sans savoir lesquels méritent un suivi.
 
-## 10. Roadmap proposée
+## 10. Recettes et préparations (exploration)
+
+Besoin remonté à l'usage : « on a fait des lasagnes dimanche soir, plutôt que de parcourir la liste
+pour ajuster douze articles à la main, je déclare la recette et l'app propose les retraits ».
+
+### 10.1 Pourquoi ce n'est pas une fonctionnalité annexe
+
+Le §4 fait fondre le stock **linéairement**, ce qui ne vaut que pour une consommation régulière
+(lait, couches, papier toilette). Pour la farine, la crème ou la viande hachée, `suivi_auto` est
+désactivé — et ces articles n'ont alors **aucun mécanisme de décrémentation**. C'est exactement la
+corvée décrite ci-dessus.
+
+> **La recette est le second régime de consommation : événementiel, là où le premier est continu.**
+> Sans lui, la moitié du garde-manger reste hors du système.
+
+### 10.2 Modèles envisagés — la symétrie avec les courses
+
+```
+Recette (foyer, nom, portions, source, instructions, uuid…)
+IngredientRecette (recette FK, article FK, quantite, optionnel bool)
+Preparation (recette FK, date, portions_faites, profil, uuid…)
+MouvementStock.preparation FK (null)   # comme .ligne pour les courses
+MouvementStock.type += "consommation"  # ni un achat, ni une perte
+```
+
+La structure est celle des courses, à l'envers :
+
+| Les courses **ajoutent** | La cuisine **retire** |
+|---|---|
+| `Sortie` → `Ligne` → `MouvementStock(achat)` | `Recette` → `Preparation` → `MouvementStock(consommation)` |
+
+Même bénéfice qu'au §5 : la FK `preparation` permet de **défaire** une préparation déclarée par
+erreur, ce que des mouvements orphelins interdiraient.
+
+`Preparation` mérite d'être un modèle plutôt qu'un simple commentaire sur les mouvements : elle
+groupe les retraits d'une même session, porte le facteur d'échelle (`portions_faites` vs
+`Recette.portions` — « des lasagnes pour 6 » quand la recette en prévoit 4), et fournit la fréquence
+(« pas fait depuis trois mois »).
+
+### 10.3 Le point dur : les unités
+
+Une recette demande « 200 g de farine ». Le stock, lui, connaît « AUCHAN Farine 1 kg ». Sans
+conversion, aucun retrait n'est possible.
+
+**Le modèle actuel sait déjà le faire** — c'est le rôle du couple `unite` + `conditionnement` (§5) :
+farine en `unite = "g"`, `conditionnement = 1000`. Un paquet acheté ajoute 1000 au stock, une recette
+en retire 200. Mais cela impose une **convention à trancher tôt** :
+
+> **L'unité de référence d'un article est son unité de *consommation*, pas son unité d'achat.**
+
+C'est le seul point de cette section qui doit être décidé **avant** la phase 1 : si le catalogue se
+remplit en « paquets », les recettes en grammes seront inapplicables sans reprendre chaque article.
+L'affichage peut toujours reconvertir en paquets ; l'inverse est perdu.
+
+### 10.4 « Qu'est-ce qu'on peut cuisiner ? »
+
+Requête inverse : les recettes dont les ingrédients sont disponibles. Deux mises en garde.
+
+- **Ne pas se limiter au binaire faisable / pas faisable.** Le stock estimé est approximatif : une
+  recette écartée à tort frustre, une recette proposée à tort aussi. Classer par **nombre
+  d'ingrédients manquants** est plus honnête et plus utile.
+- **C'est là que la boucle se referme** : « il te manque 2 ingrédients → les ajouter à la liste »
+  relie les recettes aux courses dans les deux sens. Probablement la fonctionnalité la plus
+  gratifiante de tout le projet.
+
+⚠️ **Conséquence technique** : `stock_estime` est une property Python (§5), donc **non requêtable en
+SQL**. Cette section a besoin de son équivalent en **annotation de queryset**, qui sera de toute
+façon nécessaire dès la phase 1 pour trier la liste. Les deux expressions de la même formule devront
+rester alignées — à verrouiller par un test qui compare property et annotation sur les mêmes données.
+
+### 10.5 Alimenter les recettes
+
+Par ordre de coût croissant, et dans cet ordre :
+
+1. **Saisie manuelle**, volontairement pauvre : un nom et une liste d'ingrédients avec quantités
+   suffisent. Les instructions sont facultatives — le besoin est de décrémenter un stock, pas de
+   tenir un livre de cuisine. Ne pas construire une app de recettes.
+2. **Import depuis une URL**, largement déterministe : la quasi-totalité des sites de cuisine
+   publient un bloc `schema.org/Recipe` en JSON-LD. Même logique qu'au §9.2 bis — parser d'abord, LLM
+   en secours, et le même problème de rapprochement ingrédient → `Article`.
+3. **Génération par LLM** à partir du stock, pour l'inspiration. Utile, mais à ne pas confondre avec
+   les deux premiers : une recette inventée ne doit **jamais** décrémenter le stock directement, ses
+   ingrédients n'étant rapprochés d'aucun article réel. Elle propose, on saisit.
+
+### 10.6 Risque connu
+
+Si les préparations ne sont pas déclarées, le stock dérive — le même écueil que l'inventaire tenu à
+la main (§3). La différence est de degré : déclarer « j'ai fait des lasagnes » est un geste unique et
+gratifiant, là où corriger douze compteurs est une corvée. Le recomptage (§5) reste la soupape.
+
+### 10.7 Ce qui vaut d'être anticipé dès maintenant
+
+Rien à coder — mais **une convention à figer** : l'unité de référence est l'unité de consommation
+(§10.3). Le type `consommation` et les trois modèles attendront leur phase ; ce sont des ajouts sans
+reprise de données, contrairement à un catalogue saisi dans la mauvaise unité.
+
+## 11. Roadmap proposée
 
 Livrer utile vite ; le local-first n'est **pas** la première brique.
 
@@ -706,6 +802,10 @@ Livrer utile vite ; le local-first n'est **pas** la première brique.
 - **Phase 5 — Import de Sortie** (§9). Drive d'abord, ticket de caisse ensuite.
 - **Phase 6 — Scan de code-barres.** `BarcodeDetector` (Chrome Android) pour retrouver un article
   ou créer un `ArticleMagasin` sans le saisir. À tester sur les téléphones du foyer avant de s'engager.
+- **Phase 7 — Recettes et préparations** (§10). Déclarer une préparation pour décrémenter le stock,
+  puis « qu'est-ce qu'on peut cuisiner ». Après le système de courses, comme demandé — mais **une
+  convention est à figer dès la phase 1** : l'unité de référence d'un article est son unité de
+  *consommation* (§10.3), faute de quoi les recettes en grammes seront inapplicables.
 
 **Backlog, hors roadmap** (retenu mais non prioritaire) : **comparaison des prix entre magasins.**
 Les données arrivent gratuitement — `Ligne.prix_unitaire` daté + `Sortie.magasin` (§5) — donc
@@ -715,7 +815,7 @@ table de plus. À faire quand l'historique sera assez épais pour que ce soit ho
 Attendre la phase 1 en usage réel avant de figer la phase 3 : c'est l'usage qui dira quels
 articles méritent vraiment un suivi automatique.
 
-## 11. Décisions actées
+## 12. Décisions actées
 
 - **Nom** : module Python `courses`. Nom d'affichage à trancher plus tard (pistes : *Y'a Plus !*,
   *Le Caddie*, *Ça Manque*) — sans impact sur le code.
@@ -750,9 +850,12 @@ articles méritent vraiment un suivi automatique.
 - **Plusieurs sorties ouvertes en parallèle** (drive vs apéro imprévu), avec la contrainte « un
   article dans une seule sortie ouverte » pour empêcher le double achat (§5.1).
 - **`Article.rayon` nullable** : créer un article à l'import ne doit coûter qu'un nom (§9).
-- **Comparaison des prix entre magasins** : retenue au backlog, hors roadmap (§10).
+- **Comparaison des prix entre magasins** : retenue au backlog, hors roadmap (§11).
+- **Recettes et préparations** : retenues en phase 7 (§10) — c'est le second régime de consommation,
+  celui des articles sans suivi automatique. Seule contrainte immédiate : **l'unité de référence d'un
+  article est son unité de consommation**, à respecter dès le remplissage du catalogue (§10.3).
 
-## 12. Points ouverts
+## 13. Points ouverts
 
 1. **Combien d'achats avant de faire confiance à l'estimation ?** 2 donne une réponse vite mais
    bruitée, 3 est plus sûr et retarde d'un cycle. À régler sur des données réelles, pas maintenant.
