@@ -1,7 +1,6 @@
 from django.contrib import admin
-from django.utils.html import format_html
 
-from base.admin import PhotoAdminAbtract
+from base.admin import PhotoAdminAbtract, ProfilScopedAdmin, swatch_couleur
 from super_moite_moite.forms import TacheForm
 from super_moite_moite.models import Categorie, Logement, PointTache, Tache, TrackTache
 
@@ -12,7 +11,9 @@ class CategorieInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Logement)
-class LogementAdmin(admin.ModelAdmin):
+class LogementAdmin(ProfilScopedAdmin):
+    profil_lookup = "habitants"
+
     list_display = ("nom", "slug", "date_creation")
     search_fields = ("nom", "habitants__user__username")
     date_hierarchy = "date_creation"
@@ -22,12 +23,6 @@ class LogementAdmin(admin.ModelAdmin):
 
     inlines = (CategorieInlineAdmin,)
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        if not request.user.is_superuser:
-            queryset = queryset.filter(habitants=request.user.profil)
-        return queryset
-
 
 class TacheInlineAdmin(admin.StackedInline):
     model = Tache
@@ -36,26 +31,18 @@ class TacheInlineAdmin(admin.StackedInline):
 
 
 @admin.register(Categorie)
-class CategorieAdmin(admin.ModelAdmin):
+class CategorieAdmin(ProfilScopedAdmin):
+    profil_lookup = "logement__habitants"
+
     list_display = ("nom", "logement", "order", "affiche_couleur")
     search_fields = ("nom", "logement__nom")
     list_select_related = ("logement",)
 
     inlines = (TacheInlineAdmin,)
 
+    @admin.display(ordering="couleur", description="couleur")
     def affiche_couleur(self, instance):
-        return format_html(
-            '<div style="padding: 5px; background-color: {color}">{color}</div>',
-            color=instance.couleur,
-        )
-
-    affiche_couleur.admin_order_field = "couleur"
-
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        if not request.user.is_superuser:
-            queryset = queryset.filter(logement__habitants=request.user.profil)
-        return queryset
+        return swatch_couleur(instance.couleur)
 
 
 class PointTacheInlineAdmin(admin.TabularInline):
@@ -64,7 +51,9 @@ class PointTacheInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Tache)
-class TacheAdmin(PhotoAdminAbtract):
+class TacheAdmin(ProfilScopedAdmin, PhotoAdminAbtract):
+    profil_lookup = "categorie__logement__habitants"
+
     list_display = ("thumbnail", "nom", "categorie", "order")
     search_fields = ("nom", "categorie__nom", "categorie__logement__nom")
     fields = ("nom", "categorie", "description", "photo")
@@ -74,17 +63,11 @@ class TacheAdmin(PhotoAdminAbtract):
 
     inlines = (PointTacheInlineAdmin,)
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        if not request.user.is_superuser:
-            queryset = queryset.filter(
-                categorie__logement__habitants=request.user.profil
-            )
-        return queryset
-
 
 @admin.register(PointTache)
-class PointTacheAdmin(admin.ModelAdmin):
+class PointTacheAdmin(ProfilScopedAdmin):
+    profil_lookup = "tache__categorie__logement__habitants"
+
     list_display = ("profil", "tache", "point")
     list_filter = ("point",)
     list_select_related = ("profil", "tache")
@@ -96,17 +79,13 @@ class PointTacheAdmin(admin.ModelAdmin):
         "profil__user__username",
     )
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        if not request.user.is_superuser:
-            queryset = queryset.filter(
-                tache__categorie__logement__habitants=request.user.profil
-            )
-        return queryset
-
 
 @admin.register(TrackTache)
-class TrackTacheAdmin(admin.ModelAdmin):
+class TrackTacheAdmin(ProfilScopedAdmin):
+    # Était "…__habitants_" (underscore parasite, depuis 2020) : FieldError pour tout
+    # utilisateur staff non-superuser. Jamais vu, faute d'être passé par ce chemin.
+    profil_lookup = "tache__categorie__logement__habitants"
+
     list_display = ("id", "tache", "profil", "datetime", "commentaire")
     list_filter = ("datetime",)
     list_select_related = ("profil", "tache")
@@ -119,14 +98,6 @@ class TrackTacheAdmin(admin.ModelAdmin):
         "commentaire",
         "profil__user__username",
     )
-
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        if not request.user.is_superuser:
-            queryset = queryset.filter(
-                tache__categorie__logement__habitants_=request.user.profil
-            )
-        return queryset
 
     def get_changeform_initial_data(self, request):
         return {"profil": request.user.profil}

@@ -6,10 +6,12 @@ Filet de sécurité de non-régression. Couvre :
   2. Redirect (302) des vues login_required sans auth
   3. Non-régression des endpoints API tracker & super_moite_moite
   4. Obtention/rafraîchissement de token JWT
+  5. Validité des `profil_lookup` des admins scopés (base.admin.ProfilScopedAdmin)
 
 Lancer : python manage.py test smoke_tests
 """
 
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import translation
@@ -228,3 +230,33 @@ class JWTAuthSmokeTest(TestCase):
         )
         self.assertEqual(r.status_code, status.HTTP_200_OK)
         self.assertIn("access", r.data)
+
+
+# ---------------------------------------------------------------------------
+# 6. Admins scopés au profil
+# ---------------------------------------------------------------------------
+
+
+class AdminProfilScopeTest(TestCase):
+    """
+    Chaque `profil_lookup` déclaré doit être un chemin d'ORM valide.
+
+    Un lookup erroné ne lève qu'à l'exécution, et uniquement pour un utilisateur
+    non-superuser : c'est ainsi qu'un `…__habitants_` (underscore parasite) a survécu
+    six ans dans super_moite_moite sans que personne ne passe par ce chemin.
+    """
+
+    def test_tous_les_profil_lookup_sont_valides(self):
+        profil = User.objects.create_user("scope-test").profil
+
+        scopes = [
+            (model, model_admin)
+            for model, model_admin in admin.site._registry.items()
+            if getattr(model_admin, "profil_lookup", None)
+        ]
+        self.assertGreater(len(scopes), 0, "aucun admin scopé n'a été trouvé")
+
+        for model, model_admin in scopes:
+            with self.subTest(admin=type(model_admin).__name__):
+                # Lève FieldError si le lookup ne correspond à aucun chemin réel.
+                model.objects.filter(**{model_admin.profil_lookup: profil}).exists()

@@ -63,3 +63,34 @@ class PhotoAdminAbtract(admin.ModelAdmin):
         if obj.photo:
             return format_html('<img src="{}" height="50px" />', obj.photo_url)
         return None
+
+
+def swatch_couleur(couleur):
+    """
+    Pastille de couleur pour un `list_display` d'admin (champs ColorField).
+    Mutualise le rendu jusque-là recopié dans super_moite_moite, my_spot et courses.
+    """
+    return format_html(
+        '<div style="padding: 5px; background-color: {color}">{color}</div>',
+        color=couleur,
+    )
+
+
+class ProfilScopedAdmin(admin.ModelAdmin):
+    """
+    Restreint la liste d'admin aux objets rattachés au Profil de l'utilisateur — le superuser
+    voit tout. `profil_lookup` est le chemin d'ORM depuis CE modèle jusqu'au Profil
+    (ex. "logement__habitants", "article__foyer__membres").
+
+    Un lookup erroné ne se voit qu'à l'exécution, et seulement pour un utilisateur
+    non-superuser : c'est ainsi qu'un `habitants_` a survécu six ans dans
+    super_moite_moite. `smoke_tests.AdminProfilScopeTest` valide désormais chaque lookup.
+    """
+
+    profil_lookup = None
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if self.profil_lookup and not request.user.is_superuser:
+            queryset = queryset.filter(**{self.profil_lookup: request.user.profil})
+        return queryset
