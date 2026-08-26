@@ -11,7 +11,7 @@ dependencies = [
     "django-autoslug==1.9.9",
     "django-colorfield==0.14.0",
     "django-cors-headers==4.9.0",
-    "django-filter==25.1",
+    "django-filter==26.1",
     "django-fontawesome-6==1.0.0.0",
     "django-geoposition-2==0.4.0",
     "django-pandas==0.6.7",
