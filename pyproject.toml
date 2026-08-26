@@ -18,7 +18,7 @@ dependencies = [
     "django-simple-history==3.13.0",
     "djangorestframework==3.18.0",
     "djangorestframework-simplejwt==5.5.1",
-    "google-api-python-client==2.198.0",
+    "google-api-python-client==2.199.0",
     "pandas==3.0.5",
     "Pillow==12.3.0",
     "django-storages[google]==1.14.6",
