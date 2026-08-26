@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% comment %}
+   Page juridique. Le CORPS est rédigé directement en français, sans {% trans %}
+   (même parti que templates/registration/signup.html) : le contenu est
+   spécifique au droit français (RGPD, LCEN) et un texte juridique à moitié
+   traduit vaut moins qu'un texte clair dans une seule langue. La page reste
+   servie sous /en/ comme sous /fr/ (i18n_patterns), d'où le lang="fr" porté par
+   <article> pour que navigateurs et lecteurs d'écran ne s'y trompent pas.
+   Seuls le chrome (titre, hero, liens du footer) est traduit.
+
+   À maintenir à jour quand le site change : la liste des données collectées, des
+   cookies et des sous-traitants doit rester le reflet du code (cf. §Cookies :
+   Google Analytics est chargé sans consentement préalable dans base.html — c'est
+   dit noir sur blanc ici, à corriger le jour où un bandeau sera posé).
+{% endcomment %}
+
+{% block title %}{% trans "Privacy policy" %}{% endblock %}
+{% block jumbotron_title %}{% trans "Privacy policy" %}{% endblock %}
+{% block jumbotron_description %}{% trans "What this site knows about you, and what it does with it." %}{% endblock %}
+
+{% block content %}
+    <article class="ds-legal" lang="fr">
+        <p class="ds-legal__updated">Dernière mise à jour : 26 août 2026</p>
+
+        <div class="ds-well ds-mb-5">
+            <p class="ds-mb-0">
+                <strong>En résumé :</strong> benbb96.com est un site personnel, sans publicité, et
+                aucune donnée n'y est vendue ni échangée. Il ne collecte que ce qui est nécessaire
+                pour faire tourner ses mini-applications : un compte si tu décides d'en créer un,
+                les contenus que tu y saisis, et une mesure d'audience. Tu peux demander à consulter
+                ou à supprimer tes données à tout moment en écrivant à
+                <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>.
+            </p>
+        </div>
+
+        <h2>Qui est responsable de ces données&nbsp;?</h2>
+        <p>
+            Le site est édité et exploité par Benjamin Bernard-Bouissières, à titre personnel et non
+            professionnel. C'est donc moi le responsable du traitement, au sens du Règlement général
+            sur la protection des données (RGPD). Pour toute question sur cette page ou sur tes
+            données : <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>.
+        </p>
+
+        <h2>Quelles données, pourquoi, et pour combien de temps</h2>
+        <p>
+            Tu peux consulter l'essentiel du site sans compte et sans rien communiquer. Les données
+            ci-dessous ne sont collectées que dans les situations décrites.
+        </p>
+
+        <div class="ds-table-wrap">
+            <table class="ds-table ds-table--bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Données</th>
+                        <th scope="col">Pourquoi</th>
+                        <th scope="col">Base légale</th>
+                        <th scope="col">Conservation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>Compte</strong> : nom d'utilisateur, adresse e-mail, mot de passe
+                            (haché), et si tu les renseignes : prénom, nom, avatar, date de naissance
+                        </td>
+                        <td>
+                            Te permettre de te connecter, d'être identifié par les autres membres et
+                            d'afficher ta page de profil publique
+                        </td>
+                        <td>Exécution du service que tu demandes en créant ton compte</td>
+                        <td>Tant que le compte existe</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Contenus que tu crées</strong> : avis et notes, playlists et
+                            morceaux, compteurs et relevés de trackers, parties et scores, tricks et
+                            combos de kendama, tâches partagées
+                        </td>
+                        <td>Faire fonctionner les mini-applications du site</td>
+                        <td>Exécution du service</td>
+                        <td>
+                            Tant que le compte existe, ou jusqu'à ce que tu supprimes le contenu
+                            concerné
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Notification de création de compte</strong> : ton nom
+                            d'utilisateur et le lien vers ton profil m'arrivent par e-mail à chaque
+                            inscription
+                        </td>
+                        <td>Être au courant de l'activité de mon site et repérer les inscriptions de robots</td>
+                        <td>Intérêt légitime (sécurité et suivi du site)</td>
+                        <td>Le temps que l'e-mail reste dans ma boîte</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>E-mails techniques</strong> : ton adresse est utilisée pour les
+                            envois liés à ton compte (réinitialisation de mot de passe)
+                        </td>
+                        <td>Te permettre de récupérer l'accès à ton compte</td>
+                        <td>Exécution du service</td>
+                        <td>Envoi ponctuel ; journaux de l'envoyeur conservés quelques jours</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Mesure d'audience</strong> : pages vues, provenance, type
+                            d'appareil et de navigateur, données de localisation approximative,
+                            via Google Analytics
+                        </td>
+                        <td>Savoir quelles pages sont consultées et si le site fonctionne correctement</td>
+                        <td>Consentement (voir la section « Cookies » ci-dessous)</td>
+                        <td>Jusqu'à 14 mois</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Journaux techniques</strong> : adresse IP, date, page appelée,
+                            code de réponse, conservés par l'hébergeur
+                        </td>
+                        <td>Sécurité du serveur et diagnostic des erreurs</td>
+                        <td>Intérêt légitime (sécurité)</td>
+                        <td>Quelques semaines, selon la rétention de l'hébergeur</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Connexion à Spotify</strong> (facultative, sur les pages musique)
+                            : un jeton d'accès délivré par Spotify
+                        </td>
+                        <td>
+                            Créer ou modifier des playlists publiques sur ton compte Spotify quand tu
+                            le demandes
+                        </td>
+                        <td>Consentement, donné sur l'écran d'autorisation de Spotify</td>
+                        <td>
+                            Stocké dans ta session sur le serveur ; révocable à tout moment depuis
+                            les réglages de ton compte Spotify
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>Ce que je ne fais pas</h3>
+        <ul>
+            <li>Aucune vente, location ni échange de données à des tiers.</li>
+            <li>Aucune publicité, aucun traceur publicitaire, aucun profilage commercial.</li>
+            <li>Aucune décision automatisée ayant un effet sur toi.</li>
+            <li>Aucune donnée bancaire : il n'y a rien à payer sur ce site.</li>
+            <li>
+                Aucune collecte de données dites sensibles. Si tu en publies dans un contenu libre
+                (un avis, un nom de tracker…), c'est de ton propre chef.
+            </li>
+        </ul>
+
+        <h2>Attention : une partie de ton contenu est publique</h2>
+        <p>
+            Plusieurs mini-applications sont publiques par nature : ta page de profil, tes avis, tes
+            playlists et tes contributions musicales sont visibles par n'importe quel visiteur, et
+            certaines de ces pages sont référencées dans le plan du site, donc indexables par les
+            moteurs de recherche. Ton nom d'utilisateur y apparaît ; ton adresse e-mail, jamais.
+        </p>
+
+        <h2>Cookies et stockage local</h2>
+        <p>Le site dépose les éléments suivants dans ton navigateur.</p>
+
+        <h3>Nécessaires au fonctionnement</h3>
+        <ul>
+            <li><code>sessionid</code> — te garde connecté d'une page à l'autre.</li>
+            <li><code>csrftoken</code> — protège les formulaires contre les envois falsifiés.</li>
+            <li><code>django_language</code> — mémorise la langue que tu as choisie.</li>
+            <li>
+                <code>benbb96-theme</code> — mémorise ton choix de thème clair, sombre ou
+                automatique. Ce n'est pas un cookie mais une entrée de stockage local, qui ne quitte
+                jamais ton navigateur.
+            </li>
+        </ul>
+
+        <h3>Mesure d'audience</h3>
+        <ul>
+            <li>
+                <code>_ga</code> et <code>_ga_&lt;identifiant&gt;</code> — déposés par Google
+                Analytics pour distinguer les visiteurs.
+            </li>
+        </ul>
+
+        <h3>Déposés par des services tiers, sur certaines pages seulement</h3>
+        <ul>
+            <li>
+                Les lecteurs intégrés <strong>YouTube, Spotify et SoundCloud</strong> sur les pages
+                musique et kendama déposent leurs propres cookies dès que la page se charge.
+            </li>
+            <li>
+                <strong>Google Maps</strong> sur les pages de spots, pour afficher la carte.
+            </li>
+        </ul>
+
+        <div class="ds-alert ds-alert--warning ds-mb-4" role="note">
+            <div class="ds-alert__content">
+                <strong>Transparence sur un point non conforme.</strong> En droit français, les
+                cookies qui ne sont pas strictement nécessaires — la mesure d'audience et les
+                lecteurs tiers ci-dessus — devraient être déposés seulement après ton accord
+                explicite. Aujourd'hui, ce site les charge sans te demander. C'est un écart que
+                j'assume le temps de mettre en place un vrai choix. En attendant, tu peux t'y
+                soustraire&nbsp;:
+                <ul class="ds-mb-0 ds-mt-2">
+                    <li>
+                        en installant le
+                        <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">
+                            module de désactivation de Google Analytics</a>, ou en activant le blocage
+                        des traceurs de ton navigateur&nbsp;;
+                    </li>
+                    <li>en refusant les cookies tiers dans les réglages de ton navigateur.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>Où sont mes données, et qui d'autre y touche&nbsp;?</h2>
+        <p>
+            Je n'ai pas de serveur à moi : le site s'appuie sur les prestataires suivants, qui
+            agissent comme sous-traitants.
+        </p>
+        <ul>
+            <li>
+                <strong>PythonAnywhere</strong> (PythonAnywhere LLP, Royaume-Uni) héberge le site et
+                sa base de données. Le compte utilisé est celui de la région européenne : les
+                serveurs sont situés à <strong>Francfort, en Allemagne</strong>. Le Royaume-Uni, où
+                se trouve la société, bénéficie d'une décision d'adéquation de la Commission
+                européenne.
+            </li>
+            <li>
+                <strong>Google Cloud Storage</strong> (Google) stocke les images envoyées sur le site
+                (avatars, photos). Ce stockage peut impliquer un transfert hors de l'Union
+                européenne, encadré par les mécanismes de transfert de Google (EU-US Data Privacy
+                Framework et clauses contractuelles types).
+            </li>
+            <li>
+                <strong>Mailgun</strong> (Sinch) achemine les e-mails envoyés par le site. Le
+                compte utilisé est en région américaine : l'adresse du destinataire et le contenu du
+                message transitent donc hors de l'Union européenne, dans le même cadre de transfert
+                que ci-dessus.
+            </li>
+            <li>
+                <strong>Google Analytics</strong> (Google) traite les données de mesure d'audience.
+            </li>
+        </ul>
+        <p>
+            Les lecteurs intégrés de <strong>YouTube, Spotify et SoundCloud</strong>, ainsi que
+            <strong>Google Maps</strong>, ne sont pas des sous-traitants : ce sont des services tiers
+            qui reçoivent directement ton adresse IP et posent leurs cookies quand la page les
+            charge. Leurs politiques de confidentialité s'appliquent alors en plus de celle-ci.
+        </p>
+
+        <h2>Sécurité</h2>
+        <ul>
+            <li>Tout le site est servi en HTTPS, avec redirection automatique.</li>
+            <li>
+                Les mots de passe ne sont jamais stockés en clair : Django les hache avec un sel
+                (PBKDF2-SHA256), et des règles de robustesse sont appliquées à l'inscription.
+            </li>
+            <li>L'accès d'administration est réservé à mon compte.</li>
+            <li>
+                C'est un site personnel maintenu sur mon temps libre : je fais de mon mieux, sans
+                pouvoir garantir une sécurité absolue. N'y saisis rien de confidentiel.
+            </li>
+        </ul>
+
+        <h2>Tes droits</h2>
+        <p>
+            Le RGPD te donne un droit d'accès, de rectification, d'effacement, d'opposition, de
+            limitation et de portabilité sur tes données, ainsi que le droit de retirer un
+            consentement déjà donné.
+        </p>
+        <p>
+            Pour les exercer, écris-moi à
+            <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a> : je réponds dans un délai d'un
+            mois. Il n'y a pas encore de bouton de suppression de compte en libre-service sur le
+            site — une demande par e-mail suffit, et je supprime le compte et les contenus associés.
+        </p>
+        <p>
+            Si ma réponse ne te satisfait pas, tu peux introduire une réclamation auprès de la
+            <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">CNIL</a>,
+            l'autorité française de protection des données.
+        </p>
+
+        <h2>Mineurs</h2>
+        <p>
+            Le site n'est pas destiné aux enfants de moins de 15 ans, et je ne cherche pas à
+            collecter leurs données. Si un compte a été créé par un enfant de moins de 15 ans sans
+            l'accord de ses parents, signale-le moi et je le supprimerai.
+        </p>
+
+        <h2>Évolutions de cette page</h2>
+        <p>
+            Le site est un terrain d'expérimentation : de nouvelles applications y apparaissent
+            régulièrement. Cette politique sera mise à jour en conséquence, et la date de dernière
+            mise à jour en haut de page fait foi.
+        </p>
+
+        <p class="ds-mt-5">
+            Voir aussi les <a href="{% url 'base:legal-notice' %}">mentions légales</a>.
+        </p>
+    </article>
+{% endblock %}

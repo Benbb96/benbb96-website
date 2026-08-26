@@ -26,6 +26,7 @@
                                        15. Utilitaires (.ds-*)
                                        16-19. Composants apps / hérités
                                        20. Home + About (parcours, pills, chips)
+                                       21. Pages légales (.ds-legal)
 
    Feuilles hors de ce fichier, chargées par une seule page via
    {% block stylesheet %} : base/static/base/css/labyrinthe.css (jeu Labyrinthe),
@@ -881,6 +882,28 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 .ds-social--tiktok    { --_brand: #000; }
 .ds-social--twitch    { --_brand: #9146ff; }
 .ds-social--discord   { --_brand: #5865f2; }
+/* Liens légaux (about / confidentialité / mentions). Ils ont besoin de leur
+   propre couleur : le sélecteur `a` nu impose --ds-text, soit un texte SOMBRE en
+   thème clair — illisible sur le fond --ds-secondary du footer, qui reste sombre
+   dans les deux thèmes. */
+.ds-footer__links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--ds-space-2) var(--ds-space-4);
+    margin: 0 0 var(--ds-space-3);
+    padding: 0;
+    list-style: none;
+    font-size: var(--ds-fs-sm);
+}
+.ds-footer__links a { color: rgba(255, 255, 255, 0.8); }
+.ds-footer__links a:hover,
+.ds-footer__links a:focus-visible {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: var(--ds-primary);
+}
+
 .ds-footer__copyright { font-size: var(--ds-fs-sm); margin: 0; }
 
 /* 12. ───────────────────────────────── HERO ────────────────────────────── */
@@ -1648,3 +1671,50 @@ a.platformLink:focus, a.platformLink:active { text-decoration: none; color: red;
 .ds-chips { display: flex; flex-wrap: wrap; gap: var(--ds-space-3); list-style: none; margin: 0; padding: 0; }
 .ds-chip { display: inline-flex; align-items: center; gap: var(--ds-space-2); font-size: 0.88rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: var(--ds-radius); background: var(--ds-surface); border: 1px solid var(--ds-border); }
 .ds-chip svg { width: 1.05rem; height: 1.05rem; color: var(--ds-primary-dark); flex: 0 0 auto; }
+
+/* 21. ─────────────── PAGES LÉGALES (.ds-legal) ──────────────────────────────
+   Confidentialité et mentions légales : de la prose longue, à lire, pas à
+   survoler. Colonne mesurée en `ch` (et non en px) pour rester autour des 70-80
+   caractères par ligne quelle que soit la taille de police du visiteur, et
+   respiration plus généreuse entre les sections que dans le flux par défaut.
+   ------------------------------------------------------------------------- */
+.ds-legal {
+    max-width: 74ch;
+    margin-inline: auto;
+    padding-bottom: var(--ds-space-6);
+}
+.ds-legal h2 {
+    margin-top: var(--ds-space-6);
+    padding-top: var(--ds-space-3);
+    border-top: 1px solid var(--ds-border);
+}
+.ds-legal h3 { margin-top: var(--ds-space-5); font-size: 1.0625rem; }
+/* Liens : le reste du site ne les révèle qu'au survol (cf. §3), ce qui va pour
+   du chrome où le contexte suffit, mais pas dans un texte long où un lien perdu
+   au milieu d'un paragraphe devient invisible. Ici, soulignement permanent en
+   jaune de marque — le jaune reste cantonné au trait, jamais au texte
+   (contraste). Le survol épaissit et passe le trait à la couleur du texte,
+   pour garder un retour visuel malgré le soulignement déjà présent. */
+.ds-legal a {
+    text-decoration: underline;
+    text-decoration-color: var(--ds-primary-dark);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+    transition: text-decoration-color var(--ds-transition), text-decoration-thickness var(--ds-transition);
+}
+.ds-legal a:hover,
+.ds-legal a:focus-visible {
+    text-decoration-color: var(--ds-text);
+    text-decoration-thickness: 3px;
+}
+.ds-legal ul { padding-left: 1.25rem; margin: 0 0 var(--ds-space-4); }
+.ds-legal li + li { margin-top: var(--ds-space-2); }
+/* Tableau des données collectées : beaucoup de texte dans peu de colonnes. */
+.ds-legal .ds-table { font-size: var(--ds-fs-sm); }
+.ds-legal .ds-table th { vertical-align: bottom; }
+.ds-legal .ds-table td { vertical-align: top; }
+.ds-legal__updated {
+    font-size: var(--ds-fs-sm);
+    color: var(--ds-text-muted);
+    font-family: var(--ds-font-mono);
+}

@@ -223,6 +223,13 @@ MAILERS = {
 }
 
 ADMINS = [("Benbb96", "benbb96@gmail.com")]
+
+# Adresse de contact publiée sur les pages légales (et point d'entrée pour
+# l'exercice des droits RGPD) : dérivée d'ADMINS pour n'avoir qu'un seul endroit
+# à modifier. ADMINS accepte deux formats — l'e-mail seul, ou le couple
+# (nom, e-mail) — d'où le test : sur une chaîne, ADMINS[0][1] renverrait
+# silencieusement une lettre, et c'est une valeur qui s'affiche en public.
+CONTACT_EMAIL = ADMINS[0] if isinstance(ADMINS[0], str) else ADMINS[0][1]
 EMAIL_SUBJECT_PREFIX = "[Benbb96] "
 DEFAULT_FROM_EMAIL = "webmaster@benbb96.com"
 SERVER_EMAIL = "benbb96@benbb96.com"

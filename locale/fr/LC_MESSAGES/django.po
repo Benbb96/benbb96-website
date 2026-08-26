@@ -109,3 +109,11 @@ msgstr "Suivre le système"
 #: templates/navbar.html:45
 msgid "Auto"
 msgstr "Auto"
+
+#: templates/footer.html:19
+msgid "Privacy policy"
+msgstr "Politique de confidentialité"
+
+#: templates/footer.html:20
+msgid "Legal notice"
+msgstr "Mentions légales"

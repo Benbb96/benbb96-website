@@ -11,6 +11,17 @@ urlpatterns = [
     path(
         _("about"), TemplateView.as_view(template_name="base/about.html"), name="about"
     ),
+    # Pages légales : préfixes d'URL traduits comme le reste (cf. base/locale).
+    path(
+        _("privacy"),
+        TemplateView.as_view(template_name="base/privacy.html"),
+        name="privacy",
+    ),
+    path(
+        _("legal-notice"),
+        TemplateView.as_view(template_name="base/legal_notice.html"),
+        name="legal-notice",
+    ),
     path(
         _("labyrinthe-game"),
         TemplateView.as_view(template_name="base/labyrinthe_game.html"),

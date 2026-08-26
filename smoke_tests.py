@@ -6,10 +6,12 @@ Filet de sécurité de non-régression. Couvre :
   2. Redirect (302) des vues login_required sans auth
   3. Non-régression des endpoints API tracker & super_moite_moite
   4. Obtention/rafraîchissement de token JWT
+  5. Pages légales : URLs traduites, lien depuis le footer, contact affiché
 
 Lancer : python manage.py test smoke_tests
 """
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import translation
@@ -56,6 +58,12 @@ class PublicViewsSmokeTest(TestCase):
     def test_gallery(self):
         self._get200("base:gallery")
 
+    def test_privacy(self):
+        self._get200("base:privacy")
+
+    def test_legal_notice(self):
+        self._get200("base:legal-notice")
+
     def test_robots_txt(self):
         r = self.client.get(url("robots_file"))
         self.assertEqual(r.status_code, 200)
@@ -75,6 +83,39 @@ class PublicViewsSmokeTest(TestCase):
 
     def test_kendama_tricks(self):
         self._get200("kendama:tricks")
+
+
+class LegalPagesSmokeTest(TestCase):
+    """
+    Pages légales : elles sont réclamées par des tiers (écran de consentement
+    Google OAuth, plateformes) et leurs URLs sont traduites via les catalogues
+    .po — une traduction perdue casserait les liens sans rien faire échouer
+    ailleurs. D'où le verrouillage explicite des slugs français.
+    """
+
+    def test_slugs_francais(self):
+        self.assertEqual(url("base:privacy"), "/fr/confidentialite")
+        self.assertEqual(url("base:legal-notice"), "/fr/mentions-legales")
+
+    def test_liens_dans_le_footer(self):
+        """Le footer est global : les deux pages sont joignables de partout."""
+        r = self.client.get(url("base:home"))
+        self.assertContains(r, url("base:privacy"))
+        self.assertContains(r, url("base:legal-notice"))
+
+    def test_contact_rgpd_affiche(self):
+        """Sans moyen de contact, la page de confidentialité ne remplit pas son rôle."""
+        r = self.client.get(url("base:privacy"))
+        self.assertContains(r, settings.CONTACT_EMAIL)
+
+    def test_pages_liees_entre_elles(self):
+        r = self.client.get(url("base:legal-notice"))
+        self.assertContains(r, url("base:privacy"))
+
+    def test_presentes_dans_le_sitemap(self):
+        r = self.client.get(url("django.contrib.sitemaps.views.sitemap"))
+        self.assertContains(r, url("base:privacy"))
+        self.assertContains(r, url("base:legal-notice"))
 
 
 # ---------------------------------------------------------------------------

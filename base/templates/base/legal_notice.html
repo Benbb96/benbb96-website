@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% comment %}
+   Page juridique — même parti que base/privacy.html : corps en français sans
+   {% trans %}, lang="fr" sur <article>, chrome traduit. Voir l'en-tête de
+   privacy.html pour le détail de la décision.
+
+   Éditeur personne physique éditant à titre non professionnel : la loi (LCEN,
+   art. 6-III-2) permet de ne pas publier son adresse POSTALE (le domicile) à
+   condition de donner l'identité complète de l'hébergeur, qui la détient. C'est
+   le choix fait ici — d'où le paragraphe qui cite l'article, et le bloc
+   « Hébergement » détaillé : les deux se tiennent, ne pas en retirer un seul.
+   L'adresse e-mail de contact, elle, reste nécessaire et n'a rien à voir.
+{% endcomment %}
+
+{% block title %}{% trans "Legal notice" %}{% endblock %}
+{% block jumbotron_title %}{% trans "Legal notice" %}{% endblock %}
+{% block jumbotron_description %}{% trans "Who publishes this site, and who hosts it." %}{% endblock %}
+
+{% block content %}
+    <article class="ds-legal" lang="fr">
+        <p class="ds-legal__updated">Dernière mise à jour : 26 août 2026</p>
+
+        <h2>Éditeur du site</h2>
+        <p>
+            <strong>benbb96.com</strong> est un site personnel édité par <strong>Benjamin
+            Bernard-Bouissières</strong>, personne physique, à titre <strong>non
+            professionnel</strong> : ce site n'a aucune activité commerciale, ne vend rien et
+            n'affiche aucune publicité.
+        </p>
+        <ul>
+            <li>Responsable de la publication : Benjamin Bernard-Bouissières</li>
+            <li>Contact : <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></li>
+        </ul>
+        <p>
+            Conformément à l'article 6-III-2 de la loi pour la confiance dans l'économie numérique,
+            l'éditeur non professionnel peut ne pas rendre publique son adresse postale personnelle,
+            dès lors que l'hébergeur du site, qui détient son identité, est identifié ci-dessous.
+        </p>
+
+        <h2>Hébergement</h2>
+        <p>Le site et sa base de données sont hébergés par&nbsp;:</p>
+        <p>
+            <strong>PythonAnywhere LLP</strong> (exploité par Anaconda Services (UK) Limited)<br>
+            5 The Green, Richmond TW9 1PL, Royaume-Uni<br>
+            <a href="https://www.pythonanywhere.com" target="_blank" rel="noopener">www.pythonanywhere.com</a>
+        </p>
+        <p>
+            Le compte utilisé est celui de la région européenne du service
+            (<code>eu.pythonanywhere.com</code>) : les serveurs se trouvent à Francfort, en
+            Allemagne. Les images envoyées sur le site sont, elles, stockées sur Google Cloud
+            Storage. Le détail des prestataires impliqués et des transferts de données figure dans la
+            <a href="{% url 'base:privacy' %}">politique de confidentialité</a>.
+        </p>
+
+        <h2>Propriété intellectuelle</h2>
+        <p>
+            Le <strong>code source</strong> du site est ouvert et publié sous licence MIT sur
+            <a href="https://github.com/Benbb96" target="_blank" rel="noopener">GitHub</a> : tu peux
+            le lire, le réutiliser et le modifier dans les conditions de cette licence.
+        </p>
+        <p>
+            Les <strong>contenus rédactionnels et les photographies</strong> que je publie (textes,
+            images de projets, avis signés de mon compte) restent ma propriété et ne sont pas
+            couverts par cette licence. Toute reprise en dehors des courtes citations d'usage
+            nécessite mon accord.
+        </p>
+        <p>
+            Les <strong>contenus publiés par les membres</strong> restent la propriété de leurs
+            auteurs. En les publiant sur le site, tu m'autorises simplement à les afficher dans les
+            pages du site, y compris publiquement lorsque la rubrique est publique.
+        </p>
+
+        <h2>Contenus et services tiers</h2>
+        <p>
+            Certaines pages affichent des données provenant d'API tierces — pochettes, extraits et
+            lecteurs de <strong>Spotify</strong>, <strong>SoundCloud</strong> et
+            <strong>YouTube</strong>, cartes de <strong>Google Maps</strong>. Ces contenus
+            appartiennent à leurs titulaires de droits respectifs et sont affichés via les
+            interfaces publiques prévues par ces services. Si un contenu te semble porter atteinte à
+            tes droits, écris-moi à <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a> et je le
+            retirerai.
+        </p>
+
+        <h2>Liens externes</h2>
+        <p>
+            Le site renvoie vers des sites que je ne contrôle pas. Leur contenu n'engage que leurs
+            éditeurs, et ma responsabilité ne peut être recherchée à ce titre.
+        </p>
+
+        <h2>Disponibilité et responsabilité</h2>
+        <p>
+            Ce site est un projet personnel, développé et maintenu sur mon temps libre. Il est fourni
+            « tel quel », sans garantie de disponibilité, d'exactitude des informations affichées ni
+            d'absence d'erreur, et peut être modifié, interrompu ou arrêté à tout moment. Les
+            mini-applications qu'il héberge sont des expérimentations : n'y stocke pas de données
+            dont la perte te serait préjudiciable.
+        </p>
+
+        <h2>Données personnelles et cookies</h2>
+        <p>
+            Le détail des données collectées, des cookies déposés, des prestataires et de tes droits
+            se trouve dans la
+            <a href="{% url 'base:privacy' %}">politique de confidentialité</a>.
+        </p>
+
+        <h2>Droit applicable</h2>
+        <p>
+            Le présent site et ces mentions légales sont soumis au droit français.
+        </p>
+    </article>
+{% endblock %}

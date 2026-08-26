@@ -23,6 +23,13 @@
                 <button type="submit" class="ds-btn">S'inscrire</button>
                 <a href="{% url 'login' %}" class="ds-btn ds-btn--link">Se connecter</a>
             </div>
+            {# Information au moment de la collecte (RGPD) : le lien doit rester visible ici. #}
+            <p class="ds-text-center ds-text-muted ds-mt-4 ds-mb-0">
+                En créant un compte, tu acceptes les
+                <a href="{% url 'base:legal-notice' %}">mentions légales</a> du site. Les données que
+                tu renseignes sont utilisées comme décrit dans la
+                <a href="{% url 'base:privacy' %}">politique de confidentialité</a>.
+            </p>
         </form>
     </div>
 {% endblock %}

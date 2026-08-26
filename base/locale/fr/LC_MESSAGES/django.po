@@ -307,6 +307,30 @@ msgstr "a-propos"
 msgid "labyrinthe-game"
 msgstr ""
 
+#: urls.py:16
+msgid "privacy"
+msgstr "confidentialite"
+
+#: urls.py:21
+msgid "legal-notice"
+msgstr "mentions-legales"
+
+#: templates/base/privacy.html:20 templates/base/privacy.html:21
+msgid "Privacy policy"
+msgstr "Politique de confidentialité"
+
+#: templates/base/privacy.html:22
+msgid "What this site knows about you, and what it does with it."
+msgstr "Ce que ce site sait de toi, et ce qu'il en fait."
+
+#: templates/base/legal_notice.html:16 templates/base/legal_notice.html:17
+msgid "Legal notice"
+msgstr "Mentions légales"
+
+#: templates/base/legal_notice.html:18
+msgid "Who publishes this site, and who hosts it."
+msgstr "Qui édite ce site, et qui l'héberge."
+
 #~ msgid "It's me!"
 #~ msgstr "C'est moi !"
 

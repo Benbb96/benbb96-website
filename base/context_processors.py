@@ -7,10 +7,12 @@ def base_context(request):
     """
     Ajoute les variables de contexte global avec :
       - La clé d'API Google Analytics
+      - L'adresse de contact publique (pages légales)
       - les liens actifs vers mes réseaux sociaux dans le context processor
     """
     return {
         "GOOGLE_ANALYTICS_KEY": settings.GOOGLE_ANALYTICS_KEY,
+        "CONTACT_EMAIL": settings.CONTACT_EMAIL,
         "GEOPOSITION_GOOGLE_MAPS_API_KEY": settings.GEOPOSITION_GOOGLE_MAPS_API_KEY,
         "liens_reseaux_sociaux": LienReseauSocial.objects.filter(actif=True),
     }

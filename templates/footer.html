@@ -14,5 +14,10 @@
             {% endfor %}
         </ul>
     {% endif %}
+    <ul class="ds-footer__links">
+        <li><a href="{% url 'base:about' %}">{% trans "About" %}</a></li>
+        <li><a href="{% url 'base:privacy' %}">{% trans "Privacy policy" %}</a></li>
+        <li><a href="{% url 'base:legal-notice' %}">{% trans "Legal notice" %}</a></li>
+    </ul>
     <p class="ds-footer__copyright">&copy; {% now "Y" %} Benbb96</p>
 </footer>
