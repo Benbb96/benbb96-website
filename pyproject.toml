@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "Django==6.1",
     "django-admin-sortable",  # fork LEAGUEDORA — voir [tool.uv.sources]
-    "django-anymail==13.0",
+    "django-anymail==15.1",
     "django-autoslug==1.9.9",
     "django-colorfield==0.14.0",
     "django-cors-headers==4.9.0",
