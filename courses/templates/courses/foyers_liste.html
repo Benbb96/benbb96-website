@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block navbar %}{% include 'navbar.html' with courses=True %}{% endblock %}
+{% block title %}Courses{% endblock %}
+{% block jumbotron_title %}Courses{% endblock %}
+{% block jumbotron_description %}Choisissez un foyer.{% endblock %}
+
+{% block content %}
+<div class="ds-narrow">
+    {% if foyers %}
+        <ul class="ds-list-group">
+            {% for foyer in foyers %}
+                <li>
+                    <a class="ds-list-group__item" href="{% url 'courses:a-acheter' foyer.slug %}">{{ foyer.nom }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="ds-text-muted">
+            Vous n'appartenez à aucun foyer pour le moment. Demandez à un membre existant de
+            vous y ajouter, ou passez par l'admin.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'courses/base_courses.html' %}
+
+{% block historique_active %} is-active{% endblock %}
+
+{% block courses_content %}
+
+{% for sortie in sorties_ouvertes %}
+    <a class="ds-card ds-mb-3" style="display: block; text-decoration: none;"
+       href="{% url 'courses:a-acheter' foyer.slug %}{% if sortie.nom %}?sortie={{ sortie.pk }}{% endif %}">
+        <div class="ds-cluster ds-cluster--split">
+            <div>
+                <strong>{{ sortie.nom|default:"Sortie en cours" }}</strong>
+                <div class="ds-text-muted">
+                    {{ sortie.magasin|default:"Sans magasin" }} · {{ sortie.lignes.count }} article{{ sortie.lignes.count|pluralize }}
+                    · ouverte le {{ sortie.cree_le|date:"j F" }}
+                </div>
+            </div>
+        </div>
+    </a>
+{% endfor %}
+
+{% if sorties_closes %}
+    {% regroup sorties_closes by mois_label as groupes_mois %}
+    {% for groupe in groupes_mois %}
+        <h3 class="ds-mt-5">{{ groupe.grouper|capfirst }}</h3>
+        <div class="ds-list-group ds-mb-4">
+            {% for sortie in groupe.list %}
+                <details>
+                    <summary class="ds-list-group__item courses-sortie-summary">
+                        <div class="ds-cluster ds-cluster--split">
+                            <div>
+                                <strong>{{ sortie.magasin|default:sortie.nom|default:"Sortie" }}</strong>
+                                <div class="ds-text-muted">
+                                    {{ sortie.cloture_le|date:"j F" }} · {{ sortie.lignes.count }} article{{ sortie.lignes.count|pluralize }}
+                                    {% if sortie.source != "manuel" %}· {{ sortie.get_source_display }}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </summary>
+                    <div class="ds-well">
+                        <ul>
+                            {% for ligne in sortie.lignes.all %}
+                                <li>{{ ligne.article.nom }} × {{ ligne.quantite|floatformat:"-3" }}</li>
+                            {% endfor %}
+                        </ul>
+                        <div class="ds-cluster ds-cluster--split ds-mt-3">
+                            <span class="ds-text-muted">Clôturée par {{ sortie.cree_par }}</span>
+                            <form method="post" action="{% url 'courses:corriger-sortie' foyer.slug sortie.pk %}"
+                                  onsubmit="return confirm('Rouvrir cette sortie et défaire son effet sur le stock ?');">
+                                {% csrf_token %}
+                                <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">Corriger</button>
+                            </form>
+                        </div>
+                    </div>
+                </details>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="ds-text-muted ds-mt-4">Aucune sortie clôturée pour le moment.</p>
+{% endif %}
+
+{% endblock %}

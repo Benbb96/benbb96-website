@@ -5,11 +5,21 @@ from autoslug import AutoSlugField
 from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Case, F, OuterRef, Q, Subquery, Value, When
+from django.db.models.functions import Cast, Coalesce, Greatest, Now
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from fontawesome_6.fields import IconField
 
 from base.models import Profil
+
+
+class JulianDay(models.Func):
+    """`julianday()` de SQLite : le projet est en SQLite en dev *comme* en prod (§7.1/§11 de
+    conception.md), donc pas besoin de porter cette expression sur un autre moteur."""
+
+    function = "JULIANDAY"
+    output_field = models.FloatField()
 
 
 def _quantite_field(**kwargs):
@@ -96,6 +106,67 @@ class Etiquette(models.Model):
         return self.nom
 
 
+class ArticleQuerySet(models.QuerySet):
+    def avec_besoin(self):
+        """
+        Annotation SQL de `besoin` = max(stock_cible − stock_estime, 0) + demandes ponctuelles
+        non satisfaites (conception.md §4/§10.4). `Article.stock_estime` reste une property
+        Python (§5, non requêtable) — cette expression doit produire le même nombre qu'elle sur
+        les mêmes données, alignement verrouillé par ArticleAnnotationBesoinTest.
+
+        Tout est ramené en FloatField dès les feuilles (Cast des DecimalField) pour ne jamais
+        combiner Decimal et Float dans un même nœud d'expression, ce que l'ORM refuse.
+
+        `DemandePonctuelle` n'est défini que plus bas dans ce module : la référence n'est
+        résolue qu'à l'appel de `avec_besoin()`, bien après le chargement complet du fichier.
+        """
+        demandes_non_satisfaites = Subquery(
+            DemandePonctuelle.objects.filter(
+                article=OuterRef("pk"), satisfaite_par__isnull=True
+            )
+            .order_by()
+            .values("article")
+            .annotate(total=models.Sum("quantite"))
+            .values("total"),
+            output_field=models.FloatField(),
+        )
+
+        return (
+            self.annotate(
+                jours=JulianDay(Now()) - JulianDay(F("stock_maj_le")),
+                stock_reference_f=Cast(F("stock_reference"), models.FloatField()),
+                stock_cible_f=Cast(F("stock_cible"), models.FloatField()),
+                conso_amorce_f=Cast(F("conso_amorce"), models.FloatField()),
+                conso_estimee_f=Cast(F("conso_par_jour_estimee"), models.FloatField()),
+            )
+            .annotate(
+                conso_retenue_calc=Case(
+                    When(suivi_auto=False, then=Value(None)),
+                    default=Coalesce(F("conso_estimee_f"), F("conso_amorce_f")),
+                    output_field=models.FloatField(),
+                ),
+            )
+            .annotate(
+                stock_estime_calc=Case(
+                    When(
+                        Q(conso_retenue_calc__isnull=True)
+                        | Q(stock_maj_le__isnull=True),
+                        then=F("stock_reference_f"),
+                    ),
+                    default=Greatest(
+                        F("stock_reference_f") - F("conso_retenue_calc") * F("jours"),
+                        Value(0.0),
+                    ),
+                    output_field=models.FloatField(),
+                ),
+            )
+            .annotate(
+                besoin=Greatest(F("stock_cible_f") - F("stock_estime_calc"), Value(0.0))
+                + Coalesce(demandes_non_satisfaites, Value(0.0)),
+            )
+        )
+
+
 class Article(models.Model):
     class Unite(models.TextChoices):
         UNITE = "unite", _("unité")
@@ -107,6 +178,8 @@ class Article(models.Model):
         BOITE = "boite", _("boîte")
         SACHET = "sachet", _("sachet")
         BOUTEILLE = "bouteille", _("bouteille")
+
+    objects = ArticleQuerySet.as_manager()
 
     foyer = models.ForeignKey(Foyer, on_delete=models.CASCADE, related_name="articles")
     nom = models.CharField(max_length=150)
@@ -124,7 +197,7 @@ class Article(models.Model):
         choices=Unite.choices,
         default="",
         blank=True,
-        help_text="Laissé vide par l'import (§9) tant que l'unité n'est pas confirmée.",
+        help_text="Laissé vide par l'import tant que l'unité n'est pas confirmée.",
     )
     conditionnement = _quantite_field(
         default=1,

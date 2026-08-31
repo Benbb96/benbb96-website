@@ -12,6 +12,7 @@
      data-placeholder   texte d'invite
      data-ts-url        URL de recherche JSON (active le mode distant)
      data-min-input     longueur min. de saisie avant recherche (0 = précharge)
+     data-create-url    POST {nom: saisie} -> {id, nom} : crée l'option à la volée
    ============================================================================ */
 (function (window, document) {
     'use strict';
@@ -47,6 +48,16 @@
                     })
                     .catch(function () { callback(); });
             };
+        }
+
+        var createUrl = el.dataset.createUrl;
+        if (createUrl) {
+            options.create = function (input, callback) {
+                window.http.json(createUrl, { method: 'POST', body: { nom: input } })
+                    .then(function (data) { callback({ value: String(data.id), text: data.nom }); })
+                    .catch(function () { callback(); });
+            };
+            options.createOnBlur = true;
         }
         return options;
     }

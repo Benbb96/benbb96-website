@@ -747,10 +747,11 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
 }
 .ds-nav__lang .ds-btn--ghost:hover { color: #fff; }
 
-/* La navbar horizontale (marque + 7 rubriques + langue + compte) réclame ~1130px
-   à la taille nominale (root 16px). En dessous de la largeur du contenu on bascule
-   sur le menu mobile empilé plutôt que de laisser les libellés déborder. */
-@media (max-width: 1140px) {
+/* La navbar horizontale (marque + 7 rubriques + langue + compte) réclame
+   ~1200px à la taille nominale (root 16px) — mesuré : la ligne casse encore à 1196px et
+   tient à 1201px. En dessous on bascule sur le menu mobile empilé plutôt que de laisser
+   les libellés déborder sur deux lignes façon rendu cassé. */
+@media (max-width: 1200px) {
     .ds-nav__burger { display: inline-flex; }
     /* La case (transparente) recouvre le burger : focusable au clavier, cliquable
        à la souris, bascule le menu nativement (Espace) — sans JS. */

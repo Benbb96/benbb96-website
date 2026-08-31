@@ -20,9 +20,9 @@
                 <li class="ds-nav__item {% if about %}is-active{% endif %}"><a href="{% url 'base:about' %}">{% trans "About" %}</a></li>
                 <li class="ds-nav__item {% if avis %}is-active{% endif %}"><a href="{% url 'avis:liste-avis' %}">{% trans "Reviews" %}</a></li>
                 <li class="ds-nav__item {% if music %}is-active{% endif %}"><a href="{% url 'music:liste-playlists' %}">{% trans "Musics" %}</a></li>
-                <li class="ds-nav__item {% if spot %}is-active{% endif %}"><a href="{% url 'my_spot:map' %}">{% trans "MySpot" %}</a></li>
                 {% if request.user.is_authenticated %}
                     <li class="ds-nav__item {% if tracker %}is-active{% endif %}"><a href="{% url 'tracker:liste-tracker' %}">{% trans "Trackers" %}</a></li>
+                    <li class="ds-nav__item {% if courses %}is-active{% endif %}"><a href="{% url 'courses:mes-foyers' %}">{% trans "Courses" %}</a></li>
                 {% endif %}
                 {% if request.user.is_superuser %}
                     <li class="ds-nav__item"><a href="{% url 'admin:index' %}">{% trans "Administration" %}</a></li>

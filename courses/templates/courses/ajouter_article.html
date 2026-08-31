@@ -1,0 +1,25 @@
+{% extends 'courses/base_courses.html' %}
+
+{% block acheter_active %} is-active{% endblock %}
+
+{% block stylesheet %}
+    {{ block.super }}
+    {{ form.media.css }}
+{% endblock %}
+
+{% block courses_content %}
+<h2>Ajouter un article à « {{ sortie }} »</h2>
+<form method="post">
+    {% csrf_token %}
+    {% include 'components/form.html' %}
+    <div class="ds-cluster ds-cluster--center ds-mt-4">
+        <button type="submit" class="ds-btn">Ajouter</button>
+        <a class="ds-btn ds-btn--ghost" href="{% url 'courses:a-acheter' foyer.slug %}?sortie={{ sortie.pk }}">Annuler</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    {{ form.media.js }}
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'courses/base_courses.html' %}
+{% load static %}
+
+{% block inventaire_active %} is-active{% endblock %}
+
+{% block courses_content %}
+
+<div class="ds-cluster ds-cluster--split ds-mb-4">
+    <input type="search" id="courses-filtre" data-filtre-inventaire
+           placeholder="Rechercher par nom, rayon ou étiquette" aria-label="Rechercher par nom, rayon ou étiquette">
+    <a class="ds-btn ds-btn--sm" href="{% url 'courses:creer-article' foyer.slug %}">+ Nouvel article</a>
+</div>
+
+{% if sans_rayon %}
+    <p class="ds-text-muted">
+        {{ sans_rayon }} article{{ sans_rayon|pluralize }} à compléter (sans rayon).
+    </p>
+{% endif %}
+
+{% if rayons %}
+    <div data-inventaire>
+        {% for groupe in rayons %}
+            <div data-rayon-section>
+                <div class="courses-rayon">
+                    {% if groupe.rayon %}
+                        <span class="courses-rayon__puce" style="background: {{ groupe.rayon.couleur }};"></span>
+                        {{ groupe.rayon.nom }}
+                    {% else %}
+                        Sans rayon
+                    {% endif %}
+                </div>
+
+                {% for article in groupe.articles %}
+                    <details class="courses-article" id="a-{{ article.pk }}" data-article-row
+                              data-recherche="{{ article.recherche_texte }}"
+                              {% if ouvert_id|add:"0" == article.pk %}open{% endif %}>
+                        <summary>
+                            <div class="ds-cluster ds-cluster--split">
+                                <div>
+                                    <strong>{{ article.nom }}</strong>
+                                    <div class="courses-jauge courses-jauge--sm ds-mt-2">
+                                        {% widthratio article.stock_estime_calc article.stock_cible_f 100 as pct %}
+                                        <div data-jauge class="courses-jauge__valeur{% if pct|default:0 < 34 %} is-bas{% endif %}" style="width: {{ pct|default:0 }}%;"></div>
+                                    </div>
+                                </div>
+                                {% if article.besoin %}
+                                    <span data-besoin-badge class="ds-badge ds-badge--primary">× {{ article.besoin|floatformat:"-3" }}</span>
+                                {% else %}
+                                    <span data-besoin-badge class="ds-badge">ok</span>
+                                {% endif %}
+                            </div>
+                        </summary>
+
+                        <div class="courses-article__panel">
+                            <div class="ds-cluster ds-cluster--split ds-mb-3">
+                                <span>Souhaité à la maison</span>
+                                <form method="post" action="{% url 'courses:article-cible' foyer.slug article.pk %}" class="courses-stepper" data-role="cible">
+                                    {% csrf_token %}
+                                    <button type="submit" name="delta" value="-1">−</button>
+                                    <span class="courses-stepper__val">{{ article.stock_cible|floatformat:"-3" }}</span>
+                                    <button type="submit" name="delta" value="1">+</button>
+                                </form>
+                            </div>
+
+                            <div class="ds-cluster ds-cluster--split ds-mb-3">
+                                <span>Besoin ponctuel <small class="ds-text-muted">(en plus, pour cette fois)</small></span>
+                                <form method="post" action="{% url 'courses:article-ponctuel' foyer.slug article.pk %}" class="courses-stepper" data-role="ponctuel">
+                                    {% csrf_token %}
+                                    <button type="submit" name="delta" value="-1">−</button>
+                                    <span class="courses-stepper__val">{{ article.ponctuel_personnel|floatformat:"-3" }}</span>
+                                    <button type="submit" name="delta" value="1">+</button>
+                                </form>
+                            </div>
+
+                            <div class="ds-alert ds-alert--info">
+                                <div class="ds-alert__content">
+                                    <strong data-stock-estime>Stock estimé : {{ article.stock_estime_calc|floatformat:1 }}</strong>
+                                    <div class="ds-text-muted">{{ article.estimation_label }}</div>
+                                </div>
+                            </div>
+
+                            <form method="post" action="{% url 'courses:recompter' foyer.slug article.pk %}" class="ds-cluster ds-mt-3" data-role="recompter">
+                                {% csrf_token %}
+                                <input type="number" step="0.001" min="0" name="nouvelle_valeur" placeholder="Il en reste" required class="courses-input--sm">
+                                <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">Recompter</button>
+                            </form>
+
+                            <div class="ds-mt-3">
+                                <a class="ds-btn ds-btn--ghost ds-btn--sm" href="{% url 'courses:modifier-article' foyer.slug article.pk %}">Modifier la fiche</a>
+                            </div>
+                        </div>
+                    </details>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <p class="ds-text-muted" data-aucun-resultat hidden>Aucun article ne correspond à cette recherche.</p>
+    </div>
+{% else %}
+    <p class="ds-text-muted">Aucun article pour le moment.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'courses/js/inventaire-filtre.js' %}"></script>
+    <script src="{% static 'courses/js/inventaire-steppers.js' %}"></script>
+{% endblock %}
