@@ -35,7 +35,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "django-debug-toolbar==7.1.1",
-    "coverage==7.15.4",
+    "coverage==7.16.0",
     "pyright",
     "ruff",
     "pre-commit",
