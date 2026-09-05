@@ -38,3 +38,10 @@ docs/courses/example-mail.html
 # Canvas de maquettes publié : ~2 Mo d'éditeur embarqué, régénérable à tout moment
 # depuis les .dc.html voisins (cf. docs/courses/conception.md §6.4).
 docs/courses/maquettes/liste-courses-partagee.html
+
+# Inventaire réel du foyer (export du POC + seed dérivé) : prénoms des membres,
+# composition du foyer, produits d'hygiène intime — hors dépôt public. Le seed
+# versionné (seed-poc.json) est un échantillon générique ; le vrai fichier se
+# dépose sur le serveur et se passe à `seed_foyer --fichier`.
+docs/courses/inventaire-courses.json
+docs/courses/seed-foyer-*.json

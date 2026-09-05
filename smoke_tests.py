@@ -16,8 +16,10 @@ Lancer : python manage.py test smoke_tests
 """
 
 import json
+import tempfile
 from datetime import timedelta
 from decimal import Decimal
+from pathlib import Path
 from unittest import mock
 
 from django.conf import settings
@@ -381,17 +383,108 @@ class SeedFoyerCommandTest(TestCase):
 
     def setUp(self):
         self.foyer = Foyer.objects.create(nom="Foyer seed test")
+        self.dossier = tempfile.TemporaryDirectory()
+        self.addCleanup(self.dossier.cleanup)
+
+    def _articles_du_seed(self):
+        chemin = Path(__file__).resolve().parent / "docs" / "courses" / "seed-poc.json"
+        return json.loads(chemin.read_text(encoding="utf-8"))["articles"]
 
     def test_seed_foyer_charge_le_poc(self):
+        attendu = len(self._articles_du_seed())
         call_command("seed_foyer", self.foyer.slug)
         self.assertEqual(Rayon.objects.filter(foyer=self.foyer).count(), 10)
-        self.assertEqual(Article.objects.filter(foyer=self.foyer).count(), 49)
+        self.assertEqual(Article.objects.filter(foyer=self.foyer).count(), attendu)
 
     def test_seed_foyer_idempotent(self):
+        attendu = len(self._articles_du_seed())
         call_command("seed_foyer", self.foyer.slug)
         call_command("seed_foyer", self.foyer.slug)
         self.assertEqual(Rayon.objects.filter(foyer=self.foyer).count(), 10)
-        self.assertEqual(Article.objects.filter(foyer=self.foyer).count(), 49)
+        self.assertEqual(Article.objects.filter(foyer=self.foyer).count(), attendu)
+
+    def _fichier_temporaire(self, data):
+        chemin = Path(self.dossier.name) / "seed.json"
+        chemin.write_text(json.dumps(data), encoding="utf-8")
+        return str(chemin)
+
+    def test_seed_foyer_fichier_personnalise(self):
+        """
+        L'inventaire réel d'un foyer reste hors du dépôt public : il se dépose sur le
+        serveur et se passe en argument. Le JSON versionné n'est qu'un échantillon.
+        """
+        chemin = self._fichier_temporaire(
+            {
+                "rayons": [{"nom": "Cave", "ordre": 1}],
+                "articles": [
+                    {
+                        "nom": "Vin de garde",
+                        "rayon": "Cave",
+                        "unite": "unite",
+                        "conditionnement": 6,
+                        "stock_cible": 12,
+                        "stock_reference": 3,
+                    }
+                ],
+            }
+        )
+        call_command("seed_foyer", self.foyer.slug, fichier=chemin)
+        self.assertEqual(Article.objects.filter(foyer=self.foyer).count(), 1)
+        article = Article.objects.get(foyer=self.foyer, nom="Vin de garde")
+        self.assertEqual(article.rayon.nom, "Cave")
+        self.assertEqual(article.stock_cible, Decimal(12))
+
+    def test_seed_foyer_refuse_les_doublons(self):
+        """
+        `get_or_create` porte sur (foyer, nom) : deux articles homonymes seraient fusionnés
+        en silence — c'est le cas de « Steak haché », présent à la fois en Boucherie et en
+        Surgelés dans l'export du POC. La commande doit refuser plutôt qu'en perdre un.
+        """
+        chemin = self._fichier_temporaire(
+            {
+                "rayons": [
+                    {"nom": "Boucherie", "ordre": 1},
+                    {"nom": "Surgelés", "ordre": 2},
+                ],
+                "articles": [
+                    {"nom": "Steak haché", "rayon": "Boucherie"},
+                    {"nom": "Steak haché", "rayon": "Surgelés"},
+                ],
+            }
+        )
+        with self.assertRaises(CommandError) as ctx:
+            call_command("seed_foyer", self.foyer.slug, fichier=chemin)
+        self.assertIn("Steak haché", str(ctx.exception))
+        self.assertFalse(Article.objects.filter(foyer=self.foyer).exists())
+
+    def test_seed_foyer_refuse_un_rayon_non_declare(self):
+        chemin = self._fichier_temporaire(
+            {
+                "rayons": [{"nom": "Cave", "ordre": 1}],
+                "articles": [{"nom": "Pain", "rayon": "Boulangerie"}],
+            }
+        )
+        with self.assertRaises(CommandError) as ctx:
+            call_command("seed_foyer", self.foyer.slug, fichier=chemin)
+        self.assertIn("Boulangerie", str(ctx.exception))
+
+    def test_seed_foyer_fichier_introuvable(self):
+        with self.assertRaises(CommandError):
+            call_command("seed_foyer", self.foyer.slug, fichier="/introuvable.json")
+
+    def test_seed_foyer_charge_le_want_et_le_have(self):
+        """Sans `stock_cible`, le besoin resterait nul et « À acheter » vide après le seed."""
+        call_command("seed_foyer", self.foyer.slug)
+        source = {a["nom"]: a for a in self._articles_du_seed()}
+        for nom in ("Bananes", "Farine"):
+            article = Article.objects.get(foyer=self.foyer, nom=nom)
+            self.assertEqual(article.stock_cible, Decimal(source[nom]["stock_cible"]))
+            self.assertEqual(
+                article.stock_reference, Decimal(source[nom]["stock_reference"])
+            )
+        self.assertTrue(
+            Article.objects.filter(foyer=self.foyer, stock_cible__gt=0).exists()
+        )
 
     def test_seed_foyer_charge_les_unites_de_consommation(self):
         """L'unité est celle dont une recette parle (§10.3), pas l'unité d'achat."""
