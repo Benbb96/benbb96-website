@@ -892,6 +892,68 @@ class CoursesViewsSmokeTest(TestCase):
             url(view_name, *args), data or {}, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
         )
 
+    def test_toggle_ligne_ajax_renvoie_la_rangee_re_rendue(self):
+        """
+        Retour utilisateur : cocher rechargeait la page et renvoyait en haut de la liste.
+        La rangée est re-rendue côté serveur parce que cocher fait apparaître le champ
+        quantité et le bouton « Pas trouvé » — c'est structurel, pas un basculement de classe.
+        """
+        self.client.get(url("courses:a-acheter", self.foyer.slug))
+        sortie = self._sortie_par_defaut()
+        r = self._post_ajax(
+            "courses:toggle-ligne",
+            self.foyer.slug,
+            sortie.pk,
+            self.article.pk,
+            data={"quantite": "3"},
+        )
+        self.assertEqual(r.status_code, 200)
+        html = r.json()["html"]
+        self.assertIn(f'id="ligne-{self.article.pk}"', html)
+        self.assertIn("is-checked", html)
+        # Les contrôles qui n'existent que sur une ligne créée doivent être arrivés.
+        self.assertIn("courses-qte-input", html)
+
+        r = self._post_ajax(
+            "courses:toggle-ligne", self.foyer.slug, sortie.pk, self.article.pk
+        )
+        self.assertNotIn("is-checked", r.json()["html"])
+
+    def test_toggle_ligne_ajax_demande_un_rechargement_si_conflit(self):
+        """§5.1 : l'avertissement de fusion douce n'existe qu'au rendu complet."""
+        self.client.get(url("courses:a-acheter", self.foyer.slug))
+        sortie_defaut = self._sortie_par_defaut()
+        apero = Sortie.objects.create(
+            foyer=self.foyer, nom="Apéro", cree_par=self.profil
+        )
+        self.client.post(
+            url("courses:toggle-ligne", self.foyer.slug, apero.pk, self.article.pk)
+        )
+        r = self._post_ajax(
+            "courses:toggle-ligne", self.foyer.slug, sortie_defaut.pk, self.article.pk
+        )
+        self.assertEqual(r.json(), {"recharger": True})
+
+    def test_actions_acheter_ancrent_la_redirection_sans_ajax(self):
+        """Repli natif : sans JS, la redirection doit au moins revenir sur la rangée."""
+        self.client.get(url("courses:a-acheter", self.foyer.slug))
+        sortie = self._sortie_par_defaut()
+        r = self.client.post(
+            url("courses:toggle-ligne", self.foyer.slug, sortie.pk, self.article.pk)
+        )
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(
+            r["Location"].endswith(f"#ligne-{self.article.pk}"), r["Location"]
+        )
+        for vue in ("courses:modifier-quantite-ligne", "courses:toggle-indisponible"):
+            r = self.client.post(
+                url(vue, self.foyer.slug, sortie.pk, self.article.pk), {"quantite": "2"}
+            )
+            self.assertTrue(
+                r["Location"].endswith(f"#ligne-{self.article.pk}"),
+                f"{vue} → {r['Location']}",
+            )
+
     def test_modifier_cible_ajax_renvoie_un_etat_json_sans_rediriger(self):
         """Retour utilisateur : un aller-retour AJAX ne doit pas recharger la page —
         sinon on perd la position de scroll et l'état d'ouverture des autres articles."""

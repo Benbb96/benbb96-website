@@ -9,6 +9,7 @@ from django.db.models.functions import Greatest
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import floatformat
+from django.template.loader import render_to_string
 from django.utils import dateformat, timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
@@ -225,6 +226,10 @@ def toggle_ligne(request, foyer_slug, sortie_id, article_id):
                 )
                 % {"article": article, "sortie": conflit.sortie},
             )
+            if _est_ajax(request):
+                # Le message ne s'affiche qu'au rendu complet : on demande un rechargement
+                # plutôt que de mettre à jour une rangée en taisant l'avertissement.
+                return JsonResponse({"recharger": True})
         else:
             quantite = _decimal(request.POST.get("quantite"), Decimal(1)) or Decimal(1)
             Ligne.objects.create(
@@ -238,7 +243,7 @@ def toggle_ligne(request, foyer_slug, sortie_id, article_id):
                 else Ligne.Origine.MANUEL,
             )
 
-    return _redirect_vers_acheter(request, foyer, sortie)
+    return _reponse_ligne(request, foyer, sortie, article)
 
 
 @login_required
@@ -257,7 +262,7 @@ def modifier_quantite_ligne(request, foyer_slug, sortie_id, article_id):
     if quantite is not None and quantite >= 0:
         ligne.quantite = quantite
         ligne.save(update_fields=["quantite", "modifie_le"])
-    return _redirect_vers_acheter(request, foyer, sortie)
+    return _reponse_ligne(request, foyer, sortie, ligne.article)
 
 
 @login_required
@@ -271,14 +276,56 @@ def toggle_indisponible(request, foyer_slug, sortie_id, article_id):
     if not ligne.cochee_le:  # « acheté » gagne toujours (§5)
         ligne.indisponible_le = None if ligne.indisponible_le else timezone.now()
         ligne.save(update_fields=["indisponible_le", "modifie_le"])
-    return _redirect_vers_acheter(request, foyer, sortie)
+    return _reponse_ligne(request, foyer, sortie, ligne.article)
 
 
-def _redirect_vers_acheter(request, foyer, sortie):
+def _reponse_ligne(request, foyer, sortie, article):
+    """
+    Réponse commune aux trois actions de « À acheter ».
+
+    En AJAX : la rangée re-rendue, que le JS substitue en place. Cocher un article y
+    fait apparaître le champ quantité et le bouton « Pas trouvé » — c'est structurel,
+    donc on renvoie le HTML du partiel plutôt que des champs à recomposer côté client.
+    Sinon : redirection classique, avec une ancre sur la rangée pour ne pas renvoyer
+    l'utilisateur en haut d'une liste qui fait plusieurs écrans.
+    """
+    if _est_ajax(request):
+        return JsonResponse({"html": _rendu_rangee(request, foyer, sortie, article)})
+
     url = _url_acheter(foyer)
     if sortie.nom:
         url = f"{url}?sortie={sortie.pk}"
-    return redirect(request.META.get("HTTP_REFERER") or url)
+    cible = request.META.get("HTTP_REFERER") or url
+    return redirect(f"{cible.split('#')[0]}#ligne-{article.pk}")
+
+
+def _rendu_rangee(request, foyer, sortie, article):
+    ligne = Ligne.objects.filter(sortie=sortie, article=article).first()
+    article = Article.objects.avec_besoin().get(pk=article.pk)
+    # `sortie.nom` vide = vue « Tout ce qui manque » : c'est la seule où la quantité
+    # proposée vient du besoin calculé et où les demandes ponctuelles sont affichées.
+    vue_globale = sortie.nom == ""
+    demandeurs = []
+    if vue_globale:
+        demandeurs = list(
+            DemandePonctuelle.objects.filter(
+                article=article, satisfaite_par__isnull=True
+            ).values_list("profil__user__username", flat=True)
+        )
+    return render_to_string(
+        "courses/_ligne_row.html",
+        {
+            "foyer": foyer,
+            "sortie_pour_actions": sortie,
+            "rangee": {
+                "article": article,
+                "ligne": ligne,
+                "demandeurs": demandeurs,
+                "quantite_defaut": article.besoin if vue_globale else ligne.quantite,
+            },
+        },
+        request=request,
+    )
 
 
 @login_required

@@ -1,5 +1,5 @@
 {% extends 'courses/base_courses.html' %}
-{% load i18n l10n %}
+{% load i18n l10n static %}
 
 {% block acheter_active %} is-active{% endblock %}
 
@@ -48,46 +48,7 @@
             {% endif %}
         </div>
         {% for rangee in groupe.rangees %}
-            <div class="courses-row{% if rangee.ligne.cochee_le %} is-checked{% endif %}">
-                <form method="post" action="{% url 'courses:toggle-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="quantite" value="{{ rangee.quantite_defaut|default:'1'|unlocalize }}">
-                    <button type="submit" class="courses-check{% if rangee.ligne.cochee_le %} is-checked{% endif %}"
-                            aria-label="{% blocktrans with nom=rangee.article.nom %}Marquer « {{ nom }} » comme acheté{% endblocktrans %}">
-                        {% if rangee.ligne.cochee_le %}
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>
-                        {% endif %}
-                    </button>
-                </form>
-
-                <span class="courses-row__nom">{{ rangee.article.nom }}</span>
-
-                {% for demandeur in rangee.demandeurs %}
-                    <span class="courses-row__demandeur" title="{% blocktrans %}Demandé par {{ demandeur }}{% endblocktrans %}">{{ demandeur|slice:":1"|upper }}</span>
-                {% endfor %}
-
-                {% if rangee.ligne %}
-                    <form method="post" action="{% url 'courses:modifier-quantite-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}" class="courses-qte-form">
-                        {% csrf_token %}
-                        <input type="number" step="0.001" min="0" name="quantite"
-                               value="{{ rangee.ligne.quantite|unlocalize }}" class="courses-qte-input"
-                               aria-label="{% blocktrans with nom=rangee.article.nom %}Quantité pour {{ nom }}{% endblocktrans %}">
-                        <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">{% trans "OK" %}</button>
-                    </form>
-                {% elif rangee.article.besoin %}
-                    <span class="ds-badge ds-badge--primary">× {{ rangee.article.besoin|floatformat:"-3" }}</span>
-                {% endif %}
-
-                {% if rangee.ligne and not rangee.ligne.cochee_le %}
-                    <form method="post" action="{% url 'courses:toggle-indisponible' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm"
-                                title="{% trans 'Pas trouvé en rayon' %}">
-                            {% if rangee.ligne.indisponible_le %}✕ {% trans "indisponible" %}{% else %}{% trans "Pas trouvé" %}{% endif %}
-                        </button>
-                    </form>
-                {% endif %}
-            </div>
+            {% include 'courses/_ligne_row.html' %}
         {% endfor %}
     {% endfor %}
 {% else %}
@@ -103,7 +64,7 @@
 {% if nb_total %}
     <div class="ds-cluster ds-cluster--split ds-mt-5">
         <div>
-            <strong>{{ nb_coches }} / {{ nb_total }}</strong> {% trans "dans le panier" %}
+            <strong data-panier-compteur>{{ nb_coches }} / {{ nb_total }}</strong> {% trans "dans le panier" %}
         </div>
         <form method="post" action="{% url 'courses:valider-sortie' foyer.slug sortie_pour_actions.pk %}">
             {% csrf_token %}
@@ -117,4 +78,5 @@
 {% block javascript %}
     {{ block.super }}
     {{ sortie_form.media.js }}
+    <script src="{% static 'courses/js/acheter-lignes.js' %}"></script>
 {% endblock %}
