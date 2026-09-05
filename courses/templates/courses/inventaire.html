@@ -7,7 +7,7 @@
 
 {% trans "Rechercher par nom, rayon ou étiquette" as recherche_label %}
 {% trans "Stock estimé" as stock_estime_label %}
-<div class="ds-cluster ds-cluster--split ds-mb-4">
+<div class="courses-barre">
     <div class="courses-recherche">
         <input type="search" id="courses-filtre" data-filtre-inventaire
                placeholder="{{ recherche_label }}" aria-label="{{ recherche_label }}">
@@ -24,7 +24,7 @@
 {% endif %}
 
 {% if rayons %}
-    <div data-inventaire>
+    <div class="courses-colonnes" data-inventaire>
         {% for groupe in rayons %}
             <div data-rayon-section data-recherche="{{ groupe.recherche }}">
                 <div class="courses-rayon">

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 22:53+0200\n"
+"POT-Creation-Date: 2026-09-05 23:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -243,28 +243,33 @@ msgstr ""
 
 #: courses/templates/courses/_ligne_row.html:21
 #, python-format
+msgid "Ajuster « %(nom)s » dans l'inventaire"
+msgstr ""
+
+#: courses/templates/courses/_ligne_row.html:24
+#, python-format
 msgid "Demandé par %(demandeur)s"
 msgstr ""
 
-#: courses/templates/courses/_ligne_row.html:31
+#: courses/templates/courses/_ligne_row.html:34
 #, python-format
 msgid "Quantité pour %(nom)s"
 msgstr ""
 
-#: courses/templates/courses/_ligne_row.html:32
+#: courses/templates/courses/_ligne_row.html:35
 #: templates/admin/base_site.html:24 templates/navbar.html:69
 msgid "OK"
 msgstr "Ok"
 
-#: courses/templates/courses/_ligne_row.html:42
+#: courses/templates/courses/_ligne_row.html:45
 msgid "Pas trouvé en rayon"
 msgstr ""
 
-#: courses/templates/courses/_ligne_row.html:43
+#: courses/templates/courses/_ligne_row.html:46
 msgid "indisponible"
 msgstr ""
 
-#: courses/templates/courses/_ligne_row.html:43
+#: courses/templates/courses/_ligne_row.html:46
 msgid "Pas trouvé"
 msgstr ""
 

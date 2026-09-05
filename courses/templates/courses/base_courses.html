@@ -2,6 +2,7 @@
 {% load i18n static %}
 
 {% block navbar %}{% include 'navbar.html' with courses=True %}{% endblock %}
+{% block content_class %}content--wide{% endblock %}
 
 {% block title %}{% block courses_title %}{% trans "Courses" %}{% endblock %} · {{ foyer.nom }}{% endblock %}
 
@@ -34,7 +35,7 @@
         </ul>
     </div>
 
-    <div class="ds-narrow ds-narrow--lg">
+    <div class="courses-page">
         {% block courses_content %}{% endblock %}
     </div>
 {% endblock %}

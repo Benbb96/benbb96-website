@@ -15,7 +15,10 @@
         </button>
     </form>
 
-    <span class="courses-row__nom">{{ rangee.article.nom }}</span>
+    {# Vers la fiche dépliée : c'est là que se corrigent la cible et le stock. #}
+    <a class="courses-row__nom"
+       href="{% url 'courses:inventaire' foyer.slug %}?ouvert={{ rangee.article.pk }}#a-{{ rangee.article.pk }}"
+       title="{% blocktrans with nom=rangee.article.nom %}Ajuster « {{ nom }} » dans l'inventaire{% endblocktrans %}">{{ rangee.article.nom }}</a>
 
     {% for demandeur in rangee.demandeurs %}
         <span class="courses-row__demandeur" title="{% blocktrans %}Demandé par {{ demandeur }}{% endblocktrans %}">{{ demandeur|slice:":1"|upper }}</span>
