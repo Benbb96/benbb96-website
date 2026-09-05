@@ -1,5 +1,9 @@
+import logging
+
+from anymail.exceptions import AnymailError
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, update_session_auth_hash
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
@@ -10,6 +14,34 @@ from django.views.generic import DetailView, ListView
 
 from base.forms import ProfilForm, SignUpForm
 from base.models import Profil, Projet
+
+logger = logging.getLogger(__name__)
+
+# Panne d'envoi, réseau compris. `AnymailRequestsAPIError` hérite d'`OSError`
+# via requests, mais pas les autres `AnymailError` — d'où le couple. Pas de
+# `Exception` : une erreur de template doit continuer à remonter.
+ERREURS_ENVOI = (OSError, AnymailError)
+
+
+class ResilientPasswordResetView(auth_views.PasswordResetView):
+    """Réinitialisation qui affiche une erreur au lieu d'une 500 si l'ESP tombe.
+
+    L'erreur n'apparaît que pour une adresse rattachée à un compte actif, seul
+    cas où Django envoie — pas de régression d'énumération, la 500 d'origine
+    donnait le même signal.
+    """
+
+    def form_valid(self, form):
+        try:
+            return super().form_valid(form)
+        except ERREURS_ENVOI:
+            logger.exception("Échec de l'envoi de l'e-mail de réinitialisation")
+            form.add_error(
+                None,
+                "L'envoi des e-mails est momentanément indisponible. "
+                "Merci de réessayer dans quelques minutes.",
+            )
+            return self.form_invalid(form)
 
 
 def signup(request):
@@ -25,6 +57,8 @@ def signup(request):
         mail_admins(
             "Nouveau compte créé !",
             f"{username} vient de se créer un compte sur mon site : https://www.benbb96.com{user.profil.get_absolute_url()}",
+            # Compte déjà créé : une panne de l'ESP ne doit pas le faire perdre.
+            fail_silently=True,
         )
         return redirect("base:home")
     return render(request, "registration/signup.html", {"form": form})

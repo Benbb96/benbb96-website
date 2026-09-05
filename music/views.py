@@ -360,6 +360,8 @@ class MusiqueDetailView(FormMixin, DetailView):
                     f'Le lien "{lien.url}" a été proposé pour la musique {self.object} que tu as ajouté. Tu peux valider le lien ici : {current_site.domain}{self.object.get_absolute_url()}',
                     "noreply@benbb96.com",
                     [self.object.createur.user.email],
+                    # Ne doit pas empêcher le `lien.save()` qui suit.
+                    fail_silently=True,
                 )
         lien.save()
         messages.success(self.request, "Le lien a bien été ajouté.")

@@ -37,19 +37,16 @@ GS_LOCATION = "media"
 GS_DEFAULT_ACL = "publicRead"
 GS_QUERYSTRING_AUTH = False
 
-# staticfiles : WhiteNoise hashe les noms de fichiers (manifest) et pré-compresse
-# en gzip + brotli à collectstatic, ce qui permet de servir /static/ en
-# `Cache-Control: max-age=315360000, public, immutable`.
+# staticfiles : WhiteNoise hashe les noms (manifest) et pré-compresse à
+# collectstatic → /static/ servi en `immutable`.
 #
-# Deux prérequis vivent côté PythonAnywhere, hors dépôt — si l'un des deux saute,
-# le site se retrouve sans CSS parce que le HTML réclame des noms hashés :
-#
-# 1. Le mapping statique /static/ du Web tab doit être SUPPRIMÉ, sinon nginx
-#    intercepte les requêtes en amont et WhiteNoise ne les voit jamais.
-# 2. /var/www/www_benbb96_com_wsgi.py doit exposer `get_wsgi_application()` NU.
-#    Il enveloppait l'app dans un `StaticFilesHandler`, qui capte /static/ avant
-#    la pile de middlewares et sert via les finders (donc depuis assets/, où les
-#    noms hashés n'existent pas) : tous les fichiers hashés partaient en 404.
+# Deux prérequis hors dépôt, sur PythonAnywhere ; si l'un saute, le site perd son
+# CSS (les noms hashés réclamés par le HTML partent en 404) :
+# 1. le mapping /static/ du Web tab doit rester SUPPRIMÉ — sinon nginx passe
+#    devant WhiteNoise ;
+# 2. /var/www/www_benbb96_com_wsgi.py doit exposer `get_wsgi_application()` NU —
+#    un `StaticFilesHandler` sert depuis assets/, où les noms hashés n'existent
+#    pas.
 STORAGES = {
     "default": {"BACKEND": "storages.backends.gcloud.GoogleCloudStorage"},
     "staticfiles": {
@@ -81,3 +78,19 @@ ANYMAIL = {
     "MAILGUN_API_KEY": get_secret_setting("ACCESS-KEY"),
     "MAILGUN_SENDER_DOMAIN": get_secret_setting("SERVER-NAME"),
 }
+
+# Supervision des erreurs. Canal volontairement indépendant de l'e-mail :
+# `mail_admins` seul devient aveugle quand l'ESP tombe, et aggrave la panne
+# (cf. config/log.py). Il reste actif en second canal. Secret optionnel.
+SENTRY_DSN = get_secret_setting("SENTRY_DSN", default="")
+if SENTRY_DSN:
+    import sentry_sdk  # noqa: E402
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        environment="production",
+        # Erreurs uniquement : le tracing brûlerait le quota gratuit.
+        traces_sample_rate=0.0,
+        # RGPD : ni IP ni e-mail dans les événements (cf. page de confidentialité).
+        send_default_pii=False,
+    )

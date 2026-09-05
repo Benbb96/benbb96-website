@@ -11,20 +11,25 @@ Filet de sécurité de non-régression. Couvre :
   6. Validité des `profil_lookup` des admins scopés (base.admin.ProfilScopedAdmin)
   7. Squelette de l'app courses (phase 0) : modèles, calculs et seed_foyer
   8. Vues de l'app courses (phase 1) : annotation de besoin, À acheter / Inventaire / Historique
+  9. Robustesse du canal d'alerte : l'échec d'envoi du mail d'erreur ne remonte pas
+  10. Résilience des vues qui envoient un e-mail (reset de mot de passe)
 
 Lancer : python manage.py test smoke_tests
 """
 
 import json
+import logging
 import tempfile
 from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 from unittest import mock
 
+from anymail.exceptions import AnymailError
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.core import mail
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import IntegrityError, transaction
@@ -33,6 +38,7 @@ from django.utils import timezone, translation
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from config.log import SafeAdminEmailHandler
 from courses.models import (
     Article,
     DemandePonctuelle,
@@ -1107,3 +1113,138 @@ class CoursesViewsSmokeTest(TestCase):
         self.assertEqual(MouvementStock.objects.count(), nb_mouvements_avant)
         sortie.refresh_from_db()
         self.assertIsNotNone(sortie.cloture_le)
+
+
+# ---------------------------------------------------------------------------
+# 9. Robustesse du canal d'alerte
+# ---------------------------------------------------------------------------
+
+
+class AdminEmailHandlerFailureTest(TestCase):
+    """
+    Le handler qui signale les erreurs ne doit jamais pouvoir en créer une.
+
+    Régression du 2026-09-05 : ESP en panne, `AdminEmailHandler` laissait
+    remonter l'échec, donc chaque 500 levait depuis le handler de logging, hors
+    de la pile Django. Piège réarmable : c'est le passage aux MAILERS qui a fait
+    perdre le `fail_silently=True` de l'ancien chemin.
+    """
+
+    def _record(self):
+        return logging.LogRecord(
+            name="django.request",
+            level=logging.ERROR,
+            pathname=__file__,
+            lineno=1,
+            msg="Internal Server Error: /",
+            args=(),
+            exc_info=None,
+        )
+
+    def test_echec_envoi_ne_remonte_pas(self):
+        handler = SafeAdminEmailHandler()
+        handler.handleError = mock.Mock()
+        with mock.patch(
+            "django.core.mail.mail_admins", side_effect=OSError("Mailgun 403")
+        ):
+            handler.emit(self._record())  # ne doit pas lever
+        # Pas avalé en silence pour autant : ça part sur stderr.
+        handler.handleError.assert_called_once()
+
+    def test_envoi_nominal_toujours_effectue(self):
+        """Le filet ne doit pas masquer le cas passant."""
+        handler = SafeAdminEmailHandler()
+        with mock.patch("django.core.mail.mail_admins") as envoi:
+            handler.emit(self._record())
+        envoi.assert_called_once()
+
+    def test_handler_cable_dans_les_settings(self):
+        """Sans ce câblage, le durcissement ne sert à rien en prod."""
+        self.assertEqual(
+            settings.LOGGING["handlers"]["mail_admins"]["class"],
+            "config.log.SafeAdminEmailHandler",
+        )
+
+
+# ---------------------------------------------------------------------------
+# 10. Résilience des vues qui envoient un e-mail
+# ---------------------------------------------------------------------------
+
+
+class PasswordResetResilienceTest(TestCase):
+    """
+    Une panne de l'ESP ne doit pas se traduire par une 500 (incident du
+    2026-09-05 : Mailgun en 403, reset de mot de passe cassé).
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            "conjointe", "conjointe@example.com", "motdepasse"
+        )
+        self.url = url("password_reset")
+
+    def _post(self, email="conjointe@example.com"):
+        return self.client.post(self.url, {"email": email})
+
+    def test_nominal_redirige_et_envoie(self):
+        """Le cas passant n'est pas altéré par le filet."""
+        r = self._post()
+        self.assertRedirects(r, url("password_reset_done"))
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_panne_esp_affiche_une_erreur_au_lieu_de_500(self):
+        with (
+            mock.patch(
+                "django.contrib.auth.forms.PasswordResetForm.send_mail",
+                side_effect=AnymailError("Mailgun 403"),
+            ),
+            self.assertLogs("base.views", "ERROR") as logs,
+        ):
+            r = self._post()
+        # C'est ce log qui alimente Sentry.
+        self.assertIn("Échec de l'envoi", logs.output[0])
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "momentanément indisponible")
+        self.assertContains(r, "ds-alert--danger")  # erreur non liée à un champ
+
+    def test_panne_reseau_egalement_couverte(self):
+        """Coupure SMTP/socket : l'autre moitié de ERREURS_ENVOI."""
+        with (
+            mock.patch(
+                "django.contrib.auth.forms.PasswordResetForm.send_mail",
+                side_effect=OSError("Connection refused"),
+            ),
+            self.assertLogs("base.views", "ERROR"),
+        ):
+            r = self._post()
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "momentanément indisponible")
+
+    def test_adresse_inconnue_reste_indiscernable(self):
+        """Sans compte, aucun envoi : la réponse reste celle du cas nominal."""
+        with mock.patch(
+            "django.contrib.auth.forms.PasswordResetForm.send_mail",
+            side_effect=AnymailError("Mailgun 403"),
+        ):
+            r = self._post(email="inconnu@example.com")
+        self.assertRedirects(r, url("password_reset_done"))
+
+    def test_admins_prevenus_sans_risque_a_l_inscription(self):
+        """
+        `signup()` prévient les admins après avoir créé le compte : sans
+        `fail_silently`, une panne transforme une inscription réussie en 500.
+        Anymail honore le drapeau, d'où le simple contrôle de l'appel.
+        """
+        with mock.patch("base.views.mail_admins") as prevenir:
+            r = self.client.post(
+                url("base:signup"),
+                {
+                    "username": "nouveau",
+                    "email": "nouveau@example.com",
+                    "password1": "MotDePasseTresSolide42",
+                    "password2": "MotDePasseTresSolide42",
+                },
+            )
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(User.objects.filter(username="nouveau").exists())
+        self.assertTrue(prevenir.call_args.kwargs["fail_silently"])

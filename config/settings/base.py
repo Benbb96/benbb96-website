@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import timedelta
+from typing import Any
 
 import soundcloud
 import spotipy
@@ -15,16 +16,23 @@ with open(os.path.join(BASE_DIR, "secrets.json")) as f:
     secrets = json.loads(f.read())
 
 
-def get_secret_setting(setting, json_conf=secrets):
+# Sentinelle : distingue « pas de défaut » de « défaut à None/"" ».
+_REQUIRED = object()
+
+
+def get_secret_setting(setting, json_conf=secrets, default=_REQUIRED) -> Any:
+    """Lit un secret de `secrets.json`. Un `default` le rend optionnel."""
     try:
         val = json_conf[setting]
-        if val == "True":
-            val = True
-        elif val == "False":
-            val = False
-        return val
     except KeyError:
+        if default is not _REQUIRED:
+            return default
         raise ImproperlyConfigured(f"Set the {setting} setting") from None
+    if val == "True":
+        val = True
+    elif val == "False":
+        val = False
+    return val
 
 
 # Application definition
@@ -223,16 +231,57 @@ MAILERS = {
     },
 }
 
-ADMINS = [("Benbb96", "benbb96@gmail.com")]
+# Le format (nom, e-mail) est déprécié (RemovedInDjango70Warning).
+ADMINS = ["benbb96@gmail.com"]
 
-# Adresse de contact publiée sur les pages légales (et point d'entrée pour
-# l'exercice des droits RGPD) : dérivée d'ADMINS pour n'avoir qu'un seul endroit
-# à modifier. ADMINS accepte deux formats — l'e-mail seul, ou le couple
-# (nom, e-mail) — d'où le test : sur une chaîne, ADMINS[0][1] renverrait
-# silencieusement une lettre, et c'est une valeur qui s'affiche en public.
-CONTACT_EMAIL = ADMINS[0] if isinstance(ADMINS[0], str) else ADMINS[0][1]
+# Contact publié sur les pages légales (droits RGPD) : dérivé d'ADMINS pour
+# n'avoir qu'un seul endroit à modifier.
+CONTACT_EMAIL = ADMINS[0]
 EMAIL_SUBJECT_PREFIX = "[Benbb96] "
 DEFAULT_FROM_EMAIL = "webmaster@benbb96.com"
 SERVER_EMAIL = "benbb96@benbb96.com"
+
+# `DEFAULT_LOGGING` de Django, au handler `mail_admins` près (cf. config/log.py).
+# À recopier en entier : Django ne fusionne pas, il enchaîne deux `dictConfig()`.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
+        "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
+    },
+    "formatters": {
+        "django.server": {
+            "()": "django.utils.log.ServerFormatter",
+            "format": "[{server_time}] {message}",
+            "style": "{",
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+        },
+        "django.server": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "django.server",
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "config.log.SafeAdminEmailHandler",
+        },
+    },
+    "loggers": {
+        "django": {"handlers": ["console", "mail_admins"], "level": "INFO"},
+        "django.server": {
+            "handlers": ["django.server"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 1500

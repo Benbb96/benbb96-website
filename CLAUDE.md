@@ -25,6 +25,10 @@ Un `secrets.json` à la racine est **obligatoire** même en dev (lu au chargemen
 `config/settings/base.py`) : `SECRET_KEY`, `GOOGLE_API_KEY`, `SOUNDCLOUD_CLIENT_ID`,
 `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`…
 
+`get_secret_setting(nom)` lève `ImproperlyConfigured` si la clé manque ; passer `default=` rend le
+secret **optionnel** (cas de `SENTRY_DSN`, prod uniquement — sans lui le site démarre simplement
+sans supervision).
+
 ### Tests
 
 Les `<app>/tests.py` sont des stubs vides. **Toute la suite est dans `smoke_tests.py`** à la racine
@@ -152,6 +156,20 @@ vendorisé dans `assets/js/` (Tom Select, Chart.js v4, minifiés). `assets/` est
 (`kendama/static/kendama/css/paper.css`, polices manuscrites, bordures ondulées, modales en
 checkbox-hack CSS). **Elle doit rester visuellement identique** — pas de dark mode, pas de `.ds-*`,
 pas de réécriture de son JS. Contrat détaillé dans `docs/kendama-a-preserver.md`.
+
+## Supervision des erreurs
+
+Deux canaux, volontairement indépendants :
+
+- **Sentry** (`sentry_sdk.init()` dans `config/settings/prod.py`) — canal principal. DSN dans
+  `secrets.json` sous `SENTRY_DSN`. Tracing désactivé (`traces_sample_rate=0.0`) et
+  `send_default_pii=False` (RGPD, cohérent avec la page de confidentialité).
+- **`mail_admins`** — second canal, via `config.log.SafeAdminEmailHandler` câblé dans `LOGGING`
+  (`config/settings/base.py`).
+
+⚠️ **Ne jamais remettre `django.utils.log.AdminEmailHandler` nu.** Depuis les MAILERS il laisse
+remonter ses échecs d'envoi : ESP en panne, chaque 500 lève depuis le handler de logging, hors de la
+pile Django (« Error running WSGI application »). Couvert par `smoke_tests`.
 
 ## Dépendances
 
