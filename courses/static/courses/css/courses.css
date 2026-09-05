@@ -2,8 +2,8 @@
    Courses — styles spécifiques (liste de courses partagée, conception.md)
    ============================================================================= */
 
-/* ── Case à cocher « acheté » : un <button> stylé, pas un <input type=checkbox> —
-   ainsi la ligne entière (case + nom + badge) est un seul <form> POST, sans JS. */
+/* ── Case à cocher « acheté » : un carré stylé dans un <button>, pas un
+   <input type=checkbox> — la case et le nom forment un seul submit, sans JS. */
 .courses-check {
     display: flex;
     align-items: center;
@@ -18,6 +18,21 @@
     padding: 0;
 }
 .courses-check svg { width: 1rem; height: 1rem; }
+/* La cible de tap couvre case + nom : viser un carré de 1.6rem en marchant est pénible. */
+.courses-row__toggle { flex: 1 1 auto; min-width: 0; }
+.courses-row__cible {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-3);
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
 .courses-check.is-checked {
     background: var(--ds-success);
     border-color: var(--ds-success);
@@ -41,38 +56,49 @@
    navbar et la barre de filtre, toutes deux collantes. */
 .courses-row,
 .courses-article { scroll-margin-top: calc(var(--ds-nav-h) + 4rem); }
-/* Lien vers la fiche d'inventaire. `min-width: 0` : sans lui, un nom long refuse de
-   se réduire (min-width auto d'un flex item) et pousse les actions hors de l'écran. Couleur héritée : un lien coloré sur chaque ligne
-   ferait un sapin de Noël, et le jaune de marque ne passe pas en texte (main.css). */
-.courses-row__nom {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: 1.05rem;
-    color: inherit;
-    text-decoration: none;
-}
-.courses-row__nom:hover { text-decoration: underline; }
+/* `min-width: 0` : sans lui, un nom long refuse de se réduire (min-width auto d'un
+   flex item) et pousse les actions hors de l'écran. */
+.courses-row__nom { flex: 1 1 auto; min-width: 0; font-size: 1.05rem; }
 .courses-row.is-checked .courses-row__nom {
     color: var(--ds-text-muted);
     text-decoration: line-through;
 }
 .courses-row form { display: flex; align-items: center; }
+
+/* Icône vers la fiche d'inventaire : discrète tant qu'on ne la vise pas, le nom
+   servant maintenant à cocher. */
+.courses-row__fiche {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--ds-radius-sm);
+    color: var(--ds-text-muted);
+}
+.courses-row__fiche svg { width: 1.1rem; height: 1.1rem; }
+/* Le groupe d'actions est en `stretch` pour aligner les hauteurs de champ. */
+.courses-row__actions .courses-row__fiche { align-self: center; }
+.courses-row__fiche:hover { background: var(--ds-surface-alt); color: var(--ds-text); }
+
+/* `stretch` : le bouton « Pas trouvé » prend la hauteur du champ quantité, sinon les
+   deux blocs voisins ne s'alignent pas. */
 .courses-row__actions {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: var(--ds-space-2);
     margin-left: auto;
 }
+.courses-row__actions form { align-items: stretch; }
+.courses-row__actions .ds-badge { align-self: center; }
 
-/* Quantité éditable une fois la Ligne créée — remplace le badge statique.
-   `max-width` et non `width` : main.css pose `width: 100%` en (0,8,1), imbattable
-   par une classe. Le plafond s'applique sans lutter contre la cascade. */
-.courses-qte-form { gap: var(--ds-space-2); flex: none; }
-.courses-qte-input {
-    max-width: 4.5rem;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-}
+/* Quantité éditable une fois la Ligne créée — remplace le badge statique. Accolée
+   au bouton via .ds-input-group, qui aplatit les coins mitoyens : deux boîtes
+   séparées ne diraient pas qu'elles vont ensemble. La largeur est portée par le
+   formulaire, l'input s'y étirant (.ds-input-group > input est en flex: 1 1 auto). */
+.courses-qte-form { flex: none; width: 10rem; }
+.courses-qte-input { text-align: center; font-variant-numeric: tabular-nums; }
 
 /* Écran étroit : les actions passent sous le nom (case + gap = 1.6rem + space-3). */
 @media (max-width: 34rem) {
@@ -119,7 +145,14 @@
     white-space: nowrap;
     cursor: pointer;
 }
-.courses-barre__masquer input { cursor: pointer; }
+/* `accent-color` : la case native reprend le jaune de marque sans réimplémenter
+   un faux checkbox (focus, clavier et lecteurs d'écran restent ceux du navigateur). */
+.courses-barre__masquer input {
+    cursor: pointer;
+    accent-color: var(--ds-primary);
+    width: 1.05rem;
+    height: 1.05rem;
+}
 
 /* Croix de vidage : le natif de `input[type=search]` n'existe pas sous Firefox.
    `max-width` : sur 1280 px, un champ pleine largeur est disgracieux. */

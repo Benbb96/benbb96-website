@@ -4,21 +4,21 @@
      id="ligne-{{ rangee.article.pk }}" data-ligne-row
      data-recherche="{{ rangee.recherche }}"
      data-cochee="{% if rangee.ligne.cochee_le %}1{% else %}0{% endif %}">
-    <form method="post" action="{% url 'courses:toggle-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
+    {# Case ET nom dans le même submit : la cible de tap fait toute la largeur. #}
+    <form method="post" class="courses-row__toggle"
+          action="{% url 'courses:toggle-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
         {% csrf_token %}
         <input type="hidden" name="quantite" value="{{ rangee.quantite_defaut|default:'1'|unlocalize }}">
-        <button type="submit" class="courses-check{% if rangee.ligne.cochee_le %} is-checked{% endif %}"
+        <button type="submit" class="courses-row__cible"
                 aria-label="{% blocktrans with nom=rangee.article.nom %}Marquer « {{ nom }} » comme acheté{% endblocktrans %}">
-            {% if rangee.ligne.cochee_le %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>
-            {% endif %}
+            <span class="courses-check{% if rangee.ligne.cochee_le %} is-checked{% endif %}">
+                {% if rangee.ligne.cochee_le %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>
+                {% endif %}
+            </span>
+            <span class="courses-row__nom">{{ rangee.article.nom }}</span>
         </button>
     </form>
-
-    {# Vers la fiche dépliée : c'est là que se corrigent la cible et le stock. #}
-    <a class="courses-row__nom"
-       href="{% url 'courses:inventaire' foyer.slug %}?ouvert={{ rangee.article.pk }}#a-{{ rangee.article.pk }}"
-       title="{% blocktrans with nom=rangee.article.nom %}Ajuster « {{ nom }} » dans l'inventaire{% endblocktrans %}">{{ rangee.article.nom }}</a>
 
     {% for demandeur in rangee.demandeurs %}
         <span class="courses-row__demandeur" title="{% blocktrans %}Demandé par {{ demandeur }}{% endblocktrans %}">{{ demandeur|slice:":1"|upper }}</span>
@@ -27,7 +27,8 @@
     {# Groupés pour basculer d'un bloc sur une 2e ligne en écran étroit. #}
     <div class="courses-row__actions{% if rangee.ligne %} courses-row__actions--formulaires{% endif %}">
         {% if rangee.ligne %}
-            <form method="post" action="{% url 'courses:modifier-quantite-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}" class="courses-qte-form">
+            <form method="post" class="courses-qte-form ds-input-group"
+                  action="{% url 'courses:modifier-quantite-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
                 {% csrf_token %}
                 <input type="number" step="0.001" min="0" name="quantite"
                        value="{{ rangee.ligne.quantite|unlocalize }}" class="courses-qte-input"
@@ -41,11 +42,18 @@
         {% if rangee.ligne and not rangee.ligne.cochee_le %}
             <form method="post" action="{% url 'courses:toggle-indisponible' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
                 {% csrf_token %}
-                <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm"
+                <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm courses-row__indispo"
                         title="{% trans 'Pas trouvé en rayon' %}">
                     {% if rangee.ligne.indisponible_le %}✕ {% trans "indisponible" %}{% else %}{% trans "Pas trouvé" %}{% endif %}
                 </button>
             </form>
         {% endif %}
+
+        {# En dernier, donc tout à droite. Le nom, lui, sert à cocher. #}
+        <a class="courses-row__fiche"
+           href="{% url 'courses:inventaire' foyer.slug %}?ouvert={{ rangee.article.pk }}#a-{{ rangee.article.pk }}"
+           title="{% blocktrans with nom=rangee.article.nom %}Ajuster « {{ nom }} » dans l'inventaire{% endblocktrans %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h10M18 18h2"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></svg>
+        </a>
     </div>
 </div>

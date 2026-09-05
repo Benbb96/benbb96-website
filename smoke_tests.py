@@ -641,6 +641,32 @@ class ArticleAnnotationBesoinTest(TestCase):
         self.assertEqual(noms.index(sans_rayon.nom), len(noms) - 1)
 
 
+class TemplateCommentsTest(TestCase):
+    """
+    `{# … #}` ne fonctionne que sur UNE ligne : le lexer de Django compile
+    `{#.*?#}` sans DOTALL, donc un commentaire à cheval sur deux lignes n'est pas
+    reconnu comme un token et sort tel quel dans la page. Ni djLint ni les tests de
+    vue ne le voient — d'où ce garde-fou, la faute ayant déjà été commise deux fois.
+    """
+
+    def test_aucun_commentaire_django_multiligne(self):
+        racine = Path(__file__).resolve().parent
+        fautifs = []
+        for chemin in racine.rglob("*.html"):
+            if ".venv" in chemin.parts or "node_modules" in chemin.parts:
+                continue
+            for numero, ligne in enumerate(
+                chemin.read_text(encoding="utf-8").splitlines(), 1
+            ):
+                if "{#" in ligne and "#}" not in ligne.split("{#", 1)[1]:
+                    fautifs.append(f"{chemin.relative_to(racine)}:{numero}")
+        self.assertEqual(
+            fautifs,
+            [],
+            f"Commentaires {{# #}} multilignes (rendus tels quels) : {fautifs}",
+        )
+
+
 class CoursesViewsSmokeTest(TestCase):
     """Vues serveur de la phase 1 (§11) : À acheter / Inventaire / Historique."""
 
