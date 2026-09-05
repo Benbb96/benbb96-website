@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; }
+    a { color: #1c1912; text-decoration: none; } a:hover { color: #caa100; }
+    .cs {
+      --ds-bg:#f7f5ef; --ds-surface:#ffffff; --ds-surface-alt:#efece1;
+      --ds-text:#1c1912; --ds-text-muted:#5c5646;
+      --ds-border:#e3ddc9; --ds-border-strong:#cabf9e;
+      --ds-primary:#f2c200; --ds-primary-dark:#caa100; --ds-primary-light:#fdf1c7; --ds-primary-ink:#201a08;
+      --ds-secondary:#1c1912;
+      --ds-success:#3f7d4a; --ds-warning:#d9660b; --ds-danger:#c1432c; --ds-info:#2f6f8f;
+    }
+    .cs.theme-dark {
+      --ds-bg:#15130e; --ds-surface:#1d1a13; --ds-surface-alt:#262218;
+      --ds-text:#f3efe3; --ds-text-muted:#b5ad97;
+      --ds-border:#35301f; --ds-border-strong:#4a4328;
+      --ds-primary:#e0ab2c; --ds-primary-dark:#f0c04a; --ds-primary-light:#332a12; --ds-primary-ink:#17130a;
+      --ds-secondary:#0f0d09;
+      --ds-success:#63a86f; --ds-warning:#e2883f; --ds-danger:#e0715a; --ds-info:#5da0c4;
+    }
+  </style>
+</helmet>
+<div class="cs {{themeClass}}" style="min-height: 940px; display: flex; flex-direction: column; background: var(--ds-bg); color: var(--ds-text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 17px; line-height: 1.6;">
+
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--ds-secondary); color: #f3efe3;">
+    <div style="width: 10px; height: 10px; border-radius: 999px; background: var(--ds-primary); flex: none;"></div>
+    <div style="font-size: 15px; font-weight: 600; flex-grow: 1;">Chez nous</div>
+    <div style="font-size: 13px; color: #b5ad97;">32 sorties</div>
+  </div>
+
+  <div style="display: flex; gap: 4px; padding: 8px 16px 0; background: var(--ds-surface); border-bottom: 1px solid var(--ds-border);">
+    <div style="padding: 10px 4px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text-muted);">À acheter</div>
+    <div style="padding: 10px 12px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text-muted);">Inventaire</div>
+    <div style="padding: 10px 12px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text); border-bottom: 2.5px solid var(--ds-primary); margin-bottom: -1px;">Historique</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 16px 16px; flex-grow: 1;">
+
+    <div style="display: flex; align-items: center; gap: 11px; padding: 11px 13px; border: 1px solid var(--ds-primary-dark); border-radius: 12px; background: var(--ds-primary-light); cursor: pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text)" stroke-width="1.8" stroke-linecap="round" style="width: 19px; height: 19px; flex: none;"><path d="M3 5h2.2l2.3 10.5h10L20 8H6"/><circle cx="9.5" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg>
+      <div style="display: flex; flex-direction: column; flex-grow: 1;">
+        <div style="font-size: 17px; font-weight: 600; line-height: 1.35;">Sortie en cours</div>
+        <div style="font-size: 15px; color: var(--ds-text-muted); line-height: 1.35;">Leclerc Lescar · 8 articles · ouverte hier</div>
+      </div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2" stroke-linecap="round" style="width: 15px; height: 15px; flex: none;"><path d="M9 6l6 6-6 6"/></svg>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: center; gap: 9px; height: 46px; border: 1px dashed var(--ds-border-strong); border-radius: 12px; background: var(--ds-surface); cursor: pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text)" stroke-width="1.8" stroke-linecap="round" style="width: 18px; height: 18px; flex: none;"><path d="M4.5 8.5V5.5h3M19.5 8.5V5.5h-3M4.5 15.5v3h3M19.5 15.5v3h-3"/><path d="M8 12h8"/></svg>
+      <div style="font-size: 17px; font-weight: 600;">Importer un ticket ou un drive</div>
+    </div>
+
+    <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ds-text-muted); padding: 6px 2px 0;">Juillet 2026</div>
+
+    <div style="border: 1px solid var(--ds-border); border-radius: 12px; background: var(--ds-surface); overflow: hidden;">
+      <sc-for list="{{sorties}}" as="s" hint-placeholder-count="4">
+        <div style="{{s.blocStyle}}">
+
+          <div onClick="{{s.toggle}}" style="display: flex; align-items: center; gap: 11px; padding: 10px 13px; min-height: 46px; cursor: pointer;">
+            <div style="width: 34px; height: 34px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--ds-surface-alt);">
+              <sc-if value="{{s.estDrive}}" hint-placeholder-val="{{false}}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-info)" stroke-width="1.8" stroke-linecap="round" style="width: 17px; height: 17px;"><path d="M2.5 7.5h11v9h-11z"/><path d="M13.5 11h4l3 3v2.5h-7"/><circle cx="6.5" cy="18.5" r="1.6"/><circle cx="16.5" cy="18.5" r="1.6"/></svg>
+              </sc-if>
+              <sc-if value="{{s.estTicket}}" hint-placeholder-val="{{false}}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-info)" stroke-width="1.8" stroke-linecap="round" style="width: 17px; height: 17px;"><path d="M6 3h12v18l-3-1.8-3 1.8-3-1.8L6 21z"/><path d="M9.5 8h5M9.5 12h5"/></svg>
+              </sc-if>
+              <sc-if value="{{s.estManuel}}" hint-placeholder-val="{{true}}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="1.8" stroke-linecap="round" style="width: 17px; height: 17px;"><path d="M4 20l4-1 10-10-3-3L5 16z"/><path d="M14.5 6.5l3 3"/></svg>
+              </sc-if>
+            </div>
+            <div style="display: flex; flex-direction: column; flex-grow: 1;">
+              <div style="font-size: 17px; font-weight: 600; line-height: 1.35;">{{s.magasin}}</div>
+              <div style="font-size: 15px; color: var(--ds-text-muted); line-height: 1.35;">{{s.detail}}</div>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2" stroke-linecap="round" style="width: 15px; height: 15px; flex: none; transform: {{s.chevron}};"><path d="M9 6l6 6-6 6"/></svg>
+          </div>
+
+          <sc-if value="{{s.ouvert}}" hint-placeholder-val="{{false}}">
+            <div style="padding: 6px 13px 12px; background: var(--ds-surface-alt); border-top: 1px solid var(--ds-border);">
+              <sc-for list="{{s.lignes}}" as="l" hint-placeholder-count="4">
+                <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px dotted var(--ds-border-strong);">
+                  <div style="font-size: 15px; flex-grow: 1;">{{l.nom}}</div>
+                  <div style="font-size: 15px; color: var(--ds-text-muted); font-variant-numeric: tabular-nums;">× {{l.qte}}</div>
+                </div>
+              </sc-for>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 11px;">
+                <div style="font-size: 15px; color: var(--ds-text-muted); flex-grow: 1; line-height: 1.35;">Clôturée par {{s.auteur}}</div>
+                <div style="height: 38px; display: flex; align-items: center; padding: 0 13px; border-radius: 8px; border: 1px solid var(--ds-border-strong); background: var(--ds-surface); font-size: 15px; font-weight: 600; cursor: pointer; flex: none;">Corriger</div>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+      </sc-for>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","options":["clair","sombre"],"default":"clair","section":"Thème"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ouvert: 's1' };
+  }
+
+  base() {
+    return [
+      { id: 's1', magasin: 'Leclerc Lescar', detail: '19 juillet · 23 articles', source: 'manuel', auteur: 'Ben',
+        lignes: [
+          { nom: 'Couches taille 4', qte: 1 },
+          { nom: 'Lait demi-écrémé', qte: 4 },
+          { nom: 'Yaourts nature', qte: 2 },
+          { nom: 'Papier toilette', qte: 1 },
+        ] },
+      { id: 's2', magasin: 'Drive Intermarché', detail: '12 juillet · 31 articles · importée', source: 'drive', auteur: 'Ben',
+        lignes: [{ nom: 'Café', qte: 2 }, { nom: 'Pâtes', qte: 3 }] },
+      { id: 's3', magasin: 'Lidl', detail: '5 juillet · 9 articles', source: 'manuel', auteur: 'Ben',
+        lignes: [{ nom: 'Éponges', qte: 1 }] },
+      { id: 's4', magasin: 'Leclerc Lescar', detail: '28 juin · 27 articles · ticket', source: 'ticket', auteur: 'Ben',
+        lignes: [{ nom: 'Lessive', qte: 1 }, { nom: 'Steak haché', qte: 2 }] },
+    ];
+  }
+
+  renderVals() {
+    const total = this.base().length;
+    const sorties = this.base().map((s, i) => {
+      const ouvert = this.state.ouvert === s.id;
+      return {
+        magasin: s.magasin,
+        detail: s.detail,
+        auteur: s.auteur,
+        lignes: s.lignes,
+        ouvert: ouvert,
+        estDrive: s.source === 'drive',
+        estTicket: s.source === 'ticket',
+        estManuel: s.source === 'manuel',
+        chevron: ouvert ? 'rotate(90deg)' : 'rotate(0deg)',
+        blocStyle: i < total - 1 ? 'border-bottom: 1px solid var(--ds-border);' : '',
+        toggle: () => this.setState({ ouvert: ouvert ? null : s.id }),
+      };
+    });
+    return { themeClass: this.props.theme === 'sombre' ? 'theme-dark' : '', sorties: sorties };
+  }
+}
+</script>
+</body>
+</html>

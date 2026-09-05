@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block navbar %}{% include 'navbar.html' with courses=True %}{% endblock %}
+
+{% block title %}{% block courses_title %}{% trans "Courses" %}{% endblock %} · {{ foyer.nom }}{% endblock %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'courses/css/courses.css' %}">
+{% endblock %}
+
+{% block jumbotron_title %}{{ foyer.nom }}{% endblock %}
+{% block jumbotron_description %}
+    {% trans "Liste de courses partagée du foyer." %}
+    {% if request.user.profil.foyers.count > 1 %}
+        <div class="ds-mt-2">
+            <a href="{% url 'courses:mes-foyers' %}">{% trans "Changer de foyer" %}</a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="ds-narrow ds-narrow--lg">
+        <ul class="ds-tabs ds-tabs--justified">
+            <li class="ds-tabs__item{% block acheter_active %}{% endblock %}">
+                <a href="{% url 'courses:a-acheter' foyer.slug %}">{% trans "À acheter" %}</a>
+            </li>
+            <li class="ds-tabs__item{% block inventaire_active %}{% endblock %}">
+                <a href="{% url 'courses:inventaire' foyer.slug %}">{% trans "Inventaire" %}</a>
+            </li>
+            <li class="ds-tabs__item{% block historique_active %}{% endblock %}">
+                <a href="{% url 'courses:historique' foyer.slug %}">{% trans "Historique" %}</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="ds-narrow ds-narrow--lg">
+        {% block courses_content %}{% endblock %}
+    </div>
+{% endblock %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-14 16:09+0200\n"
+"POT-Creation-Date: 2026-09-05 13:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,69 +18,704 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: .\benbb96\settings.py:120
+#: config/settings/base.py:156
 msgid "French"
 msgstr "Français"
 
-#: .\benbb96\settings.py:121
+#: config/settings/base.py:157
 msgid "English"
 msgstr "Anglais"
 
-#: .\benbb96\urls.py:56
+#: config/urls.py:37
 msgid "review/"
 msgstr "avis/"
 
-#: .\benbb96\urls.py:57
+#: config/urls.py:38
 msgid "tracker/"
 msgstr "tracker/"
 
-#: .\benbb96\urls.py:58
+#: config/urls.py:39
 msgid "versus/"
 msgstr "versus/"
 
-#: .\benbb96\urls.py:59
+#: config/urls.py:40
 msgid "music/"
 msgstr "musique/"
 
-#: .\benbb96\urls.py:60
+#: config/urls.py:41
+msgid "my-spot/"
+msgstr ""
+
+#: config/urls.py:42
+msgid "super-moite-moite/"
+msgstr ""
+
+#: config/urls.py:43
+msgid "courses/"
+msgstr ""
+
+#: config/urls.py:44
+msgid "kendama/"
+msgstr ""
+
+#: config/urls.py:45
 msgid "admin/"
 msgstr "admin/"
 
-#: .\templates\admin\base_site.html:5
-msgid "Django site admin"
+#: courses/forms.py:29
+msgid "Rayon"
 msgstr ""
 
-#: .\templates\admin\base_site.html:24 .\templates\navbar.html:42
+#: courses/forms.py:30
+msgid "Étiquettes"
+msgstr ""
+
+#: courses/forms.py:34
+msgid ""
+"Graine de démarrage — utile pour amorcer le suivi avant d'avoir assez "
+"d'historique. Devient inerte dès que la consommation est apprise."
+msgstr ""
+
+#: courses/forms.py:68
+msgid "Magasin (optionnel)"
+msgstr ""
+
+#: courses/forms.py:84
+msgid "Article"
+msgstr ""
+
+#: courses/forms.py:91
+msgid "Quantité"
+msgstr ""
+
+#: courses/forms.py:106 courses/templates/courses/inventaire.html:87
+msgid "Il en reste"
+msgstr ""
+
+#: courses/forms.py:109
+msgid "Commentaire"
+msgstr ""
+
+#: courses/models.py:50
+msgid "date de création"
+msgstr ""
+
+#: courses/models.py:173 courses/models.py:200
+msgid "unité"
+msgstr ""
+
+#: courses/models.py:178
+msgid "paquet"
+msgstr ""
+
+#: courses/models.py:179
+msgid "boîte"
+msgstr ""
+
+#: courses/models.py:180
+msgid "sachet"
+msgstr ""
+
+#: courses/models.py:181
+msgid "bouteille"
+msgstr ""
+
+#: courses/models.py:186 courses/models.py:292
+msgid "nom"
+msgstr ""
+
+#: courses/models.py:189
+msgid "rayon"
+msgstr ""
+
+#: courses/models.py:196
+msgid "étiquettes"
+msgstr ""
+
+#: courses/models.py:205
+msgid "Laissé vide par l'import tant que l'unité n'est pas confirmée."
+msgstr ""
+
+#: courses/models.py:208
+msgid "conditionnement"
+msgstr ""
+
+#: courses/models.py:211
+msgid ""
+"Unités de conso par unité d'achat (ex. 1,5 pour une bouteille de 1,5 L)."
+msgstr ""
+
+#: courses/models.py:216
+msgid "stock cible"
+msgstr ""
+
+#: courses/models.py:218
+msgid "Niveau normal souhaité à la maison (le « want » du POC)."
+msgstr ""
+
+#: courses/models.py:222
+msgid "Stock figé au dernier achat/recalage (le « have » du POC)."
+msgstr ""
+
+#: courses/models.py:228
+msgid "conso amorce"
+msgstr ""
+
+#: courses/models.py:232
+msgid ""
+"Graine de démarrage, lue uniquement tant que conso_par_jour_estimee est vide."
+msgstr ""
+
+#: courses/models.py:235
+msgid "suivi automatique"
+msgstr ""
+
+#: courses/models.py:238
+msgid "note"
+msgstr ""
+
+#: courses/models.py:287 courses/models.py:364
+msgid "Manuel"
+msgstr ""
+
+#: courses/models.py:288
+msgid "Ticket de caisse"
+msgstr ""
+
+#: courses/models.py:289
+msgid "Drive"
+msgstr ""
+
+#: courses/models.py:295
+msgid "magasin"
+msgstr ""
+
+#: courses/models.py:321
+#, python-format
+msgid "Sortie du %(date)s"
+msgstr ""
+
+#: courses/models.py:365
+msgid "Seuil"
+msgstr ""
+
+#: courses/models.py:366
+msgid "Suggestion"
+msgstr ""
+
+#: courses/models.py:367
+msgid "Import"
+msgstr ""
+
+#: courses/models.py:428
+msgid "Achat"
+msgstr ""
+
+#: courses/models.py:429
+msgid "Recalage"
+msgstr ""
+
+#: courses/models.py:430
+msgid "Perte"
+msgstr ""
+
+#: courses/models.py:443
+msgid ""
+"La Ligne à l'origine de ce mouvement — sans elle, « Corriger » ne peut rien "
+"défaire."
+msgstr ""
+
+#: courses/models.py:448
+msgid ""
+"Toujours positive — le type porte le signe : achat = ajoutée au stock, perte "
+"= retirée du stock, recalage = NOUVELLE VALEUR ABSOLUE du stock (ni un ajout "
+"ni un retrait)."
+msgstr ""
+
+#: courses/models.py:483
+msgid "Tel que le ticket ou le drive l'écrit."
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:15
+msgid "Tout ce qui manque"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:23
+msgid "+ Nouvelle sortie"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:27
+msgid "Ouvrir"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:34
+msgid "Sans magasin précisé"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:36
+msgid "+ Ajouter un article"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:47
+#: courses/templates/courses/inventaire.html:31
+msgid "Sans rayon"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:56
+#, python-format
+msgid "Marquer « %(nom)s » comme acheté"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:66
+#, python-format
+msgid "Demandé par %(demandeur)s"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:74
+#, python-format
+msgid "Quantité pour %(nom)s"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:75
+#: templates/admin/base_site.html:24 templates/navbar.html:69
 msgid "OK"
 msgstr "Ok"
 
-#: .\templates\navbar.html:15
-msgid "Home"
-msgstr "Accueil"
+#: courses/templates/courses/a_acheter.html:85
+msgid "Pas trouvé en rayon"
+msgstr ""
 
-#: .\templates\navbar.html:16
+#: courses/templates/courses/a_acheter.html:86
+msgid "indisponible"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:86
+msgid "Pas trouvé"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:96
+msgid "Rien à acheter, tout est sous contrôle."
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:98
+msgid "Cette sortie est vide pour l'instant."
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:106
+msgid "dans le panier"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:110
+msgid "Valider mes achats"
+msgstr ""
+
+#: courses/templates/courses/ajouter_article.html:12
+#, python-format
+msgid "Ajouter un article à « %(nom)s »"
+msgstr ""
+
+#: courses/templates/courses/ajouter_article.html:17
+msgid "Ajouter"
+msgstr ""
+
+#: courses/templates/courses/ajouter_article.html:18
+#: courses/templates/courses/article_form.html:24
+msgid "Annuler"
+msgstr ""
+
+#: courses/templates/courses/article_form.html:14
+#, python-format
+msgid "Modifier « %(nom)s »"
+msgstr ""
+
+#: courses/templates/courses/article_form.html:16
+msgid "Nouvel article"
+msgstr ""
+
+#: courses/templates/courses/article_form.html:23
+msgid "Enregistrer"
+msgstr ""
+
+#: courses/templates/courses/base_courses.html:6
+#: courses/templates/courses/foyers_liste.html:5
+#: courses/templates/courses/foyers_liste.html:6 templates/navbar.html:26
+msgid "Courses"
+msgstr ""
+
+#: courses/templates/courses/base_courses.html:14
+msgid "Liste de courses partagée du foyer."
+msgstr ""
+
+#: courses/templates/courses/base_courses.html:17
+msgid "Changer de foyer"
+msgstr ""
+
+#: courses/templates/courses/base_courses.html:26
+msgid "À acheter"
+msgstr ""
+
+#: courses/templates/courses/base_courses.html:29
+msgid "Inventaire"
+msgstr ""
+
+#: courses/templates/courses/base_courses.html:32
+msgid "Historique"
+msgstr ""
+
+#: courses/templates/courses/foyers_liste.html:7
+msgid "Choisissez un foyer."
+msgstr ""
+
+#: courses/templates/courses/foyers_liste.html:21
+msgid ""
+"Vous n'appartenez à aucun foyer pour le moment. Demandez à un membre "
+"existant de vous y ajouter, ou passez par l'admin."
+msgstr ""
+
+#: courses/templates/courses/historique.html:13
+msgid "Sortie en cours"
+msgstr ""
+
+#: courses/templates/courses/historique.html:15
+msgid "Sans magasin"
+msgstr ""
+
+#: courses/templates/courses/historique.html:17
+#: courses/templates/courses/historique.html:40
+#, python-format
+msgid "%(compteur)s article"
+msgid_plural "%(compteur)s articles"
+msgstr[0] "%(compteur)s article"
+msgstr[1] "%(compteur)s articles"
+
+#: courses/templates/courses/historique.html:18
+#, python-format
+msgid "ouverte le %(date)s"
+msgstr ""
+
+#: courses/templates/courses/historique.html:36
+msgid "Sortie"
+msgstr ""
+
+#: courses/templates/courses/historique.html:52
+msgid "Rouvrir cette sortie et défaire son effet sur le stock ?"
+msgstr ""
+
+#: courses/templates/courses/historique.html:54
+#, python-format
+msgid "Clôturée par %(profil)s"
+msgstr ""
+
+#: courses/templates/courses/historique.html:58
+msgid "Corriger"
+msgstr ""
+
+#: courses/templates/courses/historique.html:67
+msgid "Aucune sortie clôturée pour le moment."
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:8
+msgid "Rechercher par nom, rayon ou étiquette"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:9
+msgid "Stock estimé"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:13
+msgid "+ Nouvel article"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:18
+#, python-format
+msgid "%(compteur)s article à compléter (sans rayon)."
+msgid_plural "%(compteur)s articles à compléter (sans rayon)."
+msgstr[0] "%(compteur)s article à compléter (sans rayon)."
+msgstr[1] "%(compteur)s articles à compléter (sans rayon)."
+
+#: courses/templates/courses/inventaire.html:48
+msgid "ok"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:59
+msgid "Souhaité à la maison"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:69
+msgid "Besoin ponctuel"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:69
+msgid "(en plus, pour cette fois)"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:88
+msgid "Recompter"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:92
+msgid "Modifier la fiche"
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:99
+msgid "Aucun article ne correspond à cette recherche."
+msgstr ""
+
+#: courses/templates/courses/inventaire.html:102
+msgid "Aucun article pour le moment."
+msgstr ""
+
+#: courses/urls.py:12
+msgid "<slug:foyer_slug>/sortie/nouvelle/"
+msgstr ""
+
+#: courses/urls.py:17
+msgid ""
+"<slug:foyer_slug>/sortie/<int:sortie_id>/article/<int:article_id>/toggle/"
+msgstr ""
+
+#: courses/urls.py:23
+msgid ""
+"<slug:foyer_slug>/sortie/<int:sortie_id>/article/<int:article_id>/"
+"indisponible/"
+msgstr ""
+
+#: courses/urls.py:30
+msgid ""
+"<slug:foyer_slug>/sortie/<int:sortie_id>/article/<int:article_id>/quantite/"
+msgstr ""
+
+#: courses/urls.py:36
+msgid "<slug:foyer_slug>/sortie/<int:sortie_id>/ajouter/"
+msgstr ""
+
+#: courses/urls.py:41
+msgid "<slug:foyer_slug>/sortie/<int:sortie_id>/valider/"
+msgstr ""
+
+#: courses/urls.py:45
+msgid "<slug:foyer_slug>/inventaire/"
+msgstr ""
+
+#: courses/urls.py:47
+msgid "<slug:foyer_slug>/inventaire/nouveau/"
+msgstr ""
+
+#: courses/urls.py:52
+msgid "<slug:foyer_slug>/inventaire/<int:article_id>/modifier/"
+msgstr ""
+
+#: courses/urls.py:57
+msgid "<slug:foyer_slug>/etiquettes/creer/"
+msgstr ""
+
+#: courses/urls.py:62
+msgid "<slug:foyer_slug>/rayons/creer/"
+msgstr ""
+
+#: courses/urls.py:67
+msgid "<slug:foyer_slug>/inventaire/<int:article_id>/cible/"
+msgstr ""
+
+#: courses/urls.py:72
+msgid "<slug:foyer_slug>/inventaire/<int:article_id>/ponctuel/"
+msgstr ""
+
+#: courses/urls.py:77
+msgid "<slug:foyer_slug>/inventaire/<int:article_id>/recompter/"
+msgstr ""
+
+#: courses/urls.py:81
+msgid "<slug:foyer_slug>/historique/"
+msgstr ""
+
+#: courses/urls.py:83
+msgid "<slug:foyer_slug>/historique/<int:sortie_id>/corriger/"
+msgstr ""
+
+#: courses/views.py:181
+#, python-format
+msgid "Sortie « %(sortie)s » ouverte."
+msgstr ""
+
+#: courses/views.py:223
+#, python-format
+msgid ""
+"« %(article)s » est déjà dans « %(sortie)s ». Cochez-le depuis cette sortie-"
+"là pour éviter de l'acheter deux fois."
+msgstr ""
+
+#: courses/views.py:344
+#, python-format
+msgid "%(nb)d article validé — stock mis à jour."
+msgid_plural "%(nb)d articles validés — stock mis à jour."
+msgstr[0] "%(nb)d article validé — stock mis à jour."
+msgstr[1] "%(nb)d articles validés — stock mis à jour."
+
+#: courses/views.py:372
+msgid "Suivi automatique désactivé"
+msgstr ""
+
+#: courses/views.py:374
+#, python-format
+msgid "≈ %(taux)s / jour (estimé)"
+msgstr ""
+
+#: courses/views.py:378
+#, python-format
+msgid "≈ %(taux)s / jour (amorce, pas encore d'historique)"
+msgstr ""
+
+#: courses/views.py:381
+msgid "Pas assez d'historique pour estimer"
+msgstr ""
+
+#: courses/views.py:548
+#, python-format
+msgid "Stock de « %(article)s » recompté : %(valeur)s."
+msgstr ""
+
+#: courses/views.py:552
+msgid "Valeur de recomptage invalide."
+msgstr ""
+
+#: courses/views.py:565
+#, python-format
+msgid "« %(article)s » créé."
+msgstr ""
+
+#: courses/views.py:582
+#, python-format
+msgid "« %(article)s » mis à jour."
+msgstr ""
+
+#: courses/views.py:597
+msgid "JSON invalide."
+msgstr ""
+
+#: courses/views.py:601
+msgid "Nom invalide."
+msgstr ""
+
+#: courses/views.py:704
+#, python-format
+msgid "Sortie « %(sortie)s » rouverte — reprenez-la depuis « À acheter »."
+msgstr ""
+
+#: templates/admin/base_site.html:5
+msgid "Django site admin"
+msgstr ""
+
+#: templates/admin/index.html:24
+#, python-format
+msgid "Models in the %(name)s application"
+msgstr ""
+
+#: templates/admin/index.html:35
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:42
+msgid "View"
+msgstr ""
+
+#: templates/admin/index.html:44
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:55
+msgid "You don't have permission to view or edit anything."
+msgstr ""
+
+#: templates/admin/index.html:63
+msgid "Recent actions"
+msgstr ""
+
+#: templates/admin/index.html:64
+msgid "My actions"
+msgstr ""
+
+#: templates/admin/index.html:68
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:82
+msgid "Unknown content"
+msgstr ""
+
+#: templates/base.html:20
+msgid ""
+"Personal website of Benbb96: projects, reviews, music, trackers and Django "
+"experiments."
+msgstr ""
+
+#: templates/base.html:64
+msgid "Skip to content"
+msgstr ""
+
+#: templates/components/_message.html:11
+msgid "Close"
+msgstr ""
+
+#: templates/components/pagination.html:4
+msgid "Pagination"
+msgstr ""
+
+#: templates/components/pagination.html:7
+msgid "First page"
+msgstr ""
+
+#: templates/components/pagination.html:9
+msgid "Previous page"
+msgstr ""
+
+#: templates/components/pagination.html:15
+msgid "current"
+msgstr ""
+
+#: templates/components/pagination.html:23
+msgid "Next page"
+msgstr ""
+
+#: templates/components/pagination.html:25
+msgid "Last page"
+msgstr ""
+
+#: templates/footer.html:18 templates/navbar.html:21
 msgid "About"
 msgstr "A propos"
 
-#: .\templates\navbar.html:17
+#: templates/footer.html:19
+msgid "Privacy policy"
+msgstr "Politique de confidentialité"
+
+#: templates/footer.html:20
+msgid "Legal notice"
+msgstr "Mentions légales"
+
+#: templates/navbar.html:12
+msgid "Menu"
+msgstr ""
+
+#: templates/navbar.html:20
+msgid "Home"
+msgstr "Accueil"
+
+#: templates/navbar.html:22
 msgid "Reviews"
 msgstr "Avis"
 
-#: .\templates\navbar.html:19
-msgid "Tracker"
-msgstr "Tracker"
+#: templates/navbar.html:23
+msgid "Musics"
+msgstr "Musiques"
 
-#: .\templates\navbar.html:24
+#: templates/navbar.html:25
+msgid "Trackers"
+msgstr "Trackers"
+
+#: templates/navbar.html:29
 msgid "Administration"
 msgstr "Administration"
-
-#: .\templates\navbar.html:48
-msgid "Login"
-msgstr "Se connecter"
-
-#: .\templates\navbar.html:55
-msgid "Logout"
-msgstr "Se déconnecter"
 
 #: templates/navbar.html:42
 msgid "Theme"
@@ -110,10 +745,14 @@ msgstr "Suivre le système"
 msgid "Auto"
 msgstr "Auto"
 
-#: templates/footer.html:19
-msgid "Privacy policy"
-msgstr "Politique de confidentialité"
+#: templates/navbar.html:57
+msgid "Language"
+msgstr ""
 
-#: templates/footer.html:20
-msgid "Legal notice"
-msgstr "Mentions légales"
+#: templates/navbar.html:74
+msgid "Login"
+msgstr "Se connecter"
+
+#: templates/navbar.html:84
+msgid "Logout"
+msgstr "Se déconnecter"

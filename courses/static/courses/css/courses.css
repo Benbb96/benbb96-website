@@ -1,0 +1,158 @@
+/* =============================================================================
+   Courses — styles spécifiques (liste de courses partagée, conception.md)
+   ============================================================================= */
+
+/* ── Case à cocher « acheté » : un <button> stylé, pas un <input type=checkbox> —
+   ainsi la ligne entière (case + nom + badge) est un seul <form> POST, sans JS. */
+.courses-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    flex: none;
+    border-radius: var(--ds-radius-sm);
+    border: 2px solid var(--ds-border-strong);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+.courses-check svg { width: 1rem; height: 1rem; }
+.courses-check.is-checked {
+    background: var(--ds-success);
+    border-color: var(--ds-success);
+    color: #fff;
+}
+
+/* ── Ligne d'article (À acheter / Sortie) ─────────────────────────────────── */
+.courses-row {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-3);
+    padding: var(--ds-space-2) 0;
+    border-bottom: 1px solid var(--ds-border);
+}
+.courses-row:last-child { border-bottom: 0; }
+.courses-row__nom { flex: 1 1 auto; font-size: 1.05rem; }
+.courses-row.is-checked .courses-row__nom {
+    color: var(--ds-text-muted);
+    text-decoration: line-through;
+}
+.courses-row form { display: flex; align-items: center; }
+
+/* Quantité éditable une fois la Ligne créée (§ retour utilisateur : « il ne restait
+   que 6 œufs, pas 12 ») — remplace le badge statique, qui ne servait qu'à afficher. */
+.courses-qte-form { gap: var(--ds-space-2); flex: none; }
+.courses-qte-input {
+    width: 3.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+.courses-row__demandeur {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background: var(--ds-surface-alt);
+    border: 1px solid var(--ds-border-strong);
+    font-size: var(--ds-fs-sm);
+    font-weight: 700;
+}
+
+/* ── En-tête de groupe rayon ───────────────────────────────────────────────── */
+.courses-rayon {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-2);
+    margin-top: var(--ds-space-4);
+    padding-bottom: var(--ds-space-1);
+    font-size: var(--ds-fs-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ds-text-muted);
+}
+.courses-rayon__puce {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 2px;
+    flex: none;
+}
+
+/* ── Chips de sélection de sortie ──────────────────────────────────────────── */
+.courses-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-space-2);
+    margin-bottom: var(--ds-space-4);
+}
+.courses-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--ds-radius-pill);
+    font-size: var(--ds-fs-sm);
+    font-weight: 600;
+    background: var(--ds-surface-alt);
+    color: var(--ds-text-muted);
+}
+.courses-chip.is-active { background: var(--ds-primary-light); color: var(--ds-text); }
+
+/* ── Stepper +/- sans JS (deux boutons submit dans le même <form>) ─────────── */
+.courses-stepper {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-radius);
+    overflow: hidden;
+    flex: none;
+}
+.courses-stepper button {
+    width: 2.5rem;
+    border: 0;
+    background: var(--ds-surface);
+    color: var(--ds-text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+.courses-stepper button:hover { background: var(--ds-surface-alt); }
+.courses-stepper__val {
+    min-width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    background: var(--ds-surface);
+}
+
+/* ── Jauge de stock (Inventaire, direction B) ─────────────────────────────── */
+.courses-jauge {
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--ds-surface-alt);
+    overflow: hidden;
+}
+.courses-jauge__valeur { height: 100%; border-radius: 999px; background: var(--ds-success); }
+.courses-jauge__valeur.is-bas { background: var(--ds-warning); }
+
+/* ── Ligne d'article dépliable (Inventaire) — <details> natif, sans JS ────── */
+.courses-article summary {
+    list-style: none;
+    cursor: pointer;
+    padding: var(--ds-space-3) 0;
+}
+.courses-article summary::-webkit-details-marker { display: none; }
+.courses-article__panel {
+    padding: 0 0 var(--ds-space-4) var(--ds-space-1);
+}
+
+/* ── Historique : l'en-tête de sortie clôturée est aussi un <summary> ────── */
+.courses-sortie-summary { cursor: pointer; }
+
+/* ── Tailles étroites pour la jauge et le champ de recomptage ─────────────── */
+.courses-jauge--sm { max-width: 12rem; }
+.courses-input--sm { max-width: 8rem; }

@@ -40,6 +40,7 @@ urlpatterns += i18n_patterns(
     path(_("music/"), include("music.urls")),
     path(_("my-spot/"), include("my_spot.urls")),
     path(_("super-moite-moite/"), include("super_moite_moite.urls")),
+    path(_("courses/"), include("courses.urls")),
     path(_("kendama/"), include("kendama.urls")),
     path(_("admin/"), admin.site.urls),
     # Auth Views

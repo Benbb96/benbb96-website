@@ -1,0 +1,70 @@
+{% extends 'courses/base_courses.html' %}
+{% load i18n %}
+
+{% block historique_active %} is-active{% endblock %}
+
+{% block courses_content %}
+
+{% for sortie in sorties_ouvertes %}
+    <a class="ds-card ds-mb-3" style="display: block; text-decoration: none;"
+       href="{% url 'courses:a-acheter' foyer.slug %}{% if sortie.nom %}?sortie={{ sortie.pk }}{% endif %}">
+        <div class="ds-cluster ds-cluster--split">
+            <div>
+                <strong>{% if sortie.nom %}{{ sortie.nom }}{% else %}{% trans "Sortie en cours" %}{% endif %}</strong>
+                <div class="ds-text-muted">
+                    {% if sortie.magasin %}{{ sortie.magasin }}{% else %}{% trans "Sans magasin" %}{% endif %}
+                    ·
+                    {% blocktrans count compteur=sortie.lignes.count %}{{ compteur }} article{% plural %}{{ compteur }} articles{% endblocktrans %}
+                    · {% blocktrans with date=sortie.cree_le|date:"j F" %}ouverte le {{ date }}{% endblocktrans %}
+                </div>
+            </div>
+        </div>
+    </a>
+{% endfor %}
+
+{% if sorties_closes %}
+    {% regroup sorties_closes by mois_label as groupes_mois %}
+    {% for groupe in groupes_mois %}
+        <h3 class="ds-mt-5">{{ groupe.grouper|capfirst }}</h3>
+        <div class="ds-list-group ds-mb-4">
+            {% for sortie in groupe.list %}
+                <details>
+                    <summary class="ds-list-group__item courses-sortie-summary">
+                        <div class="ds-cluster ds-cluster--split">
+                            <div>
+                                <strong>
+                                    {% if sortie.magasin %}{{ sortie.magasin }}{% elif sortie.nom %}{{ sortie.nom }}{% else %}{% trans "Sortie" %}{% endif %}
+                                </strong>
+                                <div class="ds-text-muted">
+                                    {{ sortie.cloture_le|date:"j F" }} ·
+                                    {% blocktrans count compteur=sortie.lignes.count %}{{ compteur }} article{% plural %}{{ compteur }} articles{% endblocktrans %}
+                                    {% if sortie.source != "manuel" %}· {{ sortie.get_source_display }}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </summary>
+                    <div class="ds-well">
+                        <ul>
+                            {% for ligne in sortie.lignes.all %}
+                                <li>{{ ligne.article.nom }} × {{ ligne.quantite|floatformat:"-3" }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% trans 'Rouvrir cette sortie et défaire son effet sur le stock ?' as message_confirmation %}
+                        <div class="ds-cluster ds-cluster--split ds-mt-3">
+                            <span class="ds-text-muted">{% blocktrans with profil=sortie.cree_par %}Clôturée par {{ profil }}{% endblocktrans %}</span>
+                            <form method="post" action="{% url 'courses:corriger-sortie' foyer.slug sortie.pk %}"
+                                  onsubmit="return confirm('{{ message_confirmation|escapejs }}');">
+                                {% csrf_token %}
+                                <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">{% trans "Corriger" %}</button>
+                            </form>
+                        </div>
+                    </div>
+                </details>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="ds-text-muted ds-mt-4">{% trans "Aucune sortie clôturée pour le moment." %}</p>
+{% endif %}
+
+{% endblock %}

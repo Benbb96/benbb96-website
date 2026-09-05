@@ -4,5 +4,6 @@
     "reportAttributeAccessIssue": "none",
     "reportFunctionMemberAccess": "none",
     "reportIncompatibleMethodOverride": "none",
-    "reportIncompatibleVariableOverride": "none"
+    "reportIncompatibleVariableOverride": "none",
+    "reportGeneralTypeIssues": "none"
 }

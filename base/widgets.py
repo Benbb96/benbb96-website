@@ -9,6 +9,11 @@ Remplacent les widgets ``django_select2`` (qui dépendaient de jQuery). Deux usa
   le reste est chargé à la frappe depuis un endpoint JSON (``search_url`` → ``?q=…``
   renvoyant ``[{"id": …, "text": …}, …]``).
 
+``create_url`` (les deux familles) active la création d'option à la volée : l'endpoint
+reçoit ``{"nom": "<saisie>"}`` en POST JSON et doit répondre ``{"id": …, "nom": …}`` —
+l'option créée est alors sélectionnée sans recharger la page (ex. étiquettes, cf.
+``courses``).
+
 L'initialisation JS est faite par ``assets/js/tomselect-init.js`` sur tous les
 ``<select class="js-tomselect">``. Les assets sont déclarés via ``Media`` et donc
 chargés partout où le template rend ``{{ form.media }}``.
@@ -29,6 +34,7 @@ class TomSelectMixin:
 
     def __init__(self, *args, **kwargs):
         self.placeholder = kwargs.pop("placeholder", None)
+        self.create_url = kwargs.pop("create_url", None)
         super().__init__(*args, **kwargs)
 
     def build_attrs(self, base_attrs, extra_attrs=None):
@@ -40,6 +46,8 @@ class TomSelectMixin:
         placeholder = self.placeholder or attrs.pop("data-placeholder", None)
         if placeholder:
             attrs["data-placeholder"] = placeholder
+        if self.create_url:
+            attrs["data-create-url"] = str(self.create_url)
         return attrs
 
 

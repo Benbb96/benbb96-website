@@ -1,0 +1,247 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; }
+    a { color: #1c1912; text-decoration: none; } a:hover { color: #caa100; }
+    .cs {
+      --ds-bg:#f7f5ef; --ds-surface:#ffffff; --ds-surface-alt:#efece1;
+      --ds-text:#1c1912; --ds-text-muted:#5c5646;
+      --ds-border:#e3ddc9; --ds-border-strong:#cabf9e;
+      --ds-primary:#f2c200; --ds-primary-dark:#caa100; --ds-primary-light:#fdf1c7; --ds-primary-ink:#201a08;
+      --ds-secondary:#1c1912;
+      --ds-success:#3f7d4a; --ds-warning:#d9660b; --ds-danger:#c1432c; --ds-info:#2f6f8f;
+      --sh-sm: 0 1px 2px rgba(28,25,18,0.06);
+    }
+    .cs.theme-dark {
+      --ds-bg:#15130e; --ds-surface:#1d1a13; --ds-surface-alt:#262218;
+      --ds-text:#f3efe3; --ds-text-muted:#b5ad97;
+      --ds-border:#35301f; --ds-border-strong:#4a4328;
+      --ds-primary:#e0ab2c; --ds-primary-dark:#f0c04a; --ds-primary-light:#332a12; --ds-primary-ink:#17130a;
+      --ds-secondary:#0f0d09;
+      --ds-success:#63a86f; --ds-warning:#e2883f; --ds-danger:#e0715a; --ds-info:#5da0c4;
+      --sh-sm: 0 1px 2px rgba(0,0,0,0.4);
+    }
+  </style>
+</helmet>
+<div class="cs {{themeClass}}" style="min-height: 880px; display: flex; flex-direction: column; background: var(--ds-bg); color: var(--ds-text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 17px; line-height: 1.6;">
+
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--ds-secondary); color: #f3efe3;">
+    <div style="width: 10px; height: 10px; border-radius: 999px; background: var(--ds-primary); flex: none;"></div>
+    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+      <div style="font-size: 15px; font-weight: 600; line-height: 1.3;">Chez nous</div>
+      <div style="display: flex; align-items: center; gap: 5px; font-size: 13px; color: #b5ad97; line-height: 1.3;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="width: 13px; height: 13px; flex: none;"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M9 20v-6h6v6"/></svg>
+        <span>Leclerc Lescar</span>
+      </div>
+    </div>
+    <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin: -10px -10px -10px 0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="width: 20px; height: 20px;"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 4px; padding: 8px 16px 0; background: var(--ds-surface); border-bottom: 1px solid var(--ds-border);">
+    <div style="padding: 10px 4px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text); border-bottom: 2.5px solid var(--ds-primary); margin-bottom: -1px;">À acheter</div>
+    <div style="padding: 10px 12px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text-muted);">Inventaire</div>
+    <div style="padding: 10px 12px 12px; font-size: 15px; font-weight: 600; color: var(--ds-text-muted);">Historique</div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 6px; padding: 12px 16px 4px; overflow: hidden;">
+    <div onClick="{{voirGlobale}}" style="{{chipGlobale}}">Tout ce qui manque</div>
+    <div onClick="{{voirApero}}" style="{{chipApero}}">Apéro samedi</div>
+    <div style="width: 26px; height: 26px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--ds-surface-alt); cursor: pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2.2" stroke-linecap="round" style="width: 12px; height: 12px;"><path d="M12 5v14M5 12h14"/></svg>
+    </div>
+    <div style="flex-grow: 1;"></div>
+    <div style="width: 30px; height: 30px; flex: none; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="1.9" stroke-linecap="round" style="width: 17px; height: 17px;"><path d="M3.5 6h17M6.5 12h11M10 18h4"/></svg>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px 16px 16px; flex-grow: 1;">
+
+    <sc-for list="{{rayons}}" as="rayon" hint-placeholder-count="3">
+      <div style="display: flex; align-items: center; gap: 8px; padding: 10px 2px 4px;">
+        <div style="width: 8px; height: 8px; border-radius: 2px; flex: none; background: {{rayon.couleur}};"></div>
+        <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ds-text-muted);">{{rayon.nom}}</div>
+        <div style="flex-grow: 1; border-bottom: 1px dotted var(--ds-border-strong); margin-bottom: 3px;"></div>
+      </div>
+      <sc-for list="{{rayon.articles}}" as="art" hint-placeholder-count="3">
+        <div onClick="{{art.toggle}}" style="display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 4px; cursor: pointer;">
+          <div style="width: 26px; height: 26px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 2px solid {{art.caseBordure}}; background: {{art.caseFond}};">
+            <sc-if value="{{art.coche}}" hint-placeholder-val="{{true}}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M4.5 12.5l5 5 10-11"/></svg>
+            </sc-if>
+          </div>
+          <div style="{{art.nomStyle}}">{{art.nom}}</div>
+          <div style="flex-grow: 1; border-bottom: 1px dotted var(--ds-border); margin-bottom: 4px;"></div>
+          <sc-if value="{{art.aDemandeur}}" hint-placeholder-val="{{true}}">
+            <div title="Demandé par {{art.demandeur}}" style="width: 22px; height: 22px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--ds-surface-alt); border: 1px solid var(--ds-border-strong); font-size: 11px; font-weight: 700; color: var(--ds-text);">{{art.demandeur}}</div>
+          </sc-if>
+          <div style="padding: 0.15em 0.6em; font-size: 15px; font-weight: 600; line-height: 1.4; border-radius: 999px; background: {{art.badgeFond}}; color: {{art.badgeTexte}}; white-space: nowrap;">× {{art.qte}}</div>
+        </div>
+      </sc-for>
+    </sc-for>
+
+    <sc-if value="{{vueGlobale}}" hint-placeholder-val="{{true}}">
+    <div style="margin-top: 14px; border: 1px dashed var(--ds-border-strong); border-radius: 12px; background: var(--ds-surface); overflow: hidden;">
+      <div style="display: flex; align-items: center; gap: 7px; padding: 10px 14px 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-info)" stroke-width="1.8" stroke-linecap="round" style="width: 16px; height: 16px; flex: none;"><path d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4L7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="3.4"/></svg>
+        <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ds-info);">Suggestions</div>
+        <div style="flex-grow: 1;"></div>
+        <div style="font-size: 13px; color: var(--ds-text-muted);">2</div>
+      </div>
+      <sc-for list="{{suggestions}}" as="sug" hint-placeholder-count="2">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 8px 14px 10px; border-top: 1px solid var(--ds-border);">
+          <div style="display: flex; flex-direction: column; flex-grow: 1;">
+            <div style="font-size: 15px; font-weight: 600; line-height: 1.35;">{{sug.nom}} <span style="font-weight: 400; color: var(--ds-text-muted);">× {{sug.qte}}</span></div>
+            <div style="font-size: 13px; color: var(--ds-text-muted); line-height: 1.35;">{{sug.raison}}</div>
+          </div>
+          <div onClick="{{sug.refuser}}" style="width: 34px; height: 34px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--ds-border-strong); cursor: pointer;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2" stroke-linecap="round" style="width: 15px; height: 15px;"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </div>
+          <div onClick="{{sug.accepter}}" style="height: 34px; flex: none; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 8px; background: var(--ds-primary); color: var(--ds-primary-ink); font-size: 15px; font-weight: 600; cursor: pointer;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 14px; height: 14px;"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Ajouter</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--ds-border); background: var(--ds-surface-alt);">
+    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+      <div style="font-size: 15px; font-weight: 600; line-height: 1.3;">{{nbCoches}} / {{nbTotal}} dans le panier</div>
+      <div style="font-size: 13px; color: var(--ds-text-muted); line-height: 1.3;">{{restant}}</div>
+    </div>
+    <div style="height: 44px; display: flex; align-items: center; padding: 0 16px; border-radius: 8px; background: var(--ds-success); color: #fff; font-size: 17px; font-weight: 600; cursor: pointer;">Valider</div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","options":["clair","sombre"],"default":"clair","section":"Thème"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      vue: 'globale',
+      coches: { lait: true, beurre: true },
+      refusees: {},
+      ajoutees: {},
+    };
+  }
+
+  donnees() {
+    if (this.state.vue === 'apero') {
+      // Une sortie ne contient QUE ce qu'on y a mis — pas le besoin global du foyer (§5.1).
+      return [
+        { nom: 'Épicerie salée', couleur: '#d9660b', articles: [
+          { id: 'chips', nom: 'Chips', qte: 2, demandeur: 'S' },
+          { id: 'olives', nom: 'Olives', qte: 1, demandeur: 'B' },
+        ] },
+        { nom: 'Boissons', couleur: '#2f6f8f', articles: [
+          { id: 'biere', nom: 'Bière blonde', qte: 6, demandeur: 'S' },
+        ] },
+      ];
+    }
+    return [
+      { nom: 'Fruits & légumes', couleur: '#3f7d4a', articles: [
+        { id: 'bananes', nom: 'Bananes', qte: 1 },
+        { id: 'tomates', nom: 'Tomates', qte: 2 },
+        { id: 'carottes', nom: 'Carottes', qte: 1, demandeur: 'S' },
+      ] },
+      { nom: 'Crèmerie', couleur: '#2f6f8f', articles: [
+        { id: 'lait', nom: 'Lait', qte: 4 },
+        { id: 'beurre', nom: 'Beurre', qte: 1 },
+        { id: 'yaourts', nom: 'Yaourts nature', qte: 3, demandeur: 'B' },
+      ] },
+      { nom: 'Hygiène', couleur: '#d9660b', articles: [
+        { id: 'pq', nom: 'Papier toilette', qte: 1 },
+        { id: 'dentifrice', nom: 'Dentifrice', qte: 2 },
+      ] },
+    ];
+  }
+
+  renderVals() {
+    const sombre = this.props.theme === 'sombre';
+    const globale = this.state.vue === 'globale';
+    const coches = this.state.coches;
+    let nbTotal = 0, nbCoches = 0;
+
+    const rayons = this.donnees().map((r) => ({
+      nom: r.nom,
+      couleur: r.couleur,
+      articles: r.articles.map((a) => {
+        const coche = !!coches[a.id];
+        nbTotal += 1;
+        if (coche) nbCoches += 1;
+        return {
+          nom: a.nom,
+          qte: a.qte,
+          coche: coche,
+          aDemandeur: !!a.demandeur,
+          demandeur: a.demandeur || '',
+          caseFond: coche ? 'var(--ds-success)' : 'transparent',
+          caseBordure: coche ? 'var(--ds-success)' : 'var(--ds-border-strong)',
+          badgeFond: coche ? 'var(--ds-surface-alt)' : 'var(--ds-primary-light)',
+          badgeTexte: coche ? 'var(--ds-text-muted)' : 'var(--ds-text)',
+          nomStyle: coche
+            ? 'font-size: 17px; color: var(--ds-text-muted); text-decoration: line-through;'
+            : 'font-size: 17px; color: var(--ds-text);',
+          toggle: () => {
+            const suivant = Object.assign({}, this.state.coches);
+            if (suivant[a.id]) { delete suivant[a.id]; } else { suivant[a.id] = true; }
+            this.setState({ coches: suivant });
+          },
+        };
+      }),
+    }));
+
+    const brutes = [
+      { id: 'couches', nom: 'Couches taille 4', qte: 1, raison: 'Stock estimé épuisé dans 6 j — 1 / jour' },
+      { id: 'cafe', nom: 'Café', qte: 1, raison: 'Racheté tous les 24 j en moyenne — dernier il y a 23 j' },
+    ];
+    const suggestions = brutes
+      .filter((s) => !this.state.refusees[s.id] && !this.state.ajoutees[s.id])
+      .map((s) => ({
+        nom: s.nom,
+        qte: s.qte,
+        raison: s.raison,
+        refuser: () => this.setState({ refusees: Object.assign({}, this.state.refusees, { [s.id]: true }) }),
+        accepter: () => this.setState({ ajoutees: Object.assign({}, this.state.ajoutees, { [s.id]: true }) }),
+      }));
+
+    const chip = (actif) =>
+      'padding: 3px 11px; font-size: 15px; font-weight: 600; line-height: 1.4; border-radius: 999px;'
+      + ' white-space: nowrap; cursor: pointer; flex: none;'
+      + (actif
+          ? ' background: var(--ds-primary-light); color: var(--ds-text);'
+          : ' background: var(--ds-surface-alt); color: var(--ds-text-muted);');
+
+    const reste = nbTotal - nbCoches;
+    return {
+      themeClass: sombre ? 'theme-dark' : '',
+      vueGlobale: globale,
+      chipGlobale: chip(globale),
+      chipApero: chip(!globale),
+      voirGlobale: () => this.setState({ vue: 'globale' }),
+      voirApero: () => this.setState({ vue: 'apero' }),
+      rayons: rayons,
+      suggestions: suggestions,
+      nbCoches: nbCoches,
+      nbTotal: nbTotal,
+      restant: reste === 0 ? 'Tout est dans le caddie' : reste + ' article(s) restant(s)',
+    };
+  }
+}
+</script>
+</body>
+</html>

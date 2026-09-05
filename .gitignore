@@ -30,3 +30,11 @@ __pycache__/
 test_mails/
 
 .cache
+
+# Mail de commande réel servant à développer le parser d'import (§9) : contient
+# n° de fidélité, n° de commande et détail des achats — hors dépôt public.
+docs/courses/example-mail.html
+
+# Canvas de maquettes publié : ~2 Mo d'éditeur embarqué, régénérable à tout moment
+# depuis les .dc.html voisins (cf. docs/courses/conception.md §6.4).
+docs/courses/maquettes/liste-courses-partagee.html

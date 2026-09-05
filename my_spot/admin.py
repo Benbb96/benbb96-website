@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.utils.html import format_html
 
-from base.admin import PhotoAdminAbtract
+from base.admin import PhotoAdminAbtract, swatch_couleur
 from my_spot.forms import SpotPhotoForm
 from my_spot.models import (
     Spot,
@@ -23,13 +23,9 @@ class SpotTagAdmin(admin.ModelAdmin):
         "slug": ("nom",),
     }
 
+    @admin.display(ordering="color", description="couleur")
     def couleur(self, instance):
-        return format_html(
-            '<div style="padding: 5px; background-color: {color}">{color}</div>',
-            color=instance.color,
-        )
-
-    couleur.admin_order_field = "color"
+        return swatch_couleur(instance.color)
 
 
 class SpotGroupProfilInLine(admin.TabularInline):

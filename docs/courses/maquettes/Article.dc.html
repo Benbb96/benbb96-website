@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; }
+    a { color: #1c1912; text-decoration: none; } a:hover { color: #caa100; }
+    .cs {
+      --ds-bg:#f7f5ef; --ds-surface:#ffffff; --ds-surface-alt:#efece1;
+      --ds-text:#1c1912; --ds-text-muted:#5c5646;
+      --ds-border:#e3ddc9; --ds-border-strong:#cabf9e;
+      --ds-primary:#f2c200; --ds-primary-dark:#caa100; --ds-primary-light:#fdf1c7; --ds-primary-ink:#201a08;
+      --ds-secondary:#1c1912;
+      --ds-success:#3f7d4a; --ds-warning:#d9660b; --ds-danger:#c1432c; --ds-info:#2f6f8f;
+    }
+    .cs.theme-dark {
+      --ds-bg:#15130e; --ds-surface:#1d1a13; --ds-surface-alt:#262218;
+      --ds-text:#f3efe3; --ds-text-muted:#b5ad97;
+      --ds-border:#35301f; --ds-border-strong:#4a4328;
+      --ds-primary:#e0ab2c; --ds-primary-dark:#f0c04a; --ds-primary-light:#332a12; --ds-primary-ink:#17130a;
+      --ds-secondary:#0f0d09;
+      --ds-success:#63a86f; --ds-warning:#e2883f; --ds-danger:#e0715a; --ds-info:#5da0c4;
+    }
+  </style>
+</helmet>
+<div class="cs {{themeClass}}" style="min-height: 1240px; display: flex; flex-direction: column; background: var(--ds-bg); color: var(--ds-text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 17px; line-height: 1.6;">
+
+  <div style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--ds-secondary); color: #f3efe3;">
+    <div style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; margin-left: -8px; cursor: pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width: 20px; height: 20px;"><path d="M15 6l-6 6 6 6"/></svg>
+    </div>
+    <div style="font-size: 17px; font-weight: 600; flex-grow: 1;">Modifier l'article</div>
+    <div style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#e0715a" stroke-width="1.9" stroke-linecap="round" style="width: 19px; height: 19px;"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 16px; flex-grow: 1;">
+
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="font-size: 17px; font-weight: 600;">Nom</div>
+      <div style="padding: 8px 12px; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface); font-size: 17px;">Couches taille 4</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="font-size: 17px; font-weight: 600;">Rayon</div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface);">
+        <div style="width: 9px; height: 9px; border-radius: 2px; background: var(--ds-info); flex: none;"></div>
+        <div style="font-size: 17px; flex-grow: 1;">Bébé</div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2" stroke-linecap="round" style="width: 15px; height: 15px; flex: none;"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div style="font-size: 15px; color: var(--ds-text-muted);">Détermine la position dans la liste, selon l'ordre du magasin.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="font-size: 17px; font-weight: 600;">Étiquettes</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px; padding: 7px 10px; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface); min-height: 44px; align-items: center;">
+        <sc-for list="{{etiquettes}}" as="etq" hint-placeholder-count="2">
+          <div style="display: flex; align-items: center; gap: 5px; padding: 2px 6px 2px 10px; border-radius: 999px; background: var(--ds-primary-light); font-size: 15px; font-weight: 600;">
+            <span>{{etq.nom}}</span>
+            <div onClick="{{etq.retirer}}" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2.4" stroke-linecap="round" style="width: 11px; height: 11px;"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </div>
+          </div>
+        </sc-for>
+        <div style="font-size: 15px; color: var(--ds-text-muted);">Ajouter…</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 17px; font-weight: 600;">Unité</div>
+        <div style="padding: 8px 12px; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface); font-size: 17px;">couche</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 17px; font-weight: 600;">Par lot de</div>
+        <div style="padding: 8px 12px; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface); font-size: 17px;">40</div>
+      </div>
+    </div>
+    <div style="font-size: 15px; color: var(--ds-text-muted); margin-top: -12px;">On consomme des couches, on achète des paquets de 40.</div>
+
+    <div style="height: 1px; background: var(--ds-border);"></div>
+
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="display: flex; flex-direction: column; flex-grow: 1;">
+        <div style="font-size: 17px; font-weight: 600; line-height: 1.35;">Souhaité à la maison</div>
+        <div style="font-size: 15px; color: var(--ds-text-muted); line-height: 1.35;">Le niveau normal, hors besoin ponctuel.</div>
+      </div>
+      <div style="display: flex; align-items: center; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface); overflow: hidden; flex: none;">
+        <div onClick="{{cibleMoins}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ds-text-muted);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 14px; height: 14px;"><path d="M5 12h14"/></svg>
+        </div>
+        <div style="width: 46px; text-align: center; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums;">{{cible}}</div>
+        <div onClick="{{ciblePlus}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ds-text-muted);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 14px; height: 14px;"><path d="M12 5v14M5 12h14"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 1px; background: var(--ds-border);"></div>
+
+    <div onClick="{{toggleSuivi}}" style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+      <div style="display: flex; flex-direction: column; flex-grow: 1;">
+        <div style="font-size: 17px; font-weight: 600; line-height: 1.35;">Suivi automatique du stock</div>
+        <div style="font-size: 15px; color: var(--ds-text-muted); line-height: 1.35;">Le stock diminue seul avec le temps.</div>
+      </div>
+      <div style="width: 50px; height: 30px; border-radius: 999px; background: {{pisteFond}}; padding: 3px; flex: none; display: flex; justify-content: {{pistePos}}; transition: background 150ms ease;">
+        <div style="width: 24px; height: 24px; border-radius: 999px; background: #fff; box-shadow: 0 1px 2px rgba(28,25,18,0.3);"></div>
+      </div>
+    </div>
+
+    <sc-if value="{{suivi}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border: 1px solid var(--ds-border); border-radius: 12px; background: var(--ds-surface);">
+        <div style="font-size: 15px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ds-text-muted);">Consommation par jour</div>
+        <div style="display: flex; gap: 4px; padding: 3px; border-radius: 8px; background: var(--ds-surface-alt);">
+          <div onClick="{{modeEstime}}" style="{{ongletEstime}}">Estimée</div>
+          <div onClick="{{modeImpose}}" style="{{ongletImpose}}">Imposée</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1;">{{conso}}</div>
+          <div style="font-size: 15px; color: var(--ds-text-muted); flex-grow: 1; line-height: 1.35;">{{consoAide}}</div>
+          <sc-if value="{{imposee}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; align-items: center; border: 1px solid var(--ds-border-strong); border-radius: 8px; overflow: hidden; flex: none;">
+              <div onClick="{{consoMoins}}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ds-text-muted);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 13px; height: 13px;"><path d="M5 12h14"/></svg>
+              </div>
+              <div onClick="{{consoPlus}}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ds-text-muted); border-left: 1px solid var(--ds-border);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width: 13px; height: 13px;"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{suiviCoupe}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; align-items: center; gap: 9px; padding: 11px 13px; border: 1px solid var(--ds-border-strong); border-radius: 12px; background: var(--ds-surface-alt);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="1.8" stroke-linecap="round" style="width: 17px; height: 17px; flex: none;"><circle cx="12" cy="12" r="8.5"/><path d="M12 8.2v.2M12 11.5v4.3"/></svg>
+        <div style="font-size: 15px; color: var(--ds-text-muted); line-height: 1.4;">Sans suivi, cet article n'apparaît dans la liste que si tu le demandes.</div>
+      </div>
+    </sc-if>
+
+    <div style="height: 1px; background: var(--ds-border);"></div>
+
+    <div style="display: flex; align-items: center; gap: 10px; padding: 11px 13px; border: 1px solid var(--ds-info); border-radius: 12px; background: color-mix(in srgb, var(--ds-info) 8%, var(--ds-surface));">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-info)" stroke-width="1.8" stroke-linecap="round" style="width: 18px; height: 18px; flex: none;"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+      <div style="display: flex; flex-direction: column; flex-grow: 1;">
+        <div style="font-size: 17px; font-weight: 600; line-height: 1.35;">Stock estimé : 6</div>
+        <div style="font-size: 15px; color: var(--ds-text-muted); line-height: 1.35;">Épuisé vers le 28 août</div>
+      </div>
+      <div style="height: 38px; display: flex; align-items: center; padding: 0 13px; border-radius: 8px; border: 1px solid var(--ds-border-strong); background: var(--ds-surface); font-size: 15px; font-weight: 600; cursor: pointer; flex: none;">Recompter</div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px; padding: 12px 2px; cursor: pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="1.8" stroke-linecap="round" style="width: 18px; height: 18px; flex: none;"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5V9h4.5"/><path d="M12 8v4.3l3 1.8"/></svg>
+      <div style="font-size: 17px; font-weight: 600; flex-grow: 1; border-bottom: 1.5px solid var(--ds-primary-dark); align-self: flex-start;">Historique des mouvements</div>
+      <div style="font-size: 15px; color: var(--ds-text-muted);">14</div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2" stroke-linecap="round" style="width: 15px; height: 15px; flex: none;"><path d="M9 6l6 6-6 6"/></svg>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="font-size: 17px; font-weight: 600;">Note</div>
+      <div style="padding: 8px 12px; border: 1px solid var(--ds-border-strong); border-radius: 8px; background: var(--ds-surface); font-size: 17px; color: var(--ds-text-muted); min-height: 68px;">Marque Pommette, éviter les parfumées.</div>
+    </div>
+
+  </div>
+
+  <div style="display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--ds-border); background: var(--ds-surface-alt);">
+    <div style="height: 44px; flex-grow: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--ds-border-strong); font-size: 17px; font-weight: 600; cursor: pointer;">Annuler</div>
+    <div style="height: 44px; flex-grow: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--ds-primary); color: var(--ds-primary-ink); font-size: 17px; font-weight: 600; cursor: pointer;">Enregistrer</div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","options":["clair","sombre"],"default":"clair","section":"Thème"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      cible: 40,
+      suivi: true,
+      imposee: true,
+      consoImposee: 1,
+      etiquettes: ['Bébé', 'Indispensable'],
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const onglet = (actif) =>
+      'flex-grow: 1; text-align: center; padding: 7px 0; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer;' +
+      (actif
+        ? ' background: var(--ds-surface); color: var(--ds-text); box-shadow: 0 1px 2px rgba(28,25,18,0.08);'
+        : ' background: transparent; color: var(--ds-text-muted);');
+
+    return {
+      themeClass: this.props.theme === 'sombre' ? 'theme-dark' : '',
+      cible: s.cible,
+      suivi: s.suivi,
+      suiviCoupe: !s.suivi,
+      imposee: s.imposee,
+      pisteFond: s.suivi ? 'var(--ds-success)' : 'var(--ds-border-strong)',
+      pistePos: s.suivi ? 'flex-end' : 'flex-start',
+      ongletEstime: onglet(!s.imposee),
+      ongletImpose: onglet(s.imposee),
+      conso: s.imposee ? String(s.consoImposee) : '1,05',
+      consoAide: s.imposee
+        ? 'couche par jour, valeur que tu imposes'
+        : 'couche par jour, calculé sur les 3 derniers cycles',
+      etiquettes: s.etiquettes.map((nom) => ({
+        nom: nom,
+        retirer: () => this.setState({ etiquettes: s.etiquettes.filter((e) => e !== nom) }),
+      })),
+      cibleMoins: () => this.setState({ cible: Math.max(0, s.cible - 1) }),
+      ciblePlus: () => this.setState({ cible: s.cible + 1 }),
+      toggleSuivi: () => this.setState({ suivi: !s.suivi }),
+      modeEstime: () => this.setState({ imposee: false }),
+      modeImpose: () => this.setState({ imposee: true }),
+      consoMoins: () => this.setState({ consoImposee: Math.max(0, s.consoImposee - 1) }),
+      consoPlus: () => this.setState({ consoImposee: s.consoImposee + 1 }),
+    };
+  }
+}
+</script>
+</body>
+</html>
