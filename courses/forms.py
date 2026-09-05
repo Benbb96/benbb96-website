@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django import forms
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from base.widgets import TomSelectMultipleWidget, TomSelectWidget
 from courses.models import Article, Magasin, Rayon, Sortie
@@ -25,11 +26,11 @@ class ArticleForm(forms.ModelForm):
             "note",
         )
         widgets = {
-            "rayon": TomSelectWidget(placeholder="Rayon"),
-            "etiquettes": TomSelectMultipleWidget(placeholder="Étiquettes"),
+            "rayon": TomSelectWidget(placeholder=_("Rayon")),
+            "etiquettes": TomSelectMultipleWidget(placeholder=_("Étiquettes")),
         }
         help_texts = {
-            "conso_amorce": (
+            "conso_amorce": _(
                 "Graine de démarrage — utile pour amorcer le suivi avant d'avoir assez "
                 "d'historique. Devient inerte dès que la consommation est apprise."
             ),
@@ -64,7 +65,7 @@ class SortieForm(forms.ModelForm):
     class Meta:
         model = Sortie
         fields = ("nom", "magasin")
-        widgets = {"magasin": TomSelectWidget(placeholder="Magasin (optionnel)")}
+        widgets = {"magasin": TomSelectWidget(placeholder=_("Magasin (optionnel)"))}
 
     def __init__(self, *args, foyer=None, **kwargs):
         self.foyer = foyer
@@ -79,10 +80,15 @@ class AjouterArticleForm(forms.Form):
     """Ajoute un article existant du catalogue à une sortie (vue magasin déjà entamée)."""
 
     article = forms.ModelChoiceField(
-        queryset=Article.objects.none(), widget=TomSelectWidget(placeholder="Article")
+        queryset=Article.objects.none(),
+        widget=TomSelectWidget(placeholder=_("Article")),
     )
     quantite = forms.DecimalField(
-        max_digits=9, decimal_places=3, initial=Decimal(1), min_value=Decimal(0)
+        max_digits=9,
+        decimal_places=3,
+        initial=Decimal(1),
+        min_value=Decimal(0),
+        label=_("Quantité"),
     )
 
     def __init__(self, *args, foyer=None, **kwargs):
@@ -97,6 +103,8 @@ class RecompterForm(forms.Form):
     par ce formulaire, qui écrit un `MouvementStock(type=recalage)`."""
 
     nouvelle_valeur = forms.DecimalField(
-        max_digits=9, decimal_places=3, min_value=Decimal(0), label="Il en reste"
+        max_digits=9, decimal_places=3, min_value=Decimal(0), label=_("Il en reste")
     )
-    commentaire = forms.CharField(max_length=255, required=False)
+    commentaire = forms.CharField(
+        max_length=255, required=False, label=_("Commentaire")
+    )

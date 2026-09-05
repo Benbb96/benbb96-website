@@ -3,12 +3,15 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import F, Max, Value
 from django.db.models.functions import Greatest
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import floatformat
 from django.utils import dateformat, timezone
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 from django.views.decorators.http import require_POST
 
 from courses.forms import AjouterArticleForm, ArticleForm, RecompterForm, SortieForm
@@ -174,7 +177,9 @@ def creer_sortie(request, foyer_slug):
         sortie.foyer = foyer
         sortie.cree_par = request.user.profil
         sortie.save()
-        messages.success(request, f"Sortie « {sortie} » ouverte.")
+        messages.success(
+            request, _("Sortie « %(sortie)s » ouverte.") % {"sortie": sortie}
+        )
         return redirect(f"{_url_acheter(foyer)}?sortie={sortie.pk}")
     for erreur in form.errors.values():
         messages.error(request, erreur.as_text())
@@ -214,8 +219,11 @@ def toggle_ligne(request, foyer_slug, sortie_id, article_id):
             # §5.1 : on signale plutôt que de créer un doublon — fusion douce, pas de rejet.
             messages.warning(
                 request,
-                f"« {article} » est déjà dans « {conflit.sortie} ». Cochez-le depuis "
-                f"cette sortie-là pour éviter de l'acheter deux fois.",
+                _(
+                    "« %(article)s » est déjà dans « %(sortie)s ». Cochez-le depuis "
+                    "cette sortie-là pour éviter de l'acheter deux fois."
+                )
+                % {"article": article, "sortie": conflit.sortie},
             )
         else:
             quantite = _decimal(request.POST.get("quantite"), Decimal(1)) or Decimal(1)
@@ -297,6 +305,7 @@ def ajouter_article(request, foyer_slug, sortie_id):
 
 @login_required
 @require_POST
+@transaction.atomic
 def valider_sortie(request, foyer_slug, sortie_id):
     foyer = _foyer_du_profil(request, foyer_slug)
     sortie = get_object_or_404(
@@ -330,9 +339,13 @@ def valider_sortie(request, foyer_slug, sortie_id):
     sortie.cloture_le = maintenant
     sortie.save(update_fields=["cloture_le"])
 
-    messages.success(
-        request, f"{len(lignes_achetees)} article(s) validé(s) — stock mis à jour."
-    )
+    nb_lignes = len(lignes_achetees)
+    texte = ngettext_lazy(
+        "%(nb)d article validé — stock mis à jour.",
+        "%(nb)d articles validés — stock mis à jour.",
+        nb_lignes,
+    ) % {"nb": nb_lignes}
+    messages.success(request, texte)
     return redirect(_url_acheter(foyer))
 
 
@@ -356,12 +369,16 @@ def _estimation_label(article):
     faux en silence dès que l'historique change.
     """
     if not article.suivi_auto:
-        return "Suivi automatique désactivé"
+        return _("Suivi automatique désactivé")
     if article.conso_par_jour_estimee:
-        return f"≈ {_formate_quantite(article.conso_par_jour_estimee)} / jour (estimé)"
+        return _("≈ %(taux)s / jour (estimé)") % {
+            "taux": _formate_quantite(article.conso_par_jour_estimee)
+        }
     if article.conso_amorce:
-        return f"≈ {_formate_quantite(article.conso_amorce)} / jour (amorce, pas encore d'historique)"
-    return "Pas assez d'historique pour estimer"
+        return _("≈ %(taux)s / jour (amorce, pas encore d'historique)") % {
+            "taux": _formate_quantite(article.conso_amorce)
+        }
+    return _("Pas assez d'historique pour estimer")
 
 
 def _grouper_articles_par_rayon(articles):
@@ -505,6 +522,7 @@ def modifier_ponctuel(request, foyer_slug, article_id):
 
 @login_required
 @require_POST
+@transaction.atomic
 def recompter(request, foyer_slug, article_id):
     foyer = _foyer_du_profil(request, foyer_slug)
     article = get_object_or_404(Article, pk=article_id, foyer=foyer)
@@ -526,12 +544,15 @@ def recompter(request, foyer_slug, article_id):
         if _est_ajax(request):
             return _etat_article_json(article.pk, request.user.profil)
         messages.success(
-            request, f"Stock de « {article} » recompté : {nouvelle_valeur}."
+            request,
+            _("Stock de « %(article)s » recompté : %(valeur)s.")
+            % {"article": article, "valeur": nouvelle_valeur},
         )
     else:
+        message_erreur = _("Valeur de recomptage invalide.")
         if _est_ajax(request):
-            return JsonResponse({"error": "Valeur de recomptage invalide."}, status=400)
-        messages.error(request, "Valeur de recomptage invalide.")
+            return JsonResponse({"error": str(message_erreur)}, status=400)
+        messages.error(request, message_erreur)
     return redirect(_url_inventaire(foyer, article.pk))
 
 
@@ -541,7 +562,7 @@ def creer_article(request, foyer_slug):
     form = ArticleForm(request.POST or None, foyer=foyer)
     if request.method == "POST" and form.is_valid():
         article = form.save()
-        messages.success(request, f"« {article} » créé.")
+        messages.success(request, _("« %(article)s » créé.") % {"article": article})
         return redirect(_url_inventaire(foyer, article.pk))
     return render(
         request,
@@ -557,7 +578,9 @@ def modifier_article(request, foyer_slug, article_id):
     form = ArticleForm(request.POST or None, instance=article, foyer=foyer)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, f"« {article} » mis à jour.")
+        messages.success(
+            request, _("« %(article)s » mis à jour.") % {"article": article}
+        )
         return redirect(_url_inventaire(foyer, article.pk))
     return render(
         request,
@@ -571,11 +594,11 @@ def _lire_nom_json(request, max_length):
     try:
         payload = json.loads(request.body)
     except (json.JSONDecodeError, TypeError):
-        return None, JsonResponse({"error": "JSON invalide."}, status=400)
+        return None, JsonResponse({"error": str(_("JSON invalide."))}, status=400)
 
     nom = str(payload.get("nom", "")).strip()
     if not nom or len(nom) > max_length:
-        return None, JsonResponse({"error": "Nom invalide."}, status=400)
+        return None, JsonResponse({"error": str(_("Nom invalide."))}, status=400)
     return nom, None
 
 
@@ -653,6 +676,7 @@ def vue_historique(request, foyer_slug):
 
 @login_required
 @require_POST
+@transaction.atomic
 def corriger_sortie(request, foyer_slug, sortie_id):
     foyer = _foyer_du_profil(request, foyer_slug)
     sortie = get_object_or_404(
@@ -676,7 +700,9 @@ def corriger_sortie(request, foyer_slug, sortie_id):
     sortie.cloture_le = None
     sortie.save(update_fields=["cloture_le"])
     messages.success(
-        request, f"Sortie « {sortie} » rouverte — reprenez-la depuis « À acheter »."
+        request,
+        _("Sortie « %(sortie)s » rouverte — reprenez-la depuis « À acheter ».")
+        % {"sortie": sortie},
     )
     return redirect(
         f"{_url_acheter(foyer)}?sortie={sortie.pk}"

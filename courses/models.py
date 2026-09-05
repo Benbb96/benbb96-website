@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Case, F, OuterRef, Q, Subquery, Value, When
 from django.db.models.functions import Cast, Coalesce, Greatest, Now
 from django.utils import timezone
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from fontawesome_6.fields import IconField
 
@@ -46,7 +47,7 @@ class Foyer(models.Model):
     slug = AutoSlugField(unique=True, populate_from="nom")
     membres = models.ManyToManyField(Profil, related_name="foyers")
     archive = models.BooleanField(default=False)
-    date_creation = models.DateTimeField("date de création", auto_now_add=True)
+    date_creation = models.DateTimeField(_("date de création"), auto_now_add=True)
 
     class Meta:
         ordering = ("nom",)
@@ -182,47 +183,59 @@ class Article(models.Model):
     objects = ArticleQuerySet.as_manager()
 
     foyer = models.ForeignKey(Foyer, on_delete=models.CASCADE, related_name="articles")
-    nom = models.CharField(max_length=150)
+    nom = models.CharField(_("nom"), max_length=150)
     rayon = models.ForeignKey(
         Rayon,
+        verbose_name=_("rayon"),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name="articles",
     )
-    etiquettes = models.ManyToManyField(Etiquette, blank=True, related_name="articles")
+    etiquettes = models.ManyToManyField(
+        Etiquette, verbose_name=_("étiquettes"), blank=True, related_name="articles"
+    )
 
     unite = models.CharField(
+        _("unité"),
         max_length=10,
         choices=Unite.choices,
         default="",
         blank=True,
-        help_text="Laissé vide par l'import tant que l'unité n'est pas confirmée.",
+        help_text=_("Laissé vide par l'import tant que l'unité n'est pas confirmée."),
     )
     conditionnement = _quantite_field(
+        verbose_name=_("conditionnement"),
         default=1,
-        help_text="Unités de conso par unité d'achat (ex. 1,5 pour une bouteille de 1,5 L).",
+        help_text=_(
+            "Unités de conso par unité d'achat (ex. 1,5 pour une bouteille de 1,5 L)."
+        ),
     )
 
     stock_cible = _quantite_field(
-        default=0, help_text="Niveau normal souhaité à la maison (le « want » du POC)."
+        verbose_name=_("stock cible"),
+        default=0,
+        help_text=_("Niveau normal souhaité à la maison (le « want » du POC)."),
     )
     stock_reference = _quantite_field(
         default=0,
-        help_text="Stock figé au dernier achat/recalage (le « have » du POC).",
+        help_text=_("Stock figé au dernier achat/recalage (le « have » du POC)."),
     )
     stock_maj_le = models.DateTimeField(null=True, blank=True)
 
     conso_par_jour_estimee = _quantite_field(null=True, blank=True)
     conso_amorce = _quantite_field(
+        verbose_name=_("conso amorce"),
         null=True,
         blank=True,
-        help_text="Graine de démarrage, lue uniquement tant que conso_par_jour_estimee est vide.",
+        help_text=_(
+            "Graine de démarrage, lue uniquement tant que conso_par_jour_estimee est vide."
+        ),
     )
-    suivi_auto = models.BooleanField("suivi automatique", default=True)
+    suivi_auto = models.BooleanField(_("suivi automatique"), default=True)
 
     actif = models.BooleanField(default=True)
-    note = models.TextField(blank=True)
+    note = models.TextField(_("note"), blank=True)
 
     uuid = _uuid_field()
     modifie_le = models.DateTimeField(auto_now=True)
@@ -276,9 +289,10 @@ class Sortie(models.Model):
         DRIVE = "drive", _("Drive")
 
     foyer = models.ForeignKey(Foyer, on_delete=models.CASCADE, related_name="sorties")
-    nom = models.CharField(max_length=100, blank=True)
+    nom = models.CharField(_("nom"), max_length=100, blank=True)
     magasin = models.ForeignKey(
         Magasin,
+        verbose_name=_("magasin"),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -301,7 +315,12 @@ class Sortie(models.Model):
         ordering = ("-cree_le",)
 
     def __str__(self):
-        return self.nom or f"Sortie du {self.cree_le:%d/%m/%Y}"
+        if self.nom:
+            return self.nom
+        # gettext (non lazy) : un __str__ doit renvoyer un vrai str, pas un proxy lazy.
+        return gettext("Sortie du %(date)s") % {
+            "date": self.cree_le.strftime("%d/%m/%Y")
+        }
 
 
 class DemandePonctuelle(models.Model):
@@ -420,10 +439,12 @@ class MouvementStock(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="mouvements",
-        help_text="La Ligne à l'origine de ce mouvement — sans elle, « Corriger » ne peut rien défaire.",
+        help_text=_(
+            "La Ligne à l'origine de ce mouvement — sans elle, « Corriger » ne peut rien défaire."
+        ),
     )
     quantite = _quantite_field(
-        help_text=(
+        help_text=_(
             "Toujours positive — le type porte le signe : achat = ajoutée au stock, "
             "perte = retirée du stock, recalage = NOUVELLE VALEUR ABSOLUE du stock "
             "(ni un ajout ni un retrait)."
@@ -459,7 +480,7 @@ class ArticleMagasin(models.Model):
         Magasin, on_delete=models.CASCADE, related_name="articles_magasin"
     )
     libelle = models.CharField(
-        max_length=200, help_text="Tel que le ticket ou le drive l'écrit."
+        max_length=200, help_text=_("Tel que le ticket ou le drive l'écrit.")
     )
     marque = models.CharField(max_length=100, blank=True)
     modifie_le = models.DateTimeField(auto_now=True)

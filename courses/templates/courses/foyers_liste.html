@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block navbar %}{% include 'navbar.html' with courses=True %}{% endblock %}
-{% block title %}Courses{% endblock %}
-{% block jumbotron_title %}Courses{% endblock %}
-{% block jumbotron_description %}Choisissez un foyer.{% endblock %}
+{% block title %}{% trans "Courses" %}{% endblock %}
+{% block jumbotron_title %}{% trans "Courses" %}{% endblock %}
+{% block jumbotron_description %}{% trans "Choisissez un foyer." %}{% endblock %}
 
 {% block content %}
 <div class="ds-narrow">
@@ -17,8 +18,7 @@
         </ul>
     {% else %}
         <p class="ds-text-muted">
-            Vous n'appartenez à aucun foyer pour le moment. Demandez à un membre existant de
-            vous y ajouter, ou passez par l'admin.
+            {% blocktrans %}Vous n'appartenez à aucun foyer pour le moment. Demandez à un membre existant de vous y ajouter, ou passez par l'admin.{% endblocktrans %}
         </p>
     {% endif %}
 </div>

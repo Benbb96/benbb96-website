@@ -17,6 +17,7 @@ Lancer : python manage.py test smoke_tests
 import json
 from datetime import timedelta
 from decimal import Decimal
+from unittest import mock
 
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -542,6 +543,24 @@ class CoursesViewsSmokeTest(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Bananes")
 
+    def test_creer_article_status_200(self):
+        r = self.client.get(url("courses:creer-article", self.foyer.slug))
+        self.assertEqual(r.status_code, 200)
+
+    def test_modifier_article_status_200(self):
+        r = self.client.get(
+            url("courses:modifier-article", self.foyer.slug, self.article.pk)
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Bananes")
+
+    def test_ajouter_article_status_200(self):
+        sortie = Sortie.objects.create(
+            foyer=self.foyer, nom="Apéro", cree_par=self.profil
+        )
+        r = self.client.get(url("courses:ajouter-article", self.foyer.slug, sortie.pk))
+        self.assertEqual(r.status_code, 200)
+
     def test_inventaire_status_200(self):
         r = self.client.get(url("courses:inventaire", self.foyer.slug))
         self.assertEqual(r.status_code, 200)
@@ -668,6 +687,54 @@ class CoursesViewsSmokeTest(TestCase):
         sortie.refresh_from_db()
         self.assertIsNotNone(sortie.cloture_le)
 
+    def test_valider_sortie_est_atomique(self):
+        """
+        §13 : une interruption au milieu de la boucle (ex. « database is locked » pendant
+        qu'un autre membre du foyer écrit) ne doit laisser NI mouvement NI maj de stock
+        partiels — sinon un retry double le stock et fausse l'apprentissage de conso (§8).
+        """
+        self.client.get(url("courses:a-acheter", self.foyer.slug))
+        sortie = self._sortie_par_defaut()
+        autre_article = Article.objects.create(
+            foyer=self.foyer,
+            nom="Oeufs",
+            stock_cible=Decimal(2),
+            stock_reference=Decimal(0),
+        )
+        self.client.post(
+            url("courses:toggle-ligne", self.foyer.slug, sortie.pk, self.article.pk),
+            {"quantite": "3"},
+        )
+        self.client.post(
+            url("courses:toggle-ligne", self.foyer.slug, sortie.pk, autre_article.pk),
+            {"quantite": "2"},
+        )
+
+        original_create = MouvementStock.objects.create
+        appels = {"n": 0}
+
+        def create_qui_explose(*args, **kwargs):
+            appels["n"] += 1
+            if appels["n"] == 2:
+                raise RuntimeError("boom au milieu de la boucle")
+            return original_create(*args, **kwargs)
+
+        with mock.patch.object(
+            MouvementStock.objects, "create", side_effect=create_qui_explose
+        ):
+            with self.assertRaises(RuntimeError):
+                self.client.post(
+                    url("courses:valider-sortie", self.foyer.slug, sortie.pk)
+                )
+
+        self.assertEqual(MouvementStock.objects.count(), 0)
+        self.article.refresh_from_db()
+        autre_article.refresh_from_db()
+        self.assertEqual(self.article.stock_reference, Decimal("0"))
+        self.assertEqual(autre_article.stock_reference, Decimal("0"))
+        sortie.refresh_from_db()
+        self.assertIsNone(sortie.cloture_le)
+
     def test_recompter_cree_un_mouvement_de_recalage(self):
         r = self.client.post(
             url("courses:recompter", self.foyer.slug, self.article.pk),
@@ -732,6 +799,26 @@ class CoursesViewsSmokeTest(TestCase):
             data={"nouvelle_valeur": "pas-un-nombre"},
         )
         self.assertEqual(r.status_code, 400)
+
+    def test_recompter_est_atomique(self):
+        """§13 : un recomptage interrompu ne doit laisser ni mouvement ni maj de stock."""
+
+        def filtre_qui_explose(*args, **kwargs):
+            raise RuntimeError("boom au milieu du recomptage")
+
+        with mock.patch.object(
+            Article.objects, "filter", side_effect=filtre_qui_explose
+        ):
+            with self.assertRaises(RuntimeError):
+                self.client.post(
+                    url("courses:recompter", self.foyer.slug, self.article.pk),
+                    {"nouvelle_valeur": "12"},
+                )
+
+        self.assertEqual(MouvementStock.objects.count(), 0)
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.stock_reference, Decimal("0"))
+        self.assertIsNone(self.article.stock_maj_le)
 
     def test_creer_etiquette_ajax(self):
         """Création à la volée depuis Tom Select (fiche article) — cf. conception.md §6.3."""
@@ -831,3 +918,58 @@ class CoursesViewsSmokeTest(TestCase):
         self.assertFalse(MouvementStock.objects.filter(article=self.article).exists())
         sortie.refresh_from_db()
         self.assertIsNone(sortie.cloture_le)
+
+    def test_corriger_sortie_est_atomique(self):
+        """
+        §13 : pire cas — une coupure entre le retrait des mouvements et la réouverture
+        de la sortie ne doit ni défaire un seul mouvement sur deux, ni supprimer
+        l'historique sans rouvrir la sortie.
+        """
+        self.client.get(url("courses:a-acheter", self.foyer.slug))
+        sortie = self._sortie_par_defaut()
+        autre_article = Article.objects.create(
+            foyer=self.foyer,
+            nom="Oeufs",
+            stock_cible=Decimal(2),
+            stock_reference=Decimal(0),
+        )
+        self.client.post(
+            url("courses:toggle-ligne", self.foyer.slug, sortie.pk, self.article.pk),
+            {"quantite": "3"},
+        )
+        self.client.post(
+            url("courses:toggle-ligne", self.foyer.slug, sortie.pk, autre_article.pk),
+            {"quantite": "2"},
+        )
+        self.client.post(url("courses:valider-sortie", self.foyer.slug, sortie.pk))
+
+        self.article.refresh_from_db()
+        autre_article.refresh_from_db()
+        stock_avant = (self.article.stock_reference, autre_article.stock_reference)
+        nb_mouvements_avant = MouvementStock.objects.count()
+
+        original_filter = Article.objects.filter
+        appels = {"n": 0}
+
+        def filtre_qui_explose(*args, **kwargs):
+            appels["n"] += 1
+            if appels["n"] == 2:
+                raise RuntimeError("boom au milieu de la boucle")
+            return original_filter(*args, **kwargs)
+
+        with mock.patch.object(
+            Article.objects, "filter", side_effect=filtre_qui_explose
+        ):
+            with self.assertRaises(RuntimeError):
+                self.client.post(
+                    url("courses:corriger-sortie", self.foyer.slug, sortie.pk)
+                )
+
+        self.article.refresh_from_db()
+        autre_article.refresh_from_db()
+        self.assertEqual(
+            (self.article.stock_reference, autre_article.stock_reference), stock_avant
+        )
+        self.assertEqual(MouvementStock.objects.count(), nb_mouvements_avant)
+        sortie.refresh_from_db()
+        self.assertIsNotNone(sortie.cloture_le)

@@ -1,4 +1,5 @@
 {% extends 'courses/base_courses.html' %}
+{% load i18n %}
 
 {% block inventaire_active %} is-active{% endblock %}
 
@@ -8,13 +9,19 @@
 {% endblock %}
 
 {% block courses_content %}
-<h2>{% if article %}Modifier « {{ article.nom }} »{% else %}Nouvel article{% endif %}</h2>
+<h2>
+    {% if article %}
+        {% blocktrans with nom=article.nom %}Modifier « {{ nom }} »{% endblocktrans %}
+    {% else %}
+        {% trans "Nouvel article" %}
+    {% endif %}
+</h2>
 <form method="post">
     {% csrf_token %}
     {% include 'components/form.html' %}
     <div class="ds-cluster ds-cluster--center ds-mt-4">
-        <button type="submit" class="ds-btn">Enregistrer</button>
-        <a class="ds-btn ds-btn--ghost" href="{% url 'courses:inventaire' foyer.slug %}">Annuler</a>
+        <button type="submit" class="ds-btn">{% trans "Enregistrer" %}</button>
+        <a class="ds-btn ds-btn--ghost" href="{% url 'courses:inventaire' foyer.slug %}">{% trans "Annuler" %}</a>
     </div>
 </form>
 {% endblock %}

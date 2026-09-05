@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-14 16:09+0200\n"
+"POT-Creation-Date: 2026-09-05 11:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,66 +18,746 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\benbb96\settings.py:120
+#: config/settings/base.py:156
 msgid "French"
 msgstr ""
 
-#: .\benbb96\settings.py:121
+#: config/settings/base.py:157
 msgid "English"
 msgstr ""
 
-#: .\benbb96\urls.py:56
+#: config/urls.py:37
 msgid "review/"
 msgstr ""
 
-#: .\benbb96\urls.py:57
+#: config/urls.py:38
 msgid "tracker/"
 msgstr ""
 
-#: .\benbb96\urls.py:58
+#: config/urls.py:39
 msgid "versus/"
 msgstr ""
 
-#: .\benbb96\urls.py:59
+#: config/urls.py:40
 msgid "music/"
 msgstr ""
 
-#: .\benbb96\urls.py:60
+#: config/urls.py:41
+msgid "my-spot/"
+msgstr ""
+
+#: config/urls.py:42
+msgid "super-moite-moite/"
+msgstr ""
+
+#: config/urls.py:43
+msgid "courses/"
+msgstr "shopping/"
+
+#: config/urls.py:44
+msgid "kendama/"
+msgstr ""
+
+#: config/urls.py:45
 msgid "admin/"
 msgstr ""
 
-#: .\templates\admin\base_site.html:5
+#: courses/forms.py:29
+msgid "Rayon"
+msgstr "Aisle"
+
+#: courses/forms.py:30
+msgid "Étiquettes"
+msgstr "Tags"
+
+#: courses/forms.py:34
+msgid ""
+"Graine de démarrage — utile pour amorcer le suivi avant d'avoir assez "
+"d'historique. Devient inerte dès que la consommation est apprise."
+msgstr ""
+"Seed value — useful to kick-start tracking before there's enough history. "
+"Becomes inert as soon as consumption is learned."
+
+#: courses/forms.py:68
+msgid "Magasin (optionnel)"
+msgstr "Store (optional)"
+
+#: courses/forms.py:84
+msgid "Article"
+msgstr "Item"
+
+#: courses/forms.py:91
+msgid "Quantité"
+msgstr "Quantity"
+
+#: courses/forms.py:106 courses/templates/courses/inventaire.html:87
+msgid "Il en reste"
+msgstr "How many are left"
+
+#: courses/forms.py:109
+msgid "Commentaire"
+msgstr "Comment"
+
+#: courses/models.py:50
+msgid "date de création"
+msgstr "creation date"
+
+#: courses/models.py:173 courses/models.py:200
+msgid "unité"
+msgstr "unit"
+
+#: courses/models.py:178
+msgid "paquet"
+msgstr "pack"
+
+#: courses/models.py:179
+msgid "boîte"
+msgstr "box"
+
+#: courses/models.py:180
+msgid "sachet"
+msgstr "sachet"
+
+#: courses/models.py:181
+msgid "bouteille"
+msgstr "bottle"
+
+#: courses/models.py:186 courses/models.py:292
+msgid "nom"
+msgstr "name"
+
+#: courses/models.py:189
+msgid "rayon"
+msgstr "aisle"
+
+#: courses/models.py:196
+msgid "étiquettes"
+msgstr "tags"
+
+#: courses/models.py:205
+msgid "Laissé vide par l'import tant que l'unité n'est pas confirmée."
+msgstr "Left blank by import until the unit is confirmed."
+
+#: courses/models.py:208
+msgid "conditionnement"
+msgstr "packaging"
+
+#: courses/models.py:211
+msgid ""
+"Unités de conso par unité d'achat (ex. 1,5 pour une bouteille de 1,5 L)."
+msgstr "Consumption units per purchase unit (e.g. 1.5 for a 1.5 L bottle)."
+
+#: courses/models.py:216
+msgid "stock cible"
+msgstr "target stock"
+
+#: courses/models.py:218
+msgid "Niveau normal souhaité à la maison (le « want » du POC)."
+msgstr "Desired normal level at home (the \"want\" in the PoC)."
+
+#: courses/models.py:222
+msgid "Stock figé au dernier achat/recalage (le « have » du POC)."
+msgstr "Stock frozen at the last purchase/recount (the \"have\" in the PoC)."
+
+#: courses/models.py:228
+msgid "conso amorce"
+msgstr "seed consumption"
+
+#: courses/models.py:232
+msgid ""
+"Graine de démarrage, lue uniquement tant que conso_par_jour_estimee est "
+"vide."
+msgstr "Seed value, used only until conso_par_jour_estimee has data."
+
+#: courses/models.py:235
+msgid "suivi automatique"
+msgstr "automatic tracking"
+
+#: courses/models.py:238
+msgid "note"
+msgstr "note"
+
+#: courses/models.py:287 courses/models.py:364
+msgid "Manuel"
+msgstr "Manual"
+
+#: courses/models.py:288
+msgid "Ticket de caisse"
+msgstr "Receipt"
+
+#: courses/models.py:289
+msgid "Drive"
+msgstr "Click & collect"
+
+#: courses/models.py:295
+msgid "magasin"
+msgstr "store"
+
+#: courses/models.py:321
+#, python-format
+msgid "Sortie du %(date)s"
+msgstr "Trip from %(date)s"
+
+#: courses/models.py:365
+msgid "Seuil"
+msgstr "Threshold"
+
+#: courses/models.py:366
+msgid "Suggestion"
+msgstr "Suggestion"
+
+#: courses/models.py:367
+msgid "Import"
+msgstr "Import"
+
+#: courses/models.py:428
+msgid "Achat"
+msgstr "Purchase"
+
+#: courses/models.py:429
+msgid "Recalage"
+msgstr "Recount"
+
+#: courses/models.py:430
+msgid "Perte"
+msgstr "Loss"
+
+#: courses/models.py:443
+msgid ""
+"La Ligne à l'origine de ce mouvement — sans elle, « Corriger » ne peut rien "
+"défaire."
+msgstr ""
+"The Line this movement originated from — without it, \"Fix\" cannot undo "
+"anything."
+
+#: courses/models.py:448
+msgid ""
+"Toujours positive — le type porte le signe : achat = ajoutée au stock, perte"
+" = retirée du stock, recalage = NOUVELLE VALEUR ABSOLUE du stock (ni un "
+"ajout ni un retrait)."
+msgstr ""
+"Always positive — the type carries the sign: purchase = added to stock, loss"
+" = removed from stock, recount = the stock's NEW ABSOLUTE VALUE (neither an "
+"addition nor a removal)."
+
+#: courses/models.py:483
+msgid "Tel que le ticket ou le drive l'écrit."
+msgstr "As written on the receipt or the online order."
+
+#: courses/templates/courses/a_acheter.html:15
+msgid "Tout ce qui manque"
+msgstr "What's missing"
+
+#: courses/templates/courses/a_acheter.html:23
+msgid "+ Nouvelle sortie"
+msgstr "+ New trip"
+
+#: courses/templates/courses/a_acheter.html:27
+msgid "Ouvrir"
+msgstr "Open"
+
+#: courses/templates/courses/a_acheter.html:34
+msgid "Sans magasin précisé"
+msgstr "No store specified"
+
+#: courses/templates/courses/a_acheter.html:36
+msgid "+ Ajouter un article"
+msgstr "+ Add an item"
+
+#: courses/templates/courses/a_acheter.html:47
+#: courses/templates/courses/inventaire.html:31
+msgid "Sans rayon"
+msgstr "No aisle"
+
+#: courses/templates/courses/a_acheter.html:56
+#, python-format
+msgid "Marquer « %(nom)s » comme acheté"
+msgstr "Mark \"%(nom)s\" as bought"
+
+#: courses/templates/courses/a_acheter.html:66
+#, python-format
+msgid "Demandé par %(demandeur)s"
+msgstr "Requested by %(demandeur)s"
+
+#: courses/templates/courses/a_acheter.html:74
+#, python-format
+msgid "Quantité pour %(nom)s"
+msgstr "Quantity for %(nom)s"
+
+#: courses/templates/courses/a_acheter.html:75
+#: templates/admin/base_site.html:24 templates/navbar.html:69
+msgid "OK"
+msgstr "OK"
+
+#: courses/templates/courses/a_acheter.html:85
+msgid "Pas trouvé en rayon"
+msgstr "Not found in aisle"
+
+#: courses/templates/courses/a_acheter.html:86
+msgid "indisponible"
+msgstr "unavailable"
+
+#: courses/templates/courses/a_acheter.html:86
+msgid "Pas trouvé"
+msgstr "Not found"
+
+#: courses/templates/courses/a_acheter.html:96
+msgid "Rien à acheter, tout est sous contrôle."
+msgstr "Nothing to buy, everything's under control."
+
+#: courses/templates/courses/a_acheter.html:98
+msgid "Cette sortie est vide pour l'instant."
+msgstr "This trip is empty for now."
+
+#: courses/templates/courses/a_acheter.html:106
+msgid "dans le panier"
+msgstr "in the cart"
+
+#: courses/templates/courses/a_acheter.html:110
+msgid "Valider mes achats"
+msgstr "Confirm purchases"
+
+#: courses/templates/courses/ajouter_article.html:12
+#, python-format
+msgid "Ajouter un article à « %(nom)s »"
+msgstr "Add an item to \"%(nom)s\""
+
+#: courses/templates/courses/ajouter_article.html:17
+msgid "Ajouter"
+msgstr "Add"
+
+#: courses/templates/courses/ajouter_article.html:18
+#: courses/templates/courses/article_form.html:24
+msgid "Annuler"
+msgstr "Cancel"
+
+#: courses/templates/courses/article_form.html:14
+#, python-format
+msgid "Modifier « %(nom)s »"
+msgstr "Edit \"%(nom)s\""
+
+#: courses/templates/courses/article_form.html:16
+msgid "Nouvel article"
+msgstr "New item"
+
+#: courses/templates/courses/article_form.html:23
+msgid "Enregistrer"
+msgstr "Save"
+
+#: courses/templates/courses/base_courses.html:6
+#: courses/templates/courses/foyers_liste.html:5
+#: courses/templates/courses/foyers_liste.html:6 templates/navbar.html:26
+msgid "Courses"
+msgstr "Shopping"
+
+#: courses/templates/courses/base_courses.html:14
+msgid "Liste de courses partagée du foyer."
+msgstr "The household's shared shopping list."
+
+#: courses/templates/courses/base_courses.html:17
+msgid "Changer de foyer"
+msgstr "Switch household"
+
+#: courses/templates/courses/base_courses.html:26
+msgid "À acheter"
+msgstr "To buy"
+
+#: courses/templates/courses/base_courses.html:29
+msgid "Inventaire"
+msgstr "Inventory"
+
+#: courses/templates/courses/base_courses.html:32
+msgid "Historique"
+msgstr "History"
+
+#: courses/templates/courses/foyers_liste.html:7
+msgid "Choisissez un foyer."
+msgstr "Choose a household."
+
+#: courses/templates/courses/foyers_liste.html:21
+msgid ""
+"Vous n'appartenez à aucun foyer pour le moment. Demandez à un membre "
+"existant de vous y ajouter, ou passez par l'admin."
+msgstr ""
+"You don't belong to any household yet. Ask an existing member to add you, or"
+" go through the admin."
+
+#: courses/templates/courses/historique.html:13
+msgid "Sortie en cours"
+msgstr "Ongoing trip"
+
+#: courses/templates/courses/historique.html:15
+msgid "Sans magasin"
+msgstr "No store"
+
+#: courses/templates/courses/historique.html:17
+#: courses/templates/courses/historique.html:40
+#, python-format
+msgid "%(compteur)s article"
+msgid_plural "%(compteur)s articles"
+msgstr[0] "%(compteur)s item"
+msgstr[1] "%(compteur)s items"
+
+#: courses/templates/courses/historique.html:18
+#, python-format
+msgid "ouverte le %(date)s"
+msgstr "opened on %(date)s"
+
+#: courses/templates/courses/historique.html:36
+msgid "Sortie"
+msgstr "Trip"
+
+#: courses/templates/courses/historique.html:52
+msgid "Rouvrir cette sortie et défaire son effet sur le stock ?"
+msgstr "Reopen this trip and undo its effect on stock?"
+
+#: courses/templates/courses/historique.html:54
+#, python-format
+msgid "Clôturée par %(profil)s"
+msgstr "Closed by %(profil)s"
+
+#: courses/templates/courses/historique.html:58
+msgid "Corriger"
+msgstr "Fix"
+
+#: courses/templates/courses/historique.html:67
+msgid "Aucune sortie clôturée pour le moment."
+msgstr "No closed trips yet."
+
+#: courses/templates/courses/inventaire.html:8
+msgid "Rechercher par nom, rayon ou étiquette"
+msgstr "Search by name, aisle or tag"
+
+#: courses/templates/courses/inventaire.html:9
+msgid "Stock estimé"
+msgstr "Estimated stock"
+
+#: courses/templates/courses/inventaire.html:13
+msgid "+ Nouvel article"
+msgstr "+ New item"
+
+#: courses/templates/courses/inventaire.html:18
+#, python-format
+msgid "%(compteur)s article à compléter (sans rayon)."
+msgid_plural "%(compteur)s articles à compléter (sans rayon)."
+msgstr[0] "%(compteur)s item to complete (no aisle)."
+msgstr[1] "%(compteur)s items to complete (no aisle)."
+
+#: courses/templates/courses/inventaire.html:48
+msgid "ok"
+msgstr "ok"
+
+#: courses/templates/courses/inventaire.html:59
+msgid "Souhaité à la maison"
+msgstr "Wanted at home"
+
+#: courses/templates/courses/inventaire.html:69
+msgid "Besoin ponctuel"
+msgstr "One-off need"
+
+#: courses/templates/courses/inventaire.html:69
+msgid "(en plus, pour cette fois)"
+msgstr "(extra, just this once)"
+
+#: courses/templates/courses/inventaire.html:88
+msgid "Recompter"
+msgstr "Recount"
+
+#: courses/templates/courses/inventaire.html:92
+msgid "Modifier la fiche"
+msgstr "Edit item details"
+
+#: courses/templates/courses/inventaire.html:99
+msgid "Aucun article ne correspond à cette recherche."
+msgstr "No item matches this search."
+
+#: courses/templates/courses/inventaire.html:102
+msgid "Aucun article pour le moment."
+msgstr "No items yet."
+
+#: courses/urls.py:12
+msgid "<slug:foyer_slug>/sortie/nouvelle/"
+msgstr "<slug:foyer_slug>/trip/new/"
+
+#: courses/urls.py:17
+msgid ""
+"<slug:foyer_slug>/sortie/<int:sortie_id>/article/<int:article_id>/toggle/"
+msgstr "<slug:foyer_slug>/trip/<int:sortie_id>/item/<int:article_id>/toggle/"
+
+#: courses/urls.py:23
+msgid ""
+"<slug:foyer_slug>/sortie/<int:sortie_id>/article/<int:article_id>/indisponible/"
+msgstr ""
+"<slug:foyer_slug>/trip/<int:sortie_id>/item/<int:article_id>/unavailable/"
+
+#: courses/urls.py:30
+msgid ""
+"<slug:foyer_slug>/sortie/<int:sortie_id>/article/<int:article_id>/quantite/"
+msgstr ""
+"<slug:foyer_slug>/trip/<int:sortie_id>/item/<int:article_id>/quantity/"
+
+#: courses/urls.py:36
+msgid "<slug:foyer_slug>/sortie/<int:sortie_id>/ajouter/"
+msgstr "<slug:foyer_slug>/trip/<int:sortie_id>/add/"
+
+#: courses/urls.py:41
+msgid "<slug:foyer_slug>/sortie/<int:sortie_id>/valider/"
+msgstr "<slug:foyer_slug>/trip/<int:sortie_id>/confirm/"
+
+#: courses/urls.py:45
+msgid "<slug:foyer_slug>/inventaire/"
+msgstr "<slug:foyer_slug>/inventory/"
+
+#: courses/urls.py:47
+msgid "<slug:foyer_slug>/inventaire/nouveau/"
+msgstr "<slug:foyer_slug>/inventory/new/"
+
+#: courses/urls.py:52
+msgid "<slug:foyer_slug>/inventaire/<int:article_id>/modifier/"
+msgstr "<slug:foyer_slug>/inventory/<int:article_id>/edit/"
+
+#: courses/urls.py:57
+msgid "<slug:foyer_slug>/etiquettes/creer/"
+msgstr "<slug:foyer_slug>/tags/create/"
+
+#: courses/urls.py:62
+msgid "<slug:foyer_slug>/rayons/creer/"
+msgstr "<slug:foyer_slug>/aisles/create/"
+
+#: courses/urls.py:67
+msgid "<slug:foyer_slug>/inventaire/<int:article_id>/cible/"
+msgstr "<slug:foyer_slug>/inventory/<int:article_id>/target/"
+
+#: courses/urls.py:72
+msgid "<slug:foyer_slug>/inventaire/<int:article_id>/ponctuel/"
+msgstr "<slug:foyer_slug>/inventory/<int:article_id>/one-off/"
+
+#: courses/urls.py:77
+msgid "<slug:foyer_slug>/inventaire/<int:article_id>/recompter/"
+msgstr "<slug:foyer_slug>/inventory/<int:article_id>/recount/"
+
+#: courses/urls.py:81
+msgid "<slug:foyer_slug>/historique/"
+msgstr "<slug:foyer_slug>/history/"
+
+#: courses/urls.py:83
+msgid "<slug:foyer_slug>/historique/<int:sortie_id>/corriger/"
+msgstr "<slug:foyer_slug>/history/<int:sortie_id>/fix/"
+
+#: courses/views.py:181
+#, python-format
+msgid "Sortie « %(sortie)s » ouverte."
+msgstr "Trip \"%(sortie)s\" opened."
+
+#: courses/views.py:223
+#, python-format
+msgid ""
+"« %(article)s » est déjà dans « %(sortie)s ». Cochez-le depuis cette sortie-"
+"là pour éviter de l'acheter deux fois."
+msgstr ""
+"\"%(article)s\" is already in \"%(sortie)s\". Check it off from that trip "
+"instead, to avoid buying it twice."
+
+#: courses/views.py:344
+#, python-format
+msgid "%(nb)d article validé — stock mis à jour."
+msgid_plural "%(nb)d articles validés — stock mis à jour."
+msgstr[0] "%(nb)d item confirmed — stock updated."
+msgstr[1] "%(nb)d items confirmed — stock updated."
+
+#: courses/views.py:372
+msgid "Suivi automatique désactivé"
+msgstr "Automatic tracking disabled"
+
+#: courses/views.py:374
+#, python-format
+msgid "≈ %(taux)s / jour (estimé)"
+msgstr "≈ %(taux)s / day (estimated)"
+
+#: courses/views.py:378
+#, python-format
+msgid "≈ %(taux)s / jour (amorce, pas encore d'historique)"
+msgstr "≈ %(taux)s / day (seed value, not enough history yet)"
+
+#: courses/views.py:381
+msgid "Pas assez d'historique pour estimer"
+msgstr "Not enough history to estimate"
+
+#: courses/views.py:548
+#, python-format
+msgid "Stock de « %(article)s » recompté : %(valeur)s."
+msgstr "Stock for \"%(article)s\" recounted: %(valeur)s."
+
+#: courses/views.py:552
+msgid "Valeur de recomptage invalide."
+msgstr "Invalid recount value."
+
+#: courses/views.py:565
+#, python-format
+msgid "« %(article)s » créé."
+msgstr "\"%(article)s\" created."
+
+#: courses/views.py:582
+#, python-format
+msgid "« %(article)s » mis à jour."
+msgstr "\"%(article)s\" updated."
+
+#: courses/views.py:597
+msgid "JSON invalide."
+msgstr "Invalid JSON."
+
+#: courses/views.py:601
+msgid "Nom invalide."
+msgstr "Invalid name."
+
+#: courses/views.py:704
+#, python-format
+msgid "Sortie « %(sortie)s » rouverte — reprenez-la depuis « À acheter »."
+msgstr "Trip \"%(sortie)s\" reopened — pick it back up from \"To buy\"."
+
+#: templates/admin/base_site.html:5
 msgid "Django site admin"
 msgstr ""
 
-#: .\templates\admin\base_site.html:24 .\templates\navbar.html:42
-msgid "OK"
+#: templates/admin/index.html:24
+#, python-format
+msgid "Models in the %(name)s application"
 msgstr ""
 
-#: .\templates\navbar.html:15
+#: templates/admin/index.html:35
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:42
+msgid "View"
+msgstr ""
+
+#: templates/admin/index.html:44
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:55
+msgid "You don't have permission to view or edit anything."
+msgstr ""
+
+#: templates/admin/index.html:63
+msgid "Recent actions"
+msgstr ""
+
+#: templates/admin/index.html:64
+msgid "My actions"
+msgstr ""
+
+#: templates/admin/index.html:68
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:82
+msgid "Unknown content"
+msgstr ""
+
+#: templates/base.html:20
+msgid ""
+"Personal website of Benbb96: projects, reviews, music, trackers and Django "
+"experiments."
+msgstr ""
+
+#: templates/base.html:64
+msgid "Skip to content"
+msgstr ""
+
+#: templates/components/_message.html:11
+msgid "Close"
+msgstr ""
+
+#: templates/components/pagination.html:4
+msgid "Pagination"
+msgstr ""
+
+#: templates/components/pagination.html:7
+msgid "First page"
+msgstr ""
+
+#: templates/components/pagination.html:9
+msgid "Previous page"
+msgstr ""
+
+#: templates/components/pagination.html:15
+msgid "current"
+msgstr ""
+
+#: templates/components/pagination.html:23
+msgid "Next page"
+msgstr ""
+
+#: templates/components/pagination.html:25
+msgid "Last page"
+msgstr ""
+
+#: templates/navbar.html:12
+msgid "Menu"
+msgstr ""
+
+#: templates/navbar.html:20
 msgid "Home"
 msgstr ""
 
-#: .\templates\navbar.html:16
+#: templates/navbar.html:21
 msgid "About"
 msgstr ""
 
-#: .\templates\navbar.html:17
+#: templates/navbar.html:22
 msgid "Reviews"
 msgstr ""
 
-#: .\templates\navbar.html:19
-msgid "Tracker"
+#: templates/navbar.html:23
+msgid "Musics"
 msgstr ""
 
-#: .\templates\navbar.html:24
+#: templates/navbar.html:25
+msgid "Trackers"
+msgstr ""
+
+#: templates/navbar.html:29
 msgid "Administration"
 msgstr ""
 
-#: .\templates\navbar.html:48
+#: templates/navbar.html:42
+msgid "Theme"
+msgstr ""
+
+#: templates/navbar.html:43
+msgid "Light theme"
+msgstr ""
+
+#: templates/navbar.html:43
+msgid "Light"
+msgstr ""
+
+#: templates/navbar.html:44
+msgid "Dark theme"
+msgstr ""
+
+#: templates/navbar.html:44
+msgid "Dark"
+msgstr ""
+
+#: templates/navbar.html:45
+msgid "Follow system theme"
+msgstr ""
+
+#: templates/navbar.html:45
+msgid "Auto"
+msgstr ""
+
+#: templates/navbar.html:57
+msgid "Language"
+msgstr ""
+
+#: templates/navbar.html:74
 msgid "Login"
 msgstr ""
 
-#: .\templates\navbar.html:55
+#: templates/navbar.html:84
 msgid "Logout"
 msgstr ""

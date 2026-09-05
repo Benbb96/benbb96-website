@@ -31,7 +31,7 @@
                 badge.textContent = '× ' + donnees.besoin;
                 badge.classList.add('ds-badge--primary');
             } else {
-                badge.textContent = 'ok';
+                badge.textContent = badge.dataset.okLabel;
                 badge.classList.remove('ds-badge--primary');
             }
         }
@@ -42,9 +42,11 @@
             jauge.classList.toggle('is-bas', donnees.pct < 34);
         }
 
+        // Le libellé (« Stock estimé », traduit) est fourni par le template plutôt que
+        // codé en dur ici, pour rester dans la langue active après une mise à jour AJAX.
         var stockEstime = details.querySelector('[data-stock-estime]');
         if (stockEstime) {
-            stockEstime.textContent = 'Stock estimé : ' + donnees.stock_estime;
+            stockEstime.textContent = stockEstime.dataset.stockEstimeLabel + ' : ' + donnees.stock_estime;
         }
     }
 

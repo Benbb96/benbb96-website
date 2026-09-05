@@ -1,4 +1,5 @@
 {% extends 'courses/base_courses.html' %}
+{% load i18n %}
 
 {% block acheter_active %} is-active{% endblock %}
 
@@ -8,13 +9,13 @@
 {% endblock %}
 
 {% block courses_content %}
-<h2>Ajouter un article à « {{ sortie }} »</h2>
+<h2>{% blocktrans with nom=sortie %}Ajouter un article à « {{ nom }} »{% endblocktrans %}</h2>
 <form method="post">
     {% csrf_token %}
     {% include 'components/form.html' %}
     <div class="ds-cluster ds-cluster--center ds-mt-4">
-        <button type="submit" class="ds-btn">Ajouter</button>
-        <a class="ds-btn ds-btn--ghost" href="{% url 'courses:a-acheter' foyer.slug %}?sortie={{ sortie.pk }}">Annuler</a>
+        <button type="submit" class="ds-btn">{% trans "Ajouter" %}</button>
+        <a class="ds-btn ds-btn--ghost" href="{% url 'courses:a-acheter' foyer.slug %}?sortie={{ sortie.pk }}">{% trans "Annuler" %}</a>
     </div>
 </form>
 {% endblock %}
