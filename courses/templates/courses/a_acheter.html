@@ -38,19 +38,39 @@
 {% endif %}
 
 {% if rayons %}
-    {% for groupe in rayons %}
-        <div class="courses-rayon">
-            {% if groupe.rayon %}
-                <span class="courses-rayon__puce" style="background: {{ groupe.rayon.couleur }};"></span>
-                {{ groupe.rayon.nom }}
-            {% else %}
-                {% trans "Sans rayon" %}
-            {% endif %}
+    {% trans "Rechercher un article ou un rayon" as recherche_label %}
+    <div class="courses-barre" data-barre-filtre>
+        {# Placeholder court : le libellé complet est tronqué en 390 px. #}
+        <div class="courses-recherche">
+            <input type="search" data-filtre-acheter
+                   placeholder="{% trans 'Rechercher' %}" aria-label="{{ recherche_label }}">
+            <button type="button" class="courses-recherche__vider" data-vider-recherche
+                    aria-label="{% trans 'Effacer la recherche' %}" hidden>×</button>
         </div>
-        {% for rangee in groupe.rangees %}
-            {% include 'courses/_ligne_row.html' %}
+        <label class="courses-barre__masquer">
+            <input type="checkbox" data-masquer-cochees>
+            {% trans "Masquer le panier" %}
+        </label>
+    </div>
+
+    <div data-liste-acheter>
+        {% for groupe in rayons %}
+            <div data-rayon-section data-recherche="{{ groupe.recherche }}">
+                <div class="courses-rayon">
+                    {% if groupe.rayon %}
+                        <span class="courses-rayon__puce" style="background: {{ groupe.rayon.couleur }};"></span>
+                        {{ groupe.rayon.nom }}
+                    {% else %}
+                        {% trans "Sans rayon" %}
+                    {% endif %}
+                </div>
+                {% for rangee in groupe.rangees %}
+                    {% include 'courses/_ligne_row.html' %}
+                {% endfor %}
+            </div>
         {% endfor %}
-    {% endfor %}
+        <p class="ds-text-muted ds-mt-4" data-aucun-resultat hidden>{% trans "Aucun article ne correspond à cette recherche." %}</p>
+    </div>
 {% else %}
     <p class="ds-text-muted ds-mt-4">
         {% if vue_globale %}
@@ -79,4 +99,5 @@
     {{ block.super }}
     {{ sortie_form.media.js }}
     <script src="{% static 'courses/js/acheter-lignes.js' %}"></script>
+    <script src="{% static 'courses/js/acheter-filtre.js' %}"></script>
 {% endblock %}

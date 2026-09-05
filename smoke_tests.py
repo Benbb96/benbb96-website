@@ -415,10 +415,7 @@ class SeedFoyerCommandTest(TestCase):
         return str(chemin)
 
     def test_seed_foyer_fichier_personnalise(self):
-        """
-        L'inventaire réel d'un foyer reste hors du dépôt public : il se dépose sur le
-        serveur et se passe en argument. Le JSON versionné n'est qu'un échantillon.
-        """
+        """L'inventaire réel reste hors du dépôt : il se passe en argument."""
         chemin = self._fichier_temporaire(
             {
                 "rayons": [{"nom": "Cave", "ordre": 1}],
@@ -441,11 +438,7 @@ class SeedFoyerCommandTest(TestCase):
         self.assertEqual(article.stock_cible, Decimal(12))
 
     def test_seed_foyer_refuse_les_doublons(self):
-        """
-        `get_or_create` porte sur (foyer, nom) : deux articles homonymes seraient fusionnés
-        en silence — c'est le cas de « Steak haché », présent à la fois en Boucherie et en
-        Surgelés dans l'export du POC. La commande doit refuser plutôt qu'en perdre un.
-        """
+        """Homonymes fusionnés en silence par get_or_create : refuser plutôt que perdre."""
         chemin = self._fichier_temporaire(
             {
                 "rayons": [
@@ -713,17 +706,19 @@ class CoursesViewsSmokeTest(TestCase):
         self.assertContains(r, "data-rayon-section", count=2)  # Fruits + Sans rayon
         self.assertContains(r, sans_rayon.nom)
 
-    def test_inventaire_recherche_texte_inclut_rayon_et_etiquette(self):
-        """Retour utilisateur : la recherche doit matcher le rayon ou l'étiquette,
-        pas seulement le nom — vérifié via l'attribut data-recherche précalculé."""
+    def test_inventaire_recherche_texte_rangee_et_section(self):
+        """
+        Le nom et les étiquettes vivent sur la rangée, le rayon sur la section : le JS
+        donne la priorité au nom, sinon chercher « fruits » sortait tout le rayon.
+        """
         etiquette = Etiquette.objects.create(foyer=self.foyer, nom="Bio")
         self.article.etiquettes.add(etiquette)
         r = self.client.get(url("courses:inventaire", self.foyer.slug))
         content = r.content.decode()
-        debut = content.index(f'id="a-{self.article.pk}"')
-        extrait = content[debut : debut + 400]
-        self.assertIn("fruits", extrait.lower())
-        self.assertIn("bio", extrait.lower())
+        extrait = content[content.index(f'id="a-{self.article.pk}"') :][:400].lower()
+        self.assertIn("bananes bio", extrait)
+        self.assertNotIn("fruits", extrait)
+        self.assertContains(r, 'data-rayon-section data-recherche="fruits"')
 
     def test_historique_status_200(self):
         r = self.client.get(url("courses:historique", self.foyer.slug))
@@ -892,12 +887,24 @@ class CoursesViewsSmokeTest(TestCase):
             url(view_name, *args), data or {}, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
         )
 
+    def test_texte_de_recherche_sans_accents(self):
+        """
+        Le filtre est côté client : le texte cherché est aplati ici, et le JS applique
+        la même normalisation à la saisie (NFD + retrait des diacritiques).
+        """
+        rayon = Rayon.objects.create(foyer=self.foyer, nom="Épicerie salée", ordre=9)
+        Article.objects.create(
+            foyer=self.foyer,
+            nom="Crème fraîche",
+            rayon=rayon,
+            stock_cible=Decimal(2),
+        )
+        r = self.client.get(url("courses:a-acheter", self.foyer.slug))
+        self.assertContains(r, 'data-recherche="creme fraiche"')
+        self.assertContains(r, 'data-rayon-section data-recherche="epicerie salee"')
+
     def test_toggle_ligne_ajax_renvoie_la_rangee_re_rendue(self):
-        """
-        Retour utilisateur : cocher rechargeait la page et renvoyait en haut de la liste.
-        La rangée est re-rendue côté serveur parce que cocher fait apparaître le champ
-        quantité et le bouton « Pas trouvé » — c'est structurel, pas un basculement de classe.
-        """
+        """Cocher rechargeait la page et renvoyait en haut de la liste."""
         self.client.get(url("courses:a-acheter", self.foyer.slug))
         sortie = self._sortie_par_defaut()
         r = self._post_ajax(

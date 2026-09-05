@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 13:54+0200\n"
+"POT-Creation-Date: 2026-09-05 22:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,47 +18,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: config/settings/base.py:156
+#: config/settings/base.py:164
 msgid "French"
 msgstr "Français"
 
-#: config/settings/base.py:157
+#: config/settings/base.py:165
 msgid "English"
 msgstr "Anglais"
 
-#: config/urls.py:37
+#: config/urls.py:38
 msgid "review/"
 msgstr "avis/"
 
-#: config/urls.py:38
+#: config/urls.py:39
 msgid "tracker/"
 msgstr "tracker/"
 
-#: config/urls.py:39
+#: config/urls.py:40
 msgid "versus/"
 msgstr "versus/"
 
-#: config/urls.py:40
+#: config/urls.py:41
 msgid "music/"
 msgstr "musique/"
 
-#: config/urls.py:41
+#: config/urls.py:42
 msgid "my-spot/"
 msgstr ""
 
-#: config/urls.py:42
+#: config/urls.py:43
 msgid "super-moite-moite/"
 msgstr ""
 
-#: config/urls.py:43
+#: config/urls.py:44
 msgid "courses/"
 msgstr ""
 
-#: config/urls.py:44
+#: config/urls.py:45
 msgid "kendama/"
 msgstr ""
 
-#: config/urls.py:45
+#: config/urls.py:46
 msgid "admin/"
 msgstr "admin/"
 
@@ -88,7 +88,7 @@ msgstr ""
 msgid "Quantité"
 msgstr ""
 
-#: courses/forms.py:106 courses/templates/courses/inventaire.html:87
+#: courses/forms.py:106 courses/templates/courses/inventaire.html:91
 msgid "Il en reste"
 msgstr ""
 
@@ -236,6 +236,38 @@ msgstr ""
 msgid "Tel que le ticket ou le drive l'écrit."
 msgstr ""
 
+#: courses/templates/courses/_ligne_row.html:11
+#, python-format
+msgid "Marquer « %(nom)s » comme acheté"
+msgstr ""
+
+#: courses/templates/courses/_ligne_row.html:21
+#, python-format
+msgid "Demandé par %(demandeur)s"
+msgstr ""
+
+#: courses/templates/courses/_ligne_row.html:31
+#, python-format
+msgid "Quantité pour %(nom)s"
+msgstr ""
+
+#: courses/templates/courses/_ligne_row.html:32
+#: templates/admin/base_site.html:24 templates/navbar.html:69
+msgid "OK"
+msgstr "Ok"
+
+#: courses/templates/courses/_ligne_row.html:42
+msgid "Pas trouvé en rayon"
+msgstr ""
+
+#: courses/templates/courses/_ligne_row.html:43
+msgid "indisponible"
+msgstr ""
+
+#: courses/templates/courses/_ligne_row.html:43
+msgid "Pas trouvé"
+msgstr ""
+
 #: courses/templates/courses/a_acheter.html:15
 msgid "Tout ce qui manque"
 msgstr ""
@@ -256,56 +288,46 @@ msgstr ""
 msgid "+ Ajouter un article"
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:47
-#: courses/templates/courses/inventaire.html:31
+#: courses/templates/courses/a_acheter.html:41
+msgid "Rechercher un article ou un rayon"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:46
+msgid "Rechercher"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:48
+#: courses/templates/courses/inventaire.html:15
+msgid "Effacer la recherche"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:52
+msgid "Masquer le panier"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:64
+#: courses/templates/courses/inventaire.html:35
 msgid "Sans rayon"
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:56
-#, python-format
-msgid "Marquer « %(nom)s » comme acheté"
+#: courses/templates/courses/a_acheter.html:72
+#: courses/templates/courses/inventaire.html:103
+msgid "Aucun article ne correspond à cette recherche."
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:66
-#, python-format
-msgid "Demandé par %(demandeur)s"
-msgstr ""
-
-#: courses/templates/courses/a_acheter.html:74
-#, python-format
-msgid "Quantité pour %(nom)s"
-msgstr ""
-
-#: courses/templates/courses/a_acheter.html:75
-#: templates/admin/base_site.html:24 templates/navbar.html:69
-msgid "OK"
-msgstr "Ok"
-
-#: courses/templates/courses/a_acheter.html:85
-msgid "Pas trouvé en rayon"
-msgstr ""
-
-#: courses/templates/courses/a_acheter.html:86
-msgid "indisponible"
-msgstr ""
-
-#: courses/templates/courses/a_acheter.html:86
-msgid "Pas trouvé"
-msgstr ""
-
-#: courses/templates/courses/a_acheter.html:96
+#: courses/templates/courses/a_acheter.html:77
 msgid "Rien à acheter, tout est sous contrôle."
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:98
+#: courses/templates/courses/a_acheter.html:79
 msgid "Cette sortie est vide pour l'instant."
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:106
+#: courses/templates/courses/a_acheter.html:87
 msgid "dans le panier"
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:110
+#: courses/templates/courses/a_acheter.html:91
 msgid "Valider mes achats"
 msgstr ""
 
@@ -422,46 +444,42 @@ msgstr ""
 msgid "Stock estimé"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:13
+#: courses/templates/courses/inventaire.html:17
 msgid "+ Nouvel article"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:18
+#: courses/templates/courses/inventaire.html:22
 #, python-format
 msgid "%(compteur)s article à compléter (sans rayon)."
 msgid_plural "%(compteur)s articles à compléter (sans rayon)."
 msgstr[0] "%(compteur)s article à compléter (sans rayon)."
 msgstr[1] "%(compteur)s articles à compléter (sans rayon)."
 
-#: courses/templates/courses/inventaire.html:48
+#: courses/templates/courses/inventaire.html:52
 msgid "ok"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:59
+#: courses/templates/courses/inventaire.html:63
 msgid "Souhaité à la maison"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:69
+#: courses/templates/courses/inventaire.html:73
 msgid "Besoin ponctuel"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:69
+#: courses/templates/courses/inventaire.html:73
 msgid "(en plus, pour cette fois)"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:88
+#: courses/templates/courses/inventaire.html:92
 msgid "Recompter"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:92
+#: courses/templates/courses/inventaire.html:96
 msgid "Modifier la fiche"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:99
-msgid "Aucun article ne correspond à cette recherche."
-msgstr ""
-
-#: courses/templates/courses/inventaire.html:102
+#: courses/templates/courses/inventaire.html:106
 msgid "Aucun article pour le moment."
 msgstr ""
 
@@ -533,71 +551,71 @@ msgstr ""
 msgid "<slug:foyer_slug>/historique/<int:sortie_id>/corriger/"
 msgstr ""
 
-#: courses/views.py:181
+#: courses/views.py:190
 #, python-format
 msgid "Sortie « %(sortie)s » ouverte."
 msgstr ""
 
-#: courses/views.py:223
+#: courses/views.py:232
 #, python-format
 msgid ""
 "« %(article)s » est déjà dans « %(sortie)s ». Cochez-le depuis cette sortie-"
 "là pour éviter de l'acheter deux fois."
 msgstr ""
 
-#: courses/views.py:344
+#: courses/views.py:404
 #, python-format
 msgid "%(nb)d article validé — stock mis à jour."
 msgid_plural "%(nb)d articles validés — stock mis à jour."
 msgstr[0] "%(nb)d article validé — stock mis à jour."
 msgstr[1] "%(nb)d articles validés — stock mis à jour."
 
-#: courses/views.py:372
+#: courses/views.py:432
 msgid "Suivi automatique désactivé"
 msgstr ""
 
-#: courses/views.py:374
+#: courses/views.py:434
 #, python-format
 msgid "≈ %(taux)s / jour (estimé)"
 msgstr ""
 
-#: courses/views.py:378
+#: courses/views.py:438
 #, python-format
 msgid "≈ %(taux)s / jour (amorce, pas encore d'historique)"
 msgstr ""
 
-#: courses/views.py:381
+#: courses/views.py:441
 msgid "Pas assez d'historique pour estimer"
 msgstr ""
 
-#: courses/views.py:548
+#: courses/views.py:612
 #, python-format
 msgid "Stock de « %(article)s » recompté : %(valeur)s."
 msgstr ""
 
-#: courses/views.py:552
+#: courses/views.py:616
 msgid "Valeur de recomptage invalide."
 msgstr ""
 
-#: courses/views.py:565
+#: courses/views.py:629
 #, python-format
 msgid "« %(article)s » créé."
 msgstr ""
 
-#: courses/views.py:582
+#: courses/views.py:646
 #, python-format
 msgid "« %(article)s » mis à jour."
 msgstr ""
 
-#: courses/views.py:597
+#: courses/views.py:661
 msgid "JSON invalide."
 msgstr ""
 
-#: courses/views.py:601
+#: courses/views.py:665
 msgid "Nom invalide."
 msgstr ""
 
-#: courses/views.py:704
+#: courses/views.py:768
 #, python-format
 msgid "Sortie « %(sortie)s » rouverte — reprenez-la depuis « À acheter »."
 msgstr ""

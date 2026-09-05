@@ -1,15 +1,11 @@
 """
 Charge des rayons et des articles dans un foyer existant, depuis un fichier JSON.
 
-Le fichier par défaut (docs/courses/seed-poc.json) est un **échantillon générique** versionné
-dans le dépôt, qui sert d'exemple de format et de jeu de départ neutre. L'inventaire réel d'un
-foyer n'a rien à faire dans un dépôt public : on le dépose sur le serveur et on le passe à
-`--fichier`.
+Le fichier par défaut (docs/courses/seed-poc.json) est un échantillon générique versionné :
+l'inventaire réel d'un foyer se dépose sur le serveur et se passe à `--fichier`.
 
-Le foyer n'est pas créé par cette commande : Rayon et Article portent une FK vers Foyer, donc
-il doit déjà exister (créé via l'admin). Idempotent — rejouable sans dupliquer
-(get_or_create sur (foyer, nom)) : `db.sqlite3` est gitignoré, dev et prod ont des bases
-indépendantes, donc le seed doit être rejoué à la main sur chacune.
+Le foyer doit déjà exister (créé via l'admin). Idempotent (get_or_create sur (foyer, nom)) :
+dev et prod ont des bases indépendantes, le seed est à rejouer sur chacune.
 
 Format attendu :
     {
@@ -42,9 +38,8 @@ class Command(BaseCommand):
             "--fichier",
             default=str(SEED_PATH),
             help=(
-                "Chemin du JSON à charger. Par défaut l'échantillon générique versionné "
-                "(docs/courses/seed-poc.json) ; passer ici l'inventaire réel du foyer, "
-                "qui lui reste hors du dépôt."
+                "Chemin du JSON à charger. Par défaut l'échantillon versionné ; "
+                "passer ici l'inventaire réel du foyer, qui reste hors du dépôt."
             ),
         )
 
@@ -85,13 +80,10 @@ class Command(BaseCommand):
                 nom=article_data["nom"],
                 defaults={
                     "rayon": rayons_par_nom[article_data["rayon"]],
-                    # `unite` est l'unité de CONSOMMATION, pas d'achat (conception.md §10.3) :
-                    # une recette dose en grammes ou en millilitres, jamais en paquets.
-                    # Vide = pas encore confirmée, comme pour un article importé (§9 étape 3).
+                    # Unité de CONSOMMATION, pas d'achat (§10.3). Vide = à confirmer.
                     "unite": article_data.get("unite", ""),
                     "conditionnement": article_data.get("conditionnement", 1),
-                    # Le « want » et le « have » du POC. Sans `stock_cible`, le besoin
-                    # calculé reste nul et « À acheter » s'affiche vide après le seed.
+                    # Le « want » / « have » du POC. Sans stock_cible, « À acheter » est vide.
                     "stock_cible": article_data.get("stock_cible", 0),
                     "stock_reference": article_data.get("stock_reference", 0),
                 },
@@ -106,10 +98,7 @@ class Command(BaseCommand):
         )
 
     def _valide(self, data, chemin):
-        """
-        Échoue tôt et clairement plutôt que de laisser un KeyError remonter au milieu de
-        l'insertion : le fichier vient de l'extérieur du dépôt, il peut être n'importe quoi.
-        """
+        """Le fichier vient de l'extérieur du dépôt : échouer avant d'écrire."""
         for cle in ("rayons", "articles"):
             if not isinstance(data.get(cle), list):
                 raise CommandError(f"{chemin} : clé {cle!r} absente ou pas une liste.")

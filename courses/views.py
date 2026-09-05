@@ -1,4 +1,5 @@
 import json
+import unicodedata
 from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
@@ -117,6 +118,7 @@ def vue_a_acheter(request, foyer_slug):
                 "ligne": lignes_par_article.get(article.id),
                 "demandeurs": demandeurs_par_article.get(article.id, []),
                 "quantite_defaut": article.besoin,
+                "recherche": _texte_recherche(article),
             }
             for article in articles
         ]
@@ -131,6 +133,7 @@ def vue_a_acheter(request, foyer_slug):
                 "ligne": ligne,
                 "demandeurs": [],
                 "quantite_defaut": ligne.quantite,
+                "recherche": _texte_recherche(ligne.article),
             }
             for ligne in lignes
         ]
@@ -162,7 +165,12 @@ def _grouper_par_rayon(rangees):
         rayon = rangee["article"].rayon
         cle = rayon.id if rayon else None
         if groupe_courant is None or groupe_courant["cle"] != cle:
-            groupe_courant = {"cle": cle, "rayon": rayon, "rangees": []}
+            groupe_courant = {
+                "cle": cle,
+                "rayon": rayon,
+                "recherche": _sans_accents(rayon.nom if rayon else ""),
+                "rangees": [],
+            }
             groupes.append(groupe_courant)
         groupe_courant["rangees"].append(rangee)
     return groupes
@@ -227,8 +235,7 @@ def toggle_ligne(request, foyer_slug, sortie_id, article_id):
                 % {"article": article, "sortie": conflit.sortie},
             )
             if _est_ajax(request):
-                # Le message ne s'affiche qu'au rendu complet : on demande un rechargement
-                # plutôt que de mettre à jour une rangée en taisant l'avertissement.
+                # L'avertissement n'existe qu'au rendu complet : recharger.
                 return JsonResponse({"recharger": True})
         else:
             quantite = _decimal(request.POST.get("quantite"), Decimal(1)) or Decimal(1)
@@ -281,13 +288,8 @@ def toggle_indisponible(request, foyer_slug, sortie_id, article_id):
 
 def _reponse_ligne(request, foyer, sortie, article):
     """
-    Réponse commune aux trois actions de « À acheter ».
-
-    En AJAX : la rangée re-rendue, que le JS substitue en place. Cocher un article y
-    fait apparaître le champ quantité et le bouton « Pas trouvé » — c'est structurel,
-    donc on renvoie le HTML du partiel plutôt que des champs à recomposer côté client.
-    Sinon : redirection classique, avec une ancre sur la rangée pour ne pas renvoyer
-    l'utilisateur en haut d'une liste qui fait plusieurs écrans.
+    En AJAX : la rangée re-rendue, substituée en place (cocher fait apparaître des
+    contrôles, c'est structurel). Sinon : redirection ancrée sur la rangée.
     """
     if _est_ajax(request):
         return JsonResponse({"html": _rendu_rangee(request, foyer, sortie, article)})
@@ -299,11 +301,21 @@ def _reponse_ligne(request, foyer, sortie, article):
     return redirect(f"{cible.split('#')[0]}#ligne-{article.pk}")
 
 
+def _sans_accents(texte):
+    """« creme » doit trouver « Crème ». Le JS applique la même normalisation."""
+    decompose = unicodedata.normalize("NFD", texte.lower())
+    return "".join(c for c in decompose if not unicodedata.combining(c))
+
+
+def _texte_recherche(article):
+    """Précalculé pour acheter-filtre.js. Le rayon est porté par la section."""
+    return _sans_accents(article.nom)
+
+
 def _rendu_rangee(request, foyer, sortie, article):
     ligne = Ligne.objects.filter(sortie=sortie, article=article).first()
-    article = Article.objects.avec_besoin().get(pk=article.pk)
-    # `sortie.nom` vide = vue « Tout ce qui manque » : c'est la seule où la quantité
-    # proposée vient du besoin calculé et où les demandes ponctuelles sont affichées.
+    article = Article.objects.avec_besoin().select_related("rayon").get(pk=article.pk)
+    # `sortie.nom` vide = vue « Tout ce qui manque » (quantité issue du besoin calculé).
     vue_globale = sortie.nom == ""
     demandeurs = []
     if vue_globale:
@@ -322,6 +334,7 @@ def _rendu_rangee(request, foyer, sortie, article):
                 "ligne": ligne,
                 "demandeurs": demandeurs,
                 "quantite_defaut": article.besoin if vue_globale else ligne.quantite,
+                "recherche": _texte_recherche(article),
             },
         },
         request=request,
@@ -434,7 +447,12 @@ def _grouper_articles_par_rayon(articles):
     for article in articles:
         cle = article.rayon_id
         if groupe_courant is None or groupe_courant["cle"] != cle:
-            groupe_courant = {"cle": cle, "rayon": article.rayon, "articles": []}
+            groupe_courant = {
+                "cle": cle,
+                "rayon": article.rayon,
+                "recherche": _sans_accents(article.rayon.nom if article.rayon else ""),
+                "articles": [],
+            }
             groupes.append(groupe_courant)
         groupe_courant["articles"].append(article)
     return groupes
@@ -465,9 +483,8 @@ def vue_inventaire(request, foyer_slug):
         # Filtre côté client (JS, cf. courses/static/courses/js/inventaire-filtre.js) :
         # match sur le nom, le rayon ou les étiquettes — précalculé pour éviter de
         # ré-implémenter la même logique de recherche en JS.
-        mots = [article.nom, article.rayon.nom if article.rayon else ""]
-        mots += [etiquette.nom for etiquette in article.etiquettes.all()]
-        article.recherche_texte = " ".join(mots).lower()
+        mots = [article.nom] + [e.nom for e in article.etiquettes.all()]
+        article.recherche_texte = _sans_accents(" ".join(mots))
 
     sans_rayon = Article.objects.filter(
         foyer=foyer, actif=True, rayon__isnull=True

@@ -8,8 +8,12 @@
 {% trans "Rechercher par nom, rayon ou étiquette" as recherche_label %}
 {% trans "Stock estimé" as stock_estime_label %}
 <div class="ds-cluster ds-cluster--split ds-mb-4">
-    <input type="search" id="courses-filtre" data-filtre-inventaire
-           placeholder="{{ recherche_label }}" aria-label="{{ recherche_label }}">
+    <div class="courses-recherche">
+        <input type="search" id="courses-filtre" data-filtre-inventaire
+               placeholder="{{ recherche_label }}" aria-label="{{ recherche_label }}">
+        <button type="button" class="courses-recherche__vider" data-vider-recherche
+                aria-label="{% trans 'Effacer la recherche' %}" hidden>×</button>
+    </div>
     <a class="ds-btn ds-btn--sm" href="{% url 'courses:creer-article' foyer.slug %}">{% trans "+ Nouvel article" %}</a>
 </div>
 
@@ -22,7 +26,7 @@
 {% if rayons %}
     <div data-inventaire>
         {% for groupe in rayons %}
-            <div data-rayon-section>
+            <div data-rayon-section data-recherche="{{ groupe.recherche }}">
                 <div class="courses-rayon">
                     {% if groupe.rayon %}
                         <span class="courses-rayon__puce" style="background: {{ groupe.rayon.couleur }};"></span>

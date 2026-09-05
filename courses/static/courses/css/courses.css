@@ -28,26 +28,47 @@
 .courses-row {
     display: flex;
     align-items: center;
-    gap: var(--ds-space-3);
+    flex-wrap: wrap;
+    gap: var(--ds-space-2) var(--ds-space-3);
     padding: var(--ds-space-2) 0;
     border-bottom: 1px solid var(--ds-border);
 }
 .courses-row:last-child { border-bottom: 0; }
-.courses-row__nom { flex: 1 1 auto; font-size: 1.05rem; }
+/* `display: flex` ci-dessus bat le `display: none` du navigateur pour [hidden] (même
+   spécificité, règle plus tardive) : sans ça, le filtre ne masque rien visuellement. */
+.courses-row[hidden] { display: none; }
+/* `min-width: 0` : sans lui, un nom long refuse de se réduire (min-width auto). */
+.courses-row__nom { flex: 1 1 auto; min-width: 0; font-size: 1.05rem; }
 .courses-row.is-checked .courses-row__nom {
     color: var(--ds-text-muted);
     text-decoration: line-through;
 }
 .courses-row form { display: flex; align-items: center; }
+.courses-row__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-2);
+    margin-left: auto;
+}
 
-/* Quantité éditable une fois la Ligne créée (§ retour utilisateur : « il ne restait
-   que 6 œufs, pas 12 ») — remplace le badge statique, qui ne servait qu'à afficher. */
+/* Quantité éditable une fois la Ligne créée — remplace le badge statique.
+   `max-width` et non `width` : main.css pose `width: 100%` en (0,8,1), imbattable
+   par une classe. Le plafond s'applique sans lutter contre la cascade. */
 .courses-qte-form { gap: var(--ds-space-2); flex: none; }
 .courses-qte-input {
-    width: 3.5rem;
+    max-width: 4.5rem;
     text-align: center;
     font-variant-numeric: tabular-nums;
 }
+
+/* Écran étroit : les actions passent sous le nom (case + gap = 1.6rem + space-3). */
+@media (max-width: 34rem) {
+    .courses-row__actions--formulaires {
+        flex-basis: 100%;
+        margin-left: calc(1.6rem + var(--ds-space-3));
+    }
+}
+
 .courses-row__demandeur {
     display: inline-flex;
     align-items: center;
@@ -60,6 +81,59 @@
     font-size: var(--ds-fs-sm);
     font-weight: 700;
 }
+
+/* ── Barre de filtre de « À acheter » : collante, on l'utilise en marchant ── */
+.courses-barre {
+    position: sticky;
+    /* Sous la navbar, sticky à top:0 en z-index 100 (main.css §10). */
+    top: var(--ds-nav-h);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-3);
+    padding: var(--ds-space-2) 0;
+    margin-bottom: var(--ds-space-2);
+    background: var(--ds-bg);
+    border-bottom: 1px solid var(--ds-border);
+}
+.courses-barre__masquer {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-space-2);
+    flex: none;
+    font-size: var(--ds-fs-sm);
+    color: var(--ds-text-muted);
+    white-space: nowrap;
+    cursor: pointer;
+}
+.courses-barre__masquer input { cursor: pointer; }
+
+/* Croix de vidage : le natif de `input[type=search]` n'existe pas sous Firefox. */
+.courses-recherche { position: relative; flex: 1 1 auto; min-width: 0; }
+.courses-recherche input { padding-right: 2.2rem; }
+.courses-recherche__vider {
+    position: absolute;
+    top: 50%;
+    right: var(--ds-space-2);
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ds-surface-alt);
+    color: var(--ds-text-muted);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.courses-recherche__vider[hidden] { display: none; }  /* cf. .courses-row[hidden] */
+.courses-recherche__vider:hover { color: var(--ds-text); }
+/* Le natif ferait doublon avec le nôtre. */
+.courses-recherche input::-webkit-search-cancel-button { display: none; }
 
 /* ── En-tête de groupe rayon ───────────────────────────────────────────────── */
 .courses-rayon {

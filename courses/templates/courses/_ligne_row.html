@@ -1,12 +1,9 @@
 {% load i18n l10n %}
-{% comment %}
-    Une rangée de « À acheter ». Extrait dans son propre fichier parce que les vues
-    d'action (toggle/quantité/indisponible) le rendent seul pour le renvoyer en JSON :
-    cocher un article fait apparaître le champ quantité et le bouton « Pas trouvé »,
-    donc la mise à jour est structurelle, pas un simple basculement de classe.
-{% endcomment %}
+{# Rendu seul par les vues d'action, qui le renvoient en JSON. #}
 <div class="courses-row{% if rangee.ligne.cochee_le %} is-checked{% endif %}"
-     id="ligne-{{ rangee.article.pk }}" data-ligne-row>
+     id="ligne-{{ rangee.article.pk }}" data-ligne-row
+     data-recherche="{{ rangee.recherche }}"
+     data-cochee="{% if rangee.ligne.cochee_le %}1{% else %}0{% endif %}">
     <form method="post" action="{% url 'courses:toggle-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
         {% csrf_token %}
         <input type="hidden" name="quantite" value="{{ rangee.quantite_defaut|default:'1'|unlocalize }}">
@@ -24,25 +21,28 @@
         <span class="courses-row__demandeur" title="{% blocktrans %}Demandé par {{ demandeur }}{% endblocktrans %}">{{ demandeur|slice:":1"|upper }}</span>
     {% endfor %}
 
-    {% if rangee.ligne %}
-        <form method="post" action="{% url 'courses:modifier-quantite-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}" class="courses-qte-form">
-            {% csrf_token %}
-            <input type="number" step="0.001" min="0" name="quantite"
-                   value="{{ rangee.ligne.quantite|unlocalize }}" class="courses-qte-input"
-                   aria-label="{% blocktrans with nom=rangee.article.nom %}Quantité pour {{ nom }}{% endblocktrans %}">
-            <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">{% trans "OK" %}</button>
-        </form>
-    {% elif rangee.article.besoin %}
-        <span class="ds-badge ds-badge--primary">× {{ rangee.article.besoin|floatformat:"-3" }}</span>
-    {% endif %}
+    {# Groupés pour basculer d'un bloc sur une 2e ligne en écran étroit. #}
+    <div class="courses-row__actions{% if rangee.ligne %} courses-row__actions--formulaires{% endif %}">
+        {% if rangee.ligne %}
+            <form method="post" action="{% url 'courses:modifier-quantite-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}" class="courses-qte-form">
+                {% csrf_token %}
+                <input type="number" step="0.001" min="0" name="quantite"
+                       value="{{ rangee.ligne.quantite|unlocalize }}" class="courses-qte-input"
+                       aria-label="{% blocktrans with nom=rangee.article.nom %}Quantité pour {{ nom }}{% endblocktrans %}">
+                <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm">{% trans "OK" %}</button>
+            </form>
+        {% elif rangee.article.besoin %}
+            <span class="ds-badge ds-badge--primary">× {{ rangee.article.besoin|floatformat:"-3" }}</span>
+        {% endif %}
 
-    {% if rangee.ligne and not rangee.ligne.cochee_le %}
-        <form method="post" action="{% url 'courses:toggle-indisponible' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
-            {% csrf_token %}
-            <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm"
-                    title="{% trans 'Pas trouvé en rayon' %}">
-                {% if rangee.ligne.indisponible_le %}✕ {% trans "indisponible" %}{% else %}{% trans "Pas trouvé" %}{% endif %}
-            </button>
-        </form>
-    {% endif %}
+        {% if rangee.ligne and not rangee.ligne.cochee_le %}
+            <form method="post" action="{% url 'courses:toggle-indisponible' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm"
+                        title="{% trans 'Pas trouvé en rayon' %}">
+                    {% if rangee.ligne.indisponible_le %}✕ {% trans "indisponible" %}{% else %}{% trans "Pas trouvé" %}{% endif %}
+                </button>
+            </form>
+        {% endif %}
+    </div>
 </div>

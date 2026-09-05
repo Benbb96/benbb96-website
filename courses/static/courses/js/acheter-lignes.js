@@ -1,15 +1,6 @@
-/* =============================================================================
-   Courses — actions de « À acheter » sans rechargement de page.
-   =============================================================================
-   Même motif que inventaire-steppers.js, mais la mise à jour est structurelle
-   plutôt que champ par champ : cocher un article fait apparaître le champ
-   quantité et le bouton « Pas trouvé ». Le serveur renvoie donc la rangée
-   re-rendue, qu'on substitue en place — pas de balisage dupliqué ici.
-
-   Sans ce script, chaque coche fait un POST + redirect : ça marche (le serveur
-   pose une ancre #ligne-<id>), mais on repart en haut de page à chaque tape,
-   irritant en plein magasin sur une liste de plusieurs écrans.
-   ============================================================================= */
+/* Courses — actions de « À acheter » sans rechargement (cf. inventaire-steppers.js).
+   Cocher fait apparaître le champ quantité : le serveur renvoie la rangée re-rendue
+   plutôt que des champs à recomposer ici. Sans JS : POST + redirect ancré. */
 (function (document) {
     'use strict';
 
@@ -31,6 +22,8 @@
         rangee.replaceWith(neuve);
         brancher(neuve);
         majCompteur();
+        // acheter-filtre.js réapplique « Masquer le panier » sur la rangée neuve.
+        document.dispatchEvent(new CustomEvent('courses:ligne-maj'));
     }
 
     function intercepter(form) {
