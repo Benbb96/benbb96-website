@@ -35,7 +35,7 @@ dependencies = [
 # Dépendances de développement (PEP 735). Exclues en prod via `uv sync --no-dev`.
 [dependency-groups]
 dev = [
-    "django-debug-toolbar==7.1.1",
+    "django-debug-toolbar==8.0.0",
     "coverage==7.16.0",
     "pyright",
     "ruff",
