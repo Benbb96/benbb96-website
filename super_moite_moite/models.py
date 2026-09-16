@@ -2,9 +2,9 @@ from colorfield.fields import ColorField
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.text import slugify
 
 from base.models import PhotoAbstract, Profil
+from base.slug_utils import unique_slugify
 
 
 class Logement(models.Model):
@@ -22,17 +22,7 @@ class Logement(models.Model):
     def save(self, *args, **kwargs):
         # Ajout du slug s'il n'a pas été fourni
         if not self.slug:
-            slug = slugify(self.nom)
-            # Vérification si ce slug existe déjà
-            if Logement.objects.filter(slug=slug).exists():
-                counter = 2
-                slug_proposition = f"{slug}-{counter}"
-                while Logement.objects.filter(slug=slug_proposition).exists():
-                    counter += 1
-                    slug_proposition = f"{slug}-{counter}"
-                slug = slug_proposition
-            # Sauvegarde su slug unique
-            self.slug = slug
+            self.slug = unique_slugify(self, self.nom)
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):

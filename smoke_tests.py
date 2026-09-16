@@ -13,6 +13,7 @@ Filet de sécurité de non-régression. Couvre :
   8. Vues de l'app courses (phase 1) : annotation de besoin, À acheter / Inventaire / Historique
   9. Robustesse du canal d'alerte : l'échec d'envoi du mail d'erreur ne remonte pas
   10. Résilience des vues qui envoient un e-mail (reset de mot de passe)
+  11. Génération des slugs (base.slug_utils) : translittération, unicité, troncature
 
 Lancer : python manage.py test smoke_tests
 """
@@ -38,6 +39,7 @@ from django.utils import timezone, translation
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from avis.models import CategorieProduit
 from config.log import SafeAdminEmailHandler
 from courses.models import (
     Article,
@@ -49,6 +51,7 @@ from courses.models import (
     Rayon,
     Sortie,
 )
+from super_moite_moite.models import Logement
 
 
 def url(name, *args, lang="fr", **kwargs):
@@ -1343,3 +1346,50 @@ class PasswordResetResilienceTest(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertTrue(User.objects.filter(username="nouveau").exists())
         self.assertTrue(prevenir.call_args.kwargs["fail_silently"])
+
+
+class SlugUtilsTest(TestCase):
+    """Non-régression de base.slug_utils.unique_slugify (translittération + unicité)."""
+
+    def test_translitteration(self):
+        """Les lettres non décomposables passent, là où django.utils.text.slugify les avale."""
+        categorie = CategorieProduit.objects.create(nom="Œuvre du Cœur")
+        self.assertEqual(categorie.slug, "oeuvre-du-coeur")
+
+    def test_accents_francais(self):
+        categorie = CategorieProduit.objects.create(nom="Crème Brûlée")
+        self.assertEqual(categorie.slug, "creme-brulee")
+
+    def test_unicite_suffixee(self):
+        """Deux noms distincts au même slug ne lèvent plus d'IntegrityError."""
+        premier = CategorieProduit.objects.create(nom="Café")
+        second = CategorieProduit.objects.create(nom="Cafe")
+        self.assertEqual(premier.slug, "cafe")
+        self.assertEqual(second.slug, "cafe-2")
+        troisieme = CategorieProduit.objects.create(nom="CAFE")
+        self.assertEqual(troisieme.slug, "cafe-3")
+
+    def test_repli_slug_vide(self):
+        """Un nom qui ne laisse rien à translittérer retombe sur le nom du modèle."""
+        categorie = CategorieProduit.objects.create(nom="!!! ---")
+        self.assertEqual(categorie.slug, "categorieproduit")
+
+    def test_slug_fourni_preserve(self):
+        categorie = CategorieProduit.objects.create(nom="Café", slug="mon-slug")
+        self.assertEqual(categorie.slug, "mon-slug")
+
+    def test_troncature_a_la_taille_du_champ(self):
+        """Le suffixe d'unicité reste dans max_length du SlugField."""
+        max_length = CategorieProduit._meta.get_field("slug").max_length
+        nom = "a" * (max_length + 20)
+        premier = CategorieProduit.objects.create(nom=nom)
+        second = CategorieProduit.objects.create(nom=nom + " bis")
+        self.assertEqual(len(premier.slug), max_length)
+        self.assertLessEqual(len(second.slug), max_length)
+        self.assertTrue(second.slug.endswith("-2"))
+
+    def test_resave_ne_change_pas_le_slug(self):
+        """Une instance déjà slugée ne se suffixe pas elle-même à chaque save()."""
+        logement = Logement.objects.create(nom="Chez Moi")
+        logement.save()
+        self.assertEqual(logement.slug, "chez-moi")

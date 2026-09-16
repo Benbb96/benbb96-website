@@ -19,9 +19,9 @@ from django.views.generic.edit import FormMixin
 from django.views.generic.list import MultipleObjectMixin
 from django_filters.views import FilterView
 from googleapiclient import discovery
-from slugify import slugify
 from spotipy import DjangoSessionCacheHandler, Spotify, SpotifyException, SpotifyOAuth
 
+from base.slug_utils import unique_slugify
 from music.filters import (
     ArtisteFilter,
     LabelFilter,
@@ -141,7 +141,7 @@ def create_music_from_url(request):
     if form.is_valid() and link_form.is_valid():
         musique = form.save(commit=False)
         musique.createur = request.user.profil
-        musique.slug = slugify(musique.titre)
+        musique.slug = unique_slugify(musique, musique.titre)
         musique.save()
         form.save_m2m()
         link = link_form.save(commit=False)
@@ -286,9 +286,9 @@ def create_artist(request):
     if not name:
         return JsonResponse({"success": False, "error": "name manquant"})
     try:
-        artiste = Artiste.objects.create(
-            nom_artiste=name, slug=slugify(name), createur=request.user.profil
-        )
+        artiste = Artiste(nom_artiste=name, createur=request.user.profil)
+        artiste.slug = unique_slugify(artiste, name)
+        artiste.save()
     except IntegrityError:
         return JsonResponse(
             {"success": False, "error": "Cet artiste a déjà été créé..."}

@@ -1,10 +1,10 @@
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.urls import reverse
-from django.utils.text import slugify
 from geoposition.fields import GeopositionField
 
 from base.models import PhotoAbstract, Profil
+from base.slug_utils import unique_slugify
 
 telephone_validator = RegexValidator(
     "^(0|\\+33|0033)[1-9][0-9]{8}$", "Ce numéro n'est pas valide."
@@ -36,6 +36,11 @@ class CategorieProduit(models.Model):
 
     def get_absolute_url(self):
         return reverse("avis:categorie", kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = unique_slugify(self, self.nom)
+        super().save(*args, **kwargs)
 
 
 class TypeStructure(models.Model):
@@ -104,7 +109,7 @@ class Structure(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.nom)
+            self.slug = unique_slugify(self, self.nom)
         super().save(*args, **kwargs)
 
     def apercu_informations(self):
