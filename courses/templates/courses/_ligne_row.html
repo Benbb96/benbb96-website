@@ -49,6 +49,27 @@
             </form>
         {% endif %}
 
+        {# Bascule vers une sortie en cours (vue globale seulement). #}
+        {% if vue_globale and sorties_nommees and not rangee.ligne.cochee_le %}
+            <details class="courses-deplacer{% if rangee.sortie_nommee %} is-affecte{% endif %}" data-deplacer>
+                <summary class="courses-row__fiche"
+                         title="{% if rangee.sortie_nommee %}{% blocktrans with sortie=rangee.sortie_nommee.nom %}Dans « {{ sortie }} »{% endblocktrans %}{% else %}{% trans 'Ajouter à une sortie' %}{% endif %}"
+                         aria-label="{% blocktrans with nom=rangee.article.nom %}Sortie pour « {{ nom }} »{% endblocktrans %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h13M12 6l6 6-6 6M21 4v16"/></svg>
+                </summary>
+                <form method="post" class="courses-deplacer__menu"
+                      action="{% url 'courses:deplacer-article' foyer.slug rangee.article.pk %}">
+                    {% csrf_token %}
+                    {% for s in sorties_nommees %}
+                        <button type="submit" name="sortie" value="{{ s.pk }}"{% if rangee.sortie_nommee.pk == s.pk %} class="is-active"{% endif %}>{{ s.nom }}</button>
+                    {% endfor %}
+                    {% if rangee.sortie_nommee %}
+                        <button type="submit" name="sortie" value="">{% trans "Retirer de la sortie" %}</button>
+                    {% endif %}
+                </form>
+            </details>
+        {% endif %}
+
         {# En dernier, donc tout à droite. Le nom, lui, sert à cocher. #}
         <a class="courses-row__fiche"
            href="{% url 'courses:inventaire' foyer.slug %}?ouvert={{ rangee.article.pk }}#a-{{ rangee.article.pk }}"

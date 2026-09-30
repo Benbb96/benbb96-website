@@ -48,6 +48,26 @@ def _sortie_par_defaut(foyer, profil):
     return sortie
 
 
+def _sorties_nommees(foyer):
+    return list(
+        foyer.sorties.filter(cloture_le__isnull=True)
+        .exclude(nom="")
+        .order_by("cree_le")
+    )
+
+
+def _sortie_nommee_par_article(foyer, article_ids=None):
+    """article_id -> sortie nommée ouverte qui le contient (§5.1 : au plus une)."""
+    lignes = (
+        Ligne.objects.filter(sortie__foyer=foyer, sortie__cloture_le__isnull=True)
+        .exclude(sortie__nom="")
+        .select_related("sortie")
+    )
+    if article_ids is not None:
+        lignes = lignes.filter(article_id__in=article_ids)
+    return {ligne.article_id: ligne.sortie for ligne in lignes}
+
+
 def _decimal(valeur, defaut=Decimal(0)):
     try:
         return Decimal(valeur)
@@ -79,11 +99,7 @@ def vue_a_acheter(request, foyer_slug):
     profil = request.user.profil
     sortie_courante = _sortie_par_defaut(foyer, profil)
 
-    sorties_nommees = list(
-        foyer.sorties.filter(cloture_le__isnull=True)
-        .exclude(nom="")
-        .order_by("cree_le")
-    )
+    sorties_nommees = _sorties_nommees(foyer)
 
     sortie_id = request.GET.get("sortie")
     sortie_affichee = None
@@ -112,6 +128,7 @@ def vue_a_acheter(request, foyer_slug):
             demandeurs_par_article.setdefault(demande.article_id, []).append(
                 demande.profil.user.username
             )
+        sortie_par_article = _sortie_nommee_par_article(foyer)
         rangees = [
             {
                 "article": article,
@@ -119,6 +136,7 @@ def vue_a_acheter(request, foyer_slug):
                 "demandeurs": demandeurs_par_article.get(article.id, []),
                 "quantite_defaut": article.besoin,
                 "recherche": _texte_recherche(article),
+                "sortie_nommee": sortie_par_article.get(article.id),
             }
             for article in articles
         ]
@@ -286,6 +304,53 @@ def toggle_indisponible(request, foyer_slug, sortie_id, article_id):
     return _reponse_ligne(request, foyer, sortie, ligne.article)
 
 
+@login_required
+@require_POST
+@transaction.atomic
+def deplacer_article(request, foyer_slug, article_id):
+    """
+    Bascule un article de « Tout ce qui manque » vers une sortie nommée, ou l'en ressort
+    si `sortie` est vide. Les Lignes non cochées des autres sorties nommées sont retirées :
+    §5.1, un article n'est que dans une sortie à la fois.
+    """
+    foyer = _foyer_du_profil(request, foyer_slug)
+    article = get_object_or_404(Article, pk=article_id, foyer=foyer)
+    courante = _sortie_par_defaut(foyer, request.user.profil)
+
+    cible = None
+    if request.POST.get("sortie"):
+        cible = get_object_or_404(
+            Sortie,
+            pk=request.POST["sortie"],
+            foyer=foyer,
+            cloture_le__isnull=True,
+        )
+
+    # Y compris la Ligne non cochée de la sortie par défaut, sinon cocher l'article
+    # depuis « Tout ce qui manque » contournerait l'avertissement §5.1.
+    anciennes = Ligne.objects.filter(
+        article=article,
+        sortie__foyer=foyer,
+        sortie__cloture_le__isnull=True,
+        cochee_le__isnull=True,
+    )
+    if cible:
+        anciennes = anciennes.exclude(sortie=cible)
+    anciennes.delete()
+
+    if cible:
+        besoin = Article.objects.avec_besoin().get(pk=article.pk).besoin
+        Ligne.objects.get_or_create(
+            sortie=cible,
+            article=article,
+            defaults={
+                "quantite": _decimal(str(besoin), Decimal(1)) or Decimal(1),
+                "origine": Ligne.Origine.MANUEL,
+            },
+        )
+    return _reponse_ligne(request, foyer, courante, article)
+
+
 def _reponse_ligne(request, foyer, sortie, article):
     """
     En AJAX : la rangée re-rendue, substituée en place (cocher fait apparaître des
@@ -335,7 +400,12 @@ def _rendu_rangee(request, foyer, sortie, article):
                 "demandeurs": demandeurs,
                 "quantite_defaut": article.besoin if vue_globale else ligne.quantite,
                 "recherche": _texte_recherche(article),
+                "sortie_nommee": _sortie_nommee_par_article(foyer, [article.pk]).get(
+                    article.pk
+                ),
             },
+            "vue_globale": vue_globale,
+            "sorties_nommees": _sorties_nommees(foyer) if vue_globale else [],
         },
         request=request,
     )

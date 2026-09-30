@@ -33,6 +33,11 @@ urlpatterns = [
         name="modifier-quantite-ligne",
     ),
     path(
+        _("<slug:foyer_slug>/article/<int:article_id>/deplacer/"),
+        views.deplacer_article,
+        name="deplacer-article",
+    ),
+    path(
         _("<slug:foyer_slug>/sortie/<int:sortie_id>/ajouter/"),
         views.ajouter_article,
         name="ajouter-article",

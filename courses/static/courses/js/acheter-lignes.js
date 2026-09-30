@@ -33,7 +33,7 @@
 
             event.preventDefault();
             window.http
-                .json(form.action, { method: 'POST', body: new FormData(form) })
+                .json(form.action, { method: 'POST', body: new FormData(form, event.submitter) })
                 .then(function (donnees) {
                     // Conflit §5.1 : l'avertissement n'existe qu'au rendu complet.
                     if (donnees.recharger) {
@@ -52,5 +52,11 @@
         racine.querySelectorAll('form').forEach(intercepter);
     }
 
+    // Menu « sortie » : un seul ouvert à la fois, fermé par un clic ailleurs.
+    document.addEventListener('click', function (event) {
+        document.querySelectorAll('details[data-deplacer][open]').forEach(function (d) {
+            if (!d.contains(event.target)) d.removeAttribute('open');
+        });
+    });
     document.querySelectorAll(SELECTEUR_FORMS).forEach(intercepter);
 })(document);

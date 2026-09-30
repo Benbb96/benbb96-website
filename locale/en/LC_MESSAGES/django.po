@@ -791,3 +791,23 @@ msgstr ""
 #: templates/navbar.html:84
 msgid "Logout"
 msgstr ""
+
+#: courses
+msgid "Sortie pour « %(nom)s »"
+msgstr "Trip for \"%(nom)s\""
+
+#: courses
+msgid "Ajouter à une sortie"
+msgstr "Add to a trip"
+
+#: courses
+msgid "<slug:foyer_slug>/article/<int:article_id>/deplacer/"
+msgstr "<slug:foyer_slug>/article/<int:article_id>/move/"
+
+#: courses
+msgid "Dans « %(sortie)s »"
+msgstr "In \"%(sortie)s\""
+
+#: courses
+msgid "Retirer de la sortie"
+msgstr "Remove from trip"

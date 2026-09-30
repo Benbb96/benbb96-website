@@ -779,3 +779,23 @@ msgstr "Se connecter"
 #: templates/navbar.html:84
 msgid "Logout"
 msgstr "Se déconnecter"
+
+#: courses
+msgid "Sortie pour « %(nom)s »"
+msgstr ""
+
+#: courses
+msgid "Ajouter à une sortie"
+msgstr ""
+
+#: courses
+msgid "<slug:foyer_slug>/article/<int:article_id>/deplacer/"
+msgstr ""
+
+#: courses
+msgid "Dans « %(sortie)s »"
+msgstr ""
+
+#: courses
+msgid "Retirer de la sortie"
+msgstr ""
