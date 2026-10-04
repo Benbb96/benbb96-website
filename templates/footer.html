@@ -19,5 +19,10 @@
         <li><a href="{% url 'base:privacy' %}">{% trans "Privacy policy" %}</a></li>
         <li><a href="{% url 'base:legal-notice' %}">{% trans "Legal notice" %}</a></li>
     </ul>
+    <a class="ds-footer__ecoindex" href="https://bff.ecoindex.fr/redirect/?url=https://www.benbb96.com"
+       target="_blank" rel="noopener" title="{% trans "Environmental score of this page (EcoIndex)" %}">
+        <img src="https://bff.ecoindex.fr/badge/?theme=dark&url=https://www.benbb96.com"
+             alt="{% trans "EcoIndex badge" %}" width="130" height="30" loading="lazy">
+    </a>
     <p class="ds-footer__copyright">&copy; {% now "Y" %} Benbb96</p>
 </footer>

@@ -799,3 +799,11 @@ msgstr ""
 #: courses
 msgid "Retirer de la sortie"
 msgstr ""
+
+#: templates/footer.html
+msgid "Environmental score of this page (EcoIndex)"
+msgstr "Score environnemental de cette page (EcoIndex)"
+
+#: templates/footer.html
+msgid "EcoIndex badge"
+msgstr "Badge EcoIndex"

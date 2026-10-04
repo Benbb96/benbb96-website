@@ -905,6 +905,8 @@ select option { color: var(--ds-text); background-color: var(--ds-surface); }
     text-decoration-color: var(--ds-primary);
 }
 
+.ds-footer__ecoindex { display: inline-block; margin-bottom: var(--ds-space-3); line-height: 0; }
+
 .ds-footer__copyright { font-size: var(--ds-fs-sm); margin: 0; }
 
 /* 12. ───────────────────────────────── HERO ────────────────────────────── */
