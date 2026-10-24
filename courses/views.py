@@ -68,6 +68,19 @@ def _sortie_nommee_par_article(foyer, article_ids=None):
     return {ligne.article_id: ligne.sortie for ligne in lignes}
 
 
+def _nb_a_acheter(foyer):
+    """
+    Compteur de l'onglet, affiché depuis les trois pages : toujours la liste principale
+    (« Tout ce qui manque »), jamais le contenu d'une sortie nommée.
+    """
+    return (
+        Article.objects.filter(foyer=foyer, actif=True)
+        .avec_besoin()
+        .filter(besoin__gt=0)
+        .count()
+    )
+
+
 def _decimal(valeur, defaut=Decimal(0)):
     try:
         return Decimal(valeur)
@@ -172,6 +185,7 @@ def vue_a_acheter(request, foyer_slug):
         "sortie_pour_actions": sortie_pour_actions,
         "vue_globale": sortie_affichee is None,
         "sortie_form": SortieForm(foyer=foyer),
+        "nb_a_acheter": _nb_a_acheter(foyer),
     }
     return render(request, "courses/a_acheter.html", context)
 
@@ -566,6 +580,7 @@ def vue_inventaire(request, foyer_slug):
         "rayons": _grouper_articles_par_rayon(articles),
         "ouvert_id": ouvert_id,
         "sans_rayon": sans_rayon,
+        "nb_a_acheter": _nb_a_acheter(foyer),
     }
     return render(request, "courses/inventaire.html", context)
 
@@ -607,6 +622,13 @@ def _etat_article_json(article_id, profil):
             "besoin": _formate_quantite(article.besoin) if article.besoin else 0,
             "pct": pct,
             "stock_estime": floatformat(article.stock_estime_calc, 1),
+            # Pastille du résumé : stock courant sur cible, verte quand il n'y a plus
+            # de besoin (cible atteinte ET aucune demande ponctuelle en attente).
+            "stock_badge": (
+                f"{_formate_quantite(article.stock_estime_calc)}"
+                f" / {_formate_quantite(article.stock_cible)}"
+            ),
+            "ok": not article.besoin,
         }
     )
 
@@ -804,6 +826,7 @@ def vue_historique(request, foyer_slug):
         "onglet": "historique",
         "sorties_ouvertes": sorties_ouvertes,
         "sorties_closes": sorties_closes,
+        "nb_a_acheter": _nb_a_acheter(foyer),
     }
     return render(request, "courses/historique.html", context)
 

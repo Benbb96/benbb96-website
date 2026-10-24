@@ -26,14 +26,14 @@
         }
 
         var badge = details.querySelector('[data-besoin-badge]');
-        if (badge) {
-            if (donnees.besoin) {
-                badge.textContent = '× ' + donnees.besoin;
-                badge.classList.add('ds-badge--primary');
-            } else {
-                badge.textContent = badge.dataset.okLabel;
-                badge.classList.remove('ds-badge--primary');
-            }
+        if (badge && donnees.stock_badge !== undefined) {
+            badge.textContent = donnees.stock_badge;
+            badge.classList.toggle('ds-badge--primary', !donnees.ok);
+            badge.classList.toggle('courses-badge--ok', !!donnees.ok);
+        }
+        if (donnees.ok !== undefined) {
+            // Lu par le filtre « Seulement les manquants ».
+            details.dataset.ok = donnees.ok ? '1' : '0';
         }
 
         var jauge = details.querySelector('[data-jauge]');
@@ -68,6 +68,7 @@
                     if (form.dataset.role === 'recompter') {
                         form.reset();
                     }
+                    document.dispatchEvent(new CustomEvent('courses:article-maj'));
                 })
                 .catch(function () {
                     form.submit(); // repli : comportement classique (redirect + ancre)

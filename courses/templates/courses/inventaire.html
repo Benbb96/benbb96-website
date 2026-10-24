@@ -14,6 +14,10 @@
         <button type="button" class="courses-recherche__vider" data-vider-recherche
                 aria-label="{% trans 'Effacer la recherche' %}" hidden>×</button>
     </div>
+    <label class="courses-barre__masquer">
+        <input type="checkbox" data-non-ok>
+        {% trans "Seulement les manquants" %}
+    </label>
     <a class="ds-btn ds-btn--sm" href="{% url 'courses:creer-article' foyer.slug %}">{% trans "+ Nouvel article" %}</a>
 </div>
 
@@ -39,6 +43,7 @@
                 {% for article in groupe.articles %}
                     <details class="courses-article" id="a-{{ article.pk }}" data-article-row
                               data-recherche="{{ article.recherche_texte }}"
+                              data-ok="{% if article.besoin %}0{% else %}1{% endif %}"
                               {% if ouvert_id|add:"0" == article.pk %}open{% endif %}>
                         <summary>
                             <div class="ds-cluster ds-cluster--split">
@@ -49,12 +54,10 @@
                                         <div data-jauge class="courses-jauge__valeur{% if pct|default:0 < 34 %} is-bas{% endif %}" style="width: {{ pct|default:0 }}%;"></div>
                                     </div>
                                 </div>
-                                {% trans "ok" as ok_label %}
-                                {% if article.besoin %}
-                                    <span data-besoin-badge data-ok-label="{{ ok_label }}" class="ds-badge ds-badge--primary">× {{ article.besoin|floatformat:"-3" }}</span>
-                                {% else %}
-                                    <span data-besoin-badge data-ok-label="{{ ok_label }}" class="ds-badge">{{ ok_label }}</span>
-                                {% endif %}
+                                {# Stock sur cible plutôt qu'un « ok » : le chiffre sert au recomptage. #}
+                                <span data-besoin-badge
+                                      class="ds-badge{% if article.besoin %} ds-badge--primary{% else %} courses-badge--ok{% endif %}"
+                                      title="{% trans 'Stock estimé sur stock souhaité' %}">{{ article.stock_estime_calc|floatformat:"-3" }} / {{ article.stock_cible|floatformat:"-3" }}</span>
                             </div>
                         </summary>
 

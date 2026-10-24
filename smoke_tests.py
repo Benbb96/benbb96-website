@@ -688,6 +688,64 @@ class CoursesViewsSmokeTest(TestCase):
         )
         self.client.force_login(self.user)
 
+    def test_conditionnement_affiche_dans_a_acheter(self):
+        """
+        Le conditionnement doit être lisible sans survol : une infobulle n'existe pas
+        au doigt, et c'est sur le téléphone que la liste sert.
+        """
+        self.article.unite = "g"
+        self.article.conditionnement = Decimal(500)
+        self.article.save()
+        r = self.client.get(url("courses:a-acheter", self.foyer.slug))
+        self.assertContains(r, "500 g")
+
+    def test_conditionnement_label_selon_lunite(self):
+        cas = [
+            ("g", Decimal(500), "500 g"),
+            ("l", Decimal("1.5"), "1,5 L"),
+            ("unite", Decimal(6), "× 6"),
+            # Ni « 1 unité » (n'apprend rien) ni unité absente (import non confirmé).
+            ("unite", Decimal(1), ""),
+            ("", Decimal(500), ""),
+        ]
+        for unite, conditionnement, attendu in cas:
+            with self.subTest(unite=unite, conditionnement=conditionnement):
+                self.article.unite = unite
+                self.article.conditionnement = conditionnement
+                self.assertEqual(self.article.conditionnement_label, attendu)
+
+    def test_compteur_de_longlet_a_acheter(self):
+        """Compte la liste principale, et reste visible depuis les trois pages."""
+        for vue in ("courses:a-acheter", "courses:inventaire", "courses:historique"):
+            with self.subTest(vue=vue):
+                r = self.client.get(url(vue, self.foyer.slug))
+                self.assertContains(r, '<span class="courses-onglet__compteur">1<')
+
+        self.article.stock_reference = Decimal(5)  # cible atteinte → plus de besoin
+        self.article.save()
+        r = self.client.get(url("courses:inventaire", self.foyer.slug))
+        self.assertNotContains(r, "courses-onglet__compteur")
+
+    def test_inventaire_affiche_le_stock_et_le_vert_quand_suffisant(self):
+        r = self.client.get(url("courses:inventaire", self.foyer.slug))
+        self.assertContains(r, "0 / 3")
+        self.assertNotContains(r, "courses-badge--ok")
+
+        self.article.stock_reference = Decimal(4)
+        self.article.save()
+        r = self.client.get(url("courses:inventaire", self.foyer.slug))
+        self.assertContains(r, "4 / 3")
+        self.assertContains(r, "courses-badge--ok")
+
+    def test_inventaire_marque_les_articles_ok_pour_le_filtre(self):
+        """`data-ok` alimente la case « Seulement les manquants » (filtre client)."""
+        r = self.client.get(url("courses:inventaire", self.foyer.slug))
+        self.assertContains(r, 'data-ok="0"')
+        self.article.stock_reference = Decimal(4)
+        self.article.save()
+        r = self.client.get(url("courses:inventaire", self.foyer.slug))
+        self.assertContains(r, 'data-ok="1"')
+
     def test_mes_foyers_redirige_si_un_seul_foyer(self):
         r = self.client.get(url("courses:mes-foyers"))
         self.assertRedirects(

@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Case, F, OuterRef, Q, Subquery, Value, When
 from django.db.models.functions import Cast, Coalesce, Greatest, Now
 from django.utils import timezone
+from django.utils.formats import number_format
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from fontawesome_6.fields import IconField
@@ -246,6 +247,19 @@ class Article(models.Model):
 
     def __str__(self):
         return self.nom
+
+    @property
+    def conditionnement_label(self):
+        """Ce qu'on prend en rayon : « 500 g », « 1,5 L », « × 6 »."""
+        if not self.unite:
+            return ""
+        # `normalize()` coupe les zéros inutiles (« 1,500 L » → « 1,5 L »), `:f` développe
+        # la notation exponentielle qu'il produit sur les ronds (500 → 5E+2).
+        quantite = number_format(f"{self.conditionnement.normalize():f}")
+        if self.unite == self.Unite.UNITE:
+            # « 1 unité » n'apprend rien ; « × 6 » dit que le lot en contient six.
+            return f"× {quantite}" if self.conditionnement != 1 else ""
+        return f"{quantite} {self.get_unite_display()}"
 
     @property
     def conso_retenue(self):

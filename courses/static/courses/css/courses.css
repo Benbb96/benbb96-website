@@ -59,6 +59,14 @@
 /* `min-width: 0` : sans lui, un nom long refuse de se réduire (min-width auto d'un
    flex item) et pousse les actions hors de l'écran. */
 .courses-row__nom { flex: 1 1 auto; min-width: 0; font-size: 1.05rem; }
+/* Conditionnement : toujours affiché, pas en infobulle — invisible au doigt. */
+.courses-row__cond {
+    flex: none;
+    font-size: var(--ds-fs-sm);
+    color: var(--ds-text-muted);
+    white-space: nowrap;
+}
+.courses-row.is-checked .courses-row__cond { text-decoration: line-through; }
 .courses-row.is-checked .courses-row__nom {
     color: var(--ds-text-muted);
     text-decoration: line-through;
@@ -103,8 +111,11 @@
 /* Écran étroit : les actions passent sous le nom (case + gap = 1.6rem + space-3). */
 @media (max-width: 34rem) {
     .courses-row__actions--formulaires {
-        flex-basis: 100%;
+        /* L'indentation se retranche de la base, sinon 100% + marge déborde la ligne. */
+        flex-basis: calc(100% - 1.6rem - var(--ds-space-3));
         margin-left: calc(1.6rem + var(--ds-space-3));
+        flex-wrap: wrap;
+        row-gap: var(--ds-space-2);
     }
 }
 
@@ -152,6 +163,14 @@
     accent-color: var(--ds-primary);
     width: 1.05rem;
     height: 1.05rem;
+}
+
+/* Écran étroit : la recherche prend toute sa ligne, cases et bouton passent dessous —
+   sinon les contrôles voisins écrasent le champ jusqu'à zéro. */
+@media (max-width: 34rem) {
+    .courses-barre { flex-wrap: wrap; row-gap: var(--ds-space-2); }
+    .courses-barre .courses-recherche { flex-basis: 100%; max-width: none; }
+    .courses-barre .ds-btn { margin-left: 0; }
 }
 
 /* Croix de vidage : le natif de `input[type=search]` n'existe pas sous Firefox.
@@ -336,3 +355,32 @@
 }
 .courses-deplacer__menu button:hover { background: var(--ds-surface-alt); }
 .courses-deplacer__menu button.is-active { font-weight: 600; }
+/* ── Pastille « stock / cible » de l'Inventaire ────────────────────────────── */
+/* Verte quand il n'y a plus de besoin : cible atteinte ET aucune demande ponctuelle. */
+.courses-badge--ok {
+    background: color-mix(in srgb, var(--ds-success) 18%, transparent);
+    color: var(--ds-success);
+}
+
+/* ── Compteur de l'onglet « À acheter » ────────────────────────────────────── */
+.courses-onglet__compteur {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    padding: 0 0.35rem;
+    margin-left: var(--ds-space-2);
+    border-radius: var(--ds-radius-pill);
+    background: var(--ds-primary);
+    color: var(--ds-primary-ink);
+    font-size: var(--ds-fs-sm);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+/* L'onglet actif est déjà sur fond jaune : la pastille y prend le contraste inverse. */
+.ds-tabs__item.is-active .courses-onglet__compteur {
+    background: var(--ds-primary-ink);
+    color: var(--ds-primary);
+}

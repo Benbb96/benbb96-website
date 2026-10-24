@@ -17,6 +17,10 @@
                 {% endif %}
             </span>
             <span class="courses-row__nom">{{ rangee.article.nom }}</span>
+            {# Conditionnement visible en permanence : une infobulle serait invisible au doigt. #}
+            {% if rangee.article.conditionnement_label %}
+                <small class="courses-row__cond">{{ rangee.article.conditionnement_label }}</small>
+            {% endif %}
         </button>
     </form>
 
@@ -43,7 +47,7 @@
             <form method="post" action="{% url 'courses:toggle-indisponible' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">
                 {% csrf_token %}
                 <button type="submit" class="ds-btn ds-btn--ghost ds-btn--sm courses-row__indispo"
-                        title="{% trans 'Pas trouvé en rayon' %}">
+                        title="{% if rangee.ligne.indisponible_le %}{% trans 'Annuler : finalement trouvé en rayon' %}{% else %}{% trans 'Pas trouvé en rayon' %}{% endif %}">
                     {% if rangee.ligne.indisponible_le %}✕ {% trans "indisponible" %}{% else %}{% trans "Pas trouvé" %}{% endif %}
                 </button>
             </form>

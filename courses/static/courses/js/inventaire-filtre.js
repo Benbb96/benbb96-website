@@ -17,6 +17,7 @@
         var sections = conteneur.querySelectorAll('[data-rayon-section]');
         var aucunResultat = conteneur.querySelector('[data-aucun-resultat]');
         var vider = document.querySelector('[data-vider-recherche]');
+        var nonOk = document.querySelector('[data-non-ok]');
 
         function correspondAuNom(ligne, recherche) {
             return ligne.dataset.recherche.indexOf(recherche) > -1;
@@ -24,6 +25,7 @@
 
         function appliquer() {
             var recherche = normalise(input.value);
+            var seulementManquants = nonOk && nonOk.checked;
             var nbVisibles = 0;
 
             // Le nom prime sur le rayon : « creme » doit donner « Crème fraîche », pas
@@ -34,11 +36,13 @@
 
             lignes.forEach(function (ligne) {
                 var section = ligne.closest('[data-rayon-section]');
-                var visible =
+                var correspond =
                     !recherche ||
                     (parNom
                         ? correspondAuNom(ligne, recherche)
                         : section.dataset.recherche.indexOf(recherche) > -1);
+                var visible =
+                    correspond && !(seulementManquants && ligne.dataset.ok === '1');
                 ligne.hidden = !visible;
                 if (visible) nbVisibles += 1;
             });
@@ -55,6 +59,9 @@
         }
 
         input.addEventListener('input', appliquer);
+        if (nonOk) nonOk.addEventListener('change', appliquer);
+        // Un stepper vient de changer le besoin : rejouer le filtre sur le nouvel état.
+        document.addEventListener('courses:article-maj', appliquer);
         if (vider) {
             vider.addEventListener('click', function () {
                 input.value = '';
