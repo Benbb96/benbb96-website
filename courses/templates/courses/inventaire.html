@@ -9,7 +9,7 @@
 {% trans "Stock estimé" as stock_estime_label %}
 <div class="courses-barre">
     <div class="courses-recherche">
-        <input type="search" id="courses-filtre" data-filtre-inventaire
+        <input type="search" id="courses-filtre" data-filtre-inventaire data-autofocus
                placeholder="{{ recherche_label }}" aria-label="{{ recherche_label }}">
         <button type="button" class="courses-recherche__vider" data-vider-recherche
                 aria-label="{% trans 'Effacer la recherche' %}" hidden>×</button>
@@ -49,6 +49,11 @@
                             <div class="ds-cluster ds-cluster--split">
                                 <div>
                                     <strong>{{ article.nom }}</strong>
+                                    {% for etiquette in article.etiquettes.all %}
+                                        <span class="courses-etiquette">
+                                            <span class="courses-etiquette__puce" style="background: {{ etiquette.couleur }};"></span>{{ etiquette.nom }}
+                                        </span>
+                                    {% endfor %}
                                     <div class="courses-jauge courses-jauge--sm ds-mt-2">
                                         {% widthratio article.stock_estime_calc article.stock_cible_f 100 as pct %}
                                         <div data-jauge class="courses-jauge__valeur{% if pct|default:0 < 34 %} is-bas{% endif %}" style="width: {{ pct|default:0 }}%;"></div>
@@ -103,7 +108,12 @@
                 {% endfor %}
             </div>
         {% endfor %}
-        <p class="ds-text-muted" data-aucun-resultat hidden>{% trans "Aucun article ne correspond à cette recherche." %}</p>
+        <div data-aucun-resultat hidden>
+            <p class="ds-text-muted">{% trans "Aucun article ne correspond à cette recherche." %}</p>
+            {# L'href reçoit la saisie en cours : on crée l'article sans la retaper. #}
+            <a class="ds-btn ds-btn--sm" data-creer-depuis-recherche
+               href="{% url 'courses:creer-article' foyer.slug %}">{% trans "Créer cet article" %}</a>
+        </div>
     </div>
 {% else %}
     <p class="ds-text-muted">{% trans "Aucun article pour le moment." %}</p>

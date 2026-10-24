@@ -384,3 +384,28 @@
     background: var(--ds-primary-ink);
     color: var(--ds-primary);
 }
+
+/* ── Étiquettes d'article (Inventaire) ─────────────────────────────────────── */
+/* Pastille colorée + libellé en texte courant : la couleur de l'étiquette est libre,
+   l'utiliser en fond rendrait le contraste du texte imprévisible. */
+.courses-etiquette {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-space-1);
+    margin-left: var(--ds-space-2);
+    font-size: var(--ds-fs-sm);
+    color: var(--ds-text-muted);
+    white-space: nowrap;
+}
+.courses-etiquette__puce {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--ds-border-strong);
+}
+
+/* ── Historique ────────────────────────────────────────────────────────────── */
+/* La carte n'a pas de padding propre (main.css §.ds-card) : il vient de __body. */
+.courses-carte-lien { display: block; text-decoration: none; color: inherit; }
+.courses-carte-lien:hover { border-color: var(--ds-border-strong); }
+.courses-barre__select { flex: none; max-width: 14rem; }

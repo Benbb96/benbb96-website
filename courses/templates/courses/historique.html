@@ -1,15 +1,40 @@
 {% extends 'courses/base_courses.html' %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block historique_active %} is-active{% endblock %}
 
 {% block courses_content %}
 
+{% trans "Rechercher une sortie ou un magasin" as recherche_label %}
+<div class="courses-barre">
+    <div class="courses-recherche">
+        <input type="search" data-filtre-historique data-autofocus
+               placeholder="{% trans 'Rechercher' %}" aria-label="{{ recherche_label }}">
+        <button type="button" class="courses-recherche__vider" data-vider-recherche
+                aria-label="{% trans 'Effacer la recherche' %}" hidden>×</button>
+    </div>
+    <select data-filtre-magasin class="courses-barre__select" aria-label="{% trans 'Filtrer par magasin' %}">
+        <option value="">{% trans "Tous les magasins" %}</option>
+        {% for id, nom in magasins_filtre %}
+            <option value="{{ id }}">{{ nom }}</option>
+        {% endfor %}
+        <option value="-">{% trans "Sans magasin" %}</option>
+    </select>
+    <select data-filtre-mois class="courses-barre__select" aria-label="{% trans 'Filtrer par mois' %}">
+        <option value="">{% trans "Tous les mois" %}</option>
+        {% for cle, label in mois_filtre %}
+            <option value="{{ cle }}">{{ label|capfirst }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div data-historique>
 {% for sortie in sorties_ouvertes %}
-    <a class="ds-card ds-mb-3" style="display: block; text-decoration: none;"
-       href="{% url 'courses:a-acheter' foyer.slug %}{% if sortie.nom %}?sortie={{ sortie.pk }}{% endif %}">
-        <div class="ds-cluster ds-cluster--split">
-            <div>
+    <div data-sortie-row data-recherche="{{ sortie.recherche }}"
+         data-magasin="{{ sortie.cle_magasin|default:'-' }}" data-mois="{{ sortie.cle_mois }}">
+        <a class="ds-card courses-carte-lien ds-mb-3"
+           href="{% url 'courses:a-acheter' foyer.slug %}{% if sortie.nom %}?sortie={{ sortie.pk }}{% endif %}">
+            <div class="ds-card__body">
                 <strong>{% if sortie.nom %}{{ sortie.nom }}{% else %}{% trans "Sortie en cours" %}{% endif %}</strong>
                 <div class="ds-text-muted">
                     {% if sortie.magasin %}{{ sortie.magasin }}{% else %}{% trans "Sans magasin" %}{% endif %}
@@ -18,17 +43,19 @@
                     · {% blocktrans with date=sortie.cree_le|date:"j F" %}ouverte le {{ date }}{% endblocktrans %}
                 </div>
             </div>
-        </div>
-    </a>
+        </a>
+    </div>
 {% endfor %}
 
 {% if sorties_closes %}
     {% regroup sorties_closes by mois_label as groupes_mois %}
     {% for groupe in groupes_mois %}
+      <div data-mois-section>
         <h3 class="ds-mt-5">{{ groupe.grouper|capfirst }}</h3>
         <div class="ds-list-group ds-mb-4">
             {% for sortie in groupe.list %}
-                <details>
+                <details data-sortie-row data-recherche="{{ sortie.recherche }}"
+                         data-magasin="{{ sortie.cle_magasin|default:'-' }}" data-mois="{{ sortie.cle_mois }}">
                     <summary class="ds-list-group__item courses-sortie-summary">
                         <div class="ds-cluster ds-cluster--split">
                             <div>
@@ -62,9 +89,17 @@
                 </details>
             {% endfor %}
         </div>
+      </div>
     {% endfor %}
 {% else %}
     <p class="ds-text-muted ds-mt-4">{% trans "Aucune sortie clôturée pour le moment." %}</p>
 {% endif %}
+    <p class="ds-text-muted ds-mt-4" data-aucun-resultat hidden>{% trans "Aucune sortie ne correspond à cette recherche." %}</p>
+</div>
 
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'courses/js/historique-filtre.js' %}"></script>
 {% endblock %}

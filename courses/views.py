@@ -715,7 +715,9 @@ def recompter(request, foyer_slug, article_id):
 @login_required
 def creer_article(request, foyer_slug):
     foyer = _foyer_du_profil(request, foyer_slug)
-    form = ArticleForm(request.POST or None, foyer=foyer)
+    # `?nom=` : la recherche sans résultat propose de créer l'article déjà saisi.
+    initial = {"nom": request.GET.get("nom", "").strip()[:150]}
+    form = ArticleForm(request.POST or None, foyer=foyer, initial=initial)
     if request.method == "POST" and form.is_valid():
         article = form.save()
         messages.success(request, _("« %(article)s » créé.") % {"article": article})
@@ -821,11 +823,36 @@ def vue_historique(request, foyer_slug):
     for sortie in sorties_closes:
         sortie.mois_label = dateformat.format(sortie.cloture_le, "F Y")
 
+    # Filtres côté client : les clés sont précalculées ici, comme pour l'Inventaire.
+    for sortie in sorties_ouvertes + sorties_closes:
+        sortie.cle_magasin = str(sortie.magasin_id or "")
+        date = sortie.cloture_le or sortie.cree_le
+        sortie.cle_mois = date.strftime("%Y-%m")
+        sortie.recherche = _sans_accents(
+            f"{sortie.nom} {sortie.magasin.nom if sortie.magasin else ''}"
+        )
+
+    magasins = sorted(
+        {
+            (s.magasin_id, s.magasin.nom)
+            for s in sorties_ouvertes + sorties_closes
+            if s.magasin
+        },
+        key=lambda m: m[1],
+    )
+    mois = []
+    for sortie in sorties_closes:
+        entree = (sortie.cle_mois, sortie.mois_label)
+        if entree not in mois:
+            mois.append(entree)
+
     context = {
         "foyer": foyer,
         "onglet": "historique",
         "sorties_ouvertes": sorties_ouvertes,
         "sorties_closes": sorties_closes,
+        "magasins_filtre": magasins,
+        "mois_filtre": mois,
         "nb_a_acheter": _nb_a_acheter(foyer),
     }
     return render(request, "courses/historique.html", context)

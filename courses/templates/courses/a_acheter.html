@@ -42,7 +42,7 @@
     <div class="courses-barre" data-barre-filtre>
         {# Placeholder court : le libellé complet est tronqué en 390 px. #}
         <div class="courses-recherche">
-            <input type="search" data-filtre-acheter
+            <input type="search" data-filtre-acheter data-autofocus
                    placeholder="{% trans 'Rechercher' %}" aria-label="{{ recherche_label }}">
             <button type="button" class="courses-recherche__vider" data-vider-recherche
                     aria-label="{% trans 'Effacer la recherche' %}" hidden>×</button>
@@ -69,7 +69,12 @@
                 {% endfor %}
             </div>
         {% endfor %}
-        <p class="ds-text-muted ds-mt-4" data-aucun-resultat hidden>{% trans "Aucun article ne correspond à cette recherche." %}</p>
+        <div class="ds-mt-4" data-aucun-resultat hidden>
+            <p class="ds-text-muted">{% trans "Aucun article ne correspond à cette recherche." %}</p>
+            {# L'href reçoit la saisie en cours : on crée l'article sans la retaper. #}
+            <a class="ds-btn ds-btn--sm" data-creer-depuis-recherche
+               href="{% url 'courses:creer-article' foyer.slug %}">{% trans "Créer cet article" %}</a>
+        </div>
     </div>
 {% else %}
     <p class="ds-text-muted ds-mt-4">

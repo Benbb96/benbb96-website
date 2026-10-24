@@ -16,6 +16,17 @@
         return (texte || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     }
 
+    // Bouton « Créer cet article » : on y repasse la saisie pour ne pas la retaper.
+    function majLienCreation(valeur) {
+        var lien = document.querySelector('[data-creer-depuis-recherche]');
+        if (!lien) return;
+        if (!lien.dataset.base) lien.dataset.base = lien.getAttribute('href');
+        lien.setAttribute(
+            'href',
+            lien.dataset.base + (valeur ? '?nom=' + encodeURIComponent(valeur) : '')
+        );
+    }
+
     function correspondAuNom(ligne, recherche) {
         return ligne.dataset.recherche.indexOf(recherche) > -1;
     }
@@ -53,6 +64,7 @@
 
         if (aucunResultat) aucunResultat.hidden = nbVisibles !== 0;
         if (vider) vider.hidden = !champ.value;
+        majLienCreation(champ.value.trim());
     }
 
     champ.addEventListener('input', appliquer);

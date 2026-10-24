@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 23:25+0200\n"
+"POT-Creation-Date: 2026-10-24 23:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -88,7 +88,7 @@ msgstr ""
 msgid "Quantité"
 msgstr ""
 
-#: courses/forms.py:106 courses/templates/courses/inventaire.html:94
+#: courses/forms.py:106 courses/templates/courses/inventaire.html:99
 msgid "Il en reste"
 msgstr ""
 
@@ -320,10 +320,12 @@ msgid "Rechercher un article ou un rayon"
 msgstr ""
 
 #: courses/templates/courses/a_acheter.html:46
+#: courses/templates/courses/historique.html:12
 msgid "Rechercher"
 msgstr ""
 
 #: courses/templates/courses/a_acheter.html:48
+#: courses/templates/courses/historique.html:14
 #: courses/templates/courses/inventaire.html:15
 msgid "Effacer la recherche"
 msgstr ""
@@ -337,24 +339,29 @@ msgstr ""
 msgid "Sans rayon"
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:72
-#: courses/templates/courses/inventaire.html:106
+#: courses/templates/courses/a_acheter.html:73
+#: courses/templates/courses/inventaire.html:112
 msgid "Aucun article ne correspond à cette recherche."
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:77
+#: courses/templates/courses/a_acheter.html:76
+#: courses/templates/courses/inventaire.html:115
+msgid "Créer cet article"
+msgstr ""
+
+#: courses/templates/courses/a_acheter.html:82
 msgid "Rien à acheter, tout est sous contrôle."
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:79
+#: courses/templates/courses/a_acheter.html:84
 msgid "Cette sortie est vide pour l'instant."
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:87
+#: courses/templates/courses/a_acheter.html:92
 msgid "dans le panier"
 msgstr ""
 
-#: courses/templates/courses/a_acheter.html:91
+#: courses/templates/courses/a_acheter.html:96
 msgid "Valider mes achats"
 msgstr ""
 
@@ -391,23 +398,23 @@ msgstr ""
 msgid "Courses"
 msgstr ""
 
-#: courses/templates/courses/base_courses.html:15
+#: courses/templates/courses/base_courses.html:20
 msgid "Liste de courses partagée du foyer."
 msgstr ""
 
-#: courses/templates/courses/base_courses.html:18
+#: courses/templates/courses/base_courses.html:23
 msgid "Changer de foyer"
 msgstr ""
 
-#: courses/templates/courses/base_courses.html:27
+#: courses/templates/courses/base_courses.html:32
 msgid "À acheter"
 msgstr ""
 
-#: courses/templates/courses/base_courses.html:30
+#: courses/templates/courses/base_courses.html:35
 msgid "Inventaire"
 msgstr ""
 
-#: courses/templates/courses/base_courses.html:33
+#: courses/templates/courses/base_courses.html:38
 msgid "Historique"
 msgstr ""
 
@@ -421,46 +428,71 @@ msgid ""
 "existant de vous y ajouter, ou passez par l'admin."
 msgstr ""
 
-#: courses/templates/courses/historique.html:13
-msgid "Sortie en cours"
+#: courses/templates/courses/historique.html:8
+msgid "Rechercher une sortie ou un magasin"
 msgstr ""
 
-#: courses/templates/courses/historique.html:15
-msgid "Sans magasin"
+#: courses/templates/courses/historique.html:16
+msgid "Filtrer par magasin"
 msgstr ""
 
 #: courses/templates/courses/historique.html:17
+msgid "Tous les magasins"
+msgstr ""
+
+#: courses/templates/courses/historique.html:21
 #: courses/templates/courses/historique.html:40
+msgid "Sans magasin"
+msgstr ""
+
+#: courses/templates/courses/historique.html:23
+msgid "Filtrer par mois"
+msgstr ""
+
+#: courses/templates/courses/historique.html:24
+msgid "Tous les mois"
+msgstr ""
+
+#: courses/templates/courses/historique.html:38
+msgid "Sortie en cours"
+msgstr ""
+
+#: courses/templates/courses/historique.html:42
+#: courses/templates/courses/historique.html:67
 #, python-format
 msgid "%(compteur)s article"
 msgid_plural "%(compteur)s articles"
 msgstr[0] "%(compteur)s article"
 msgstr[1] "%(compteur)s articles"
 
-#: courses/templates/courses/historique.html:18
+#: courses/templates/courses/historique.html:43
 #, python-format
 msgid "ouverte le %(date)s"
 msgstr ""
 
-#: courses/templates/courses/historique.html:36
+#: courses/templates/courses/historique.html:63
 msgid "Sortie"
 msgstr ""
 
-#: courses/templates/courses/historique.html:52
+#: courses/templates/courses/historique.html:79
 msgid "Rouvrir cette sortie et défaire son effet sur le stock ?"
 msgstr ""
 
-#: courses/templates/courses/historique.html:54
+#: courses/templates/courses/historique.html:81
 #, python-format
 msgid "Clôturée par %(profil)s"
 msgstr ""
 
-#: courses/templates/courses/historique.html:58
+#: courses/templates/courses/historique.html:85
 msgid "Corriger"
 msgstr ""
 
-#: courses/templates/courses/historique.html:67
+#: courses/templates/courses/historique.html:95
 msgid "Aucune sortie clôturée pour le moment."
+msgstr ""
+
+#: courses/templates/courses/historique.html:97
+msgid "Aucune sortie ne correspond à cette recherche."
 msgstr ""
 
 #: courses/templates/courses/inventaire.html:8
@@ -486,31 +518,31 @@ msgid_plural "%(compteur)s articles à compléter (sans rayon)."
 msgstr[0] "%(compteur)s article à compléter (sans rayon)."
 msgstr[1] "%(compteur)s articles à compléter (sans rayon)."
 
-#: courses/templates/courses/inventaire.html:60
+#: courses/templates/courses/inventaire.html:65
 msgid "Stock estimé sur stock souhaité"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:66
+#: courses/templates/courses/inventaire.html:71
 msgid "Souhaité à la maison"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:76
+#: courses/templates/courses/inventaire.html:81
 msgid "Besoin ponctuel"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:76
+#: courses/templates/courses/inventaire.html:81
 msgid "(en plus, pour cette fois)"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:95
+#: courses/templates/courses/inventaire.html:100
 msgid "Recompter"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:99
+#: courses/templates/courses/inventaire.html:104
 msgid "Modifier la fiche"
 msgstr ""
 
-#: courses/templates/courses/inventaire.html:109
+#: courses/templates/courses/inventaire.html:119
 msgid "Aucun article pour le moment."
 msgstr ""
 
@@ -632,25 +664,25 @@ msgstr ""
 msgid "Valeur de recomptage invalide."
 msgstr ""
 
-#: courses/views.py:721
+#: courses/views.py:723
 #, python-format
 msgid "« %(article)s » créé."
 msgstr ""
 
-#: courses/views.py:738
+#: courses/views.py:740
 #, python-format
 msgid "« %(article)s » mis à jour."
 msgstr ""
 
-#: courses/views.py:753
+#: courses/views.py:755
 msgid "JSON invalide."
 msgstr ""
 
-#: courses/views.py:757
+#: courses/views.py:759
 msgid "Nom invalide."
 msgstr ""
 
-#: courses/views.py:861
+#: courses/views.py:888
 #, python-format
 msgid "Sortie « %(sortie)s » rouverte — reprenez-la depuis « À acheter »."
 msgstr ""

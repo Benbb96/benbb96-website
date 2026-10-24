@@ -47,6 +47,7 @@ from courses.models import (
     Etiquette,
     Foyer,
     Ligne,
+    Magasin,
     MouvementStock,
     Rayon,
     Sortie,
@@ -687,6 +688,44 @@ class CoursesViewsSmokeTest(TestCase):
             stock_reference=Decimal(0),
         )
         self.client.force_login(self.user)
+
+    def test_creation_prremplie_depuis_la_recherche(self):
+        """La recherche sans résultat propose de créer l'article déjà saisi."""
+        r = self.client.get(
+            url("courses:creer-article", self.foyer.slug), {"nom": "Yaourt grec"}
+        )
+        self.assertContains(r, 'value="Yaourt grec"')
+
+    def test_creation_sans_nom_reste_vide(self):
+        r = self.client.get(url("courses:creer-article", self.foyer.slug))
+        self.assertEqual(r.context["form"].initial["nom"], "")
+
+    def test_etiquettes_affichees_dans_linventaire(self):
+        etiquette = Etiquette.objects.create(
+            foyer=self.foyer, nom="Bio", couleur="#4CAF50"
+        )
+        self.article.etiquettes.add(etiquette)
+        r = self.client.get(url("courses:inventaire", self.foyer.slug))
+        self.assertContains(r, "courses-etiquette")
+        self.assertContains(r, "Bio")
+
+    def test_historique_expose_les_cles_de_filtre(self):
+        """Magasin, mois et texte sont précalculés côté Python pour le filtre client."""
+        magasin = Magasin.objects.create(foyer=self.foyer, nom="Auchan")
+        sortie = Sortie.objects.create(
+            foyer=self.foyer, nom="Drive", magasin=magasin, cree_par=self.profil
+        )
+        r = self.client.get(url("courses:historique", self.foyer.slug))
+        self.assertContains(r, f'data-magasin="{magasin.pk}"')
+        self.assertContains(r, f'data-mois="{sortie.cree_le:%Y-%m}"')
+        self.assertContains(r, 'data-recherche="drive auchan"')
+        self.assertEqual(list(r.context["magasins_filtre"]), [(magasin.pk, "Auchan")])
+
+    def test_historique_carte_a_un_corps_avec_padding(self):
+        """`.ds-card` n'a pas de padding propre : il vient de `.ds-card__body`."""
+        Sortie.objects.create(foyer=self.foyer, nom="Drive", cree_par=self.profil)
+        r = self.client.get(url("courses:historique", self.foyer.slug))
+        self.assertContains(r, "ds-card__body")
 
     def test_conditionnement_affiche_dans_a_acheter(self):
         """

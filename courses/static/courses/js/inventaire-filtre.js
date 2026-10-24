@@ -10,6 +10,18 @@
         return (texte || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     }
 
+
+    // Bouton « Créer cet article » : on y repasse la saisie pour ne pas la retaper.
+    function majLienCreation(valeur) {
+        var lien = document.querySelector('[data-creer-depuis-recherche]');
+        if (!lien) return;
+        if (!lien.dataset.base) lien.dataset.base = lien.getAttribute('href');
+        lien.setAttribute(
+            'href',
+            lien.dataset.base + (valeur ? '?nom=' + encodeURIComponent(valeur) : '')
+        );
+    }
+
     function init(input) {
         var conteneur = document.querySelector('[data-inventaire]');
         if (!conteneur) return;
@@ -56,6 +68,7 @@
 
             if (aucunResultat) aucunResultat.hidden = nbVisibles !== 0;
             if (vider) vider.hidden = !input.value;
+            majLienCreation(input.value.trim());
         }
 
         input.addEventListener('input', appliquer);

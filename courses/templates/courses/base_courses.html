@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="{% static 'courses/css/courses.css' %}">
 {% endblock %}
 
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'courses/js/courses-focus.js' %}"></script>
+{% endblock %}
+
 {% block jumbotron_title %}{{ foyer.nom }}{% endblock %}
 {% block jumbotron_description %}
     {% trans "Liste de courses partagée du foyer." %}
