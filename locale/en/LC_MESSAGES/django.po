@@ -341,6 +341,15 @@ msgstr "Clear the search"
 msgid "Masquer le panier"
 msgstr "Hide the cart"
 
+msgid "Masquer les articles affectés à une sortie"
+msgstr "Hide items assigned to a trip"
+
+msgid "Aucun article à acheter ne correspond à cette recherche."
+msgstr "No item to buy matches this search."
+
+msgid "Chercher dans l'inventaire"
+msgstr "Search the inventory"
+
 #: courses/templates/courses/a_acheter.html:64
 #: courses/templates/courses/inventaire.html:39
 msgid "Sans rayon"

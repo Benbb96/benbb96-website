@@ -3,7 +3,8 @@
 <div class="courses-row{% if rangee.ligne.cochee_le %} is-checked{% endif %}"
      id="ligne-{{ rangee.article.pk }}" data-ligne-row
      data-recherche="{{ rangee.recherche }}"
-     data-cochee="{% if rangee.ligne.cochee_le %}1{% else %}0{% endif %}">
+     data-cochee="{% if rangee.ligne.cochee_le %}1{% else %}0{% endif %}"
+     data-affectee="{% if rangee.sortie_nommee %}1{% else %}0{% endif %}">
     {# Case ET nom dans le même submit : la cible de tap fait toute la largeur. #}
     <form method="post" class="courses-row__toggle"
           action="{% url 'courses:toggle-ligne' foyer.slug sortie_pour_actions.pk rangee.article.pk %}">

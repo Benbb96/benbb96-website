@@ -51,6 +51,12 @@
             <input type="checkbox" data-masquer-cochees>
             {% trans "Masquer le panier" %}
         </label>
+        {% if vue_globale and sorties_nommees %}
+            <label class="courses-barre__masquer">
+                <input type="checkbox" data-masquer-affectees>
+                {% trans "Masquer les articles affectés à une sortie" %}
+            </label>
+        {% endif %}
     </div>
 
     <div class="courses-colonnes" data-liste-acheter>
@@ -70,10 +76,10 @@
             </div>
         {% endfor %}
         <div class="ds-mt-4" data-aucun-resultat hidden>
-            <p class="ds-text-muted">{% trans "Aucun article ne correspond à cette recherche." %}</p>
-            {# L'href reçoit la saisie en cours : on crée l'article sans la retaper. #}
-            <a class="ds-btn ds-btn--sm" data-creer-depuis-recherche
-               href="{% url 'courses:creer-article' foyer.slug %}">{% trans "Créer cet article" %}</a>
+            <p class="ds-text-muted">{% trans "Aucun article à acheter ne correspond à cette recherche." %}</p>
+            {# L'article est peut-être en stock : on cherche dans l'inventaire, où la création est proposée. #}
+            <a class="ds-btn ds-btn--sm" data-chercher-inventaire
+               href="{% url 'courses:inventaire' foyer.slug %}">{% trans "Chercher dans l'inventaire" %}</a>
         </div>
     </div>
 {% else %}

@@ -82,6 +82,9 @@
                 appliquer();
             });
         }
+        // Arrivée depuis « À acheter » (?q=…) : on reprend la recherche en cours.
+        var q = new URLSearchParams(window.location.search).get('q');
+        if (q) input.value = q;
         appliquer();
     }
 

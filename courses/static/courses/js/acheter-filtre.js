@@ -6,6 +6,7 @@
     var conteneur = document.querySelector('[data-liste-acheter]');
     var champ = document.querySelector('[data-filtre-acheter]');
     var masquer = document.querySelector('[data-masquer-cochees]');
+    var masquerAff = document.querySelector('[data-masquer-affectees]');
     var vider = document.querySelector('[data-vider-recherche]');
     if (!conteneur || !champ) return;
 
@@ -16,14 +17,14 @@
         return (texte || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     }
 
-    // Bouton « Créer cet article » : on y repasse la saisie pour ne pas la retaper.
-    function majLienCreation(valeur) {
-        var lien = document.querySelector('[data-creer-depuis-recherche]');
+    // Lien « Chercher dans l'inventaire » : on y repasse la saisie pour ne pas la retaper.
+    function majLienInventaire(valeur) {
+        var lien = document.querySelector('[data-chercher-inventaire]');
         if (!lien) return;
         if (!lien.dataset.base) lien.dataset.base = lien.getAttribute('href');
         lien.setAttribute(
             'href',
-            lien.dataset.base + (valeur ? '?nom=' + encodeURIComponent(valeur) : '')
+            lien.dataset.base + (valeur ? '?q=' + encodeURIComponent(valeur) : '')
         );
     }
 
@@ -34,6 +35,7 @@
     function appliquer() {
         var recherche = normalise(champ.value);
         var masquerCochees = masquer && masquer.checked;
+        var masquerAffectees = masquerAff && masquerAff.checked;
         var lignes = conteneur.querySelectorAll('[data-ligne-row]');
         var nbVisibles = 0;
 
@@ -50,7 +52,10 @@
                 (parNom
                     ? correspondAuNom(ligne, recherche)
                     : section.dataset.recherche.indexOf(recherche) > -1);
-            var visible = correspond && !(masquerCochees && ligne.dataset.cochee === '1');
+            var visible =
+                correspond &&
+                !(masquerCochees && ligne.dataset.cochee === '1') &&
+                !(masquerAffectees && ligne.dataset.affectee === '1');
             ligne.hidden = !visible;
             if (visible) nbVisibles += 1;
         });
@@ -64,11 +69,12 @@
 
         if (aucunResultat) aucunResultat.hidden = nbVisibles !== 0;
         if (vider) vider.hidden = !champ.value;
-        majLienCreation(champ.value.trim());
+        majLienInventaire(champ.value.trim());
     }
 
     champ.addEventListener('input', appliquer);
     if (masquer) masquer.addEventListener('change', appliquer);
+    if (masquerAff) masquerAff.addEventListener('change', appliquer);
     if (vider) {
         vider.addEventListener('click', function () {
             champ.value = '';
