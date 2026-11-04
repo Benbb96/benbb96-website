@@ -26,6 +26,15 @@
         document.dispatchEvent(new CustomEvent('courses:ligne-maj'));
     }
 
+    // L'article a changé de sortie : on le retire de la vue, et le rayon avec s'il est vide.
+    function retirer(rangee) {
+        var section = rangee.closest('[data-rayon-section]');
+        rangee.remove();
+        if (section && !section.querySelector('[data-ligne-row]')) section.remove();
+        majCompteur();
+        document.dispatchEvent(new CustomEvent('courses:ligne-maj'));
+    }
+
     function intercepter(form) {
         form.addEventListener('submit', function (event) {
             var rangee = form.closest('[data-ligne-row]');
@@ -38,6 +47,8 @@
                     // Conflit §5.1 : l'avertissement n'existe qu'au rendu complet.
                     if (donnees.recharger) {
                         window.location.reload();
+                    } else if (donnees.retirer) {
+                        retirer(rangee);
                     } else if (donnees.html) {
                         remplacer(rangee, donnees.html);
                     }

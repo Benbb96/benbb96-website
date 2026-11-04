@@ -165,6 +165,7 @@ def vue_a_acheter(request, foyer_slug):
                 "demandeurs": [],
                 "quantite_defaut": ligne.quantite,
                 "recherche": _texte_recherche(ligne.article),
+                "sortie_nommee": sortie_affichee,
             }
             for ligne in lignes
         ]
@@ -331,6 +332,16 @@ def deplacer_article(request, foyer_slug, article_id):
     article = get_object_or_404(Article, pk=article_id, foyer=foyer)
     courante = _sortie_par_defaut(foyer, request.user.profil)
 
+    # `depuis` : le formulaire vient d'une sortie nommée (pas de « Tout ce qui manque »).
+    depuis = None
+    if request.POST.get("depuis"):
+        depuis = get_object_or_404(
+            Sortie,
+            pk=request.POST["depuis"],
+            foyer=foyer,
+            cloture_le__isnull=True,
+        )
+
     cible = None
     if request.POST.get("sortie"):
         cible = get_object_or_404(
@@ -362,6 +373,13 @@ def deplacer_article(request, foyer_slug, article_id):
                 "origine": Ligne.Origine.MANUEL,
             },
         )
+    if depuis:
+        if cible == depuis:
+            return _reponse_ligne(request, foyer, depuis, article)
+        # L'article a quitté la sortie affichée : la rangée disparaît de cette vue.
+        if _est_ajax(request):
+            return JsonResponse({"retirer": True})
+        return redirect(f"{_url_acheter(foyer)}?sortie={depuis.pk}")
     return _reponse_ligne(request, foyer, courante, article)
 
 
@@ -416,10 +434,12 @@ def _rendu_rangee(request, foyer, sortie, article):
                 "recherche": _texte_recherche(article),
                 "sortie_nommee": _sortie_nommee_par_article(foyer, [article.pk]).get(
                     article.pk
-                ),
+                )
+                if vue_globale
+                else sortie,
             },
             "vue_globale": vue_globale,
-            "sorties_nommees": _sorties_nommees(foyer) if vue_globale else [],
+            "sorties_nommees": _sorties_nommees(foyer),
         },
         request=request,
     )

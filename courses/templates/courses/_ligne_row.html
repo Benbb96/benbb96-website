@@ -54,8 +54,8 @@
             </form>
         {% endif %}
 
-        {# Bascule vers une sortie en cours (vue globale seulement). #}
-        {% if vue_globale and sorties_nommees and not rangee.ligne.cochee_le %}
+        {# Bascule vers une autre sortie, ou retrait : depuis la vue globale comme depuis une sortie. #}
+        {% if sorties_nommees and not rangee.ligne.cochee_le %}
             <details class="courses-deplacer{% if rangee.sortie_nommee %} is-affecte{% endif %}" data-deplacer>
                 <summary class="courses-row__fiche"
                          title="{% if rangee.sortie_nommee %}{% blocktrans with sortie=rangee.sortie_nommee.nom %}Dans « {{ sortie }} »{% endblocktrans %}{% else %}{% trans 'Ajouter à une sortie' %}{% endif %}"
@@ -65,6 +65,7 @@
                 <form method="post" class="courses-deplacer__menu"
                       action="{% url 'courses:deplacer-article' foyer.slug rangee.article.pk %}">
                     {% csrf_token %}
+                    {% if not vue_globale %}<input type="hidden" name="depuis" value="{{ sortie_pour_actions.pk }}">{% endif %}
                     {% for s in sorties_nommees %}
                         <button type="submit" name="sortie" value="{{ s.pk }}"{% if rangee.sortie_nommee.pk == s.pk %} class="is-active"{% endif %}>{{ s.nom }}</button>
                     {% endfor %}
