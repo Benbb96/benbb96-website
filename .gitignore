@@ -45,3 +45,6 @@ docs/courses/maquettes/liste-courses-partagee.html
 # dépose sur le serveur et se passe à `seed_foyer --fichier`.
 docs/courses/inventaire-courses.json
 docs/courses/seed-foyer-*.json
+
+# Config VS Code propre au poste (chemin du venv, language server)
+.vscode/settings.json
