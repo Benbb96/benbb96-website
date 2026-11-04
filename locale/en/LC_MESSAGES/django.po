@@ -338,6 +338,9 @@ msgid "Effacer la recherche"
 msgstr "Clear the search"
 
 #: courses/templates/courses/a_acheter.html:52
+msgid "%(unite)s de %(quantite)s"
+msgstr "%(unite)s of %(quantite)s"
+
 msgid "Masquer le panier"
 msgstr "Hide the cart"
 

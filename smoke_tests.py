@@ -743,6 +743,9 @@ class CoursesViewsSmokeTest(TestCase):
             ("g", Decimal(500), "500 g"),
             ("l", Decimal("1.5"), "1,5 L"),
             ("unite", Decimal(6), "× 6"),
+            ("paquet", Decimal(16), "paquet de 16"),
+            ("boite", Decimal(6), "boîte de 6"),
+            ("paquet", Decimal(1), ""),
             # Ni « 1 unité » (n'apprend rien) ni unité absente (import non confirmé).
             ("unite", Decimal(1), ""),
             ("", Decimal(500), ""),

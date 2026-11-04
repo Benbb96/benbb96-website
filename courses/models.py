@@ -181,6 +181,9 @@ class Article(models.Model):
         SACHET = "sachet", _("sachet")
         BOUTEILLE = "bouteille", _("bouteille")
 
+    # Unités qui désignent un contenant : le conditionnement dit ce qu'il contient.
+    UNITES_CONTENANT = (Unite.PAQUET, Unite.BOITE, Unite.SACHET, Unite.BOUTEILLE)
+
     objects = ArticleQuerySet.as_manager()
 
     foyer = models.ForeignKey(Foyer, on_delete=models.CASCADE, related_name="articles")
@@ -259,6 +262,14 @@ class Article(models.Model):
         if self.unite == self.Unite.UNITE:
             # « 1 unité » n'apprend rien ; « × 6 » dit que le lot en contient six.
             return f"× {quantite}" if self.conditionnement != 1 else ""
+        if self.unite in self.UNITES_CONTENANT:
+            # « 16 paquet » se lit mal : le contenant porte le lot, « paquet de 16 ».
+            if self.conditionnement == 1:
+                return ""
+            return _("%(unite)s de %(quantite)s") % {
+                "unite": self.get_unite_display(),
+                "quantite": quantite,
+            }
         return f"{quantite} {self.get_unite_display()}"
 
     @property

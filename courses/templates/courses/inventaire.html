@@ -49,6 +49,9 @@
                             <div class="ds-cluster ds-cluster--split">
                                 <div>
                                     <strong>{{ article.nom }}</strong>
+                                    {% if article.conditionnement_label %}
+                                        <small class="courses-row__cond">{{ article.conditionnement_label }}</small>
+                                    {% endif %}
                                     {% for etiquette in article.etiquettes.all %}
                                         <span class="courses-etiquette">
                                             <span class="courses-etiquette__puce" style="background: {{ etiquette.couleur }};"></span>{{ etiquette.nom }}
