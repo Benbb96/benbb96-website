@@ -34,7 +34,8 @@ from django.core import mail
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import IntegrityError, transaction
-from django.test import TestCase
+from django.test import TestCase as DjangoTestCase
+from django.test import override_settings
 from django.utils import timezone, translation
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -53,6 +54,15 @@ from courses.models import (
     Sortie,
 )
 from super_moite_moite.models import Logement
+
+
+@override_settings(PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])
+class TestCase(DjangoTestCase):
+    """
+    Base de toutes les classes de ce fichier. Le hasher PBKDF2 par défaut coûte ~1 s par
+    `create_user(password=…)` ; les tests ne vérifient pas la robustesse du hachage, un
+    hasher rapide ramène la suite de ~70 s à quelques secondes.
+    """
 
 
 def url(name, *args, lang="fr", **kwargs):
